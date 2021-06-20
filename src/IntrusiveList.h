@@ -1,8 +1,15 @@
 #pragma once
 
+#include <iterator>
 #include <stdint.h>
 
 namespace RolUI {
+
+    template <typename Type, typename Member>
+    Type* contain_of(const Member* member, const Member Type::*offset) {
+        void* obj_ptr = (void*)member - (uint32_t)offset;
+        return (Type*)obj_ptr;
+    }
 
     class IntrusiveListNode {
       public:
@@ -14,70 +21,61 @@ namespace RolUI {
         const IntrusiveListNode* prev() const noexcept { return _prev; }
         const IntrusiveListNode* next() const noexcept { return _next; }
 
-        void insert_prev(IntrusiveListNode* node) noexcept {
-            if (node == nullptr) return;
+        void insert_prev(IntrusiveListNode* node) noexcept;
+        void insert_next(IntrusiveListNode* node) noexcept;
 
-            node->remove_self();
+        void remove_self() noexcept;
 
-            IntrusiveListNode* p = _prev;
-
-            if (p != nullptr)
-                p->_next = node;
-            _prev = node;
-
-            node->_prev = p;
-            node->_next = this;
-        }
-
-        void insert_next(IntrusiveListNode* node) noexcept {
-            if (node == nullptr) return;
-
-            node->remove_self();
-
-            IntrusiveListNode* n = _next;
-
-            if (n != nullptr)
-                n->_prev = node;
-            _next = node;
-
-            node->_prev = this;
-            node->_next = n;
-        }
-
-        void remove_self() noexcept {
-            IntrusiveListNode *p, *n;
-            p = _prev;
-            n = _next;
-
-            if (p != nullptr)
-                p->_next = n;
-            if (n != nullptr)
-                n->_prev = p;
-
-            _prev = nullptr;
-            _next = nullptr;
-        }
-
-        IntrusiveListNode* remove_prev() noexcept {
-            IntrusiveListNode* p = _prev;
-            if (p == nullptr) return nullptr;
-            p->remove_self();
-            return p;
-        }
-        IntrusiveListNode* remove_next() noexcept {
-            IntrusiveListNode* n = _next;
-            if (n == nullptr) return nullptr;
-            n->remove_self();
-            return n;
-        }
+        IntrusiveListNode* remove_prev() noexcept;
+        IntrusiveListNode* remove_next() noexcept;
 
       private:
         IntrusiveListNode* _prev;
         IntrusiveListNode* _next;
     };
 
+    class IntrusivelistIterator {
+      public:
+        typedef std::bidirectional_iterator_tag iterator_category;
+        typedef typename IntrusiveListNode value_type;
+        typedef typename IntrusiveListNode* pointer;
+        typedef typename IntrusiveListNode& reference;
+        typedef void difference_type;
+
+        IntrusivelistIterator() noexcept : _node(nullptr), _is_reverse(false) {}
+        IntrusivelistIterator(IntrusiveListNode* node, bool reverse = false) noexcept
+            : _node(node), _is_reverse(reverse) {}
+
+        IntrusivelistIterator(const IntrusivelistIterator&) = default;
+        IntrusivelistIterator(IntrusivelistIterator&&) = default;
+
+        ~IntrusivelistIterator() noexcept {}
+
+        IntrusivelistIterator& operator=(const IntrusivelistIterator&) = default;
+        IntrusivelistIterator& operator=(IntrusivelistIterator&&) = default;
+
+        IntrusivelistIterator& operator++() noexcept;
+        IntrusivelistIterator& operator--() noexcept;
+
+        bool operator==(const IntrusivelistIterator& other) const noexcept;
+        bool operator!=(const IntrusivelistIterator& other) const noexcept;
+
+        reference operator*() noexcept { return *_node; }
+        const reference operator*() const noexcept { return *_node; }
+
+        pointer operator->() noexcept { return _node; }
+        const pointer operator->() const noexcept { return _node; }
+
+      private:
+        bool _is_reverse;
+        IntrusiveListNode* _node;
+    };
+
     class IntrusiveList {
       public:
+        typedef IntrusivelistIterator iterator;
+        typedef const IntrusivelistIterator const_iterator;
+
         IntrusiveList() noexcept : _first(nullptr), _last(nullptr) {}
 
         IntrusiveListNode* front() noexcept { return _first; }
@@ -85,61 +83,28 @@ namespace RolUI {
         const IntrusiveListNode* front() const noexcept { return _first; }
         const IntrusiveListNode* back() const noexcept { return _last; }
 
-        void insert_prev(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept {
-            if (pos == nullptr) return;
-            if (node == nullptr) return;
+        void insert_prev(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept;
+        void insert_next(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept;
 
-            pos->insert_prev(node);
-            if (pos == _first) _first = node;
-        }
-        void insert_next(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept {
-            if (pos == nullptr) return;
-            if (node == nullptr) return;
+        void insert_front(IntrusiveListNode* node) noexcept;
+        void insert_back(IntrusiveListNode* node) noexcept;
 
-            pos->insert_next(node);
-            if (pos == _last) _last = node;
-        }
+        void append(IntrusiveListNode* node) noexcept;
 
-        void insert_front(IntrusiveListNode* node) noexcept {
-            if (node == nullptr) return;
+        void remove(IntrusiveListNode* node) noexcept;
 
-            node->remove_self();
+        iterator begin() noexcept { return {_first}; }
+        iterator end() noexcept { return {nullptr}; }
+        const_iterator begin() const noexcept { return {_first}; }
+        const_iterator end() const noexcept { return {nullptr}; }
 
-            if (_first == nullptr) {
-                _first = node;
-                _last = node;
-                return;
-            }
+        const_iterator cbegin() const noexcept { return {_first}; }
+        const_iterator cend() const noexcept { return {nullptr}; }
 
-            _first->insert_prev(node);
-            _first = node;
-        }
-        void insert_back(IntrusiveListNode* node) noexcept {
-            if (node == nullptr) return;
-
-            node->remove_self();
-
-            if (_last == nullptr) {
-                _first = node;
-                _last = node;
-                return;
-            }
-
-            _last->insert_next(node);
-            _last = node;
-        }
-
-        void append(IntrusiveListNode* node) noexcept {
-            insert_back(node);
-        }
-
-        void remove(IntrusiveListNode* node) noexcept {
-            if (node == _first)
-                _first = node->next();
-            if (node == _last)
-                _last = node->prev();
-            node->remove_self();
-        }
+        iterator rbegin() noexcept { return {_last, true}; }
+        iterator rend() noexcept { return {nullptr, true}; }
+        const_iterator rbegin() const noexcept { return {_last, true}; }
+        const_iterator rend() const noexcept { return {nullptr, true}; }
 
       private:
         IntrusiveListNode* _first;
