@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "Widget.h"
+#include "RolUI/Widget.h"
 
 namespace RolUI {
     Widget::Widget(Widget* parent) noexcept {
@@ -15,7 +15,7 @@ namespace RolUI {
         widget->add_child(this);
     }
 
-    void Widget::add_child(Widget* widget) {
+    void Widget::add_child(Widget* widget) noexcept {
         if (widget == nullptr) return;
         if (widget->_parent != nullptr)
             widget->_parent->remove_child(widget);
@@ -23,7 +23,7 @@ namespace RolUI {
         _children.insert_back(&widget->_brother);
         widget->_parent = this;
     }
-    void Widget::remove_child(Widget* widget) {
+    void Widget::remove_child(Widget* widget) noexcept {
         if (widget == nullptr) return;
         if (widget->_parent != this) return;
 

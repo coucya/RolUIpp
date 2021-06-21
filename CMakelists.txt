@@ -3,9 +3,11 @@ cmake_minimum_required(VERSION 3.2)
 PROJECT(RolUI)
 
 set(RolUI_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(RolUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 set(3rd_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
-set(3rd_INCLUDE_DIRS )
+set(3rd_INCLUDE_DIRS ${3rd_DIR}/glad/include
+                     ${3rd_DIR}/glfw/include)
 
 add_subdirectory(src)
 add_subdirectory(examples)

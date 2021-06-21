@@ -1,0 +1,6 @@
+
+aux_source_directory(${RolUI_SOURCE_DIR} RolUI_source)
+ 
+add_library(RolUI STATIC ${RolUI_source})
+target_include_directories(RolUI PRIVATE ${RolUI_INCLUDE_DIR})
+target_compile_options(RolUI PRIVATE -std=c++17)

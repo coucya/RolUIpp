@@ -7,8 +7,7 @@ namespace RolUI {
 
     template <typename Type, typename Member>
     Type* contain_of(const Member* member, const Member Type::*offset) {
-        void* obj_ptr = (void*)member - (uint32_t)offset;
-        return (Type*)obj_ptr;
+        return (Type*)((uint8_t*)member - (size_t) & (((Type*)0)->*offset));
     }
 
     class IntrusiveListNode {
@@ -37,9 +36,9 @@ namespace RolUI {
     class IntrusivelistIterator {
       public:
         typedef std::bidirectional_iterator_tag iterator_category;
-        typedef typename IntrusiveListNode value_type;
-        typedef typename IntrusiveListNode* pointer;
-        typedef typename IntrusiveListNode& reference;
+        typedef IntrusiveListNode value_type;
+        typedef IntrusiveListNode* pointer;
+        typedef IntrusiveListNode& reference;
         typedef void difference_type;
 
         IntrusivelistIterator() noexcept : _node(nullptr), _is_reverse(false) {}

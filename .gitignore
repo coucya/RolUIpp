@@ -1,2 +1,5 @@
 /build
 /.vscode
+
+/3rdparty/glad
+/3rdparty/glfw
