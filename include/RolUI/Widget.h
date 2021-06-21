@@ -20,6 +20,9 @@ namespace RolUI {
 
     class Widget : public IWidget, public IEventListener {
       public:
+        typedef IntrusiveView<IntrusiveList::iterator, Widget, IntrusiveListNode> ChlidrenView;
+
+      public:
         Widget() noexcept : _parent(nullptr) {}
         Widget(Widget* parent) noexcept;
 
@@ -30,6 +33,12 @@ namespace RolUI {
 
         Widget& operator=(const Widget&) = delete;
         Widget& operator=(Widget&&) = delete;
+
+        Widget* parent() noexcept { return _parent; }
+        const Widget* parent() const noexcept { return _parent; }
+
+        ChlidrenView children_view() noexcept;
+        const ChlidrenView children_view() const noexcept;
 
         void set_parent(Widget* widget) noexcept;
 

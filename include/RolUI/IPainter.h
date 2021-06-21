@@ -4,9 +4,9 @@
 
 namespace RolUI {
 
-    class IEvent {
+    class IPainter {
       public:
-        virtual ~IEvent() {}
+        virtual ~IPainter() {}
     };
 
 } // namespace RolUI

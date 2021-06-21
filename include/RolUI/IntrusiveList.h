@@ -3,12 +3,9 @@
 #include <iterator>
 #include <stdint.h>
 
-namespace RolUI {
+#include "Intrusive.h"
 
-    template <typename Type, typename Member>
-    Type* contain_of(const Member* member, const Member Type::*offset) {
-        return (Type*)((uint8_t*)member - (size_t) & (((Type*)0)->*offset));
-    }
+namespace RolUI {
 
     class IntrusiveListNode {
       public:
@@ -33,7 +30,7 @@ namespace RolUI {
         IntrusiveListNode* _next;
     };
 
-    class IntrusivelistIterator {
+    class IntrusiveListIterator {
       public:
         typedef std::bidirectional_iterator_tag iterator_category;
         typedef IntrusiveListNode value_type;
@@ -41,23 +38,23 @@ namespace RolUI {
         typedef IntrusiveListNode& reference;
         typedef void difference_type;
 
-        IntrusivelistIterator() noexcept : _node(nullptr), _is_reverse(false) {}
-        IntrusivelistIterator(IntrusiveListNode* node, bool reverse = false) noexcept
+        IntrusiveListIterator() noexcept : _node(nullptr), _is_reverse(false) {}
+        IntrusiveListIterator(IntrusiveListNode* node, bool reverse = false) noexcept
             : _node(node), _is_reverse(reverse) {}
 
-        IntrusivelistIterator(const IntrusivelistIterator&) = default;
-        IntrusivelistIterator(IntrusivelistIterator&&) = default;
+        IntrusiveListIterator(const IntrusiveListIterator&) = default;
+        IntrusiveListIterator(IntrusiveListIterator&&) = default;
 
-        ~IntrusivelistIterator() noexcept {}
+        ~IntrusiveListIterator() noexcept {}
 
-        IntrusivelistIterator& operator=(const IntrusivelistIterator&) = default;
-        IntrusivelistIterator& operator=(IntrusivelistIterator&&) = default;
+        IntrusiveListIterator& operator=(const IntrusiveListIterator&) = default;
+        IntrusiveListIterator& operator=(IntrusiveListIterator&&) = default;
 
-        IntrusivelistIterator& operator++() noexcept;
-        IntrusivelistIterator& operator--() noexcept;
+        IntrusiveListIterator& operator++() noexcept;
+        IntrusiveListIterator& operator--() noexcept;
 
-        bool operator==(const IntrusivelistIterator& other) const noexcept;
-        bool operator!=(const IntrusivelistIterator& other) const noexcept;
+        bool operator==(const IntrusiveListIterator& other) const noexcept;
+        bool operator!=(const IntrusiveListIterator& other) const noexcept;
 
         reference operator*() noexcept { return *_node; }
         const reference operator*() const noexcept { return *_node; }
@@ -72,8 +69,8 @@ namespace RolUI {
 
     class IntrusiveList {
       public:
-        typedef IntrusivelistIterator iterator;
-        typedef const IntrusivelistIterator const_iterator;
+        typedef IntrusiveListIterator iterator;
+        typedef const IntrusiveListIterator const_iterator;
 
         IntrusiveList() noexcept : _first(nullptr), _last(nullptr) {}
 
@@ -104,6 +101,16 @@ namespace RolUI {
         iterator rend() noexcept { return {nullptr, true}; }
         const_iterator rbegin() const noexcept { return {_last, true}; }
         const_iterator rend() const noexcept { return {nullptr, true}; }
+
+        template <typename Type, typename Member>
+        IntrusiveView<iterator, Type, Member> view(const Member Type::*offset) noexcept {
+            return IntrusiveView(begin(), end(), offset);
+        }
+
+        template <typename Type, typename Member>
+        const IntrusiveView<iterator, Type, Member> view(const Member Type::*offset) const noexcept {
+            return IntrusiveView(begin(), end(), offset);
+        }
 
       private:
         IntrusiveListNode* _first;

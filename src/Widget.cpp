@@ -3,11 +3,18 @@
 #include "RolUI/Widget.h"
 
 namespace RolUI {
+
     Widget::Widget(Widget* parent) noexcept {
         set_parent(parent);
     }
 
-    Widget::~Widget() {
+    Widget::~Widget() {}
+
+    Widget::ChlidrenView Widget::children_view() noexcept {
+        return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
+    }
+    const Widget::ChlidrenView Widget::children_view() const noexcept {
+        return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
     }
 
     void Widget::set_parent(Widget* widget) noexcept {

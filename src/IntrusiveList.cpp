@@ -101,7 +101,7 @@ namespace RolUI {
         node->remove_self();
     }
 
-    IntrusivelistIterator& IntrusivelistIterator::operator++() noexcept {
+    IntrusiveListIterator& IntrusiveListIterator::operator++() noexcept {
         if (_node != nullptr)
             if (_is_reverse)
                 _node = _node->prev();
@@ -109,7 +109,7 @@ namespace RolUI {
                 _node = _node->next();
         return *this;
     }
-    IntrusivelistIterator& IntrusivelistIterator::operator--() noexcept {
+    IntrusiveListIterator& IntrusiveListIterator::operator--() noexcept {
         if (_node != nullptr)
             if (_is_reverse)
                 _node = _node->next();
@@ -118,10 +118,10 @@ namespace RolUI {
         return *this;
     }
 
-    bool IntrusivelistIterator::operator==(const IntrusivelistIterator& other) const noexcept {
+    bool IntrusiveListIterator::operator==(const IntrusiveListIterator& other) const noexcept {
         return _node == other._node;
     }
-    bool IntrusivelistIterator::operator!=(const IntrusivelistIterator& other) const noexcept {
+    bool IntrusiveListIterator::operator!=(const IntrusiveListIterator& other) const noexcept {
         return _node != other._node;
     }
 } // namespace RolUI
