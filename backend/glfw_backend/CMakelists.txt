@@ -1,0 +1,8 @@
+
+aux_source_directory(./ glfw_backend_source)
+add_library(RolUI_glfw_backend STATIC ${glfw_backend_source})
+target_include_directories(RolUI_glfw_backend PRIVATE ${RolUI_INCLUDE_DIR})
+target_include_directories(RolUI_glfw_backend PRIVATE ${3RDPARTY_DIR}/glfw/include)
+target_include_directories(RolUI_glfw_backend PRIVATE ${3RDPARTY_DIR}/glad/include)
+target_link_libraries(RolUI_glfw_backend glfw glad)
+target_compile_options(RolUI_glfw_backend PRIVATE -std=c++17)

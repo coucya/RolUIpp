@@ -32,6 +32,19 @@ namespace RolUI {
         node->_next = n;
     }
 
+    void IntrusiveListNode::remove_self() noexcept {
+        IntrusiveListNode* p = _prev;
+        IntrusiveListNode* n = _next;
+
+        if (p != nullptr)
+            p->_next = n;
+        if (n != nullptr)
+            n->_prev = p;
+
+        _prev = nullptr;
+        _next = nullptr;
+    }
+
     IntrusiveListNode* IntrusiveListNode::remove_prev() noexcept {
         IntrusiveListNode* p = _prev;
         if (p == nullptr) return nullptr;

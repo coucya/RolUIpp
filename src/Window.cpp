@@ -6,6 +6,10 @@
 
 namespace RolUI {
 
+    IPainter* Window::painter() {
+        throw std::runtime_error("RolUI::Window::painter(): not impl.");
+    }
+
     void Window::draw() {
         Widget* root_widget = this->_widget;
         IPainter* painter = this->painter();
@@ -13,7 +17,7 @@ namespace RolUI {
         if (root_widget == nullptr) return;
         if (painter == nullptr) return;
 
-        auto& rtw_children = root_widget->children_view();
+        auto rtw_children = root_widget->children_view();
         for (auto& cw : rtw_children) {
             cw.draw(painter);
         }

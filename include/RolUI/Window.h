@@ -18,6 +18,7 @@ namespace RolUI {
         const Widget* widget() const noexcept { return _widget; }
         void set_widget(Widget* widget) noexcept { _widget = widget; }
 
+        IPainter* painter() override;
         void draw() override;
 
       protected:

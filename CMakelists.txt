@@ -5,10 +5,11 @@ PROJECT(RolUI)
 set(RolUI_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(RolUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
-set(3rd_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
-set(3rd_INCLUDE_DIRS ${3rd_DIR}/glad/include
-                     ${3rd_DIR}/glfw/include)
+set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
+
+set(BACKEND_DIR ${CMAKE_SOURCE_DIR}/backend)
 
 add_subdirectory(src)
+add_subdirectory(backend)
 add_subdirectory(examples)
 add_subdirectory(3rdparty)

@@ -32,8 +32,14 @@ namespace RolUI {
         IntrusiveTransformIterator& operator=(const IntrusiveTransformIterator&) = default;
         IntrusiveTransformIterator& operator=(IntrusiveTransformIterator&&) = default;
 
-        IntrusiveTransformIterator& operator++() noexcept { return ++_iter; }
-        IntrusiveTransformIterator& operator--() noexcept { return --_iter; }
+        IntrusiveTransformIterator& operator++() noexcept {
+            ++_iter;
+            return *this;
+        }
+        IntrusiveTransformIterator& operator--() noexcept {
+            --_iter;
+            return *this;
+        }
 
         bool operator==(const IntrusiveTransformIterator& other) const noexcept {
             return _iter == other._iter;
