@@ -46,6 +46,8 @@ namespace RolUIBackend {
 
         void close();
 
+        void run();
+
         RolUI::IPainter* painter() override {
             std::runtime_error("not impl!");
             return nullptr;

@@ -97,4 +97,11 @@ namespace RolUIBackend {
         glfwSetWindowShouldClose(_glfw_window, GLFW_TRUE);
     }
 
+    void GLFWWindow::run() {
+        while (should_close() == false) {
+            poll_events();
+            display();
+        }
+    }
+
 } // namespace RolUIBackend
