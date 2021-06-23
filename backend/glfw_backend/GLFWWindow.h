@@ -27,6 +27,7 @@ namespace RolUIBackend {
         GLFWWindow& operator=(GLFWWindow&&) = default;
 
         void make_opengl_context();
+        void init_nanovg();
 
         void poll_events();
         void wait_events();
@@ -52,6 +53,7 @@ namespace RolUIBackend {
 
       private:
         GLFWwindow* _glfw_window;
+        void* nvg_context;
     };
 
 } // namespace RolUIBackend

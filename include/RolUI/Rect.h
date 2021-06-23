@@ -34,6 +34,8 @@ namespace RolUI {
         Point righttop() const noexcept { return Point(x + width - 1, y); }
         Point rightbottom() const noexcept { return Point(x + width - 1, y + height - 1); }
 
+        Point centre() const noexcept { return Point(x + width / 2, y + height / 2); }
+
         bool is_contain_point(int32_t x, int32_t y) const noexcept {
             if (x < this->x || y < this->y) return false;
             int32_t rb_x = this->x + this->width - 1;

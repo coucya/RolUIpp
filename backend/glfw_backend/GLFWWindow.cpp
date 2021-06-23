@@ -2,6 +2,10 @@
 
 #include "glad/glad.h"
 
+#include "nanovg.h"
+#define NANOVG_GL3_IMPLEMENTATION
+#include "nanovg_gl.h"
+
 #include "GLFWWindow.h"
 #include "GLFWPainter.h"
 
@@ -28,6 +32,9 @@ namespace RolUIBackend {
         _glfw_window = glfwCreateWindow(w, h, title, nullptr, nullptr);
         if (_glfw_window == nullptr)
             throw std::runtime_error("glfw create window error.");
+
+        make_opengl_context();
+        init_nanovg();
     }
 
     GLFWWindow::~GLFWWindow() {
@@ -41,6 +48,12 @@ namespace RolUIBackend {
         glfwMakeContextCurrent(_glfw_window);
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
             throw std::runtime_error("glfw make OpenGL context error");
+    }
+
+    void GLFWWindow::init_nanovg() {
+        nvg_context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        if (nvg_context == nullptr)
+            throw std::runtime_error("RolUIBackend::GLFWWindow::init_nanovg(): nvg_context == nullptr.");
     }
 
     size_t GLFWWindow::width() {
