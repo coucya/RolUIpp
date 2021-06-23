@@ -3,6 +3,7 @@
 #include "glad/glad.h"
 
 #include "GLFWWindow.h"
+#include "GLFWPainter.h"
 
 namespace RolUIBackend {
     bool GLFWWindow::_is_init = false;
@@ -102,6 +103,11 @@ namespace RolUIBackend {
             poll_events();
             display();
         }
+    }
+
+    RolUI::IPainter* GLFWWindow::painter() {
+
+        return nullptr;
     }
 
 } // namespace RolUIBackend

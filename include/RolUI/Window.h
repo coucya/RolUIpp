@@ -21,6 +21,9 @@ namespace RolUI {
         IPainter* painter() override;
         void draw() override;
 
+      private:
+        void _draw_widget(RolUI::Widget* widget, RolUI::IPainter* painter);
+
       protected:
         Widget* _widget;
     };

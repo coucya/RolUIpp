@@ -48,11 +48,7 @@ namespace RolUIBackend {
 
         void run();
 
-        RolUI::IPainter* painter() override {
-            std::runtime_error("not impl!");
-            return nullptr;
-        }
-        void draw() override { std::runtime_error("not impl!"); }
+        RolUI::IPainter* painter() override;
 
       private:
         GLFWwindow* _glfw_window;
