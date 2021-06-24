@@ -70,4 +70,7 @@ namespace RolUI {
             return true;
         return event_distribute_to_listener(event);
     }
+
+    void Widget::draw(IPainter* painter) {}
+
 } // namespace RolUI

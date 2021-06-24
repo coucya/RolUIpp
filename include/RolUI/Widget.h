@@ -49,6 +49,7 @@ namespace RolUI {
         void remove_Listener(WidgetEventListener* listener) noexcept;
 
         bool on_event(IEvent* event) override;
+        void draw(IPainter* painter) override;
 
       protected:
         bool event_distribute_to_children(IEvent* event);
