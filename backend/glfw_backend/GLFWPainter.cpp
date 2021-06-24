@@ -96,7 +96,7 @@ namespace RolUIBackend {
 
         nvgBeginPath(vg);
         nvgEllipse(vg, centre.x, centre.y, rx, ry);
-        nvgFillColor(vg, rc_to_nc(_stroke_color));
+        nvgFillColor(vg, rc_to_nc(_fill_color));
         nvgFill(vg);
     }
 
@@ -104,7 +104,7 @@ namespace RolUIBackend {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
         nvgCircle(vg, centre.x, centre.y, r);
-        nvgFillColor(vg, rc_to_nc(_stroke_color));
+        nvgFillColor(vg, rc_to_nc(_fill_color));
         nvgFill(vg);
     }
 
