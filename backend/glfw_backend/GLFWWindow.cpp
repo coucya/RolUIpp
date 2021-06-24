@@ -21,7 +21,7 @@ namespace RolUIBackend {
     }
 
     GLFWWindow::GLFWWindow(size_t w, size_t h, const char* title)
-        : _glfw_window(nullptr), RolUI::Window() {
+        : _glfw_window(nullptr), _painter(nullptr) {
 
         if (!_is_init) _init();
 
@@ -51,9 +51,10 @@ namespace RolUIBackend {
     }
 
     void GLFWWindow::init_nanovg() {
-        nvg_context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
-        if (nvg_context == nullptr)
+        _nvg_context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        if (_nvg_context == nullptr)
             throw std::runtime_error("RolUIBackend::GLFWWindow::init_nanovg(): nvg_context == nullptr.");
+        _painter = GLFWPainter(_nvg_context);
     }
 
     size_t GLFWWindow::width() {
@@ -113,14 +114,27 @@ namespace RolUIBackend {
 
     void GLFWWindow::run() {
         while (should_close() == false) {
+            draw();
+
             poll_events();
             display();
         }
     }
+    void GLFWWindow::draw() {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
 
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        nvgBeginFrame(vg, width(), height(), 1);
+
+        RolUI::Window::draw();
+
+        nvgEndFrame(vg);
+    }
     RolUI::IPainter* GLFWWindow::painter() {
 
-        return nullptr;
+        return &_painter;
     }
 
 } // namespace RolUIBackend

@@ -9,7 +9,7 @@ namespace RolUI {
 
     class Window : public IWindow {
       protected:
-        Window() {}
+        Window() noexcept {}
 
       public:
         ~Window() override {}
@@ -25,7 +25,7 @@ namespace RolUI {
         void _draw_widget(RolUI::Widget* widget, RolUI::IPainter* painter);
 
       protected:
-        Widget* _widget;
+        Widget* _widget = nullptr;
     };
 
 } // namespace RolUI

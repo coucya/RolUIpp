@@ -7,6 +7,8 @@
 
 #include "RolUI/Window.h"
 
+#include "GLFWPainter.h"
+
 namespace RolUIBackend {
 
     class GLFWWindow : public RolUI::Window {
@@ -49,11 +51,13 @@ namespace RolUIBackend {
 
         void run();
 
+        void draw() override;
         RolUI::IPainter* painter() override;
 
       private:
         GLFWwindow* _glfw_window;
-        void* nvg_context;
+        GLFWPainter _painter;
+        void* _nvg_context;
     };
 
 } // namespace RolUIBackend
