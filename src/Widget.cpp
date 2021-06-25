@@ -4,11 +4,17 @@
 
 namespace RolUI {
 
-    Widget::Widget(Widget* parent) noexcept {
+    Widget::Widget(Widget* parent) noexcept
+        : Widget() {
         set_parent(parent);
     }
 
-    Widget::~Widget() {}
+    Widget::~Widget() {
+        if (_parent != nullptr)
+            _parent->remove_child(this);
+        _parent = nullptr;
+        _window = nullptr;
+    }
 
     Widget::ChlidrenView Widget::children_view() noexcept {
         return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
@@ -29,6 +35,9 @@ namespace RolUI {
 
         _children.insert_back(&widget->_brother);
         widget->_parent = this;
+
+        _set_window(widget->window());
+        _set_window_for_chilren(widget->window());
     }
     void Widget::remove_child(Widget* widget) noexcept {
         if (widget == nullptr) return;
@@ -36,6 +45,9 @@ namespace RolUI {
 
         _children.remove(&widget->_brother);
         widget->_parent = nullptr;
+
+        _set_window(nullptr);
+        _set_window_for_chilren(nullptr);
     }
 
     void Widget::add_listener(WidgetEventListener* listener) noexcept {
@@ -72,5 +84,16 @@ namespace RolUI {
     }
 
     void Widget::draw(IPainter* painter) {}
+
+    void Widget::_set_window(Window* w) noexcept {
+        _window = w;
+    }
+    void Widget::_set_window_for_chilren(Window* w) {
+        auto chilren = children_view();
+        for (auto& c : chilren) {
+            c._set_window(w);
+            c._set_window_for_chilren(w);
+        }
+    }
 
 } // namespace RolUI

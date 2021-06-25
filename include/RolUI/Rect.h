@@ -15,6 +15,8 @@ namespace RolUI {
         Rect() noexcept : x(0), y(0), width(0), height(0) {}
         Rect(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
             : x(x), y(y), width(w), height(h) {}
+        Rect(const Point& pos, const Size& size) noexcept
+            : x(pos.x), y(pos.y), width(size.width), height(size.height) {}
         Rect(const Point& a, const Point& b) noexcept {
             int32_t min_x = a.x < b.x ? a.x : b.x;
             int32_t max_x = a.x > b.x ? a.x : b.x;
