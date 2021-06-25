@@ -17,10 +17,18 @@ namespace RolUIBackend {
       public:
         ~GLFWPainter() override;
 
+        virtual bool load_font(const char* name, const char* filename) override;
+
+        virtual void set_font_size(uint32_t s) override;
+        virtual void set_font_color(RolUI::Color color) override;
+        virtual void set_font(const char* name) override;
+
         virtual void set_stroke_color(RolUI::Color color) override;
         virtual void set_fill_color(RolUI::Color color) override;
 
         virtual void set_stroke_width(uint32_t w) override;
+
+        virtual void draw_text(const RolUI::Point& pos, const char* text, uint32_t len) override;
 
         virtual void draw_line(const RolUI::Point& a, const RolUI::Point& b) override;
         virtual void draw_rect(const RolUI::Rect& rect) override;
@@ -36,10 +44,14 @@ namespace RolUIBackend {
       private:
         GLFWPainter(void* nvg_context);
 
-        void* _nvg_context;
+        void* _nvg_context = nullptr;
+
+        uint32_t _stroke_width = 1;
+        uint32_t _font_size = 15;
+
         RolUI::Color _fill_color;
         RolUI::Color _stroke_color;
-        uint32_t _stroke_width;
+        RolUI::Color _font_color;
     };
 
 } // namespace RolUIBackend

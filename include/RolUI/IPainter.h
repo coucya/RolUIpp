@@ -10,10 +10,32 @@ namespace RolUI {
       public:
         virtual ~IPainter() {}
 
+        virtual bool load_font(const char* name, const char* fileName) = 0;
+
+        virtual void set_font_size(uint32_t s) = 0;
+        virtual void set_font_color(Color color) = 0;
+        virtual void set_font(const char* name) = 0;
+
         virtual void set_stroke_color(Color color) = 0;
         virtual void set_fill_color(Color color) = 0;
 
         virtual void set_stroke_width(uint32_t w) = 0;
+
+        virtual void draw_text(const Point& pos, const char* text, uint32_t len) = 0;
+
+        virtual void draw_text(int32_t x, int32_t y, const char* text, uint32_t len) {
+            draw_text(Point(x, y), text, len);
+        }
+        virtual void draw_text(const Point& pos, const char* text) {
+            uint32_t len = 0;
+            const char* text_it = text;
+            while (*(text_it++) != '\0') len++;
+
+            draw_text(pos, text, len);
+        }
+        virtual void draw_text(int32_t x, int32_t y, const char* text) {
+            draw_text(Point(x, y), text);
+        }
 
         virtual void draw_line(const Point& a, const Point& b) = 0;
         virtual void draw_rect(const Rect& rect) = 0;

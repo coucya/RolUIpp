@@ -15,10 +15,30 @@ namespace RolUIBackend {
 
     GLFWPainter::~GLFWPainter() {}
 
+    bool GLFWPainter::load_font(const char* name, const char* filename) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        return nvgCreateFont(vg, name, filename) >= 0;
+    }
+
+    void GLFWPainter::set_font_size(uint32_t s) { _font_size = s; }
+    void GLFWPainter::set_font_color(RolUI::Color color) { _font_color = color; }
+    void GLFWPainter::set_font(const char* name) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        nvgFontFace(vg, name);
+    }
+
     void GLFWPainter::set_stroke_color(RolUI::Color color) { _stroke_color = color; }
     void GLFWPainter::set_fill_color(RolUI::Color color) { _fill_color = color; }
 
     void GLFWPainter::set_stroke_width(uint32_t w) { _stroke_width = w; }
+
+    void GLFWPainter::draw_text(const RolUI::Point& pos, const char* text, uint32_t len) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        nvgFontSize(vg, _font_size);
+        nvgFillColor(vg, rc_to_nc(_font_color));
+        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+        nvgText(vg, pos.x, pos.y, text, text + len);
+    }
 
     void GLFWPainter::draw_line(const RolUI::Point& a, const RolUI::Point& b) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
