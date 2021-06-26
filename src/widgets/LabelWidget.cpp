@@ -1,5 +1,5 @@
 
-
+#include "RolUI/string.h"
 #include "RolUI/widgets/LabelWidget.h"
 
 namespace RolUI {
@@ -23,11 +23,7 @@ namespace RolUI {
     void LabelWidget::set_text(const char* text) {
         if (text == nullptr) return;
 
-        uint32_t len = 0;
-        const char* text_it = text;
-        while (*(text_it++) != '\0') len++;
-
-        set_text(text, len);
+        set_text(text, strlen(text));
     }
     void LabelWidget::set_text(const char* text, uint32_t len) noexcept {
         if (text == nullptr) return;

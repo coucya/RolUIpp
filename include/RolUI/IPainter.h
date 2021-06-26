@@ -5,6 +5,8 @@
 #include "Size.h"
 #include "Rect.h"
 #include "Color.h"
+#include "string.h"
+
 namespace RolUI {
 
     class IPainter {
@@ -13,7 +15,7 @@ namespace RolUI {
 
         virtual bool load_font(const char* name, const char* fileName) = 0;
 
-        virtual Size text_size() const = 0;
+        virtual Size text_size(const char* text, uint32_t len) const = 0;
 
         virtual void push_pos(const Point& pos) = 0;
         virtual void pop_pos(const Point& pos) = 0;
@@ -30,15 +32,15 @@ namespace RolUI {
 
         virtual void draw_text(const Point& pos, const char* text, uint32_t len) = 0;
 
+        virtual Size text_size(const char* text) const {
+            return text_size(text, strlen(text));
+        }
+
         virtual void draw_text(int32_t x, int32_t y, const char* text, uint32_t len) {
             draw_text(Point(x, y), text, len);
         }
         virtual void draw_text(const Point& pos, const char* text) {
-            uint32_t len = 0;
-            const char* text_it = text;
-            while (*(text_it++) != '\0') len++;
-
-            draw_text(pos, text, len);
+            draw_text(pos, text, strlen(text));
         }
         virtual void draw_text(int32_t x, int32_t y, const char* text) {
             draw_text(Point(x, y), text);

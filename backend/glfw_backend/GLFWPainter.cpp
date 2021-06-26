@@ -20,7 +20,14 @@ namespace RolUIBackend {
         return nvgCreateFont(vg, name, filename) >= 0;
     }
 
-    RolUI::Size GLFWPainter::text_size() const { throw std::runtime_error("not impl"); }
+    RolUI::Size GLFWPainter::text_size(const char* text, uint32_t len) const {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        float bound[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+
+        nvgTextBounds(vg, 0, 0, text, text + len, bound);
+        return {(uint32_t)(bound[2] - bound[0]),
+                (uint32_t)(bound[3] - bound[1])};
+    }
 
     void GLFWPainter::push_pos(const RolUI::Point& pos) { _pos += pos; }
     void GLFWPainter::pop_pos(const RolUI::Point& pos) { _pos -= pos; }

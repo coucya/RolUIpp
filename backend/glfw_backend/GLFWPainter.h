@@ -19,7 +19,7 @@ namespace RolUIBackend {
 
         virtual bool load_font(const char* name, const char* filename) override;
 
-        virtual RolUI::Size text_size() const override;
+        virtual RolUI::Size text_size(const char* text, uint32_t len) const override;
 
         virtual void push_pos(const RolUI::Point& pos) override;
         virtual void pop_pos(const RolUI::Point& pos) override;
