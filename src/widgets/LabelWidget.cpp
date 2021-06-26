@@ -1,15 +1,34 @@
 
 #include "RolUI/string.h"
+#include "RolUI/Window.h"
 #include "RolUI/widgets/LabelWidget.h"
 
 namespace RolUI {
 
     LabelWidget::LabelWidget() noexcept
-        : _text(nullptr), _text_len(0),
+        : _is_update_size(false), _text(nullptr), _text_len(0),
           _font_size(15), _font_color(Color()) {}
 
     LabelWidget::~LabelWidget() {}
 
+    void LabelWidget::_update_size() {
+        if (_is_update_size) return;
+
+        Window* win = window();
+
+        if (win == nullptr)
+            _is_update_size = false;
+        else {
+            Size s = win->painter()->text_size(_text, _text_len);
+            Widget::set_size(s);
+            _is_update_size = true;
+        }
+    }
+
+    Size LabelWidget::size() {
+        _update_size();
+        return Widget::size();
+    }
     void LabelWidget::set_font(const char* name) noexcept {
         _font_name = name;
     }
@@ -30,6 +49,8 @@ namespace RolUI {
 
         _text = text;
         _text_len = len;
+
+        _update_size();
     }
 
     void LabelWidget::draw(IPainter* painter) {

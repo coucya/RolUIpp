@@ -23,8 +23,8 @@ namespace RolUI {
         return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
     }
 
-    Point Widget::pos() const { return _pos; }
-    Size Widget::size() const { return _size; }
+    Point Widget::pos() { return _pos; }
+    Size Widget::size() { return _size; }
 
     void Widget::set_pos(const Point& pos) noexcept { _pos = pos; }
     void Widget::set_size(const Size& size) noexcept { _size = size; }

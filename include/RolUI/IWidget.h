@@ -13,9 +13,9 @@ namespace RolUI {
       public:
         virtual ~IWidget() {}
 
-        virtual Point pos() const = 0;
-        virtual Size size() const = 0;
-        virtual Rect rect() const { return Rect{pos(), size()}; }
+        virtual Point pos() = 0;
+        virtual Size size() = 0;
+        virtual Rect rect() { return Rect{pos(), size()}; }
 
         virtual void draw(IPainter* painter) = 0;
     };
