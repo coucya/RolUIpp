@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include "Size.h"
 #include "Rect.h"
 #include "Color.h"
 namespace RolUI {
@@ -11,6 +12,12 @@ namespace RolUI {
         virtual ~IPainter() {}
 
         virtual bool load_font(const char* name, const char* fileName) = 0;
+
+        virtual Size text_size() const = 0;
+
+        virtual void push_pos(const Point& pos) = 0;
+        virtual void pop_pos(const Point& pos) = 0;
+        virtual void reset_pos() = 0;
 
         virtual void set_font_size(uint32_t s) = 0;
         virtual void set_font_color(Color color) = 0;

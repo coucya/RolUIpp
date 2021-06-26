@@ -19,6 +19,12 @@ namespace RolUIBackend {
 
         virtual bool load_font(const char* name, const char* filename) override;
 
+        virtual RolUI::Size text_size() const override;
+
+        virtual void push_pos(const RolUI::Point& pos) override;
+        virtual void pop_pos(const RolUI::Point& pos) override;
+        virtual void reset_pos() override;
+
         virtual void set_font_size(uint32_t s) override;
         virtual void set_font_color(RolUI::Color color) override;
         virtual void set_font(const char* name) override;
@@ -52,6 +58,8 @@ namespace RolUIBackend {
         RolUI::Color _fill_color;
         RolUI::Color _stroke_color;
         RolUI::Color _font_color;
+
+        RolUI::Point _pos;
     };
 
 } // namespace RolUIBackend

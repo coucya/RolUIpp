@@ -27,35 +27,35 @@ int main(int argc, char* argv[]) {
     RolUI::EllipseWidget cw3, cw4;
     RolUI::LabelWidget cw5;
 
-    rw1.set_pos(10, 10)
-        .set_size(500, 500)
-        .set_round(10)
-        .set_background_color(RolUI::Color(240, 240, 0));
+    rw1.set_pos(10, 10);
+    rw1.set_size(500, 500);
+    rw1.set_round(10);
+    rw1.set_background_color(RolUI::Color(240, 240, 0));
 
-    cw1.set_pos(30, 30)
-        .set_size(100, 100)
-        .set_round(10)
-        .set_background_color(RolUI::Color(240, 0, 0));
+    cw1.set_pos(10, 10);
+    cw1.set_size(100, 100);
+    cw1.set_round(10);
+    cw1.set_background_color(RolUI::Color(240, 0, 0));
 
-    cw2.set_pos(150, 30)
-        .set_size(100, 100)
-        .set_round(10)
-        .set_background_color(RolUI::Color(240, 0, 0))
-        .set_border_width(10);
+    cw2.set_pos(150, 10);
+    cw2.set_size(100, 100);
+    cw2.set_round(10);
+    cw2.set_background_color(RolUI::Color(240, 0, 0));
+    cw2.set_border_width(10);
 
-    cw3.set_pos(30, 150)
-        .set_size(100, 200)
-        .set_background_color(RolUI::Color(240, 0, 0));
+    cw3.set_pos(10, 150);
+    cw3.set_size(100, 200);
+    cw3.set_background_color(RolUI::Color(240, 0, 0));
 
-    cw4.set_pos(150, 150)
-        .set_size(100, 200)
-        .set_background_color(RolUI::Color(240, 0, 0))
-        .set_border_width(10);
+    cw4.set_pos(150, 150);
+    cw4.set_size(100, 200);
+    cw4.set_background_color(RolUI::Color(240, 0, 0));
+    cw4.set_border_width(10);
 
-    cw5.set_pos(270, 30)
-        .set_font_size(16)
-        .set_font("san")
-        .set_text("label widget.");
+    cw5.set_pos(270, 10);
+    cw5.set_font_size(16);
+    cw5.set_font("san");
+    cw5.set_text("label widget.");
 
     rw1.add_child(&cw1);
     rw1.add_child(&cw2);

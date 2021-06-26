@@ -48,10 +48,14 @@ namespace RolUI {
         ChlidrenView children_view() noexcept;
         const ChlidrenView children_view() const noexcept;
 
-        Size size() const override { return Size{0, 0}; }
-        Point pos() const override { return _pos; }
+        Point pos() const override;
+        Size size() const override;
 
-        void set_pos(const Point& pos) { _pos = pos; }
+        void set_pos(const Point& pos) noexcept;
+        void set_size(const Size& size) noexcept;
+
+        void set_pos(int32_t x, int32_t y) noexcept;
+        void set_size(uint32_t w, uint32_t h) noexcept;
 
         void set_parent(Widget* widget) noexcept;
 
@@ -70,6 +74,7 @@ namespace RolUI {
 
       protected:
         Point _pos;
+        Size _size;
 
         Window* _window;
         Widget* _parent;

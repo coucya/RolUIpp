@@ -10,49 +10,30 @@ namespace RolUI {
 
     LabelWidget::~LabelWidget() {}
 
-    LabelWidget& LabelWidget::set_font(const char* name) noexcept {
+    void LabelWidget::set_font(const char* name) noexcept {
         _font_name = name;
-        return *this;
     }
-    LabelWidget& LabelWidget::set_font_size(uint32_t size) noexcept {
+    void LabelWidget::set_font_size(uint32_t size) noexcept {
         _font_size = size;
-        return *this;
     }
-    LabelWidget& LabelWidget::set_font_color(Color c) noexcept {
+    void LabelWidget::set_font_color(Color c) noexcept {
         _font_color = c;
-        return *this;
     }
 
-    LabelWidget& LabelWidget::set_text(const char* text) {
-        if (text == nullptr) return *this;
+    void LabelWidget::set_text(const char* text) {
+        if (text == nullptr) return;
 
         uint32_t len = 0;
         const char* text_it = text;
         while (*(text_it++) != '\0') len++;
 
         set_text(text, len);
-
-        return *this;
     }
-    LabelWidget& LabelWidget::set_text(const char* text, uint32_t len) noexcept {
-        if (text == nullptr) return *this;
+    void LabelWidget::set_text(const char* text, uint32_t len) noexcept {
+        if (text == nullptr) return;
 
         _text = text;
         _text_len = len;
-        return *this;
-    }
-
-    LabelWidget& LabelWidget::set_x(int32_t x) noexcept {
-        _pos.x = x;
-        return *this;
-    }
-    LabelWidget& LabelWidget::set_y(int32_t y) noexcept {
-        _pos.y = y;
-        return *this;
-    }
-    LabelWidget& LabelWidget::set_pos(int32_t x, int32_t y) noexcept {
-        _pos = Point(x, y);
-        return *this;
     }
 
     void LabelWidget::draw(IPainter* painter) {

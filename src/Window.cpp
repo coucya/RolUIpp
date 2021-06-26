@@ -27,12 +27,18 @@ namespace RolUI {
     void Window::_draw_widget(RolUI::Widget* widget, RolUI::IPainter* painter) {
         if (widget == nullptr) return;
 
+        Point pos = widget->pos();
+
         widget->draw(painter);
+
+        painter->push_pos(pos);
 
         auto children = widget->children_view();
         for (auto& c : children) {
             _draw_widget(&c, painter);
         }
+
+        painter->pop_pos(pos);
     }
     void Window::draw() {
         Widget* root_widget = this->_widget;
