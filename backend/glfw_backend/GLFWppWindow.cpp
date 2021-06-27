@@ -7,8 +7,7 @@
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
-#include "GLFWWindow.h"
-#include "GLFWPainter.h"
+#include "GLFWppWindow.h"
 
 namespace RolUIBackend {
 

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <cstdlib>
 
-#include "glfw_backend/GLFWWindow.h"
+#include "glfw_backend/GLFWppWindow.h"
 #include "RolUI/widgets/RectWidget.h"
 #include "RolUI/widgets/EllipseWidget.h"
 #include "RolUI/widgets/LabelWidget.h"
