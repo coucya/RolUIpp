@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <optional>
 #include <functional>
+#include <tuple>
 
 #include "GLFW/glfw3.h"
 
@@ -53,8 +54,11 @@ namespace RolUIBackend {
         void set_title(const char* title);
         void set_size(int w, int h);
 
-        size_t width();
-        size_t height();
+        std::tuple<size_t, size_t> window_size() const noexcept;
+        size_t width() const noexcept;
+        size_t height() const noexcept;
+
+        std::tuple<double, double> cursor_pos() const noexcept;
 
         bool should_close();
 

@@ -48,6 +48,9 @@ namespace RolUI {
         ChlidrenView children_view() noexcept;
         const ChlidrenView children_view() const noexcept;
 
+        ChlidrenView children_view_reverse() noexcept;
+        const ChlidrenView children_view_reverse() const noexcept;
+
         Point pos() override;
         Size size() override;
 
@@ -69,7 +72,7 @@ namespace RolUI {
         void draw(IPainter* painter) override;
 
       protected:
-        bool event_distribute_to_children(IEvent* event);
+        // bool event_distribute_to_children(IEvent* event);
         bool event_distribute_to_listener(IEvent* event);
 
       protected:

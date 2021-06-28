@@ -43,6 +43,7 @@ namespace RolUI {
             int32_t rb_x = this->x + this->width - 1;
             int32_t rb_y = this->y + this->height - 1;
             if (x > rb_x || y > rb_y) return false;
+            return true;
         }
         bool is_contain_point(const Point& p) const noexcept {
             return is_contain_point(p.x, p.y);

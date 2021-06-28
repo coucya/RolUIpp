@@ -4,6 +4,8 @@
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
+#include "RolUI/events/MouseEvent.h"
+
 #include "GLFWWindow.h"
 
 namespace RolUIBackend {
@@ -42,6 +44,18 @@ namespace RolUIBackend {
 
     void GLFWWindow::run() {
 
+        set_cursor_enter_callback([this](int enter) {
+            auto [mx, my] = this->cursor_pos();
+            this->_mouse_state.last_pos = {(int32_t)mx, (int32_t)my};
+            this->_mouse_state.current_pos = {(int32_t)mx, (int32_t)my};
+        });
+        set_cursor_pos_callback([this](double x, double y) {
+            this->_mouse_state.last_pos = this->_mouse_state.current_pos;
+            this->_mouse_state.current_pos = {(int32_t)x, (int32_t)y};
+
+            this->_distribute_mouse_event();
+        });
+
         while (!should_close()) {
             draw();
 
@@ -49,4 +63,35 @@ namespace RolUIBackend {
             swap_buffer();
         }
     }
+
+    bool GLFWWindow::_distribute_mouse_event_to_widget(
+        RolUI::Widget* w, RolUI::Point widget_pos) {
+
+        auto chilren = w->children_view_reverse();
+
+        bool is_do = false;
+        for (auto& c : chilren) {
+            RolUI::Point c_widget_pos = widget_pos + c.pos();
+            is_do = _distribute_mouse_event_to_widget(&c, c_widget_pos);
+            if (is_do) break;
+        }
+
+        RolUI::Point mouse_pos = _mouse_state.current_pos - widget_pos;
+        RolUI::Rect widget_rect = RolUI::Rect{RolUI::Point(), w->size()};
+
+        if (!is_do && widget_rect.is_contain_point(mouse_pos)) {
+            RolUI::MouseEvent event{_mouse_state.last_pos, _mouse_state.current_pos};
+            event.set_widget_pos(widget_pos);
+            is_do = w->do_event(&event);
+        }
+
+        return is_do;
+    }
+    void GLFWWindow::_distribute_mouse_event() {
+        RolUI::Widget* root_widget = widget();
+        if (root_widget == nullptr) return;
+
+        _distribute_mouse_event_to_widget(root_widget, root_widget->pos());
+    }
+
 } // namespace RolUIBackend

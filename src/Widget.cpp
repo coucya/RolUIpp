@@ -23,6 +23,13 @@ namespace RolUI {
         return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
     }
 
+    Widget::ChlidrenView Widget::children_view_reverse() noexcept {
+        return ChlidrenView(_children.rbegin(), _children.rend(), &Widget::_brother);
+    }
+    const Widget::ChlidrenView Widget::children_view_reverse() const noexcept {
+        return ChlidrenView(_children.rbegin(), _children.rend(), &Widget::_brother);
+    }
+
     Point Widget::pos() { return _pos; }
     Size Widget::size() { return _size; }
 
@@ -70,13 +77,13 @@ namespace RolUI {
         _listeners.remove(&listener->_brother);
     }
 
-    bool Widget::event_distribute_to_children(IEvent* event) {
-        for (auto it = _children.rbegin(); it != _children.rend(); ++it) {
-            auto cw = contain_of(&*it, &Widget::_brother);
-            if (cw->do_event(event)) return true;
-        }
-        return false;
-    }
+    // bool Widget::event_distribute_to_children(IEvent* event) {
+    //     for (auto it = _children.rbegin(); it != _children.rend(); ++it) {
+    //         auto cw = contain_of(&*it, &Widget::_brother);
+    //         if (cw->do_event(event)) return true;
+    //     }
+    //     return false;
+    // }
     bool Widget::event_distribute_to_listener(IEvent* event) {
         bool res = false;
         for (auto it = _listeners.begin(); it != _listeners.end(); ++it) {
@@ -87,8 +94,8 @@ namespace RolUI {
     }
 
     bool Widget::on_event(IEvent* event) {
-        if (event_distribute_to_children(event))
-            return true;
+        // if (event_distribute_to_children(event))
+        //     return true;
         return event_distribute_to_listener(event);
     }
 

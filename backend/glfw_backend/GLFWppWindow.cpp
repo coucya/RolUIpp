@@ -314,19 +314,27 @@ namespace RolUIBackend {
         glfwSetWindowSize(_glfw_window, w, h);
     }
 
-    size_t GLFWppWindow::width() {
+    std::tuple<size_t, size_t> GLFWppWindow::window_size() const noexcept {
         auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
 
         int w, h;
         glfwGetWindowSize(_glfw_window, &w, &h);
+        return {w, h};
+    }
+    size_t GLFWppWindow::width() const noexcept {
+        auto [w, h] = window_size();
         return w;
     }
-    size_t GLFWppWindow::height() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-
-        int w, h;
-        glfwGetWindowSize(_glfw_window, &w, &h);
+    size_t GLFWppWindow::height() const noexcept {
+        auto [w, h] = window_size();
         return h;
+    }
+
+    std::tuple<double, double> GLFWppWindow::cursor_pos() const noexcept {
+        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
+        double x, y;
+        glfwGetCursorPos(_glfw_window, &x, &y);
+        return {x, y};
     }
 
     bool GLFWppWindow::should_close() {
