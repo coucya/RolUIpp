@@ -33,20 +33,9 @@ namespace RolUIBackend {
       private:
         void _init_nanovg();
 
-        bool _distribute_mouse_event_to_widget(RolUI::Widget* w, RolUI::Point widget_pos);
-        void _distribute_mouse_event();
-
-      private:
-        struct _MouseState {
-            RolUI::Point last_pos;
-            RolUI::Point current_pos;
-        };
-
       private:
         void* _nvg_context;
         GLFWPainter _painter;
-
-        _MouseState _mouse_state;
     };
 
 } // namespace RolUIBackend

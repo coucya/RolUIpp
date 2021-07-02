@@ -4,6 +4,7 @@
 
 #include "IWindow.h"
 #include "Widget.h"
+#include "events/MouseEvent.h"
 
 namespace RolUI {
 
@@ -18,6 +19,10 @@ namespace RolUI {
         const Widget* widget() const noexcept { return _widget; }
         void set_widget(Widget* widget);
 
+        MouseDispatcher& mouse_dispatcher() noexcept { return _mouse_dispatcher; }
+
+        void distribute_event();
+
         IPainter* painter() override;
         void draw() override;
 
@@ -26,6 +31,7 @@ namespace RolUI {
 
       protected:
         Widget* _widget = nullptr;
+        MouseDispatcher _mouse_dispatcher;
     };
 
 } // namespace RolUI

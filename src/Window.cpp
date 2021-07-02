@@ -50,4 +50,8 @@ namespace RolUI {
         _draw_widget(root_widget, painter);
     }
 
+    void Window::distribute_event() {
+        _mouse_dispatcher.distribute(_widget);
+    }
+
 } // namespace RolUI
