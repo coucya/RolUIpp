@@ -4,11 +4,17 @@
 
 namespace RolUI {
 
-    bool MouseDispatcher::is_key_change(MouseKey key) const noexcept {
+    bool MouseDispatcher::is_action(MouseKey key) const noexcept {
         return _key_is_change[(int)key - 1];
     }
 
+    MouseKeyMode MouseDispatcher::button(MouseKey key) const noexcept {
+        return _key_mode[(int)key - 1];
+    }
+
     void MouseDispatcher::set_pos(Point pos) noexcept {
+        if (pos == _current_pos) return;
+
         if (_pos_is_change) {
             _current_pos = pos;
         } else {
@@ -43,19 +49,20 @@ namespace RolUI {
     void MouseDispatcher::distribute(Widget* root_widget) {
         if (root_widget == nullptr) return;
 
-        _distribute_to_widget(root_widget, root_widget->pos());
+        if (is_move())
+            _distribute_pos_event_to_widget(root_widget, root_widget->pos());
 
         clear_change();
     }
 
-    bool MouseDispatcher::_distribute_to_widget(Widget* w, Point widget_pos) {
+    bool MouseDispatcher::_distribute_pos_event_to_widget(Widget* w, Point widget_pos) {
 
         auto chilren = w->children_view_reverse();
 
         bool is_do = false;
         for (auto& c : chilren) {
             Point c_widget_pos = widget_pos + c.pos();
-            is_do = _distribute_to_widget(&c, c_widget_pos);
+            is_do = _distribute_pos_event_to_widget(&c, c_widget_pos);
             if (is_do) break;
         }
 
@@ -63,28 +70,36 @@ namespace RolUI {
         Rect widget_rect = Rect{Point(), w->size()};
 
         if (!is_do && widget_rect.is_contain_point(mouse_pos)) {
-            MouseEvent event{_last_pos, _current_pos};
-            event.set_widget_pos(widget_pos);
+            MousePosEvent event{this};
+            event._set_widget_pos(widget_pos);
             is_do = w->do_event(&event);
         }
 
         return is_do;
     }
 
-    MouseEvent::MouseEvent(Point last_pos, Point current_pos) noexcept
-        : _last_pos(last_pos), _current_pos(current_pos) {}
+    MouseEvent::MouseEvent(MouseDispatcher* dispatcher) noexcept
+        : _dispatcher(dispatcher) {
+        _action_key = MouseKey::unkown;
+    }
 
     MouseEvent::~MouseEvent() {}
 
     Point MouseEvent::pos() const noexcept {
-        return _current_pos - _widget_pos;
+        return _dispatcher->pos() - _widget_pos;
     }
     Vector MouseEvent::offset() const noexcept {
-        return _current_pos - _last_pos;
-    }
-    MouseKey MouseEvent::button() const noexcept {
-        return MouseKey::key1;
+        return _dispatcher->offset();
     }
 
-    void MouseEvent::set_widget_pos(Point p) { _widget_pos = p; }
+    MouseKeyMode MouseEvent::button(MouseKey key) const noexcept {
+        return _dispatcher->button(key);
+    }
+    MouseKey MouseEvent::action() const noexcept {
+        return _action_key;
+    }
+
+    void MouseEvent::_set_widget_pos(Point p) { _widget_pos = p; }
+    void MouseEvent::_set_action_key(MouseKey key) { _action_key = key; }
+
 } // namespace RolUI

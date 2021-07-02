@@ -9,12 +9,15 @@
 
 namespace RolUI {
 
+    class MouseDispatcher;
+
     enum class MouseKeyMode {
         press,
         release,
     };
 
     enum class MouseKey {
+        unkown = -1,
         key1 = 1,
         key2,
         key3,
@@ -32,20 +35,44 @@ namespace RolUI {
     };
 
     class MouseEvent : public IEvent {
+        friend class MouseDispatcher;
+
       public:
-        MouseEvent(Point last_pos, Point current_pos) noexcept;
+        MouseEvent(MouseDispatcher* dispatcher) noexcept;
         ~MouseEvent() override;
 
         Point pos() const noexcept;
         Vector offset() const noexcept;
-        MouseKey button() const noexcept;
 
-        void set_widget_pos(Point p);
+        MouseKeyMode button(MouseKey key) const noexcept;
+        MouseKey action() const noexcept;
 
       private:
-        Point _last_pos;
-        Point _current_pos;
+        void _set_widget_pos(Point p);
+        void _set_action_key(MouseKey key);
+
+      private:
+        MouseKey _action_key;
         Point _widget_pos;
+        MouseDispatcher* _dispatcher;
+    };
+
+    class MouseKeyEvent : public MouseEvent {
+        friend class MouseDispatcher;
+
+      public:
+        MouseKeyEvent(MouseDispatcher* dispatcher) noexcept
+            : MouseEvent(dispatcher) {}
+        ~MouseKeyEvent() override {}
+    };
+
+    class MousePosEvent : public MouseEvent {
+        friend class MouseDispatcher;
+
+      public:
+        MousePosEvent(MouseDispatcher* dispatcher) noexcept
+            : MouseEvent(dispatcher) {}
+        ~MousePosEvent() override {}
     };
 
     class MouseDispatcher {
@@ -53,10 +80,12 @@ namespace RolUI {
         Point pos() const noexcept { return _current_pos; }
         Vector offset() const noexcept { return _current_pos - _last_pos; }
 
+        MouseKeyMode button(MouseKey key) const noexcept;
+
         bool is_pos_change() const noexcept { return _pos_is_change; }
         bool is_move() const noexcept { return _pos_is_change; }
 
-        bool is_key_change(MouseKey key) const noexcept;
+        bool is_action(MouseKey key) const noexcept;
 
         void set_pos(Point pos) noexcept;
         void set_pos(int32_t x, int32_t y) noexcept;
@@ -71,7 +100,7 @@ namespace RolUI {
         void distribute(Widget* root_widget);
 
       private:
-        bool _distribute_to_widget(Widget* w, Point widget_pos);
+        bool _distribute_pos_event_to_widget(Widget* w, Point widget_pos);
 
       private:
         bool _pos_is_change;
