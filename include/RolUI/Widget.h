@@ -17,7 +17,21 @@ namespace RolUI {
     class WidgetEventListener : public IEventListener {
         friend class Widget;
 
+      public:
+        typedef bool (*CallbackFun)(IEvent* e);
+
+      public:
+        WidgetEventListener() noexcept : _cb(nullptr) {}
+        WidgetEventListener(CallbackFun cb) noexcept : _cb(cb) {}
+
+        bool on_event(IEvent* event) override {
+            return _cb ? _cb(event) : false;
+        }
+
+        void set_callback(CallbackFun cb) { _cb = cb; }
+
       protected:
+        CallbackFun _cb;
         IntrusiveListNode _brother;
     };
 

@@ -12,21 +12,7 @@
 #include "RolUI/widgets/RectWidget.h"
 #include "RolUI/widgets/EllipseWidget.h"
 #include "RolUI/widgets/LabelWidget.h"
-
-class Listener : public RolUI::WidgetEventListener {
-  public:
-    Listener() noexcept {}
-    Listener(std::function<bool(RolUI::IEvent*)>&& cb) noexcept : _cb(cb) {}
-
-    ~Listener() {}
-
-    bool on_event(RolUI::IEvent* e) {
-        return _cb ? _cb(e) : false;
-    }
-
-  private:
-    std::function<bool(RolUI::IEvent*)> _cb;
-};
+#include "RolUI/events/MouseEvent.h"
 
 std::string get_font_path() {
     std::filesystem::path self_path{__FILE__};
@@ -93,19 +79,19 @@ int main(int argc, char* argv[]) {
     cw5.set_font("san");
     cw5.set_text("label widget.");
 
-    Listener rw1_l{[](RolUI::IEvent* e) {
+    RolUI::MousePosEventListener rw1_l{[](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("rw1 listener. x: %d, y: %d \n", x, y);
         return true;
     }};
-    Listener cw4_l{[](RolUI::IEvent* e) {
+    RolUI::MousePosEventListener cw4_l{[](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw4 listener. x: %d, y: %d \n", x, y);
         return true;
     }};
-    Listener cw5_l{[](RolUI::IEvent* e) {
+    RolUI::MousePosEventListener cw5_l{[](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw5 listener. x: %d, y: %d \n", x, y);
