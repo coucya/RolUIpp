@@ -41,6 +41,8 @@ namespace RolUI {
         MouseEvent(MouseDispatcher* dispatcher) noexcept;
         ~MouseEvent() override;
 
+        EventType event_type() const override;
+
         Point pos() const noexcept;
         Vector offset() const noexcept;
 
@@ -64,6 +66,8 @@ namespace RolUI {
         MouseKeyEvent(MouseDispatcher* dispatcher) noexcept
             : MouseEvent(dispatcher) {}
         ~MouseKeyEvent() override {}
+
+        EventType event_type() const override;
     };
 
     class MousePosEvent : public MouseEvent {
@@ -73,6 +77,8 @@ namespace RolUI {
         MousePosEvent(MouseDispatcher* dispatcher) noexcept
             : MouseEvent(dispatcher) {}
         ~MousePosEvent() override {}
+
+        EventType event_type() const override;
     };
 
     class MouseDispatcher {

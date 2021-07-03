@@ -1,8 +1,13 @@
 #include <stdexcept>
 
+#include "RolUI/IEvent.h"
 #include "RolUI/events/MouseEvent.h"
 
 namespace RolUI {
+
+    impl_event_type(MouseEvent);
+    impl_event_type(MousePosEvent);
+    impl_event_type(MouseKeyEvent);
 
     bool MouseDispatcher::is_action(MouseKey key) const noexcept {
         return _key_is_change[(int)key - 1];
