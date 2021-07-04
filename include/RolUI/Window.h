@@ -3,10 +3,11 @@
 #include <stdint.h>
 
 #include "IWindow.h"
-#include "Widget.h"
 #include "events/MouseEvent.h"
 
 namespace RolUI {
+
+    class Widget;
 
     class Window : public IWindow {
       protected:

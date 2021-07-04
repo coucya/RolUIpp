@@ -137,7 +137,7 @@ namespace RolUI {
         typedef IntrusiveView<IntrusivePrimeList::iterator, T, IntrusiveListNode> View;
 
       public:
-        IntrusiveList(IntrusiveListNode T::*member) noexcept : _member_ptr(member) {}
+        IntrusiveList(IntrusiveListNode T::*member) noexcept : _member_offset(member) {}
         ~IntrusiveList() {}
 
         T* front() noexcept { return _contain_of(_list.front()); }
@@ -145,57 +145,63 @@ namespace RolUI {
         const T* front() const noexcept { return _contain_of(_list.front()); }
         const T* back() const noexcept { return _contain_of(_list.back()); }
 
-        size_t size() { return _list.size(); }
+        size_t size() const noexcept { return _list.size(); }
+
+        IntrusiveListNode T::*member_offset() noexcept { return _member_offset; }
+        const IntrusiveListNode T::*member_offset() const noexcept { return _member_offset; }
+
+        IntrusivePrimeList& prime_list() noexcept { return _list; }
+        const IntrusivePrimeList& prime_list() const noexcept { return _list; }
 
         void insert_prev(T* pos, T* node) noexcept {
-            _list.insert_prev(&(pos->*_member_ptr), &(node->*_member_ptr));
+            _list.insert_prev(&(pos->*_member_offset), &(node->*_member_offset));
         }
         void insert_next(T* pos, T* node) noexcept {
-            _list.insert_next(&(pos->*_member_ptr), &(node->*_member_ptr));
+            _list.insert_next(&(pos->*_member_offset), &(node->*_member_offset));
         }
 
         void insert_front(T* node) noexcept {
-            _list.insert_front(&(node->*_member_ptr));
+            _list.insert_front(&(node->*_member_offset));
         }
         void insert_back(T* node) noexcept {
-            _list.insert_back(&(node->*_member_ptr));
+            _list.insert_back(&(node->*_member_offset));
         }
 
         void append(T* node) noexcept {
-            _list.append(&(node->*_member_ptr));
+            _list.append(&(node->*_member_offset));
         }
 
         void remove(T* node) noexcept {
-            _list.remove(&(node->*_member_ptr));
+            _list.remove(&(node->*_member_offset));
         }
 
-        iterator begin() noexcept { return iterator(_list.begin(), _member_ptr); }
-        iterator end() noexcept { return iterator(_list.end(), _member_ptr); }
-        const_iterator begin() const noexcept { return const_iterator(_list.begin(), _member_ptr); }
-        const_iterator end() const noexcept { return const_iterator(_list.end(), _member_ptr); }
+        iterator begin() noexcept { return iterator(_list.begin(), _member_offset); }
+        iterator end() noexcept { return iterator(_list.end(), _member_offset); }
+        const_iterator begin() const noexcept { return const_iterator(_list.begin(), _member_offset); }
+        const_iterator end() const noexcept { return const_iterator(_list.end(), _member_offset); }
 
-        const_iterator cbegin() const noexcept { return const_iterator(_list.begin(), _member_ptr); }
-        const_iterator cend() const noexcept { return const_iterator(_list.end(), _member_ptr); }
+        const_iterator cbegin() const noexcept { return const_iterator(_list.begin(), _member_offset); }
+        const_iterator cend() const noexcept { return const_iterator(_list.end(), _member_offset); }
 
-        iterator rbegin() noexcept { return iterator(_list.rbegin(), _member_ptr); }
-        iterator rend() noexcept { return iterator(_list.rend(), _member_ptr); }
-        const_iterator rbegin() const noexcept { return const_iterator(_list.rbegin(), _member_ptr); }
-        const_iterator rend() const noexcept { return const_iterator(_list.rend(), _member_ptr); }
+        iterator rbegin() noexcept { return iterator(_list.rbegin(), _member_offset); }
+        iterator rend() noexcept { return iterator(_list.rend(), _member_offset); }
+        const_iterator rbegin() const noexcept { return const_iterator(_list.rbegin(), _member_offset); }
+        const_iterator rend() const noexcept { return const_iterator(_list.rend(), _member_offset); }
 
         View view(bool reverse = false) noexcept {
-            return _list.view(_member_ptr, reverse);
+            return _list.view(_member_offset, reverse);
         }
         const View view(bool reverse = false) const noexcept {
-            return _list.view(_member_ptr, reverse);
+            return _list.view(_member_offset, reverse);
         }
 
       private:
         T* _contain_of(IntrusiveListNode* node) {
-            return node ? contain_of(node, _member_ptr) : nullptr;
+            return node ? contain_of(node, _member_offset) : nullptr;
         }
 
       private:
-        IntrusiveListNode T::*_member_ptr;
+        IntrusiveListNode T::*_member_offset;
         IntrusivePrimeList _list;
     };
 } // namespace RolUI

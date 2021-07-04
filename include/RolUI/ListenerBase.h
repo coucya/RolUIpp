@@ -40,4 +40,5 @@ namespace RolUI {
         IntrusiveList<_ListenerNode> _in_use_list;
         _ListenerNode _linsteners[max_linstener_number];
     };
+
 } // namespace RolUI
