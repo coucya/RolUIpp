@@ -72,6 +72,7 @@ namespace RolUI {
         typedef IntrusiveListIterator iterator;
         typedef const IntrusiveListIterator const_iterator;
 
+      public:
         IntrusivePrimeList() noexcept : _size(0), _first(nullptr), _last(nullptr) {}
 
         size_t size() const noexcept { return _size; }
@@ -133,6 +134,8 @@ namespace RolUI {
         typedef IntrusiveTransformIterator<IntrusiveListIterator, T, IntrusiveListNode> iterator;
         typedef const IntrusiveTransformIterator<IntrusiveListIterator, T, IntrusiveListNode> const_iterator;
 
+        typedef IntrusiveView<IntrusivePrimeList::iterator, T, IntrusiveListNode> View;
+
       public:
         IntrusiveList(IntrusiveListNode T::*member) noexcept : _member_ptr(member) {}
         ~IntrusiveList() {}
@@ -179,17 +182,11 @@ namespace RolUI {
         const_iterator rbegin() const noexcept { return const_iterator(_list.rbegin(), _member_ptr); }
         const_iterator rend() const noexcept { return const_iterator(_list.rend(), _member_ptr); }
 
-        IntrusiveView<iterator, T, IntrusiveListNode> view(bool reverse = false) noexcept {
-            if (reverse)
-                return IntrusiveView(rbegin(), rend(), _member_ptr);
-            else
-                return IntrusiveView(begin(), end(), _member_ptr);
+        View view(bool reverse = false) noexcept {
+            return _list.view(_member_ptr, reverse);
         }
-        const IntrusiveView<iterator, T, IntrusiveListNode> view(bool reverse = false) const noexcept {
-            if (reverse)
-                return IntrusiveView(rbegin(), rend(), _member_ptr);
-            else
-                return IntrusiveView(begin(), end(), _member_ptr);
+        const View view(bool reverse = false) const noexcept {
+            return _list.view(_member_ptr, reverse);
         }
 
       private:

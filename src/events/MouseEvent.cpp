@@ -62,7 +62,7 @@ namespace RolUI {
 
     bool MouseDispatcher::_distribute_pos_event_to_widget(Widget* w, Point widget_pos) {
 
-        auto chilren = w->children_view_reverse();
+        auto chilren = w->children_view(true);
 
         bool is_do = false;
         for (auto& c : chilren) {

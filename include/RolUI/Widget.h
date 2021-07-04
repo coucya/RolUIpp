@@ -5,56 +5,21 @@
 #include "Size.h"
 #include "Point.h"
 #include "IWidget.h"
-#include "IEvent.h"
-#include "IEventListener.h"
-#include "IntrusiveList.h"
+#include "ListenerBase.h"
 
 namespace RolUI {
 
     class Widget;
     class Window;
 
-    class WidgetListener : public IEventListener {
-      public:
-        typedef bool (*CallbackFun)(IEvent* e);
-
-      public:
-        static constexpr uint32_t max_linstener_number = 64;
-
-      public:
-        WidgetListener() noexcept;
-        ~WidgetListener();
-
-        void add_listener(EventType et, CallbackFun cb);
-        void remove_listener(EventType et, CallbackFun cb);
-
-        virtual bool on_event(IEvent* e) override;
-
-      private:
-        struct _ListenerNode {
-            IntrusiveListNode brother;
-            EventType event_type;
-            CallbackFun callback;
-
-            _ListenerNode() noexcept : event_type(), callback(nullptr) {}
-            _ListenerNode(EventType et, CallbackFun cb) noexcept
-                : event_type(et), callback(cb) {}
-            void clear() { *this = {}; }
-        };
-
-        IntrusiveList<_ListenerNode> _free_list;
-        IntrusiveList<_ListenerNode> _in_use_list;
-        _ListenerNode _linsteners[max_linstener_number];
-    };
-
-    class Widget : public IWidget, public WidgetListener {
+    class Widget : public IWidget, public ListenerBase {
         friend class Window;
 
       public:
-        typedef IntrusiveView<IntrusivePrimeList::iterator, Widget, IntrusiveListNode> ChlidrenView;
+        typedef typename IntrusiveList<Widget>::View ChlidrenView;
 
       public:
-        Widget() noexcept : _parent(nullptr), _window(nullptr) {}
+        Widget() noexcept;
         Widget(Widget* parent) noexcept;
 
         Widget(const Widget&) = delete;
@@ -71,11 +36,8 @@ namespace RolUI {
         Window* window() noexcept { return _window; }
         const Window* window() const noexcept { return _window; }
 
-        ChlidrenView children_view() noexcept;
-        const ChlidrenView children_view() const noexcept;
-
-        ChlidrenView children_view_reverse() noexcept;
-        const ChlidrenView children_view_reverse() const noexcept;
+        ChlidrenView children_view(bool reverse = false) noexcept;
+        const ChlidrenView children_view(bool reverse = false) const noexcept;
 
         Point pos() override;
         Size size() override;
@@ -101,7 +63,7 @@ namespace RolUI {
         Widget* _parent;
 
         IntrusiveListNode _brother;
-        IntrusivePrimeList _children;
+        IntrusiveList<Widget> _children;
 
       private:
         void _set_window(Window* w) noexcept;

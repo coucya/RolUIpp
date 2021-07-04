@@ -4,49 +4,9 @@
 
 namespace RolUI {
 
-    WidgetListener::WidgetListener() noexcept
-        : _in_use_list(&_ListenerNode::brother), _free_list(&_ListenerNode::brother) {
-        for (int i = 0; i < WidgetListener::max_linstener_number; i++) {
-            _ListenerNode* node = &_linsteners[i];
-            _free_list.insert_back(node);
-        }
-    }
-    WidgetListener::~WidgetListener() {}
-
-    void WidgetListener::add_listener(EventType et, CallbackFun cb) {
-        if (cb == nullptr) return;
-
-        _ListenerNode* node = _free_list.front();
-        if (node == nullptr) return;
-
-        node->event_type = et;
-        node->callback = cb;
-
-        _free_list.remove(node);
-        _in_use_list.append(node);
-    }
-    void WidgetListener::remove_listener(EventType et, CallbackFun cb) {
-        if (cb == nullptr) return;
-
-        for (auto& node : _in_use_list) {
-            if (node.event_type == et && node.callback == cb) {
-                node.clear();
-                _in_use_list.remove(&node);
-                _free_list.append(&node);
-            }
-        }
-        return;
-    }
-
-    bool WidgetListener::on_event(IEvent* e) {
-        bool res = false;
-
-        for (auto& node : _in_use_list) {
-            if (node.event_type == e->event_type())
-                res = (node.callback ? node.callback(e) : false) || res;
-        }
-        return res;
-    }
+    Widget::Widget() noexcept
+        : _parent(nullptr), _window(nullptr),
+          _children(&Widget::_brother) {}
 
     Widget::Widget(Widget* parent) noexcept
         : Widget() {
@@ -60,18 +20,11 @@ namespace RolUI {
         _window = nullptr;
     }
 
-    Widget::ChlidrenView Widget::children_view() noexcept {
-        return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
+    Widget::ChlidrenView Widget::children_view(bool reverse) noexcept {
+        return _children.view(reverse);
     }
-    const Widget::ChlidrenView Widget::children_view() const noexcept {
-        return ChlidrenView(_children.begin(), _children.end(), &Widget::_brother);
-    }
-
-    Widget::ChlidrenView Widget::children_view_reverse() noexcept {
-        return ChlidrenView(_children.rbegin(), _children.rend(), &Widget::_brother);
-    }
-    const Widget::ChlidrenView Widget::children_view_reverse() const noexcept {
-        return ChlidrenView(_children.rbegin(), _children.rend(), &Widget::_brother);
+    const Widget::ChlidrenView Widget::children_view(bool reverse) const noexcept {
+        return _children.view(reverse);
     }
 
     Point Widget::pos() { return _pos; }
@@ -93,7 +46,7 @@ namespace RolUI {
         if (widget->_parent != nullptr)
             widget->_parent->remove_child(widget);
 
-        _children.insert_back(&widget->_brother);
+        _children.insert_back(widget);
         widget->_parent = this;
 
         _set_window(widget->window());
@@ -103,7 +56,7 @@ namespace RolUI {
         if (widget == nullptr) return;
         if (widget->_parent != this) return;
 
-        _children.remove(&widget->_brother);
+        _children.remove(widget);
         widget->_parent = nullptr;
 
         _set_window(nullptr);
