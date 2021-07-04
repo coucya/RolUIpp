@@ -81,27 +81,6 @@ namespace RolUI {
         EventType event_type() const override;
     };
 
-    class MouseEventListener : public WidgetEventListener {
-      public:
-        MouseEventListener() noexcept : WidgetEventListener() {}
-        MouseEventListener(CallbackFun cb) noexcept : WidgetEventListener(cb) {}
-        bool filter_event(const IEvent* event) override;
-    };
-
-    class MousePosEventListener : public WidgetEventListener {
-      public:
-        MousePosEventListener() noexcept : WidgetEventListener() {}
-        MousePosEventListener(CallbackFun cb) noexcept : WidgetEventListener(cb) {}
-        bool filter_event(const IEvent* event) override;
-    };
-
-    class MouseKeyEventListener : public WidgetEventListener {
-      public:
-        MouseKeyEventListener() noexcept : WidgetEventListener() {}
-        MouseKeyEventListener(CallbackFun cb) noexcept : WidgetEventListener(cb) {}
-        bool filter_event(const IEvent* event) override;
-    };
-
     class MouseDispatcher {
       public:
         Point pos() const noexcept { return _current_pos; }

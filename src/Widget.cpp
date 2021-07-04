@@ -4,6 +4,50 @@
 
 namespace RolUI {
 
+    WidgetListener::WidgetListener() noexcept
+        : _in_use_list(&_ListenerNode::brother), _free_list(&_ListenerNode::brother) {
+        for (int i = 0; i < WidgetListener::max_linstener_number; i++) {
+            _ListenerNode* node = &_linsteners[i];
+            _free_list.insert_back(node);
+        }
+    }
+    WidgetListener::~WidgetListener() {}
+
+    void WidgetListener::add_listener(EventType et, CallbackFun cb) {
+        if (cb == nullptr) return;
+
+        _ListenerNode* node = _free_list.front();
+        if (node == nullptr) return;
+
+        node->event_type = et;
+        node->callback = cb;
+
+        _free_list.remove(node);
+        _in_use_list.append(node);
+    }
+    void WidgetListener::remove_listener(EventType et, CallbackFun cb) {
+        if (cb == nullptr) return;
+
+        for (auto& node : _in_use_list) {
+            if (node.event_type == et && node.callback == cb) {
+                node.clear();
+                _in_use_list.remove(&node);
+                _free_list.append(&node);
+            }
+        }
+        return;
+    }
+
+    bool WidgetListener::on_event(IEvent* e) {
+        bool res = false;
+
+        for (auto& node : _in_use_list) {
+            if (node.event_type == e->event_type())
+                res = (node.callback ? node.callback(e) : false) || res;
+        }
+        return res;
+    }
+
     Widget::Widget(Widget* parent) noexcept
         : Widget() {
         set_parent(parent);
@@ -64,39 +108,6 @@ namespace RolUI {
 
         _set_window(nullptr);
         _set_window_for_chilren(nullptr);
-    }
-
-    void Widget::add_listener(WidgetEventListener* listener) noexcept {
-        if (listener == nullptr) return;
-
-        _listeners.insert_back(&listener->_brother);
-    }
-    void Widget::remove_Listener(WidgetEventListener* listener) noexcept {
-        if (listener == nullptr) return;
-
-        _listeners.remove(&listener->_brother);
-    }
-
-    // bool Widget::event_distribute_to_children(IEvent* event) {
-    //     for (auto it = _children.rbegin(); it != _children.rend(); ++it) {
-    //         auto cw = contain_of(&*it, &Widget::_brother);
-    //         if (cw->do_event(event)) return true;
-    //     }
-    //     return false;
-    // }
-    bool Widget::event_distribute_to_listener(IEvent* event) {
-        bool res = false;
-        for (auto it = _listeners.begin(); it != _listeners.end(); ++it) {
-            auto wel = contain_of(&*it, &WidgetEventListener::_brother);
-            res = res || wel->do_event(event);
-        };
-        return res;
-    }
-
-    bool Widget::on_event(IEvent* event) {
-        // if (event_distribute_to_children(event))
-        //     return true;
-        return event_distribute_to_listener(event);
     }
 
     void Widget::draw(IPainter* painter) {}

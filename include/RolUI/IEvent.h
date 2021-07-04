@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include <type_traits>
 
-#define event_type_of(tp) EventType(typeid(tp), #tp)
+#define event_type_of(tp) (RolUI::EventType::of<tp>())
 
 #define impl_event_type_in_class(tp)        \
     EventType event_type() const override { \
@@ -29,21 +29,40 @@ namespace RolUI {
         }
 
       public:
+        EventType() noexcept : _type_info(nullptr), _name("") {}
         EventType(const std::type_info& ti, const char* name = "") noexcept
-            : _type_info(ti), _name(name) {}
+            : _type_info(&ti), _name(name) {}
+
+        EventType(const EventType&) = default;
+        EventType(EventType&&) = default;
+
+        ~EventType() {}
+
+        EventType& operator=(const EventType& et) = default;
+        EventType& operator=(EventType&&) = default;
 
         bool operator==(const EventType& et) const noexcept {
-            return _type_info == et._type_info;
+            if (_type_info == nullptr && et._type_info == nullptr)
+                return true;
+            else if (_type_info != nullptr && et._type_info != nullptr)
+                return *_type_info == *et._type_info;
+            else
+                return false;
         }
         bool operator!=(const EventType& et) const noexcept {
-            return _type_info != et._type_info;
+            if (_type_info == nullptr && et._type_info == nullptr)
+                return false;
+            else if (_type_info != nullptr && et._type_info != nullptr)
+                return *_type_info != *et._type_info;
+            else
+                return true;
         }
 
         const char* name() const noexcept { return _name; }
 
       private:
         const char* _name;
-        const std::type_info& _type_info;
+        const std::type_info* _type_info;
     };
 
     class IEvent {

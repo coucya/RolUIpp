@@ -79,28 +79,24 @@ int main(int argc, char* argv[]) {
     cw5.set_font("san");
     cw5.set_text("label widget.");
 
-    RolUI::MousePosEventListener rw1_l{[](RolUI::IEvent* e) {
+    rw1.add_listener(event_type_of(RolUI::MousePosEvent), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("rw1 listener. x: %d, y: %d \n", x, y);
         return true;
-    }};
-    RolUI::MousePosEventListener cw4_l{[](RolUI::IEvent* e) {
+    });
+    cw4.add_listener(event_type_of(RolUI::MousePosEvent), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw4 listener. x: %d, y: %d \n", x, y);
         return true;
-    }};
-    RolUI::MousePosEventListener cw5_l{[](RolUI::IEvent* e) {
+    });
+    cw5.add_listener(event_type_of(RolUI::MousePosEvent), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw5 listener. x: %d, y: %d \n", x, y);
         return true;
-    }};
-
-    rw1.add_listener(&rw1_l);
-    cw4.add_listener(&cw4_l);
-    cw5.add_listener(&cw5_l);
+    });
 
     rw1.add_child(&cw1);
     rw1.add_child(&cw2);

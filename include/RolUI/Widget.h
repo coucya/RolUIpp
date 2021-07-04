@@ -14,32 +14,44 @@ namespace RolUI {
     class Widget;
     class Window;
 
-    class WidgetEventListener : public IEventListener {
-        friend class Widget;
-
+    class WidgetListener : public IEventListener {
       public:
         typedef bool (*CallbackFun)(IEvent* e);
 
       public:
-        WidgetEventListener() noexcept : _cb(nullptr) {}
-        WidgetEventListener(CallbackFun cb) noexcept : _cb(cb) {}
+        static constexpr uint32_t max_linstener_number = 64;
 
-        bool on_event(IEvent* event) override {
-            return _cb ? _cb(event) : false;
-        }
+      public:
+        WidgetListener() noexcept;
+        ~WidgetListener();
 
-        void set_callback(CallbackFun cb) { _cb = cb; }
+        void add_listener(EventType et, CallbackFun cb);
+        void remove_listener(EventType et, CallbackFun cb);
 
-      protected:
-        CallbackFun _cb;
-        IntrusiveListNode _brother;
+        virtual bool on_event(IEvent* e) override;
+
+      private:
+        struct _ListenerNode {
+            IntrusiveListNode brother;
+            EventType event_type;
+            CallbackFun callback;
+
+            _ListenerNode() noexcept : event_type(), callback(nullptr) {}
+            _ListenerNode(EventType et, CallbackFun cb) noexcept
+                : event_type(et), callback(cb) {}
+            void clear() { *this = {}; }
+        };
+
+        IntrusiveList<_ListenerNode> _free_list;
+        IntrusiveList<_ListenerNode> _in_use_list;
+        _ListenerNode _linsteners[max_linstener_number];
     };
 
-    class Widget : public IWidget, public IEventListener {
+    class Widget : public IWidget, public WidgetListener {
         friend class Window;
 
       public:
-        typedef IntrusiveView<IntrusiveList::iterator, Widget, IntrusiveListNode> ChlidrenView;
+        typedef IntrusiveView<IntrusivePrimeList::iterator, Widget, IntrusiveListNode> ChlidrenView;
 
       public:
         Widget() noexcept : _parent(nullptr), _window(nullptr) {}
@@ -79,15 +91,7 @@ namespace RolUI {
         void add_child(Widget* widget) noexcept;
         void remove_child(Widget* widget) noexcept;
 
-        void add_listener(WidgetEventListener* listener) noexcept;
-        void remove_Listener(WidgetEventListener* listener) noexcept;
-
-        bool on_event(IEvent* event) override;
         void draw(IPainter* painter) override;
-
-      protected:
-        // bool event_distribute_to_children(IEvent* event);
-        bool event_distribute_to_listener(IEvent* event);
 
       protected:
         Point _pos;
@@ -97,9 +101,7 @@ namespace RolUI {
         Widget* _parent;
 
         IntrusiveListNode _brother;
-        IntrusiveList _children;
-
-        IntrusiveList _listeners;
+        IntrusivePrimeList _children;
 
       private:
         void _set_window(Window* w) noexcept;

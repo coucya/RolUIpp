@@ -107,14 +107,4 @@ namespace RolUI {
     void MouseEvent::_set_widget_pos(Point p) { _widget_pos = p; }
     void MouseEvent::_set_action_key(MouseKey key) { _action_key = key; }
 
-    bool MouseEventListener::filter_event(const IEvent* event) {
-        return event->is<MouseEvent>();
-    }
-    bool MousePosEventListener::filter_event(const IEvent* event) {
-        return event->is<MousePosEvent>();
-    }
-    bool MouseKeyEventListener::filter_event(const IEvent* event) {
-        return event->is<MouseKeyEvent>();
-    }
-
 } // namespace RolUI
