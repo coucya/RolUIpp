@@ -58,25 +58,31 @@ namespace RolUI {
         return n;
     }
 
-    void IntrusiveList::insert_prev(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept {
+    void IntrusivePrimeList::insert_prev(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept {
         if (pos == nullptr) return;
         if (node == nullptr) return;
 
         pos->insert_prev(node);
+        _size++;
+
         if (pos == _first) _first = node;
     }
-    void IntrusiveList::insert_next(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept {
+    void IntrusivePrimeList::insert_next(IntrusiveListNode* pos, IntrusiveListNode* node) noexcept {
         if (pos == nullptr) return;
         if (node == nullptr) return;
 
         pos->insert_next(node);
+        _size++;
+
         if (pos == _last) _last = node;
     }
 
-    void IntrusiveList::insert_front(IntrusiveListNode* node) noexcept {
+    void IntrusivePrimeList::insert_front(IntrusiveListNode* node) noexcept {
         if (node == nullptr) return;
 
         node->remove_self();
+
+        _size++;
 
         if (_first == nullptr) {
             _first = node;
@@ -87,10 +93,12 @@ namespace RolUI {
         _first->insert_prev(node);
         _first = node;
     }
-    void IntrusiveList::insert_back(IntrusiveListNode* node) noexcept {
+    void IntrusivePrimeList::insert_back(IntrusiveListNode* node) noexcept {
         if (node == nullptr) return;
 
         node->remove_self();
+
+        _size++;
 
         if (_last == nullptr) {
             _first = node;
@@ -102,32 +110,27 @@ namespace RolUI {
         _last = node;
     }
 
-    void IntrusiveList::append(IntrusiveListNode* node) noexcept {
+    void IntrusivePrimeList::append(IntrusiveListNode* node) noexcept {
         insert_back(node);
     }
 
-    void IntrusiveList::remove(IntrusiveListNode* node) noexcept {
+    void IntrusivePrimeList::remove(IntrusiveListNode* node) noexcept {
         if (node == _first)
             _first = node->next();
         if (node == _last)
             _last = node->prev();
+        _size--;
         node->remove_self();
     }
 
     IntrusiveListIterator& IntrusiveListIterator::operator++() noexcept {
         if (_node != nullptr)
-            if (_is_reverse)
-                _node = _node->prev();
-            else
-                _node = _node->next();
+            _node = _is_reverse ? _node->prev() : _node->next();
         return *this;
     }
     IntrusiveListIterator& IntrusiveListIterator::operator--() noexcept {
         if (_node != nullptr)
-            if (_is_reverse)
-                _node = _node->next();
-            else
-                _node = _node->prev();
+            _node = _is_reverse ? _node->next() : _node->prev();
         return *this;
     }
 

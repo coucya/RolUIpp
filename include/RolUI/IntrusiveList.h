@@ -67,12 +67,14 @@ namespace RolUI {
         IntrusiveListNode* _node;
     };
 
-    class IntrusiveList {
+    class IntrusivePrimeList {
       public:
         typedef IntrusiveListIterator iterator;
         typedef const IntrusiveListIterator const_iterator;
 
-        IntrusiveList() noexcept : _first(nullptr), _last(nullptr) {}
+        IntrusivePrimeList() noexcept : _size(0), _first(nullptr), _last(nullptr) {}
+
+        size_t size() const noexcept { return _size; }
 
         IntrusiveListNode* front() noexcept { return _first; }
         IntrusiveListNode* back() noexcept { return _last; }
@@ -102,19 +104,101 @@ namespace RolUI {
         const_iterator rbegin() const noexcept { return {_last, true}; }
         const_iterator rend() const noexcept { return {nullptr, true}; }
 
-        template <typename Type, typename Member>
-        IntrusiveView<iterator, Type, Member> view(const Member Type::*offset) noexcept {
-            return IntrusiveView(begin(), end(), offset);
+        template <typename Type>
+        IntrusiveView<iterator, Type, IntrusiveListNode>
+        view(const IntrusiveListNode Type::*offset, bool reverse = false) noexcept {
+            if (reverse)
+                return IntrusiveView(rbegin(), rend(), offset);
+            else
+                return IntrusiveView(begin(), end(), offset);
         }
-
-        template <typename Type, typename Member>
-        const IntrusiveView<iterator, Type, Member> view(const Member Type::*offset) const noexcept {
-            return IntrusiveView(begin(), end(), offset);
+        template <typename Type>
+        const IntrusiveView<iterator, Type, IntrusiveListNode>
+        view(const IntrusiveListNode Type::*offset, bool reverse = false) const noexcept {
+            if (reverse)
+                return IntrusiveView(rbegin(), rend(), offset);
+            else
+                return IntrusiveView(begin(), end(), offset);
         }
 
       private:
+        size_t _size;
         IntrusiveListNode* _first;
         IntrusiveListNode* _last;
     };
 
+    template <typename T>
+    class IntrusiveList {
+      public:
+        typedef IntrusiveTransformIterator<IntrusiveListIterator, T, IntrusiveListNode> iterator;
+        typedef const IntrusiveTransformIterator<IntrusiveListIterator, T, IntrusiveListNode> const_iterator;
+
+      public:
+        IntrusiveList(IntrusiveListNode T::*member) noexcept : _member_ptr(member) {}
+        ~IntrusiveList() {}
+
+        T* front() noexcept { return _contain_of(_list.front()); }
+        T* back() noexcept { return _contain_of(_list.back()); }
+        const T* front() const noexcept { return _contain_of(_list.front()); }
+        const T* back() const noexcept { return _contain_of(_list.back()); }
+
+        size_t size() { return _list.size(); }
+
+        void insert_prev(T* pos, T* node) noexcept {
+            _list.insert_prev(&(pos->*_member_ptr), &(node->*_member_ptr));
+        }
+        void insert_next(T* pos, T* node) noexcept {
+            _list.insert_next(&(pos->*_member_ptr), &(node->*_member_ptr));
+        }
+
+        void insert_front(T* node) noexcept {
+            _list.insert_front(&(node->*_member_ptr));
+        }
+        void insert_back(T* node) noexcept {
+            _list.insert_back(&(node->*_member_ptr));
+        }
+
+        void append(T* node) noexcept {
+            _list.append(&(node->*_member_ptr));
+        }
+
+        void remove(T* node) noexcept {
+            _list.remove(&(node->*_member_ptr));
+        }
+
+        iterator begin() noexcept { return iterator(_list.begin(), _member_ptr); }
+        iterator end() noexcept { return iterator(_list.end(), _member_ptr); }
+        const_iterator begin() const noexcept { return const_iterator(_list.begin(), _member_ptr); }
+        const_iterator end() const noexcept { return const_iterator(_list.end(), _member_ptr); }
+
+        const_iterator cbegin() const noexcept { return const_iterator(_list.begin(), _member_ptr); }
+        const_iterator cend() const noexcept { return const_iterator(_list.end(), _member_ptr); }
+
+        iterator rbegin() noexcept { return iterator(_list.rbegin(), _member_ptr); }
+        iterator rend() noexcept { return iterator(_list.rend(), _member_ptr); }
+        const_iterator rbegin() const noexcept { return const_iterator(_list.rbegin(), _member_ptr); }
+        const_iterator rend() const noexcept { return const_iterator(_list.rend(), _member_ptr); }
+
+        IntrusiveView<iterator, T, IntrusiveListNode> view(bool reverse = false) noexcept {
+            if (reverse)
+                return IntrusiveView(rbegin(), rend(), _member_ptr);
+            else
+                return IntrusiveView(begin(), end(), _member_ptr);
+        }
+        const IntrusiveView<iterator, T, IntrusiveListNode> view(bool reverse = false) const noexcept {
+            if (reverse)
+                return IntrusiveView(rbegin(), rend(), _member_ptr);
+            else
+                return IntrusiveView(begin(), end(), _member_ptr);
+        }
+
+      private:
+        T* _contain_of(IntrusiveListNode* node) {
+            return node ? contain_of(node, _member_ptr) : nullptr;
+        }
+
+      private:
+        IntrusiveListNode T::*_member_ptr;
+        IntrusivePrimeList _list;
+    };
 } // namespace RolUI
