@@ -4,7 +4,7 @@
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
-#include "RolUI/events/MouseEvent.h"
+#include "RolUI/events/MouseEvent.hpp"
 
 #include "GLFWWindow.h"
 

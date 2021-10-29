@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "RolUI/Color.h"
-#include "RolUI/Rect.h"
-#include "RolUI/Widget.h"
-#include "RolUI/IPainter.h"
+#include "RolUI/Color.hpp"
+#include "RolUI/Rect.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/IPainter.hpp"
 
 namespace RolUI {
     class EllipseWidget : public Widget {

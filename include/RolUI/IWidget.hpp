@@ -2,10 +2,11 @@
 
 #include <stdint.h>
 
-#include "Rect.h"
-#include "Size.h"
-#include "Point.h"
-#include "IPainter.h"
+
+#include "Rect.hpp"
+#include "Size.hpp"
+#include "Point.hpp"
+#include "IPainter.hpp"
 
 namespace RolUI {
 

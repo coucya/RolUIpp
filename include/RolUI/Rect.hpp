@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <optional>
 
-#include "Point.h"
-#include "Size.h"
+#include "Point.hpp"
+#include "Size.hpp"
 
 namespace RolUI {
 

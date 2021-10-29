@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "Size.h"
-#include "Point.h"
-#include "WidgetBase.h"
-#include "ListenerBase.h"
+#include "Size.hpp"
+#include "Point.hpp"
+#include "WidgetBase.hpp"
+#include "ListenerBase.hpp"
 
 namespace RolUI {
 

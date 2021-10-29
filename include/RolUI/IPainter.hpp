@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "Size.h"
-#include "Rect.h"
-#include "Color.h"
-#include "string.h"
+#include "Size.hpp"
+#include "Rect.hpp"
+#include "Color.hpp"
+#include "string.hpp"
 
 namespace RolUI {
 

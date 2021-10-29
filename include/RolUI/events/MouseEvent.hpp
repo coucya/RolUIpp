@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "RolUI/Point.h"
-#include "RolUI/Vector.h"
-#include "RolUI/IEvent.h"
-#include "RolUI/Widget.h"
+#include "RolUI/Point.hpp"
+#include "RolUI/Vector.hpp"
+#include "RolUI/IEvent.hpp"
+#include "RolUI/Widget.hpp"
 
 namespace RolUI {
 

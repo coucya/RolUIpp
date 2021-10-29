@@ -2,7 +2,7 @@
 
 #include "nanovg.h"
 
-#include "RolUI/Color.h"
+#include "RolUI/Color.hpp"
 #include "GLFWPainter.h"
 
 namespace RolUIBackend {

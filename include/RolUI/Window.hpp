@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "IWindow.h"
-#include "events/MouseEvent.h"
+#include "IWindow.hpp"
+#include "events/MouseEvent.hpp"
 
 namespace RolUI {
 

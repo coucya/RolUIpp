@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "RolUI/WidgetBase.h"
+#include "RolUI/WidgetBase.hpp"
 
 namespace RolUI {
 

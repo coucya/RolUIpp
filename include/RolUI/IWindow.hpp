@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "IPainter.h"
+#include "IPainter.hpp"
 
 namespace RolUI {
 

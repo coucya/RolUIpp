@@ -1,7 +1,7 @@
 #include <stdexcept>
 
-#include "RolUI/IEvent.h"
-#include "RolUI/events/MouseEvent.h"
+#include "RolUI/IEvent.hpp"
+#include "RolUI/events/MouseEvent.hpp"
 
 namespace RolUI {
 

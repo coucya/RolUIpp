@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "RolUI/Widget.h"
-#include "RolUI/IPainter.h"
+#include "RolUI/Widget.hpp"
+#include "RolUI/IPainter.hpp"
 
 namespace RolUI {
 

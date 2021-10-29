@@ -6,12 +6,12 @@
 
 #include "glfw_backend/GLFWWindow.h"
 
-#include "RolUI/IEvent.h"
-#include "RolUI/Widget.h"
-#include "RolUI/widgets/RectWidget.h"
-#include "RolUI/widgets/EllipseWidget.h"
-#include "RolUI/widgets/LabelWidget.h"
-#include "RolUI/events/MouseEvent.h"
+#include "RolUI/IEvent.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/widgets/RectWidget.hpp"
+#include "RolUI/widgets/EllipseWidget.hpp"
+#include "RolUI/widgets/LabelWidget.hpp"
+#include "RolUI/events/MouseEvent.hpp"
 
 using RolUI::EllipseWidget;
 

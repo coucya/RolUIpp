@@ -2,9 +2,9 @@
 
 #include <stdint.h>
 
-#include "IEvent.h"
-#include "IEventListener.h"
-#include "IntrusiveList.h"
+#include "IEvent.hpp"
+#include "IEventListener.hpp"
+#include "IntrusiveList.hpp"
 
 namespace RolUI {
 

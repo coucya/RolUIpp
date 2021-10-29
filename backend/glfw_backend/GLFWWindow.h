@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "RolUI/Point.h"
-#include "RolUI/Vector.h"
-#include "RolUI/Window.h"
-#include "RolUI/events/MouseEvent.h"
+#include "RolUI/Point.hpp"
+#include "RolUI/Vector.hpp"
+#include "RolUI/Window.hpp"
+#include "RolUI/events/MouseEvent.hpp"
 
 #include "GLFWPainter.h"
 #include "GLFWppWindow.h"

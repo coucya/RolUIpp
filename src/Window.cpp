@@ -1,8 +1,8 @@
 #include <stdexcept>
 
-#include "RolUI/Window.h"
-#include "RolUI/Widget.h"
-#include "RolUI/IPainter.h"
+#include "RolUI/Window.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/IPainter.hpp"
 
 namespace RolUI {
 

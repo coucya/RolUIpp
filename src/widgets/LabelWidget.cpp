@@ -1,7 +1,7 @@
 
-#include "RolUI/string.h"
-#include "RolUI/Window.h"
-#include "RolUI/widgets/LabelWidget.h"
+#include "RolUI/string.hpp"
+#include "RolUI/Window.hpp"
+#include "RolUI/widgets/LabelWidget.hpp"
 
 namespace RolUI {
 

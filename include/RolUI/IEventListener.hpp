@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "IEvent.h"
+#include "IEvent.hpp"
 
 namespace RolUI {
 

@@ -1,5 +1,5 @@
 
-#include "RolUI/widgets/EllipseWidget.h"
+#include "RolUI/widgets/EllipseWidget.hpp"
 
 namespace RolUI {
     EllipseWidget::EllipseWidget(

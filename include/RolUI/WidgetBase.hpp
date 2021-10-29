@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "IWidget.h"
-#include "IntrusiveList.h"
+#include "IWidget.hpp"
+#include "IntrusiveList.hpp"
 
 namespace RolUI {
 

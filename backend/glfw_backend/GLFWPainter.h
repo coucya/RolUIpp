@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "RolUI/Rect.h"
-#include "RolUI/Point.h"
-#include "RolUI/Color.h"
-#include "RolUI/IPainter.h"
+#include "RolUI/Rect.hpp"
+#include "RolUI/Point.hpp"
+#include "RolUI/Color.hpp"
+#include "RolUI/IPainter.hpp"
 
 namespace RolUIBackend {
 
