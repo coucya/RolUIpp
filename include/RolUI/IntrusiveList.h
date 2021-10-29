@@ -57,7 +57,7 @@ namespace RolUI {
         bool operator!=(const IntrusiveListIterator& other) const noexcept;
 
         reference operator*() noexcept { return *_node; }
-        const reference operator*() const noexcept { return *_node; }
+        // const reference operator*() const noexcept { return *_node; }
 
         pointer operator->() noexcept { return _node; }
         const pointer operator->() const noexcept { return _node; }

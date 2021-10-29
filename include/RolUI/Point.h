@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "vector.h"
+#include "Vector.h"
 
 namespace RolUI {
 

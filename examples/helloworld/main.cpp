@@ -2,7 +2,6 @@
 #include <string>
 #include <filesystem>
 #include <stdexcept>
-#include <functional>
 #include <cstdlib>
 
 #include "glfw_backend/GLFWWindow.h"
@@ -14,6 +13,8 @@
 #include "RolUI/widgets/LabelWidget.h"
 #include "RolUI/events/MouseEvent.h"
 
+using RolUI::EllipseWidget;
+
 std::string get_font_path() {
     std::filesystem::path self_path{__FILE__};
 
@@ -21,10 +22,11 @@ std::string get_font_path() {
     return font_path.string();
 }
 
+
 int main(int argc, char* argv[]) {
 
     RolUIBackend::GLFWWindow win(800, 600, "helloworld");
-
+  
     // win.set_char_callback([](int unicode) {
     //     printf("char callback: %d \n", unicode);
     // });
@@ -46,7 +48,7 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     RolUI::RectWidget rw1, cw1, cw2;
-    RolUI::EllipseWidget cw3, cw4;
+    EllipseWidget cw3, cw4;
     RolUI::LabelWidget cw5;
 
     rw1.set_pos(10, 10);

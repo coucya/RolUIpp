@@ -49,7 +49,7 @@ namespace RolUI {
         }
 
         reference operator*() noexcept { return *contain_of(&*_iter, _offset); }
-        const reference operator*() const noexcept { return *contain_of(&*_iter, _offset); }
+        // const reference operator*() const noexcept { return *contain_of(&*_iter, _offset); }
 
         pointer operator->() noexcept { return contain_of(&*_iter, _offset); }
         const pointer operator->() const noexcept { return contain_of(&*_iter, _offset); }

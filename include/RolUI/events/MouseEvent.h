@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "RolUI/Point.h"
-#include "RolUI/vector.h"
+#include "RolUI/Vector.h"
 #include "RolUI/IEvent.h"
 #include "RolUI/Widget.h"
 
