@@ -1,11 +1,11 @@
 #pragma once
 
+#include <cstring>
 #include <stdint.h>
 
 #include "Size.hpp"
 #include "Rect.hpp"
 #include "Color.hpp"
-#include "string.hpp"
 
 namespace RolUI {
 

@@ -1,5 +1,4 @@
 
-#include "RolUI/string.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/widgets/LabelWidget.hpp"
 #include "RolUI/events/Widget_event.hpp"

@@ -77,7 +77,6 @@ namespace RolUI {
 
       private:
         typedef std::vector<Widget*> Childrens;
-        // typedef std::deque<Widget*> Childrens;
 
         Widget* _get_widget(size_t idx) const noexcept;
         void _add_widget(Childrens::iterator pos, Widget* w) noexcept;

@@ -24,7 +24,6 @@ namespace RolUI {
 
       private:
         void _draw_window() noexcept;
-        void _flush_window() noexcept;
         void _dispatch_event() noexcept;
 
       private:

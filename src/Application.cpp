@@ -28,8 +28,6 @@ namespace RolUI {
         if (!_window) return;
         _window->draw();
     }
-    void Application::_flush_window() noexcept {
-    }
     void Application::_dispatch_event() noexcept {
         if (!_window) return;
         _window->dispatch_event();

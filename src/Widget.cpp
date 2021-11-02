@@ -87,14 +87,14 @@ namespace RolUI {
 
     Widget* Widget::get_child_by_pos(Point pos) const noexcept {
         for (auto it = _child_rbegin_it(), ed = _child_rend_it(); it != ed; ++it) {
-            if ((*it)->rect().contain_point(pos))
+            if ((*it)->rect().contain(pos))
                 return *it;
         }
         return nullptr;
     }
     Widget* Widget::get_part_by_pos(Point pos) const noexcept {
         for (auto it = _part_rbegin_it(), ed = _part_rend_it(); it != ed; ++it) {
-            if ((*it)->rect().contain_point(pos))
+            if ((*it)->rect().contain(pos))
                 return *it;
         }
         return nullptr;

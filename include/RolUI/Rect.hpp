@@ -2,8 +2,10 @@
 
 #include <stdint.h>
 #include <optional>
+#include <algorithm>
 
 #include "Point.hpp"
+#include "RolUI/Point.hpp"
 #include "Size.hpp"
 
 namespace RolUI {
@@ -31,45 +33,57 @@ namespace RolUI {
         Point pos() const noexcept { return Point(x, y); }
         Size size() const noexcept { return Size(width, height); }
 
-        Point lefttop() const noexcept { return Point(x, y); }
-        Point leftbottom() const noexcept { return Point(x, y + height - 1); }
-        Point righttop() const noexcept { return Point(x + width - 1, y); }
-        Point rightbottom() const noexcept { return Point(x + width - 1, y + height - 1); }
+        int32_t top() const noexcept { return y; }
+        int32_t bottom() const noexcept { return y + height; }
+        int32_t left() const noexcept { return x; }
+        int32_t right() const noexcept { return x + width; }
+        int32_t centre() const noexcept { return x + width / 2; }
+        int32_t middle() const noexcept { return y + height / 2; }
 
-        Point centre() const noexcept { return Point(x + width / 2, y + height / 2); }
+        Point left_top() const noexcept { return Point(left(), top()); }
+        Point left_bottom() const noexcept { return Point(left(), bottom()); }
+        Point right_top() const noexcept { return Point(right(), top()); }
+        Point right_bottom() const noexcept { return Point(right(), bottom()); }
 
-        bool contain_point(int32_t x, int32_t y) const noexcept {
+        Point centre_top() const noexcept { return Point(centre(), top()); }
+        Point centre_bottom() const noexcept { return Point(centre(), bottom()); }
+        Point left_middle() const noexcept { return Point(left(), middle()); }
+        Point right_middle() const noexcept { return Point(right(), middle()); }
+
+        Point centre_middle() const noexcept { return Point(centre(), middle()); }
+
+        bool contain(int32_t x, int32_t y) const noexcept {
             if (x < this->x || y < this->y) return false;
             int32_t rb_x = this->x + this->width - 1;
             int32_t rb_y = this->y + this->height - 1;
             if (x > rb_x || y > rb_y) return false;
             return true;
         }
-        bool contain_point(const Point& p) const noexcept {
-            return contain_point(p.x, p.y);
+        bool contain(const Point& p) const noexcept {
+            return contain(p.x, p.y);
         }
         bool intersect(const Rect& other) const noexcept {
-            return intersection(other).has_value();
+            return intersected(other).has_value();
         }
 
-        Rect unionset(const Rect& other) const noexcept {
+        Rect united(const Rect& other) const noexcept {
             int32_t lt_x = x < other.x ? x : other.x;
             int32_t lt_y = y < other.y ? y : other.y;
 
-            Point self_rb = rightbottom();
-            Point other_rb = other.rightbottom();
+            Point self_rb = right_bottom();
+            Point other_rb = other.right_bottom();
 
             int32_t rb_x = self_rb.x > other_rb.x ? self_rb.x : other_rb.x;
             int32_t rb_y = self_rb.y > other_rb.y ? self_rb.y : other_rb.y;
 
             return Rect(Point(lt_x, lt_y), Point(rb_x, rb_y));
         }
-        std::optional<Rect> intersection(const Rect& other) const noexcept {
+        std::optional<Rect> intersected(const Rect& other) const noexcept {
             int32_t lt_x = x > other.x ? x : other.x;
             int32_t lt_y = y > other.y ? y : other.y;
 
-            Point self_rb = rightbottom();
-            Point other_rb = other.rightbottom();
+            Point self_rb = right_bottom();
+            Point other_rb = other.right_bottom();
 
             int32_t rb_x = self_rb.x < other_rb.x ? self_rb.x : other_rb.x;
             int32_t rb_y = self_rb.y < other_rb.y ? self_rb.y : other_rb.y;

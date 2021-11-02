@@ -92,7 +92,7 @@ namespace RolUIBackend {
     }
 
     void GLFWPainter::draw_ellipse(const RolUI::Rect& rect) {
-        RolUI::Point centre = rect.centre();
+        RolUI::Point centre = rect.centre_middle();
         float rx = (float)rect.width / 2.0;
         float ry = (float)rect.height / 2.0;
 
@@ -139,7 +139,7 @@ namespace RolUIBackend {
     }
 
     void GLFWPainter::fill_ellipse(const RolUI::Rect& rect) {
-        RolUI::Point centre = rect.centre();
+        RolUI::Point centre = rect.centre_middle();
         float rx = (float)rect.width / 2.0;
         float ry = (float)rect.height / 2.0;
 

@@ -59,8 +59,8 @@ namespace RolUI {
 
     class IEvent {
       public:
-        IEvent(const EventType* et, Widget* w) noexcept
-            : _type(et), _target(w) {}
+        IEvent(const EventType* et, Widget* target) noexcept
+            : _type(et), _target(target) {}
 
         virtual ~IEvent() {}
 
