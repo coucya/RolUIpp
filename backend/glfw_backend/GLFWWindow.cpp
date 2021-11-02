@@ -5,8 +5,6 @@
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
-// #include "RolUI/events/MouseEvent.hpp"
-
 #include "GLFWWindow.h"
 
 namespace RolUIBackend {
@@ -53,6 +51,10 @@ namespace RolUIBackend {
             this->_mouse_dispatcher.set_key_mode(key, md);
         };
 
+        on_size = [this](int w, int h) {
+            glViewport(0, 0, w, h);
+        };
+
         _mouse_dispatcher.clear_change();
     }
 
@@ -76,8 +78,6 @@ namespace RolUIBackend {
 
     void GLFWWindow::dispatch_event() {
         this->wait_events();
-
-        if (should_close() && on_exit) on_exit();
 
         _mouse_dispatcher.dispatch(this);
         _mouse_dispatcher.clear_change();

@@ -14,6 +14,7 @@ namespace RolUIBackend {
         class GLFWppWindowBase {
           public:
             typedef std::function<void()> ExitFunc;
+            typedef std::function<void(int, int)> SizeFunc;
             typedef std::function<void(unsigned int)> CharFunc;
             typedef std::function<void(int)> CursorEnterFunc;
             typedef std::function<void(double, double)> CursorPosFunc;
@@ -21,6 +22,7 @@ namespace RolUIBackend {
             typedef std::function<void(double, double)> ScrollFunc;
 
             ExitFunc on_exit;
+            SizeFunc on_size;
             CharFunc on_char;
             CursorEnterFunc on_cursor_enter;
             CursorPosFunc on_cursor_pos;
@@ -28,6 +30,8 @@ namespace RolUIBackend {
             ScrollFunc on_scroll;
 
           protected:
+            static void _exit_callback(GLFWwindow* w);
+            static void _size_callback(GLFWwindow* win, int w, int h);
             static void _char_callback(GLFWwindow* w, unsigned int unicode);
             static void _cursor_enter_callback(GLFWwindow* w, int enter);
             static void _cursor_pos_callback(GLFWwindow* w, double x, double y);

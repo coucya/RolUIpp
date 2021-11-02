@@ -38,6 +38,16 @@ namespace RolUIBackend {
 
     using namespace _details;
 
+    void GLFWppWindowBase::_exit_callback(GLFWwindow* w) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_exit) return;
+        wd->on_exit();
+    }
+    void GLFWppWindowBase::_size_callback(GLFWwindow* win, int w, int h) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(win);
+        if (wd == nullptr || !wd->on_size) return;
+        wd->on_size(w, h);
+    }
     void GLFWppWindowBase::_char_callback(GLFWwindow* w, unsigned int unicode) {
         GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
         if (wd == nullptr || !wd->on_char) return;
@@ -72,6 +82,8 @@ namespace RolUIBackend {
         if (!win_opt.has_value()) return;
         GLFWwindow* win = win_opt.value();
 
+        glfwSetWindowCloseCallback(win, &_exit_callback);
+        glfwSetWindowSizeCallback(win, &_size_callback);
         glfwSetCharCallback(win, &_char_callback);
         glfwSetCursorEnterCallback(win, &_cursor_enter_callback);
         glfwSetCursorPosCallback(win, &_cursor_pos_callback);
