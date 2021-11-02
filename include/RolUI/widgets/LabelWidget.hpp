@@ -9,8 +9,6 @@ namespace RolUI {
 
     class LabelWidget : public Widget {
       private:
-        bool _is_update_size;
-
         uint32_t _font_size;
         Color _font_color;
         uint32_t _text_len;
@@ -21,21 +19,16 @@ namespace RolUI {
         LabelWidget() noexcept;
         ~LabelWidget() override;
 
-        Size size() override;
-
         void set_text(const char* text);
         void set_text(const char* text, uint32_t len) noexcept;
         void set_font(const char* name) noexcept;
         void set_font_size(uint32_t size) noexcept;
         void set_font_color(Color c) noexcept;
 
-        void draw(IPainter* painter) override;
+        void on_draw(IPainter* painter) override;
 
       private:
         void _update_size();
-
-        void set_size(const Size& size) noexcept;
-        void set_size(uint32_t w, uint32_t h) noexcept;
     };
 
 } // namespace RolUI

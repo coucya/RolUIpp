@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "Vector.hpp"
 
 namespace RolUI {

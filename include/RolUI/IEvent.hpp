@@ -1,97 +1,78 @@
 #pragma once
 
 #include <stdint.h>
-#include <typeinfo>
-#include <type_traits>
+#include <string_view>
 
-#define event_type_of(tp) (RolUI::EventType::of<tp>())
-
-#define impl_event_type_in_class(tp)        \
-    EventType event_type() const override { \
-        return event_type_of(tp);           \
+#define RolUI_define_event_type_in_class(tp) \
+    static const EventType* type() {               \
+        static EventType et{#tp};            \
+        return &et;                          \
     }
 
-#define impl_event_type(tp)            \
-    EventType tp::event_type() const { \
-        return event_type_of(tp);      \
+#define RolUI_decl_event_type_in_class(tp) \
+    static const EventType* type();
+
+#define RolUI_impl_event_type_in_class(tp) \
+    const EventType* tp::type() {                \
+        static EventType et{#tp};          \
+        return &et;                        \
+    }
+
+#define RolUI_define_event_type(tp) \
+    inline const EventType* tp##_type() { \
+        static EventType et{#tp};   \
+        return &et;                 \
+    }
+
+#define RolUI_decl_event_type(tp) \
+    const EventType* tp##_type();
+
+#define RolUI_impl_event_type(tp) \
+    const EventType* tp##_type() {      \
+        static EventType et{#tp}; \
+        return &et;               \
     }
 
 namespace RolUI {
 
+    class Widget;
     class IEvent;
 
     class EventType {
       public:
-        template <typename T>
-        static EventType of() {
-            static_assert(std::is_base_of<IEvent, T>::value);
-            return EventType(typeid(T), typeid(T).name());
-        }
+        EventType(const char* name) noexcept : _name(name) {}
+        EventType(std::string_view name) noexcept : _name(name) {}
 
-      public:
-        EventType() noexcept : _type_info(nullptr), _name("") {}
-        EventType(const std::type_info& ti, const char* name = "") noexcept
-            : _type_info(&ti), _name(name) {}
+        EventType(const EventType&) = delete;
+        EventType(EventType&&) = delete;
 
-        EventType(const EventType&) = default;
-        EventType(EventType&&) = default;
+        ~EventType() = default;
 
-        ~EventType() {}
+        EventType& operator=(const EventType& et) = delete;
+        EventType& operator=(EventType&&) = delete;
 
-        EventType& operator=(const EventType& et) = default;
-        EventType& operator=(EventType&&) = default;
-
-        bool operator==(const EventType& et) const noexcept {
-            if (_type_info == nullptr && et._type_info == nullptr)
-                return true;
-            else if (_type_info != nullptr && et._type_info != nullptr)
-                return *_type_info == *et._type_info;
-            else
-                return false;
-        }
-        bool operator!=(const EventType& et) const noexcept {
-            if (_type_info == nullptr && et._type_info == nullptr)
-                return false;
-            else if (_type_info != nullptr && et._type_info != nullptr)
-                return *_type_info != *et._type_info;
-            else
-                return true;
-        }
-
-        const char* name() const noexcept { return _name; }
+        std::string_view name() const noexcept { return _name; }
 
       private:
-        const char* _name;
-        const std::type_info* _type_info;
+        std::string_view _name;
     };
 
     class IEvent {
       public:
+        IEvent(const EventType* et, Widget* w) noexcept
+            : _type(et), _target(w) {}
+
         virtual ~IEvent() {}
 
-        virtual EventType event_type() const = 0;
+        const EventType* event_type() const noexcept { return _type; };
 
-        bool is(const EventType& et) const noexcept { return event_type() == et; }
+        bool is(const EventType* et) const noexcept { return event_type() == et; }
 
-        template <typename T>
-        bool is() const noexcept {
-            static_assert(std::is_base_of<IEvent, T>::value);
-            return is(event_type_of(T));
-        }
+        Widget* target() const noexcept { return _target; }
 
-        template <typename T>
-        T* cast() {
-            static_assert(std::is_base_of<IEvent, T>::value);
-            if (!is<T>()) return nullptr;
-            return static_cast<T*>(this);
-        }
-
-        template <typename T>
-        const T* cast() const {
-            static_assert(std::is_base_of<IEvent, T>::value);
-            if (!is<T>()) return nullptr;
-            return static_cast<T*>(this);
-        }
+      private:
+        const EventType* _type;
+        Widget* _target;
     };
 
 } // namespace RolUI

@@ -1,4 +1,3 @@
-#include <stdexcept>
 
 #include "nanovg.h"
 
@@ -46,6 +45,8 @@ namespace RolUIBackend {
     void GLFWPainter::set_stroke_width(uint32_t w) { _stroke_width = w; }
 
     void GLFWPainter::draw_text(const RolUI::Point& pos, const char* text, uint32_t len) {
+        if (!text || len == 0) return;
+
         RolUI::Point p = _pos + pos;
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;

@@ -38,17 +38,17 @@ namespace RolUI {
 
         Point centre() const noexcept { return Point(x + width / 2, y + height / 2); }
 
-        bool is_contain_point(int32_t x, int32_t y) const noexcept {
+        bool contain_point(int32_t x, int32_t y) const noexcept {
             if (x < this->x || y < this->y) return false;
             int32_t rb_x = this->x + this->width - 1;
             int32_t rb_y = this->y + this->height - 1;
             if (x > rb_x || y > rb_y) return false;
             return true;
         }
-        bool is_contain_point(const Point& p) const noexcept {
-            return is_contain_point(p.x, p.y);
+        bool contain_point(const Point& p) const noexcept {
+            return contain_point(p.x, p.y);
         }
-        bool is_intersect(const Rect& other) const noexcept {
+        bool intersect(const Rect& other) const noexcept {
             return intersection(other).has_value();
         }
 

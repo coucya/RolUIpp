@@ -1,4 +1,4 @@
-#include <stdexcept>
+
 #include <optional>
 
 #include "glad/glad.h"
@@ -7,316 +7,118 @@
 
 namespace RolUIBackend {
 
-    class _GLFWppWindow {
-        friend class GLFWppWindow;
+    static bool _is_init = false;
 
-      public:
-        void do_char_callback(unsigned int unicode) {
-            if (_char_callback)
-                _char_callback(unicode);
-        }
-        void do_cursor_enter_callback(int enter) {
-            if (_cursor_enter_callback)
-                _cursor_enter_callback(enter);
-        }
-        void do_cursor_pos_callback(double x, double y) {
-            if (_cursor_pos_callback)
-                _cursor_pos_callback(x, y);
-        }
-        void do_mouse_button_callback(int button, int action, int mods) {
-            if (_mouse_button_callback)
-                _mouse_button_callback(button, action, mods);
-        }
-        void do_scroll_callback(double x_offset, double y_offset) {
-            if (_scroll_callback)
-                _scroll_callback(x_offset, y_offset);
-        }
-
-      private:
-        GLFWppWindow::CharFun _char_callback;
-        GLFWppWindow::CursorEnterFun _cursor_enter_callback;
-        GLFWppWindow::CursorPosFun _cursor_pos_callback;
-        GLFWppWindow::MouseButtonFun _mouse_button_callback;
-        GLFWppWindow::ScrollFun _scroll_callback;
-    };
-
-    struct _WindowNode {
-        uint32_t rc;
-        GLFWwindow* glfw_ptr;
-        _GLFWppWindow win;
-    };
-
-    bool _is_init = false;
-
-    const uint32_t GLFWppWindow::max_window_number;
-    _WindowNode _windows[GLFWpp_MAX_WINDOW_NUMBER];
-
-    static void _init();
-
-    static uint32_t _window_hash(GLFWwindow* ptr);
-
-    static std::optional<uint32_t> _find_window_index_eq(GLFWwindow* ptr);
-    static std::optional<uint32_t> _find_window_index_null(GLFWwindow* ptr);
-
-    static std::optional<uint32_t> _create_window(size_t w, size_t h, const char* title = "");
-    static void _destroy_window(uint32_t handle);
-
-    static void _inc_window_rc(uint32_t handle);
-    static void _dec_window_rc(uint32_t handle);
-
-    static GLFWwindow* _get_glfw_window_by_handle(uint32_t handle);
-    static _GLFWppWindow* _get_window_by_glfw_window(GLFWwindow* ptr);
-    static _GLFWppWindow* _get_window_by_handle(uint32_t handle);
-
-    void _init() {
-        if (_is_init) return;
+    static bool _init() {
+        if (_is_init) return true;
 
         if (glfwInit() == GLFW_FALSE)
-            throw std::runtime_error("glfw initialization error.");
-
+            return false;
         _is_init = true;
+        return true;
     }
 
-    uint32_t _window_hash(GLFWwindow* ptr) {
-        uintptr_t p = (uintptr_t)ptr;
-        uint32_t idx = (p / 4) % GLFWpp_MAX_WINDOW_NUMBER;
-        return idx;
-    }
-    std::optional<uint32_t> _find_window_index_null(GLFWwindow* ptr) {
-        uint32_t idx = _window_hash(ptr);
-
-        for (uint32_t i = idx; i < GLFWpp_MAX_WINDOW_NUMBER; i++) {
-            auto wp = _windows[idx].glfw_ptr;
-            if (wp == nullptr) return i;
-        }
-        return {};
-    }
-    std::optional<uint32_t> _find_window_index_eq(GLFWwindow* ptr) {
-        uint32_t idx = _window_hash(ptr);
-
-        for (uint32_t i = idx; i < GLFWpp_MAX_WINDOW_NUMBER; i++) {
-            auto wp = _windows[idx].glfw_ptr;
-            if (wp == ptr) return i;
-        }
-        return {};
-    }
-
-    std::optional<uint32_t> _create_window(size_t w, size_t h, const char* title) {
+    static std::optional<GLFWwindow*> _create_window(size_t w, size_t h, const char* title = "") {
         if (!_is_init) _init();
+        if (!_is_init) return {};
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        auto* _glfw_window = glfwCreateWindow(w, h, title, nullptr, nullptr);
-        if (_glfw_window == nullptr)
-            throw std::runtime_error("glfw create window error.");
-
-        auto idx_opt = _find_window_index_null(_glfw_window);
-        if (idx_opt.has_value() == false) {
-            glfwDestroyWindow(_glfw_window);
-            return {};
-        }
-
-        uint32_t idx = idx_opt.value();
-
-        auto& _w = _windows[idx];
-        auto* data = &_w.win;
-
-        _w.glfw_ptr = _glfw_window;
-        _w.rc = 0;
-
-        new (data) _GLFWppWindow();
-
-        return idx;
+        GLFWwindow* _glfw_window = glfwCreateWindow(w, h, title, nullptr, nullptr);
+        return _glfw_window ? _glfw_window : std::optional<GLFWwindow*>();
     }
 
-    void _destroy_window(uint32_t handle) {
-        if (handle >= GLFWpp_MAX_WINDOW_NUMBER) return;
-
-        auto& _w = _windows[handle];
-
-        if (_w.glfw_ptr != nullptr) {
-            glfwDestroyWindow(_w.glfw_ptr);
-            _w.win.~_GLFWppWindow();
-        }
-
-        _w.glfw_ptr = nullptr;
-        _w.rc = 0;
-    }
-
-    void _inc_window_rc(uint32_t handle) {
-        if (handle >= GLFWpp_MAX_WINDOW_NUMBER) return;
-        if (_windows[handle].glfw_ptr == nullptr) return;
-        _windows[handle].rc++;
-    }
-    void _dec_window_rc(uint32_t handle) {
-        if (handle >= GLFWpp_MAX_WINDOW_NUMBER) return;
-        if (_windows[handle].glfw_ptr == nullptr) return;
-        _windows[handle].rc--;
-
-        if (_windows[handle].rc == 0)
-            _destroy_window(handle);
-    }
-
-    _GLFWppWindow* _get_window_by_glfw_window(GLFWwindow* ptr) {
-        if (ptr == nullptr) return nullptr;
-
-        auto idx_opt = _find_window_index_eq(ptr);
-        if (idx_opt.has_value() == false) return nullptr;
-
-        uint32_t idx = idx_opt.value();
-
-        return &_windows[idx].win;
-    }
-    GLFWwindow* _get_glfw_window_by_handle(uint32_t handle) {
-        if (handle >= GLFWpp_MAX_WINDOW_NUMBER) return nullptr;
-        return _windows[handle].glfw_ptr;
-    }
-    _GLFWppWindow* _get_window_by_handle(uint32_t handle) {
-        if (handle >= GLFWpp_MAX_WINDOW_NUMBER) return nullptr;
-        if (_windows[handle].glfw_ptr == nullptr) return nullptr;
-        return &_windows[handle].win;
+    static void _destroy_window(GLFWwindow* w) {
+        if (w) glfwDestroyWindow(w);
     }
 
     /* ================================================================ */
-    /* ================================================================ */
-    /* ================================================================ */
 
-    void GLFWppWindow::_char_callback(GLFWwindow* w, unsigned int unicode) {
-        auto* wd = _get_window_by_glfw_window(w);
-        if (wd == nullptr) return;
+    using namespace _details;
 
-        wd->do_char_callback(unicode);
+    void GLFWppWindowBase::_char_callback(GLFWwindow* w, unsigned int unicode) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_char) return;
+        wd->on_char(unicode);
     }
-    void GLFWppWindow::_cursor_enter_callback(GLFWwindow* w, int enter) {
-        auto* wd = _get_window_by_glfw_window(w);
-        if (wd == nullptr) return;
-
-        wd->do_cursor_enter_callback(enter);
+    void GLFWppWindowBase::_cursor_enter_callback(GLFWwindow* w, int enter) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_cursor_enter) return;
+        wd->on_cursor_enter(enter);
     }
-    void GLFWppWindow::_cursor_pos_callback(GLFWwindow* w, double x, double y) {
-        auto* wd = _get_window_by_glfw_window(w);
-        if (wd == nullptr) return;
-
-        wd->do_cursor_pos_callback(x, y);
+    void GLFWppWindowBase::_cursor_pos_callback(GLFWwindow* w, double x, double y) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_cursor_pos) return;
+        wd->on_cursor_pos(x, y);
     }
-    void GLFWppWindow::_mouse_button_callback(GLFWwindow* w, int button, int action, int mods) {
-        auto* wd = _get_window_by_glfw_window(w);
-        if (wd == nullptr) return;
-
-        wd->do_mouse_button_callback(button, action, mods);
+    void GLFWppWindowBase::_mouse_button_callback(GLFWwindow* w, int button, int action, int mods) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_mouse_button) return;
+        wd->on_mouse_button(button, action, mods);
     }
-    void GLFWppWindow::_scroll_callback(GLFWwindow* w, double x_offset, double y_offset) {
-        auto* wd = _get_window_by_glfw_window(w);
-        if (wd == nullptr) return;
-
-        wd->do_scroll_callback(x_offset, y_offset);
+    void GLFWppWindowBase::_scroll_callback(GLFWwindow* w, double x_offset, double y_offset) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_scroll) return;
+        wd->on_scroll(x_offset, y_offset);
     }
 
-    void GLFWppWindow::set_char_callback(CharFun&& callback) {
-        GLFWwindow* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-        _GLFWppWindow* _window = _get_window_by_handle(_glfw_handle);
-
-        if (_glfw_window == nullptr || _window == nullptr) return;
-
-        glfwSetCharCallback(_glfw_window, &GLFWppWindow::_char_callback);
-        _window->_char_callback = callback;
-    }
-    void GLFWppWindow::set_cursor_enter_callback(CursorEnterFun&& callback) {
-        GLFWwindow* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-        _GLFWppWindow* _window = _get_window_by_handle(_glfw_handle);
-
-        if (_glfw_window == nullptr || _window == nullptr) return;
-
-        glfwSetCursorEnterCallback(_glfw_window, &GLFWppWindow::_cursor_enter_callback);
-        _window->_cursor_enter_callback = callback;
-    }
-    void GLFWppWindow::set_cursor_pos_callback(CursorPosFun&& callback) {
-        GLFWwindow* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-        _GLFWppWindow* _window = _get_window_by_handle(_glfw_handle);
-
-        if (_glfw_window == nullptr || _window == nullptr) return;
-
-        glfwSetCursorPosCallback(_glfw_window, &GLFWppWindow::_cursor_pos_callback);
-        _window->_cursor_pos_callback = callback;
-    }
-    void GLFWppWindow::set_mouse_button_callback(MouseButtonFun&& callback) {
-        GLFWwindow* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-        _GLFWppWindow* _window = _get_window_by_handle(_glfw_handle);
-
-        if (_glfw_window == nullptr || _window == nullptr) return;
-
-        glfwSetMouseButtonCallback(_glfw_window, &GLFWppWindow::_mouse_button_callback);
-        _window->_mouse_button_callback = callback;
-    }
-    void GLFWppWindow::set_scroll_callback(ScrollFun&& callback) {
-        GLFWwindow* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-        _GLFWppWindow* _window = _get_window_by_handle(_glfw_handle);
-
-        if (_glfw_window == nullptr || _window == nullptr) return;
-
-        glfwSetScrollCallback(_glfw_window, &GLFWppWindow::_scroll_callback);
-        _window->_scroll_callback = callback;
-    }
-    /* ================================================================ */
-    /* ================================================================ */
     /* ================================================================ */
 
-    GLFWppWindow::GLFWppWindow(size_t w, size_t h, const char* title) {
-        auto handle_opt = _create_window(w, h, title);
-        if (handle_opt.has_value() == false)
-            throw std::runtime_error("unable to create window.");
+    GLFWppWindow::GLFWppWindow(size_t w, size_t h, const char* title) : _glfw_window(nullptr) {
+        auto win_opt = _create_window(w, h, title);
 
-        _glfw_handle = handle_opt.value();
+        if (!win_opt.has_value()) return;
+        GLFWwindow* win = win_opt.value();
+
+        glfwSetCharCallback(win, &_char_callback);
+        glfwSetCursorEnterCallback(win, &_cursor_enter_callback);
+        glfwSetCursorPosCallback(win, &_cursor_pos_callback);
+        glfwSetMouseButtonCallback(win, &_mouse_button_callback);
+        glfwSetScrollCallback(win, &_scroll_callback);
+
+        _glfw_window = win;
+        glfwSetWindowUserPointer(_glfw_window, this);
     }
 
-    GLFWppWindow::GLFWppWindow(const GLFWppWindow& w) {
-        _glfw_handle = w._glfw_handle;
-        _inc_window_rc(_glfw_handle);
-    }
-    GLFWppWindow::GLFWppWindow(GLFWppWindow&& w) {
-        _glfw_handle = w._glfw_handle;
-        _inc_window_rc(_glfw_handle);
+    GLFWppWindow::GLFWppWindow(GLFWppWindow&& w) : _glfw_window(w._glfw_window) {
+        w._glfw_window = nullptr;
+        if (_glfw_window)
+            glfwSetWindowUserPointer(_glfw_window, this);
     }
 
     GLFWppWindow::~GLFWppWindow() {
-        _dec_window_rc(_glfw_handle);
+        if (!_glfw_window) return;
+        _destroy_window(_glfw_window);
     }
 
-    GLFWppWindow& GLFWppWindow::operator=(const GLFWppWindow& w) {
-        this->~GLFWppWindow();
-        _glfw_handle = w._glfw_handle;
-        _inc_window_rc(_glfw_handle);
-        return *this;
-    }
     GLFWppWindow& GLFWppWindow::operator=(GLFWppWindow&& w) {
-        this->~GLFWppWindow();
-        _glfw_handle = w._glfw_handle;
-        _inc_window_rc(_glfw_handle);
+        if (_glfw_window)
+            _destroy_window(_glfw_window);
+
+        _glfw_window = w._glfw_window;
+        if (_glfw_window)
+            glfwSetWindowUserPointer(_glfw_window, this);
+
         return *this;
     }
 
-    void GLFWppWindow::make_opengl_context() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-
+    bool GLFWppWindow::make_opengl_context() {
         glfwMakeContextCurrent(_glfw_window);
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-            throw std::runtime_error("glfw make OpenGL context error");
+            return false;
+        return true;
     }
 
     void GLFWppWindow::set_title(const char* title) {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
         glfwSetWindowTitle(_glfw_window, title);
     }
     void GLFWppWindow::set_size(int w, int h) {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
         glfwSetWindowSize(_glfw_window, w, h);
     }
 
     std::tuple<size_t, size_t> GLFWppWindow::window_size() const noexcept {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-
         int w, h;
         glfwGetWindowSize(_glfw_window, &w, &h);
         return {w, h};
@@ -331,50 +133,23 @@ namespace RolUIBackend {
     }
 
     std::tuple<double, double> GLFWppWindow::cursor_pos() const noexcept {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
         double x, y;
         glfwGetCursorPos(_glfw_window, &x, &y);
         return {x, y};
     }
 
     bool GLFWppWindow::should_close() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-
         return glfwWindowShouldClose(_glfw_window) == GLFW_TRUE;
     }
 
     void GLFWppWindow::poll_events() { glfwPollEvents(); }
     void GLFWppWindow::wait_events() { glfwWaitEvents(); }
 
-    void GLFWppWindow::hide() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
+    void GLFWppWindow::hide() { glfwHideWindow(_glfw_window); }
+    void GLFWppWindow::show() { glfwShowWindow(_glfw_window); }
 
-        glfwHideWindow(_glfw_window);
-    }
-    void GLFWppWindow::show() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
+    void GLFWppWindow::swap_buffer() { glfwSwapBuffers(_glfw_window); }
 
-        glfwShowWindow(_glfw_window);
-    }
-
-    void GLFWppWindow::swap_buffer() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-
-        glfwSwapBuffers(_glfw_window);
-    }
-
-    void GLFWppWindow::close() {
-        auto* _glfw_window = _get_glfw_window_by_handle(_glfw_handle);
-
-        glfwSetWindowShouldClose(_glfw_window, GLFW_TRUE);
-    }
-
-    void GLFWppWindow::run() {
-        while (should_close() == false) {
-
-            poll_events();
-            swap_buffer();
-        }
-    }
+    void GLFWppWindow::close() { glfwSetWindowShouldClose(_glfw_window, GLFW_TRUE); }
 
 } // namespace RolUIBackend

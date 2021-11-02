@@ -1,52 +1,55 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstddef>
 #include <optional>
 #include <functional>
 #include <tuple>
 
 #include "GLFW/glfw3.h"
 
-#define GLFWpp_MAX_WINDOW_NUMBER 16
-
 namespace RolUIBackend {
 
-    class GLFWppWindow {
+    namespace _details {
+
+        class GLFWppWindowBase {
+          public:
+            typedef std::function<void()> ExitFunc;
+            typedef std::function<void(unsigned int)> CharFunc;
+            typedef std::function<void(int)> CursorEnterFunc;
+            typedef std::function<void(double, double)> CursorPosFunc;
+            typedef std::function<void(int, int, int)> MouseButtonFunc;
+            typedef std::function<void(double, double)> ScrollFunc;
+
+            ExitFunc on_exit;
+            CharFunc on_char;
+            CursorEnterFunc on_cursor_enter;
+            CursorPosFunc on_cursor_pos;
+            MouseButtonFunc on_mouse_button;
+            ScrollFunc on_scroll;
+
+          protected:
+            static void _char_callback(GLFWwindow* w, unsigned int unicode);
+            static void _cursor_enter_callback(GLFWwindow* w, int enter);
+            static void _cursor_pos_callback(GLFWwindow* w, double x, double y);
+            static void _mouse_button_callback(GLFWwindow* w, int button, int action, int mods);
+            static void _scroll_callback(GLFWwindow* w, double x_offset, double y_offset);
+        };
+
+    } // namespace _details
+
+    class GLFWppWindow : public _details::GLFWppWindowBase {
       public:
-        static const uint32_t max_window_number = GLFWpp_MAX_WINDOW_NUMBER;
+        GLFWppWindow(size_t w, size_t h, const char* title);
 
-      private:
-        static void _char_callback(GLFWwindow* w, unsigned int unicode);
-        static void _cursor_enter_callback(GLFWwindow* w, int enter);
-        static void _cursor_pos_callback(GLFWwindow* w, double x, double y);
-        static void _mouse_button_callback(GLFWwindow* w, int button, int action, int mods);
-        static void _scroll_callback(GLFWwindow* w, double x_offset, double y_offset);
-
-      public:
-        typedef std::function<void(unsigned int)> CharFun;
-        typedef std::function<void(int)> CursorEnterFun;
-        typedef std::function<void(double, double)> CursorPosFun;
-        typedef std::function<void(int, int, int)> MouseButtonFun;
-        typedef std::function<void(double, double)> ScrollFun;
-
-        void set_char_callback(CharFun&& callback);
-        void set_cursor_enter_callback(CursorEnterFun&& callback);
-        void set_cursor_pos_callback(CursorPosFun&& callback);
-        void set_mouse_button_callback(MouseButtonFun&& callback);
-        void set_scroll_callback(ScrollFun&& callback);
-
-      public:
-        GLFWppWindow(size_t w, size_t h, const char* title = "");
-
-        GLFWppWindow(const GLFWppWindow& w);
+        GLFWppWindow(const GLFWppWindow& w) = delete;
         GLFWppWindow(GLFWppWindow&& w);
 
         ~GLFWppWindow();
 
-        GLFWppWindow& operator=(const GLFWppWindow& w);
+        GLFWppWindow& operator=(const GLFWppWindow& w) = delete;
         GLFWppWindow& operator=(GLFWppWindow&& w);
 
-        void make_opengl_context();
+        bool make_opengl_context();
 
         void poll_events();
         void wait_events();
@@ -69,10 +72,8 @@ namespace RolUIBackend {
 
         void close();
 
-        void run();
-
       private:
-        uint32_t _glfw_handle;
+        GLFWwindow* _glfw_window;
     };
 
 } // namespace RolUIBackend

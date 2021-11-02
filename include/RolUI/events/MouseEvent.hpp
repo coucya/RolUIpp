@@ -5,10 +5,11 @@
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
 #include "RolUI/IEvent.hpp"
-#include "RolUI/Widget.hpp"
+#include "RolUI/Window.hpp"
 
 namespace RolUI {
 
+    class Widget;
     class MouseDispatcher;
 
     enum class MouseKeyMode {
@@ -16,7 +17,7 @@ namespace RolUI {
         release,
     };
 
-    enum class MouseKey {
+    enum class MouseKey : char {
         unkown = -1,
         key1 = 1,
         key2,
@@ -27,59 +28,36 @@ namespace RolUI {
         key7,
         key8,
 
-        enum_count = 8,
-
         left = key1,
         right = key2,
         middle = key3,
     };
 
+    constexpr int MOUSE_KEY_COUNT = 8;
+
     class MouseEvent : public IEvent {
         friend class MouseDispatcher;
 
+      private:
+        MouseEvent(const EventType* et, Widget* target, const MouseDispatcher* dispatcher) noexcept;
+
       public:
-        MouseEvent(MouseDispatcher* dispatcher) noexcept;
-        ~MouseEvent() override;
-
-        EventType event_type() const override;
-
         Point pos() const noexcept;
         Vector offset() const noexcept;
 
-        MouseKeyMode button(MouseKey key) const noexcept;
         MouseKey action() const noexcept;
+        MouseKeyMode button(MouseKey key) const noexcept;
 
       private:
-        void _set_widget_pos(Point p);
         void _set_action_key(MouseKey key);
 
       private:
         MouseKey _action_key;
-        Point _widget_pos;
-        MouseDispatcher* _dispatcher;
+        const MouseDispatcher* _dispatcher;
     };
 
-    class MouseKeyEvent : public MouseEvent {
-        friend class MouseDispatcher;
-
-      public:
-        MouseKeyEvent(MouseDispatcher* dispatcher) noexcept
-            : MouseEvent(dispatcher) {}
-        ~MouseKeyEvent() override {}
-
-        EventType event_type() const override;
-    };
-
-    class MousePosEvent : public MouseEvent {
-        friend class MouseDispatcher;
-
-      public:
-        MousePosEvent(MouseDispatcher* dispatcher) noexcept
-            : MouseEvent(dispatcher) {}
-        ~MousePosEvent() override {}
-
-        EventType event_type() const override;
-    };
+    RolUI_decl_event_type(MousePosEvent);
+    RolUI_decl_event_type(MouseKeyEvent);
 
     class MouseDispatcher {
       public:
@@ -103,18 +81,15 @@ namespace RolUI {
 
         void clear_change() noexcept;
 
-        void distribute(Widget* root_widget);
-
-      private:
-        bool _distribute_pos_event_to_widget(Widget* w, Point widget_pos);
+        void dispatch(Window* w) noexcept;
 
       private:
         bool _pos_is_change;
         Point _last_pos;
         Point _current_pos;
 
-        bool _key_is_change[(int)MouseKey::enum_count];
-        MouseKeyMode _key_mode[(int)MouseKey::enum_count];
+        bool _key_is_change[MOUSE_KEY_COUNT + 1];
+        MouseKeyMode _key_mode[MOUSE_KEY_COUNT + 1];
     };
 
 } // namespace RolUI

@@ -1,10 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-
-#include "IEvent.hpp"
-
 namespace RolUI {
+
+    class IEvent;
 
     class IEventListener {
       public:

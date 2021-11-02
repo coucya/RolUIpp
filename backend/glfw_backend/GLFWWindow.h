@@ -4,8 +4,9 @@
 
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
-#include "RolUI/Window.hpp"
+#include "RolUI/IPainter.hpp"
 #include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/Window.hpp"
 
 #include "GLFWPainter.h"
 #include "GLFWppWindow.h"
@@ -26,16 +27,21 @@ namespace RolUIBackend {
         GLFWWindow& operator=(GLFWWindow&&) = delete;
 
         RolUI::IPainter* painter() override;
-        void draw() override;
+        void begin_draw() override;
+        void end_draw() override;
 
-        void run();
+        void dispatch_event() override;
 
       private:
         void _init_nanovg();
 
+        void _init_event_callback();
+
       private:
         void* _nvg_context;
         GLFWPainter _painter;
+
+        RolUI::MouseDispatcher _mouse_dispatcher;
     };
 
 } // namespace RolUIBackend

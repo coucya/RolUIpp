@@ -21,16 +21,16 @@ namespace RolUI {
         _background_color = c;
     }
 
-    void EllipseWidget::draw(IPainter* painter) {
+    void EllipseWidget::on_draw(IPainter* painter) {
         painter->set_fill_color(_background_color);
-        painter->fill_ellipse(_pos.x, _pos.y, _size.width, _size.height);
+        painter->fill_ellipse(pos().x, pos().y, size().width, size().height);
 
         if (_border_width > 0) {
             int32_t hw = _border_width / 2.0f;
-            int32_t x = _pos.x + hw;
-            int32_t y = _pos.y + hw;
-            uint32_t w = _size.width - _border_width;
-            uint32_t h = _size.height - _border_width;
+            int32_t x = pos().x + hw;
+            int32_t y = pos().y + hw;
+            uint32_t w = size().width - _border_width;
+            uint32_t h = size().height - _border_width;
 
             painter->set_stroke_color(_border_color);
             painter->set_stroke_width(_border_width);

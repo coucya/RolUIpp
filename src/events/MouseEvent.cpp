@@ -1,20 +1,21 @@
-#include <stdexcept>
 
 #include "RolUI/IEvent.hpp"
+#include "RolUI/Point.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/Window.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 
 namespace RolUI {
 
-    impl_event_type(MouseEvent);
-    impl_event_type(MousePosEvent);
-    impl_event_type(MouseKeyEvent);
+    RolUI_impl_event_type(MousePosEvent);
+    RolUI_impl_event_type(MouseKeyEvent);
 
     bool MouseDispatcher::is_action(MouseKey key) const noexcept {
-        return _key_is_change[(int)key - 1];
+        return _key_is_change[(int)key];
     }
 
     MouseKeyMode MouseDispatcher::button(MouseKey key) const noexcept {
-        return _key_mode[(int)key - 1];
+        return _key_mode[(int)key];
     }
 
     void MouseDispatcher::set_pos(Point pos) noexcept {
@@ -38,7 +39,7 @@ namespace RolUI {
     }
 
     void MouseDispatcher::set_key_mode(MouseKey key, MouseKeyMode mode) noexcept {
-        int idx = (int)key - 1;
+        int idx = (int)key;
         if (_key_mode[idx] != mode)
             _key_is_change[idx] = true;
         _key_mode[idx] = mode;
@@ -51,47 +52,48 @@ namespace RolUI {
         }
     }
 
-    void MouseDispatcher::distribute(Widget* root_widget) {
-        if (root_widget == nullptr) return;
+    void MouseDispatcher::dispatch(Window* w) noexcept {
+        if (w == nullptr) return;
 
-        if (is_move())
-            _distribute_pos_event_to_widget(root_widget, root_widget->pos());
+        Point mouse_pos = this->pos();
 
-        clear_change();
-    }
+        Widget* widget = w->get_widget_by_pos(mouse_pos);
+        if (widget == nullptr) return;
 
-    bool MouseDispatcher::_distribute_pos_event_to_widget(Widget* w, Point widget_pos) {
+        if (is_move()) {
+            Widget* tw = widget;
+            while (tw) {
+                MouseEvent me = MouseEvent(MousePosEvent_type(), tw, this);
+                me._set_action_key(MouseKey::unkown);
 
-        auto chilren = w->children_view(true);
+                if (w->send_event(tw, &me)) break;
 
-        bool is_do = false;
-        for (auto& c : chilren) {
-            Point c_widget_pos = widget_pos + c.pos();
-            is_do = _distribute_pos_event_to_widget(&c, c_widget_pos);
-            if (is_do) break;
+                tw = tw->parent();
+            }
         }
 
-        Point mouse_pos = _current_pos - widget_pos;
-        Rect widget_rect = Rect{Point(), w->size()};
+        for (int i = 0; i < sizeof(_key_is_change); i++) {
+            if (is_action((MouseKey)i)) {
+                Widget* tw = widget;
+                while (tw) {
+                    MouseEvent me = MouseEvent(MouseKeyEvent_type(), tw, this);
+                    me._set_action_key((MouseKey)i);
 
-        if (!is_do && widget_rect.is_contain_point(mouse_pos)) {
-            MousePosEvent event{this};
-            event._set_widget_pos(widget_pos);
-            is_do = w->do_event(&event);
+                    if (w->send_event(tw, &me)) break;
+
+                    tw = tw->parent();
+                }
+            }
         }
-
-        return is_do;
     }
 
-    MouseEvent::MouseEvent(MouseDispatcher* dispatcher) noexcept
-        : _dispatcher(dispatcher) {
+    MouseEvent::MouseEvent(const EventType* et, Widget* target, const MouseDispatcher* dispatcher) noexcept
+        : IEvent(et, target), _dispatcher(dispatcher) {
         _action_key = MouseKey::unkown;
     }
 
-    MouseEvent::~MouseEvent() {}
-
     Point MouseEvent::pos() const noexcept {
-        return _dispatcher->pos() - _widget_pos;
+        return _dispatcher->pos();
     }
     Vector MouseEvent::offset() const noexcept {
         return _dispatcher->offset();
@@ -104,7 +106,6 @@ namespace RolUI {
         return _action_key;
     }
 
-    void MouseEvent::_set_widget_pos(Point p) { _widget_pos = p; }
     void MouseEvent::_set_action_key(MouseKey key) { _action_key = key; }
 
 } // namespace RolUI

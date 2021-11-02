@@ -2,7 +2,6 @@
 #include <string>
 #include <filesystem>
 #include <stdexcept>
-#include <cstdlib>
 
 #include "glfw_backend/GLFWWindow.h"
 
@@ -12,36 +11,23 @@
 #include "RolUI/widgets/EllipseWidget.hpp"
 #include "RolUI/widgets/LabelWidget.hpp"
 #include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/Application.hpp"
 
 using RolUI::EllipseWidget;
 
 std::string get_font_path() {
     std::filesystem::path self_path{__FILE__};
-
     std::filesystem::path font_path = self_path.parent_path() / "Roboto-Regular.ttf";
     return font_path.string();
 }
 
-
 int main(int argc, char* argv[]) {
 
+    RolUI::Application app;
     RolUIBackend::GLFWWindow win(800, 600, "helloworld");
-  
-    // win.set_char_callback([](int unicode) {
-    //     printf("char callback: %d \n", unicode);
-    // });
-    // win.set_cursor_enter_callback([](int enter) {
-    //     printf("cursor_enter callback: %s \n", enter == GLFW_TRUE ? "true" : "false");
-    // });
-    // win.set_cursor_pos_callback([](double x, double y) {
-    //     printf("cursor_pos callback: %.2f, %.2f \n", x, y);
-    // });
-    // win.set_mouse_button_callback([](int button, int action, int mods) {
-    //     printf("mouse button callback: %d, %d, %d \n", button, action, mods);
-    // });
-    // win.set_scroll_callback([](double x, double y) {
-    //     printf("scroll callback: %.2f, %.2f \n", x, y);
-    // });
+    win.on_exit = [&] { app.exit(); };
+
+    app.set_window(&win);
 
     std::string font_path = get_font_path();
     if (win.painter()->load_font("san", font_path.c_str()) == false)
@@ -56,7 +42,7 @@ int main(int argc, char* argv[]) {
     rw1.set_round(10);
     rw1.set_background_color(RolUI::Color(240, 240, 0));
 
-    cw1.set_pos(10, 10);
+    cw1.set_pos(0, 0);
     cw1.set_size(100, 100);
     cw1.set_round(10);
     cw1.set_background_color(RolUI::Color(240, 0, 0));
@@ -81,19 +67,19 @@ int main(int argc, char* argv[]) {
     cw5.set_font("san");
     cw5.set_text("label widget.");
 
-    rw1.add_listener(event_type_of(RolUI::MousePosEvent), [](RolUI::IEvent* e) {
+    rw1.add_listener(RolUI::MouseKeyEvent_type(), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("rw1 listener. x: %d, y: %d \n", x, y);
         return true;
     });
-    cw4.add_listener(event_type_of(RolUI::MousePosEvent), [](RolUI::IEvent* e) {
+    cw4.add_listener(RolUI::MouseKeyEvent_type(), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw4 listener. x: %d, y: %d \n", x, y);
         return true;
     });
-    cw5.add_listener(event_type_of(RolUI::MousePosEvent), [](RolUI::IEvent* e) {
+    cw5.add_listener(RolUI::MouseKeyEvent_type(), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw5 listener. x: %d, y: %d \n", x, y);
@@ -106,11 +92,11 @@ int main(int argc, char* argv[]) {
     rw1.add_child(&cw4);
     rw1.add_child(&cw5);
 
-    win.set_widget(&rw1);
+    win.set_content_widget(&rw1);
 
     win.show();
 
-    win.run();
+    app.run();
 
     return 0;
 }

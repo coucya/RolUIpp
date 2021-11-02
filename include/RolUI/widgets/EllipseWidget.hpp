@@ -26,7 +26,7 @@ namespace RolUI {
         void set_border_color(const Color& c) noexcept;
         void set_background_color(const Color& c) noexcept;
 
-        void draw(IPainter* painter) override;
+        void on_draw(IPainter* painter) override;
     };
 
 } // namespace RolUI
