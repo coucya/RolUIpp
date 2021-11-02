@@ -66,7 +66,7 @@ namespace RolUI {
                 MouseEvent me = MouseEvent(MousePosEvent_type(), tw, this);
                 me._set_action_key(MouseKey::unkown);
 
-                if (w->send_event(tw, &me)) break;
+                if (send_event(tw, &me)) break;
 
                 tw = tw->parent();
             }
@@ -79,7 +79,7 @@ namespace RolUI {
                     MouseEvent me = MouseEvent(MouseKeyEvent_type(), tw, this);
                     me._set_action_key((MouseKey)i);
 
-                    if (w->send_event(tw, &me)) break;
+                    if (send_event(tw, &me)) break;
 
                     tw = tw->parent();
                 }

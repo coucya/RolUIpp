@@ -12,6 +12,8 @@ namespace RolUI {
 
     void Window::dispatch_event() {}
 
+    Application* Window::application() const noexcept { return _application; }
+    
     void Window::set_content_widget(Widget* widget) noexcept {
         if (widget == nullptr) return;
 
@@ -44,11 +46,6 @@ namespace RolUI {
         begin_draw();
         _draw_widget(root_widget, painter);
         end_draw();
-    }
-
-    bool Window::send_event(Widget* w, IEvent* e) {
-        if (w == nullptr || w->window() != this) return false;
-        return w->do_event(e);
     }
 
     Widget* Window::get_widget_by_pos(Point pos) const noexcept {

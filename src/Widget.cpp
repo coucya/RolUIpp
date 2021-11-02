@@ -4,12 +4,18 @@
 #include <tuple>
 #include <utility>
 
+#include "RolUI/Application.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
+
+    bool send_event(Widget* w, IEvent* e) {
+        if (!w || !w->window() || !w->window()->application()) return false;
+        return w->do_event(e);
+    }
 
     Widget::Widget() noexcept {}
 
@@ -199,11 +205,11 @@ namespace RolUI {
     }
 
     void Widget::_set_window(Window* w) noexcept {
-
-        WindowChangeEvent e{this, w, _window};
+        Window* old = _window;
         _window = w;
 
-        if (w) w->send_event(this, &e);
+        WindowChangeEvent e{this, w, old};
+        send_event(this, &e);
 
         for (auto& widget : _children)
             if (widget->_window != w)

@@ -1,5 +1,6 @@
 
 #include "RolUI/Window.hpp"
+#include "RolUI/Widget.hpp"
 #include "RolUI/Application.hpp"
 
 namespace RolUI {
@@ -9,9 +10,13 @@ namespace RolUI {
 
     void Application::set_window(Window* w) noexcept {
         _window = w;
+        _window->_application = this;
     }
     void Application::remove_window(Window* w) noexcept {
-        if (_window == w) _window = nullptr;
+        if (_window == w) {
+            _window = nullptr;
+            w->_application = nullptr;
+        }
     }
 
     void Application::exit() noexcept { _should_exit = true; }
@@ -19,7 +24,6 @@ namespace RolUI {
         _draw_window();
         while (!_should_exit) {
             _dispatch_event();
-
             _draw_window();
         }
     }

@@ -3,6 +3,8 @@
 namespace RolUI {
 
     class Window;
+    class Widget;
+    class IEvent;
 
     class Application {
       public:

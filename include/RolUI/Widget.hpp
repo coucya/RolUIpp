@@ -14,9 +14,12 @@
 namespace RolUI {
 
     class Window;
+    class Widget;
 
     typedef bool (*EventCallbackFunc)(IEvent*);
     typedef std::function<bool(IEvent*)> EventCallback;
+
+    bool send_event(Widget* w, IEvent* e);
 
     class Widget : public IWidget, public IEventListener {
 

@@ -9,14 +9,18 @@
 
 namespace RolUI {
 
+    class Application;
     class Widget;
 
     class Window : public IDisplay, public IDispatcher {
-      protected:
+        friend Application;
+
       public:
         Window() noexcept {}
 
         ~Window() override {}
+
+        Application* application() const noexcept;
 
         Widget* content_widget() const noexcept;
         void set_content_widget(Widget* w) noexcept;
@@ -29,8 +33,6 @@ namespace RolUI {
 
         void dispatch_event() override;
 
-        bool send_event(Widget* w, IEvent* e);
-
         Widget* get_widget_by_pos(Point pos) const noexcept;
 
       private:
@@ -38,6 +40,8 @@ namespace RolUI {
 
       protected:
         Widget* _content_widget = nullptr;
+
+        Application* _application;
     };
 
 } // namespace RolUI
