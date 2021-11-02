@@ -52,16 +52,14 @@ namespace RolUI {
     }
 
     Widget* Window::get_widget_by_pos(Point pos) const noexcept {
-        Widget* widget = _content_widget;
         Point t_pos = pos;
 
-        if (widget == nullptr) return nullptr;
-
-        while (true) {
-            t_pos = pos - widget->pos();
-            Widget* tw = widget->get_child_by_pos(t_pos);
-            if (tw == nullptr) break;
-            widget = tw;
+        Widget* widget = nullptr;
+        Widget* it_w = _content_widget;
+        while (it_w && it_w->rect().contain(t_pos)) {
+            widget = it_w;
+            t_pos = t_pos - it_w->pos();
+            it_w = it_w->get_child_by_pos(t_pos);
         }
         return widget;
     }

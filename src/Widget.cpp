@@ -103,7 +103,6 @@ namespace RolUI {
         Widget* w = get_child_by_pos(pos);
         if (w) return w;
         return get_part_by_pos(pos);
-        return nullptr;
     }
 
     size_t Widget::add_listener(const EventType* et, EventCallback&& callback) {
