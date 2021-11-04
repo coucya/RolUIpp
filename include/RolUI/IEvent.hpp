@@ -1,10 +1,12 @@
 #pragma once
 
+#include "RolUI/IEvent.hpp"
+#include "RolUI/IWidget.hpp"
 #include <stdint.h>
 #include <string_view>
 
 #define RolUI_define_event_type_in_class(tp) \
-    static const EventType* type() {               \
+    static const EventType* type() {         \
         static EventType et{#tp};            \
         return &et;                          \
     }
@@ -13,30 +15,32 @@
     static const EventType* type();
 
 #define RolUI_impl_event_type_in_class(tp) \
-    const EventType* tp::type() {                \
+    const EventType* tp::type() {          \
         static EventType et{#tp};          \
         return &et;                        \
     }
 
-#define RolUI_define_event_type(tp) \
+#define RolUI_define_event_type(tp)       \
     inline const EventType* tp##_type() { \
-        static EventType et{#tp};   \
-        return &et;                 \
+        static EventType et{#tp};         \
+        return &et;                       \
     }
 
 #define RolUI_decl_event_type(tp) \
     const EventType* tp##_type();
 
-#define RolUI_impl_event_type(tp) \
-    const EventType* tp##_type() {      \
-        static EventType et{#tp}; \
-        return &et;               \
+#define RolUI_impl_event_type(tp)  \
+    const EventType* tp##_type() { \
+        static EventType et{#tp};  \
+        return &et;                \
     }
 
 namespace RolUI {
 
     class Widget;
     class IEvent;
+
+    bool send_event(Widget* w, IEvent* e);
 
     class EventType {
       public:
@@ -58,6 +62,9 @@ namespace RolUI {
     };
 
     class IEvent {
+
+        friend bool send_event(Widget*, IEvent*);
+
       public:
         IEvent(const EventType* et, Widget* target) noexcept
             : _type(et), _target(target) {}

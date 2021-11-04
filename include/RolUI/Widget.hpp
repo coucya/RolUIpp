@@ -52,7 +52,6 @@ namespace RolUI {
         Window* window() const noexcept;
 
         Widget* parent() const noexcept;
-        Widget* real_parent() const noexcept;
 
         virtual size_t child_count() const noexcept;
         virtual bool is_my_child(Widget* w) const noexcept;
@@ -100,13 +99,13 @@ namespace RolUI {
         Childrens::iterator _find_part_it(Widget* w) const noexcept;
 
         void _set_window(Window* w) noexcept;
+        void _set_parent(Widget* w) noexcept;
 
       private:
         Point _pos;
         Size _size;
 
         Widget* _parent = nullptr;
-        Widget* _real_parent = nullptr;
 
         Window* _window = nullptr;
 

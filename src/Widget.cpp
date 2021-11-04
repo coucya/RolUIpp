@@ -14,6 +14,7 @@ namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e) {
         if (!w || !w->window() || !w->window()->application()) return false;
+        e->_target = w;
         return w->do_event(e);
     }
 
@@ -30,9 +31,8 @@ namespace RolUI {
     Rect Widget::rect() const noexcept { return {_pos, _size}; }
 
     Point Widget::abs_pos() const noexcept {
-        if (_real_parent == nullptr) return _pos;
-        return _real_parent->abs_pos() + _pos;
-        return {};
+        if (_parent == nullptr) return _pos;
+        return _parent->abs_pos() + _pos;
     }
 
     void Widget::set_pos(const Point& pos) noexcept { _pos = pos; }
@@ -42,7 +42,6 @@ namespace RolUI {
     void Widget::set_size(uint32_t w, uint32_t h) noexcept { set_size({w, h}); }
 
     Widget* Widget::parent() const noexcept { return _parent; }
-    Widget* Widget::real_parent() const noexcept { return _real_parent; }
 
     Window* Widget::window() const noexcept { return _window; }
 
@@ -137,12 +136,15 @@ namespace RolUI {
         return idx < _children.size() ? _children[idx] : nullptr;
     }
     void Widget::_add_widget(Childrens::iterator pos, Widget* w) noexcept {
-        if (w->_parent) w->_parent->remove_widget(w);
+        if (!w || w->parent() == this) return;
 
-        w->_parent = this;
-        w->_real_parent = this;
-        w->_window = _window;
+        if (w->_parent) {
+            auto it = w->_parent->_find_widget_it(w);
+            w->_parent->_children.erase(it);
+        }
+
         w->_set_window(_window);
+        w->_set_parent(this);
 
         _children.insert(pos, w);
     }
@@ -150,9 +152,8 @@ namespace RolUI {
         if (pos == _children.end()) return;
 
         Widget* w = *pos;
-        w->_parent = nullptr;
-        w->_real_parent = nullptr;
         w->_set_window(nullptr);
+        w->_parent = nullptr;
 
         _children.erase(pos);
     }
@@ -205,15 +206,31 @@ namespace RolUI {
     }
 
     void Widget::_set_window(Window* w) noexcept {
+        if (_window == w) return;
+
         Window* old = _window;
         _window = w;
 
-        WindowChangeEvent e{this, w, old};
-        send_event(this, &e);
+        if (w && w != old) {
+            WindowChangeEvent e{this, w, old};
+            send_event(this, &e);
+        }
 
         for (auto& widget : _children)
             if (widget->_window != w)
                 widget->_set_window(w);
+    }
+
+    void Widget::_set_parent(Widget* w) noexcept {
+        if (_parent == w) return;
+
+        Widget* old = _parent;
+        _parent = w;
+
+        if (w && w != old) {
+            ParentChangeEvent e(this, w, old);
+            send_event(this, &e);
+        }
     }
 
 } // namespace RolUI

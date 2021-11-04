@@ -11,6 +11,7 @@
 #include "RolUI/widgets/EllipseWidget.hpp"
 #include "RolUI/widgets/LabelWidget.hpp"
 #include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
 
 using RolUI::EllipseWidget;
@@ -22,6 +23,7 @@ std::string get_font_path() {
 }
 
 int main(int argc, char* argv[]) {
+    using namespace RolUI;
 
     RolUI::Application app;
     RolUIBackend::GLFWWindow win(800, 600, "helloworld");
@@ -42,10 +44,10 @@ int main(int argc, char* argv[]) {
     rw1.set_round(10);
     rw1.set_background_color(RolUI::Color(240, 240, 0));
 
-    cw1.set_pos(0, 0);
+    cw1.set_pos(20, 20);
     cw1.set_size(100, 100);
     cw1.set_round(10);
-    cw1.set_background_color(RolUI::Color(240, 0, 0));
+    cw1.set_background_color(RolUI::Color(240, 0, 100));
 
     cw2.set_pos(150, 10);
     cw2.set_size(100, 100);
@@ -83,6 +85,22 @@ int main(int argc, char* argv[]) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw5 listener. x: %d, y: %d \n", x, y);
+        return true;
+    });
+
+    cw1.add_listener(RolUI::ParentChangeEvent::type(), [](RolUI::IEvent* e) {
+        printf("cw1 %s. \n", e->event_type()->name().data());
+        return true;
+    });
+    rw1.add_listener(RolUI::MouseKeyEvent_type(), [&](RolUI::IEvent* e) {
+        RolUI::MouseEvent* me = (RolUI::MouseEvent*)e;
+        if (me->action() == MouseKey::left && me->button(MouseKey::left) == MouseKeyMode::press) {
+            if (cw1.parent() != &rw1)
+                rw1.add_child(&cw1);
+            else
+                cw2.add_child(&cw1);
+        }
+
         return true;
     });
 
