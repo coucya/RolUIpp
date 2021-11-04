@@ -57,7 +57,8 @@ namespace RolUI {
     };
 
     RolUI_decl_event_type(MousePosEvent);
-    RolUI_decl_event_type(MouseKeyEvent);
+    RolUI_decl_event_type(MousePressEvent);
+    RolUI_decl_event_type(MouseReleaseEvent);
 
     class MouseDispatcher {
       public:

@@ -69,37 +69,38 @@ int main(int argc, char* argv[]) {
     cw5.set_font("san");
     cw5.set_text("label widget.");
 
-    rw1.add_listener(RolUI::MouseKeyEvent_type(), [](RolUI::IEvent* e) {
+    rw1.add_listener(RolUI::MousePressEvent_type(), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("rw1 listener. x: %d, y: %d \n", x, y);
         return true;
     });
-    cw4.add_listener(RolUI::MouseKeyEvent_type(), [](RolUI::IEvent* e) {
+    cw4.add_listener(RolUI::MousePressEvent_type(), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw4 listener. x: %d, y: %d \n", x, y);
         return true;
     });
-    cw5.add_listener(RolUI::MouseKeyEvent_type(), [](RolUI::IEvent* e) {
+    cw5.add_listener(RolUI::MousePressEvent_type(), [](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
         auto [x, y] = me->pos();
         printf("cw5 listener. x: %d, y: %d \n", x, y);
         return true;
     });
 
-    cw1.add_listener(RolUI::ParentChangeEvent::type(), [](RolUI::IEvent* e) {
-        printf("cw1 %s. \n", e->event_type()->name().data());
+    bool is_lock = false;
+    rw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
+        is_lock = true;
         return true;
     });
-    rw1.add_listener(RolUI::MouseKeyEvent_type(), [&](RolUI::IEvent* e) {
+    rw1.add_listener(RolUI::MouseReleaseEvent_type(), [&](RolUI::IEvent* e) {
+        is_lock = false;
+        return true;
+    });
+    rw1.add_listener(RolUI::MousePosEvent_type(), [&](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = (RolUI::MouseEvent*)e;
-        if (me->action() == MouseKey::left && me->button(MouseKey::left) == MouseKeyMode::press) {
-            if (cw1.parent() != &rw1)
-                rw1.add_child(&cw1);
-            else
-                cw2.add_child(&cw1);
-        }
+        if (is_lock)
+            rw1.set_pos(rw1.pos() + me->offset());
 
         return true;
     });

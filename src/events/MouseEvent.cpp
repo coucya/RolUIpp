@@ -8,7 +8,8 @@
 namespace RolUI {
 
     RolUI_impl_event_type(MousePosEvent);
-    RolUI_impl_event_type(MouseKeyEvent);
+    RolUI_impl_event_type(MousePressEvent);
+    RolUI_impl_event_type(MouseReleaseEvent);
 
     bool MouseDispatcher::is_action(MouseKey key) const noexcept {
         return _key_is_change[(int)key];
@@ -76,7 +77,10 @@ namespace RolUI {
             if (is_action((MouseKey)i)) {
                 Widget* tw = widget;
                 while (tw) {
-                    MouseEvent me = MouseEvent(MouseKeyEvent_type(), tw, this);
+                    const EventType* et = button((MouseKey)i) == MouseKeyMode::press
+                                            ? MousePressEvent_type()
+                                            : MouseReleaseEvent_type();
+                    MouseEvent me = MouseEvent(et, tw, this);
                     me._set_action_key((MouseKey)i);
 
                     if (send_event(tw, &me)) break;
