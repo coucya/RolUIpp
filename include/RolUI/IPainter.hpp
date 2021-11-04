@@ -3,6 +3,7 @@
 #include <cstring>
 #include <stdint.h>
 
+#include "RolUI/Rect.hpp"
 #include "Size.hpp"
 #include "Rect.hpp"
 #include "Color.hpp"
@@ -17,9 +18,8 @@ namespace RolUI {
 
         virtual Size text_size(const char* text, uint32_t len) const = 0;
 
-        virtual void push_pos(const Point& pos) = 0;
-        virtual void pop_pos(const Point& pos) = 0;
-        virtual void reset_pos() = 0;
+        virtual void set_base_pos(const Point& pos) = 0;
+        virtual void scissor(const Rect& rect) = 0;
 
         virtual void set_font_size(uint32_t s) = 0;
         virtual void set_font_color(Color color) = 0;

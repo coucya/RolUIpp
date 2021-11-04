@@ -6,6 +6,7 @@
 #include "RolUI/IDispatcher.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
+#include "RolUI/Rect.hpp"
 
 namespace RolUI {
 
@@ -36,7 +37,7 @@ namespace RolUI {
         Widget* get_widget_by_pos(Point pos) const noexcept;
 
       private:
-        void _draw_widget(RolUI::Widget* widget, RolUI::IPainter* painter) noexcept;
+        void _draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept;
 
       protected:
         Widget* _content_widget = nullptr;

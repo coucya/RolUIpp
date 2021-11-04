@@ -1,6 +1,10 @@
 
+#include <climits>
+
 #include "RolUI/Window.hpp"
 #include "RolUI/Point.hpp"
+#include "RolUI/Rect.hpp"
+#include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IPainter.hpp"
 
@@ -13,7 +17,7 @@ namespace RolUI {
     void Window::dispatch_event() {}
 
     Application* Window::application() const noexcept { return _application; }
-    
+
     void Window::set_content_widget(Widget* widget) noexcept {
         if (widget == nullptr) return;
 
@@ -21,20 +25,24 @@ namespace RolUI {
         _content_widget->_set_window(this);
     }
 
-    void Window::_draw_widget(RolUI::Widget* widget, RolUI::IPainter* painter) noexcept {
+    void Window::_draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept {
         if (widget == nullptr || painter == nullptr) return;
 
         Point pos = widget->pos();
+        Size size = widget->size();
+        Rect new_scissor = {scissor.pos() + pos, size};
 
         widget->on_draw(painter);
 
-        painter->push_pos(pos);
+        painter->set_base_pos(new_scissor.pos());
+        painter->scissor(new_scissor);
 
         for (auto& cw : widget->_children) {
-            _draw_widget(cw, painter);
+            _draw_widget(cw, new_scissor, painter);
         }
 
-        painter->pop_pos(pos);
+        painter->scissor(scissor);
+        painter->set_base_pos(scissor.pos());
     }
     void Window::draw() noexcept {
         Widget* root_widget = this->_content_widget;
@@ -44,7 +52,7 @@ namespace RolUI {
         if (painter == nullptr) return;
 
         begin_draw();
-        _draw_widget(root_widget, painter);
+        _draw_widget(root_widget, Rect{Point(), Size{INT_MAX, INT_MAX}}, painter);
         end_draw();
     }
 

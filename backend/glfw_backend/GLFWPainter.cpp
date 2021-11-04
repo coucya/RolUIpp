@@ -28,9 +28,11 @@ namespace RolUIBackend {
                 (uint32_t)(bound[3] - bound[1])};
     }
 
-    void GLFWPainter::push_pos(const RolUI::Point& pos) { _pos += pos; }
-    void GLFWPainter::pop_pos(const RolUI::Point& pos) { _pos -= pos; }
-    void GLFWPainter::reset_pos() { _pos = RolUI::Point{0, 0}; }
+    void GLFWPainter::set_base_pos(const RolUI::Point& pos) { _pos = pos; }
+    void GLFWPainter::scissor(const RolUI::Rect& rect) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        nvgScissor(vg, rect.x, rect.y, rect.width, rect.height);
+    }
 
     void GLFWPainter::set_font_size(uint32_t s) { _font_size = s; }
     void GLFWPainter::set_font_color(RolUI::Color color) { _font_color = color; }
