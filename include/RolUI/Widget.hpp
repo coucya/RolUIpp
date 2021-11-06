@@ -54,19 +54,16 @@ namespace RolUI {
         Widget* parent() const noexcept;
 
         virtual size_t child_count() const noexcept;
-        virtual bool is_my_child(Widget* w) const noexcept;
         virtual Widget* get_child(size_t idx) const noexcept;
         virtual void add_child(Widget* w) noexcept;
         virtual void remove_child(Widget* w) noexcept;
 
         virtual size_t part_count() const noexcept;
-        virtual bool is_my_part(Widget* w) const noexcept;
         virtual Widget* get_part(size_t idx) const noexcept;
         virtual void add_part(Widget* w) noexcept;
         virtual void remove_part(Widget* w) noexcept;
 
         virtual void remove_widget(Widget* w) noexcept;
-        virtual bool is_my_child_or_part(Widget* w) const noexcept;
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept;
         virtual Widget* get_part_by_pos(Point pos) const noexcept;

@@ -57,9 +57,6 @@ namespace RolUI {
     Widget* Widget::get_child(size_t idx) const noexcept {
         return _get_widget(_part_count + idx);
     }
-    bool Widget::is_my_child(Widget* w) const noexcept {
-        return _find_child_it(w) != _child_end_it();
-    }
     size_t Widget::child_count() const noexcept {
         return _children.size() - _part_count;
     }
@@ -75,19 +72,12 @@ namespace RolUI {
         _remove_widget(it);
         _part_count--;
     }
-    bool Widget::is_my_part(Widget* w) const noexcept {
-        return _find_part_it(w) != _part_end_it();
-    }
     Widget* Widget::get_part(size_t idx) const noexcept { return _get_widget(idx); }
     size_t Widget::part_count() const noexcept { return _part_count; }
 
     void Widget::remove_widget(Widget* w) noexcept {
         remove_part(w);
         remove_child(w);
-    }
-    bool Widget::is_my_child_or_part(Widget* w) const noexcept {
-        return std::find(_children.begin(), _children.end(), w) != _children.end();
-        return false;
     }
 
     Widget* Widget::get_child_by_pos(Point pos) const noexcept {
