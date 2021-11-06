@@ -4,6 +4,7 @@
 
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
+#include "RolUI/Size.hpp"
 #include "RolUI/IPainter.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/Window.hpp"
@@ -25,6 +26,9 @@ namespace RolUIBackend {
 
         GLFWWindow& operator=(const GLFWWindow&) = delete;
         GLFWWindow& operator=(GLFWWindow&&) = delete;
+
+        RolUI::Point pos() const override;
+        RolUI::Size size() const override;
 
         RolUI::IPainter* painter() override;
         void begin_draw() override;

@@ -1,4 +1,6 @@
 
+#include <cstdint>
+
 #include "glad/glad.h"
 
 #include "nanovg.h"
@@ -56,6 +58,15 @@ namespace RolUIBackend {
         };
 
         _mouse_dispatcher.clear_change();
+    }
+
+    RolUI::Point GLFWWindow::pos() const {
+        auto [x, y] = window_pos();
+        return {x, y};
+    }
+    RolUI::Size GLFWWindow::size() const {
+        auto [w, h] = window_size();
+        return {w, h};
     }
 
     RolUI::IPainter* GLFWWindow::painter() { return &_painter; }

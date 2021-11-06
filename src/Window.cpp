@@ -52,7 +52,7 @@ namespace RolUI {
         if (painter == nullptr) return;
 
         begin_draw();
-        _draw_widget(root_widget, Rect{Point(), Size{INT_MAX, INT_MAX}}, painter);
+        _draw_widget(root_widget, Rect{Point(), this->size()}, painter);
         end_draw();
     }
 

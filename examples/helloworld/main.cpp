@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
     });
 
     rw1.on_pos_change.connect([](Point p) {
-        printf("rw1.on_pos_change: %d, %d", p.x, p.y);
+        printf("rw1.on_pos_change: %d, %d \n", p.x, p.y);
     });
 
     rw1.add_child(&cw1);

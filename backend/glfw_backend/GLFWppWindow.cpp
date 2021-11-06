@@ -1,7 +1,9 @@
 
+#include <cstdint>
 #include <optional>
 
 #include "glad/glad.h"
+#include "GLFW/glfw3.h"
 
 #include "GLFWppWindow.h"
 
@@ -130,16 +132,30 @@ namespace RolUIBackend {
         glfwSetWindowSize(_glfw_window, w, h);
     }
 
-    std::tuple<size_t, size_t> GLFWppWindow::window_size() const noexcept {
+    std::tuple<int, int> GLFWppWindow::window_pos() const noexcept {
+        int x, y;
+        glfwGetWindowPos(_glfw_window, &x, &y);
+        return {x, y};
+    }
+    int GLFWppWindow::x() const noexcept {
+        auto [x, y] = window_pos();
+        return x;
+    }
+    int GLFWppWindow::y() const noexcept {
+        auto [x, y] = window_pos();
+        return y;
+    }
+
+    std::tuple<uint32_t, uint32_t> GLFWppWindow::window_size() const noexcept {
         int w, h;
         glfwGetWindowSize(_glfw_window, &w, &h);
         return {w, h};
     }
-    size_t GLFWppWindow::width() const noexcept {
+    uint32_t GLFWppWindow::width() const noexcept {
         auto [w, h] = window_size();
         return w;
     }
-    size_t GLFWppWindow::height() const noexcept {
+    uint32_t GLFWppWindow::height() const noexcept {
         auto [w, h] = window_size();
         return h;
     }

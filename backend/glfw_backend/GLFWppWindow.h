@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <functional>
 #include <tuple>
@@ -61,9 +62,13 @@ namespace RolUIBackend {
         void set_title(const char* title);
         void set_size(int w, int h);
 
-        std::tuple<size_t, size_t> window_size() const noexcept;
-        size_t width() const noexcept;
-        size_t height() const noexcept;
+        std::tuple<int, int> window_pos() const noexcept;
+        int x() const noexcept;
+        int y() const noexcept;
+
+        std::tuple<uint32_t, uint32_t> window_size() const noexcept;
+        uint32_t width() const noexcept;
+        uint32_t height() const noexcept;
 
         std::tuple<double, double> cursor_pos() const noexcept;
 
