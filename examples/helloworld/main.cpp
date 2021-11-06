@@ -5,6 +5,7 @@
 
 #include "glfw_backend/GLFWWindow.h"
 
+#include "RolUI/Point.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/widgets/RectWidget.hpp"
@@ -103,6 +104,10 @@ int main(int argc, char* argv[]) {
             rw1.set_pos(rw1.pos() + me->offset());
 
         return true;
+    });
+
+    rw1.on_pos_change.connect([](Point p) {
+        printf("rw1.on_pos_change: %d, %d", p.x, p.y);
     });
 
     rw1.add_child(&cw1);

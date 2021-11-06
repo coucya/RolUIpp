@@ -1,42 +1,47 @@
 #pragma once
 
 #include "RolUI/IEvent.hpp"
+#include "RolUI/Point.hpp"
+#include "RolUI/Size.hpp"
+#include "RolUI/events/Widget_event.hpp"
+#include <optional>
 
 namespace RolUI {
 
     class Window;
     class Widget;
 
-    class WindowChangeEvent : public IEvent {
+    template <typename T>
+    class PropertyChangeEvent : public IEvent {
       public:
-        RolUI_decl_event_type_in_class(WindowChangeEvent);
+        PropertyChangeEvent(const EventType* et, Widget* target, T current, T old) noexcept
+            : IEvent(et, target), _current(current), _old(old) {}
 
-      public:
-        WindowChangeEvent(Widget* target, Window* current, Window* old) noexcept
-            : IEvent(type(), target), _current_window(current), _old_window(old) {}
-
-        Window* current_window() const noexcept;
-        Window* old_window() const noexcept;
+        T current_value() const noexcept { return _current; }
+        T old_value() const noexcept { return _old; }
 
       private:
-        Window* _current_window;
-        Window* _old_window;
+        T _current;
+        T _old;
     };
 
-    class ParentChangeEvent : public IEvent {
-      public:
-        RolUI_decl_event_type_in_class(ParentChangeEvent);
+#define RulUI_define_property_change_event(name, property_type)                   \
+    class name : public PropertyChangeEvent<property_type> {                      \
+      public:                                                                     \
+        RolUI_decl_event_type_in_class(name);                                     \
+                                                                                  \
+        name(Widget* target, property_type current, property_type old) noexcept   \
+            : PropertyChangeEvent<property_type>(type(), target, current, old) {} \
+    }
 
-      public:
-        ParentChangeEvent(Widget* target, Widget* current, Widget* old) noexcept
-            : IEvent(type(), target), _current_parent(current), _old_parent(old) {}
+    RulUI_define_property_change_event(WindowChangeEvent, Window*);
 
-        Widget* current_parent() const noexcept;
-        Widget* old_parent() const noexcept;
+    RulUI_define_property_change_event(ParentChangeEvent, Widget*);
 
-      private:
-        Widget* _current_parent;
-        Widget* _old_parent;
-    };
+    RulUI_define_property_change_event(PosChangeEvent, Point);
+
+    RulUI_define_property_change_event(SizeChangeEvent, Size);
+
+#undef RulUI_define_property_change_event
 
 } // namespace RolUI

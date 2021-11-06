@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <stdint.h>
 #include <functional>
 #include <vector>
 #include <tuple>
@@ -9,6 +8,7 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/IWidget.hpp"
 #include "RolUI/IEventListener.hpp"
+#include "RolUI/sigsslot/Signal.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
@@ -23,7 +23,7 @@ namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e);
 
-    class Widget : public IWidget, public IEventListener {
+    class Widget : public IWidget, public IEventListener, public HasSlot {
 
         friend Window;
 
@@ -82,9 +82,14 @@ namespace RolUI {
 
         bool on_event(IEvent* e) override;
 
+      public:
+        Signal<Point> on_pos_change;
+        Signal<Size> on_size_change;
+
       private:
         typedef std::vector<Widget*> Childrens;
 
+        void _init_event_bind() noexcept;
         void _update_child_index(size_t begin = 0) noexcept;
 
         Widget* _get_widget(size_t idx) const noexcept;

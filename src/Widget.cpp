@@ -6,6 +6,8 @@
 
 #include "RolUI/Application.hpp"
 #include "RolUI/IEvent.hpp"
+#include "RolUI/Point.hpp"
+#include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/events/Widget_event.hpp"
@@ -18,9 +20,12 @@ namespace RolUI {
         return w->do_event(e);
     }
 
-    Widget::Widget() noexcept {}
+    Widget::Widget() noexcept {
+        _init_event_bind();
+    }
 
     Widget::Widget(Widget* parent) noexcept {
+        _init_event_bind();
         parent->add_child(this);
     }
 
@@ -35,8 +40,20 @@ namespace RolUI {
         return _parent->abs_pos() + _pos;
     }
 
-    void Widget::set_pos(const Point& pos) noexcept { _pos = pos; }
-    void Widget::set_size(const Size& size) noexcept { _size = size; }
+    void Widget::set_pos(const Point& pos) noexcept {
+        Point old = _pos;
+        _pos = pos;
+
+        PosChangeEvent e{this, pos, old};
+        send_event(this, &e);
+    }
+    void Widget::set_size(const Size& size) noexcept {
+        Size old = _size;
+        _size = size;
+
+        SizeChangeEvent e{this, size, old};
+        send_event(this, &e);
+    }
 
     void Widget::set_pos(int32_t x, int32_t y) noexcept { set_pos({x, y}); }
     void Widget::set_size(uint32_t w, uint32_t h) noexcept { set_size({w, h}); }
@@ -128,6 +145,18 @@ namespace RolUI {
         return b;
     }
 
+    void Widget::_init_event_bind() noexcept {
+        add_listener(PosChangeEvent::type(), [this](IEvent* e) {
+            PosChangeEvent* pe = (PosChangeEvent*)e;
+            this->on_pos_change.emit(pe->current_value());
+            return true;
+        });
+        add_listener(SizeChangeEvent::type(), [this](IEvent* e) {
+            SizeChangeEvent* se = (SizeChangeEvent*)e;
+            this->on_size_change.emit(se->current_value());
+            return true;
+        });
+    }
     void Widget::_update_child_index(size_t begin) noexcept {
         for (size_t i = begin; i < _children.size(); i++)
             _children[i]->_index = i;
