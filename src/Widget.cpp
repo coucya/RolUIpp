@@ -45,6 +45,12 @@ namespace RolUI {
 
     Window* Widget::window() const noexcept { return _window; }
 
+    bool Widget::is_child() const noexcept { return _parent && _index >= _parent->_part_count; }
+    bool Widget::is_part() const noexcept { return _parent && _index < _parent->_part_count; }
+
+    size_t Widget::child_index() const noexcept { return is_child() ? _index - _parent->_part_count : 0; }
+    size_t Widget::part_index() const noexcept { return is_part() ? _index : 0; }
+
     void Widget::add_child(Widget* w) noexcept {
         _add_widget(_child_end_it(), w);
     }
@@ -122,6 +128,11 @@ namespace RolUI {
         return b;
     }
 
+    void Widget::_update_child_index(size_t begin) noexcept {
+        for (size_t i = begin; i < _children.size(); i++)
+            _children[i]->_index = i;
+    }
+
     Widget* Widget::_get_widget(size_t idx) const noexcept {
         return idx < _children.size() ? _children[idx] : nullptr;
     }
@@ -136,16 +147,52 @@ namespace RolUI {
         w->_set_window(_window);
         w->_set_parent(this);
 
+        size_t pos_idx = std::distance(_children.begin(), pos);
+
         _children.insert(pos, w);
+
+        _update_child_index(pos_idx);
     }
     void Widget::_remove_widget(Childrens::iterator pos) noexcept {
         if (pos == _children.end()) return;
 
         Widget* w = *pos;
         w->_set_window(nullptr);
-        w->_parent = nullptr;
+        w->_set_parent(nullptr);
+
+        size_t pos_idx = std::distance(_children.begin(), pos);
 
         _children.erase(pos);
+
+        _update_child_index(pos_idx);
+    }
+
+    void Widget::_set_window(Window* w) noexcept {
+        if (_window == w) return;
+
+        Window* old = _window;
+        _window = w;
+
+        if (w && w != old) {
+            WindowChangeEvent e{this, w, old};
+            send_event(this, &e);
+        }
+
+        for (auto& widget : _children)
+            if (widget->_window != w)
+                widget->_set_window(w);
+    }
+
+    void Widget::_set_parent(Widget* w) noexcept {
+        if (_parent == w) return;
+
+        Widget* old = _parent;
+        _parent = w;
+
+        if (w && w != old) {
+            ParentChangeEvent e(this, w, old);
+            send_event(this, &e);
+        }
     }
 
     auto Widget::_child_begin_it() const noexcept -> Childrens::iterator {
@@ -193,34 +240,6 @@ namespace RolUI {
     }
     auto Widget::_find_part_it(Widget* w) const noexcept -> Childrens::iterator {
         return std::find(_part_begin_it(), _part_end_it(), w);
-    }
-
-    void Widget::_set_window(Window* w) noexcept {
-        if (_window == w) return;
-
-        Window* old = _window;
-        _window = w;
-
-        if (w && w != old) {
-            WindowChangeEvent e{this, w, old};
-            send_event(this, &e);
-        }
-
-        for (auto& widget : _children)
-            if (widget->_window != w)
-                widget->_set_window(w);
-    }
-
-    void Widget::_set_parent(Widget* w) noexcept {
-        if (_parent == w) return;
-
-        Widget* old = _parent;
-        _parent = w;
-
-        if (w && w != old) {
-            ParentChangeEvent e(this, w, old);
-            send_event(this, &e);
-        }
     }
 
 } // namespace RolUI

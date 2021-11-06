@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <stdint.h>
 #include <functional>
 #include <vector>
@@ -10,6 +11,7 @@
 #include "RolUI/IEventListener.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
+#include "RolUI/Size.hpp"
 
 namespace RolUI {
 
@@ -53,6 +55,12 @@ namespace RolUI {
 
         Widget* parent() const noexcept;
 
+        bool is_child() const noexcept;
+        bool is_part() const noexcept;
+
+        size_t child_index() const noexcept;
+        size_t part_index() const noexcept;
+
         virtual size_t child_count() const noexcept;
         virtual Widget* get_child(size_t idx) const noexcept;
         virtual void add_child(Widget* w) noexcept;
@@ -77,9 +85,14 @@ namespace RolUI {
       private:
         typedef std::vector<Widget*> Childrens;
 
+        void _update_child_index(size_t begin = 0) noexcept;
+
         Widget* _get_widget(size_t idx) const noexcept;
         void _add_widget(Childrens::iterator pos, Widget* w) noexcept;
         void _remove_widget(Childrens::iterator pos) noexcept;
+
+        void _set_window(Window* w) noexcept;
+        void _set_parent(Widget* w) noexcept;
 
         Childrens::iterator _child_begin_it() const noexcept;
         Childrens::iterator _child_end_it() const noexcept;
@@ -95,12 +108,11 @@ namespace RolUI {
         Childrens::iterator _find_child_it(Widget* w) const noexcept;
         Childrens::iterator _find_part_it(Widget* w) const noexcept;
 
-        void _set_window(Window* w) noexcept;
-        void _set_parent(Widget* w) noexcept;
-
       private:
         Point _pos;
         Size _size;
+
+        size_t _index = 0;
 
         Widget* _parent = nullptr;
 
