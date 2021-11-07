@@ -59,9 +59,13 @@ namespace RolUI {
     RolUI_decl_event_type(MousePosEvent);
     RolUI_decl_event_type(MousePressEvent);
     RolUI_decl_event_type(MouseReleaseEvent);
+    RolUI_decl_event_type(MouseEnterEvent);
+    RolUI_decl_event_type(MouseLeaveEvent);
 
     class MouseDispatcher {
       public:
+        MouseDispatcher() noexcept;
+
         Point pos() const noexcept { return _current_pos; }
         Vector offset() const noexcept { return _current_pos - _last_pos; }
 
@@ -80,9 +84,20 @@ namespace RolUI {
 
         void set_key_mode(MouseKey key, MouseKeyMode mode) noexcept;
 
+        void enter() noexcept;
+        void leave() noexcept;
+
         void clear_change() noexcept;
 
         void dispatch(Window* w) noexcept;
+
+      private:
+        void _init() noexcept {
+            _last_pos = {};
+            _current_pos = {};
+            for (int i = 0; i < sizeof(_key_mode) / sizeof(MouseKeyMode); i++)
+                _key_mode[i] = MouseKeyMode::release;
+        }
 
       private:
         bool _pos_is_change;
@@ -91,6 +106,10 @@ namespace RolUI {
 
         bool _key_is_change[MOUSE_KEY_COUNT + 1];
         MouseKeyMode _key_mode[MOUSE_KEY_COUNT + 1];
+
+        Widget* _current_widget = nullptr;
+        bool _is_enter = false;
+        bool _is_leave = false;
     };
 
 } // namespace RolUI

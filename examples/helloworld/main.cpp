@@ -70,25 +70,6 @@ int main(int argc, char* argv[]) {
     cw5.set_font("san");
     cw5.set_text("label widget.");
 
-    rw1.add_listener(RolUI::MousePressEvent_type(), [](RolUI::IEvent* e) {
-        RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
-        auto [x, y] = me->pos();
-        printf("rw1 listener. x: %d, y: %d \n", x, y);
-        return true;
-    });
-    cw4.add_listener(RolUI::MousePressEvent_type(), [](RolUI::IEvent* e) {
-        RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
-        auto [x, y] = me->pos();
-        printf("cw4 listener. x: %d, y: %d \n", x, y);
-        return true;
-    });
-    cw5.add_listener(RolUI::MousePressEvent_type(), [](RolUI::IEvent* e) {
-        RolUI::MouseEvent* me = static_cast<RolUI::MouseEvent*>(e);
-        auto [x, y] = me->pos();
-        printf("cw5 listener. x: %d, y: %d \n", x, y);
-        return true;
-    });
-
     bool is_lock = false;
     rw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
         is_lock = true;
@@ -106,9 +87,26 @@ int main(int argc, char* argv[]) {
         return true;
     });
 
-    rw1.on_pos_change.connect([](Point p) {
-        printf("rw1.on_pos_change: %d, %d \n", p.x, p.y);
+    rw1.add_listener(RolUI::MouseEnterEvent_type(), [&](RolUI::IEvent* e) {
+        printf("rw1 enter event. \n");
+        return true;
     });
+    rw1.add_listener(RolUI::MouseLeaveEvent_type(), [&](RolUI::IEvent* e) {
+        printf("rw1 leave event. \n");
+        return true;
+    });
+    cw1.add_listener(RolUI::MouseEnterEvent_type(), [&](RolUI::IEvent* e) {
+        printf("cw1 enter event. \n");
+        return true;
+    });
+    cw1.add_listener(RolUI::MouseLeaveEvent_type(), [&](RolUI::IEvent* e) {
+        printf("cw1 leave event. \n");
+        return true;
+    });
+
+    // rw1.on_pos_change.connect([](Point p) {
+    //     printf("rw1.on_pos_change: %d, %d \n", p.x, p.y);
+    // });
 
     rw1.add_child(&cw1);
     rw1.add_child(&cw2);

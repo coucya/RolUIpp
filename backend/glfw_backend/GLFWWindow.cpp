@@ -25,10 +25,16 @@ namespace RolUIBackend {
         _painter = GLFWPainter(_nvg_context);
     }
     void GLFWWindow::_init_event_callback() {
-        on_cursor_enter = [this](int enter) {
+        on_cursor_enter = [this]() {
             auto [mx, my] = this->cursor_pos();
             this->_mouse_dispatcher.set_pos((int32_t)mx, (int32_t)my);
             this->_mouse_dispatcher.set_last_pos((int32_t)mx, (int32_t)my);
+            this->_mouse_dispatcher.enter();
+        };
+        on_cursor_leave = [this](){
+            auto [mx, my] = this->cursor_pos();
+            this->_mouse_dispatcher.set_pos((int32_t)mx, (int32_t)my);
+            this->_mouse_dispatcher.leave();
         };
         on_cursor_pos = [this](double x, double y) {
             this->_mouse_dispatcher.set_pos((int)x, (int)y);

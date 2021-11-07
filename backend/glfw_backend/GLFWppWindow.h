@@ -17,7 +17,8 @@ namespace RolUIBackend {
             typedef std::function<void()> ExitFunc;
             typedef std::function<void(int, int)> SizeFunc;
             typedef std::function<void(unsigned int)> CharFunc;
-            typedef std::function<void(int)> CursorEnterFunc;
+            typedef std::function<void()> CursorEnterFunc;
+            typedef std::function<void()> CursorLeaveFunc;
             typedef std::function<void(double, double)> CursorPosFunc;
             typedef std::function<void(int, int, int)> MouseButtonFunc;
             typedef std::function<void(double, double)> ScrollFunc;
@@ -26,6 +27,7 @@ namespace RolUIBackend {
             SizeFunc on_size;
             CharFunc on_char;
             CursorEnterFunc on_cursor_enter;
+            CursorLeaveFunc on_cursor_leave;
             CursorPosFunc on_cursor_pos;
             MouseButtonFunc on_mouse_button;
             ScrollFunc on_scroll;

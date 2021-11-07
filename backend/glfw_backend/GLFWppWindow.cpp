@@ -57,8 +57,11 @@ namespace RolUIBackend {
     }
     void GLFWppWindowBase::_cursor_enter_callback(GLFWwindow* w, int enter) {
         GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
-        if (wd == nullptr || !wd->on_cursor_enter) return;
-        wd->on_cursor_enter(enter);
+        if (wd == nullptr) return;
+        if (enter && wd->on_cursor_enter)
+            wd->on_cursor_enter();
+        else if (!enter && wd->on_cursor_leave)
+            wd->on_cursor_leave();
     }
     void GLFWppWindowBase::_cursor_pos_callback(GLFWwindow* w, double x, double y) {
         GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);

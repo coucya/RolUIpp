@@ -39,6 +39,7 @@ namespace RolUI {
         if (_parent == nullptr) return _pos;
         return _parent->abs_pos() + _pos;
     }
+    Rect Widget::abs_rect() const noexcept { return {abs_pos(), _size}; }
 
     void Widget::set_pos(const Point& pos) noexcept {
         Point old = _pos;

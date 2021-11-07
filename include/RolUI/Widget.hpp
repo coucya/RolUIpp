@@ -44,6 +44,7 @@ namespace RolUI {
         Rect rect() const noexcept;
 
         Point abs_pos() const noexcept;
+        Rect abs_rect() const noexcept;
 
         void set_pos(const Point& pos) noexcept;
         void set_size(const Size& size) noexcept;

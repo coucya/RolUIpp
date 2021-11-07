@@ -10,6 +10,13 @@ namespace RolUI {
     RolUI_impl_event_type(MousePosEvent);
     RolUI_impl_event_type(MousePressEvent);
     RolUI_impl_event_type(MouseReleaseEvent);
+    RolUI_impl_event_type(MouseEnterEvent);
+    RolUI_impl_event_type(MouseLeaveEvent);
+
+    MouseDispatcher::MouseDispatcher() noexcept {
+        _init();
+        clear_change();
+    }
 
     bool MouseDispatcher::is_action(MouseKey key) const noexcept {
         return _key_is_change[(int)key];
@@ -46,11 +53,19 @@ namespace RolUI {
         _key_mode[idx] = mode;
     }
 
+    void MouseDispatcher::enter() noexcept {
+        _is_enter = true;
+    }
+    void MouseDispatcher::leave() noexcept {
+        _is_leave = true;
+    }
+
     void MouseDispatcher::clear_change() noexcept {
         _pos_is_change = false;
-        for (int i = 0; i < sizeof(_key_is_change); i++) {
+        for (int i = 0; i < sizeof(_key_is_change) / sizeof(bool); i++) {
             _key_is_change[i] = false;
         }
+        _is_enter = _is_leave = false;
     }
 
     void MouseDispatcher::dispatch(Window* w) noexcept {
@@ -59,7 +74,43 @@ namespace RolUI {
         Point mouse_pos = this->pos();
 
         Widget* widget = w->get_widget_by_pos(mouse_pos);
-        if (widget == nullptr) return;
+
+        if (is_move() && !_is_enter && !_is_leave) {
+            Widget* tw = _current_widget;
+            while (tw && tw->abs_rect().contain(mouse_pos) == false) {
+                MouseEvent me = MouseEvent(MouseLeaveEvent_type(), tw, this);
+                send_event(tw, &me);
+
+                tw = tw->parent();
+            }
+
+            tw = widget;
+            while (tw && tw->abs_rect().contain(_last_pos) == false) {
+                MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
+                send_event(tw, &me);
+
+                tw = tw->parent();
+            }
+            _current_widget = widget;
+        } else if (_is_enter) {
+            Widget* tw = widget;
+            while (tw) {
+                MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
+                send_event(tw, &me);
+
+                tw = tw->parent();
+            }
+            _current_widget = widget;
+        } else if (_is_leave) {
+            Widget* tw = _current_widget;
+            while (tw) {
+                MouseEvent me = MouseEvent(MouseLeaveEvent_type(), tw, this);
+                send_event(tw, &me);
+
+                tw = tw->parent();
+            }
+            _current_widget = nullptr;
+        }
 
         if (is_move()) {
             Widget* tw = widget;
