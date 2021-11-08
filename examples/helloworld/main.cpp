@@ -50,26 +50,30 @@ int main(int argc, char* argv[]) {
     cw1.set_round(10);
     cw1.set_background_color(RolUI::Color(240, 0, 100));
 
-    cw2.set_pos(10, 0);
-    cw2.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
+    cw2.set_pos(0, 0);
+    cw2.set_pos_target(&cw1);
+    cw2.set_pos_relative(PosRelative::target, AnchorPoint::right_top);
     cw2.set_size(100, 100);
     cw2.set_round(10);
     cw2.set_background_color(RolUI::Color(240, 0, 0));
     cw2.set_border_width(10);
 
-    cw3.set_pos(10, 0);
-    cw3.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
+    cw3.set_pos(0, 0);
+    cw3.set_pos_target(&cw1);
+    cw3.set_pos_relative(PosRelative::target, AnchorPoint::left_top, AnchorPoint::right_top);
     cw3.set_size(100, 200);
     cw3.set_background_color(RolUI::Color(240, 0, 0));
 
-    cw4.set_pos(10, 0);
-    cw4.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
+    cw4.set_pos(0, 0);
+    cw4.set_pos_target(&cw1);
+    cw4.set_pos_relative(PosRelative::target, AnchorPoint::left_bottom, AnchorPoint::left_top);
     cw4.set_size(100, 200);
     cw4.set_background_color(RolUI::Color(240, 0, 0));
     cw4.set_border_width(10);
 
-    cw5.set_pos(20, 0);
-    cw5.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
+    cw5.set_pos(0, 0);
+    cw5.set_pos_target(&cw1);
+    cw5.set_pos_relative(PosRelative::target, AnchorPoint::left_top, AnchorPoint::left_bottom);
     cw5.set_font_size(16);
     cw5.set_font("san");
     cw5.set_text("label widget.");
@@ -96,6 +100,15 @@ int main(int argc, char* argv[]) {
         return true;
     });
 
+    rw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
+        rw1.remove_widget(&cw1);
+        return true;
+    });
+    rw1.add_listener(RolUI::MouseReleaseEvent_type(), [&](RolUI::IEvent* e) {
+        cw2.pos();
+        return true;
+    });
+
     rw1.add_listener(RolUI::MouseEnterEvent_type(), [&](RolUI::IEvent* e) {
         printf("rw1 enter event. \n");
         return true;
@@ -119,8 +132,6 @@ int main(int argc, char* argv[]) {
     rw1.add_child(&cw4);
     rw1.add_child(&cw5);
 
-    cw2.pos();
-    
     win.set_content_widget(&rw1);
 
     win.show();

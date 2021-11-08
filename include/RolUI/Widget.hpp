@@ -65,6 +65,7 @@ namespace RolUI {
         void set_pos(int32_t x, int32_t y) noexcept;
         void set_size(uint32_t w, uint32_t h) noexcept;
 
+        void set_pos_target(Widget* target) noexcept;
         void set_pos_relative(
             PosRelative relative,
             AnchorPoint target = AnchorPoint::left_top,
@@ -144,7 +145,8 @@ namespace RolUI {
 
         Point _pos;
         Size _size;
-        PosRelative _target_relative = PosRelative::parent;
+        Widget* _pos_target = nullptr;
+        PosRelative _pos_relative = PosRelative::parent;
         AnchorPoint _self_anchor_point = AnchorPoint::left_top;
         AnchorPoint _target_anchor_point = AnchorPoint::left_top;
 
