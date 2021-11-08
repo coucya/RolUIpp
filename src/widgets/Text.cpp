@@ -1,11 +1,11 @@
 
 #include "RolUI/Window.hpp"
-#include "RolUI/widgets/LabelWidget.hpp"
+#include "RolUI/widgets/Text.hpp"
 #include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
 
-    LabelWidget::LabelWidget() noexcept
+    Text ::Text() noexcept
         : _font_size(15), _font_color(Color()) {
 
         add_listener(WindowChangeEvent::type(), [this](IEvent* e) {
@@ -14,9 +14,9 @@ namespace RolUI {
         });
     }
 
-    LabelWidget::~LabelWidget() {}
+    Text::~Text() {}
 
-    void LabelWidget::_update_size() {
+    void Text::_update_size() {
         Window* win = window();
 
         if (win && !_text.empty()) {
@@ -25,27 +25,27 @@ namespace RolUI {
         }
     }
 
-    void LabelWidget::set_font(const char* name) noexcept {
+    void Text::set_font(const char* name) noexcept {
         _font_name = name;
     }
-    void LabelWidget::set_font_size(uint32_t size) noexcept {
+    void Text::set_font_size(uint32_t size) noexcept {
         _font_size = size;
     }
-    void LabelWidget::set_font_color(Color c) noexcept {
+    void Text::set_font_color(Color c) noexcept {
         _font_color = c;
     }
 
-    void LabelWidget::set_text(const char* text) {
+    void Text::set_text(const char* text) {
         if (text == nullptr) return;
         set_text(text, strlen(text));
     }
-    void LabelWidget::set_text(const char* text, uint32_t len) noexcept {
+    void Text::set_text(const char* text, uint32_t len) noexcept {
         if (text == nullptr) return;
         _text = std::string(text, len);
         _update_size();
     }
 
-    void LabelWidget::on_draw(IPainter* painter) {
+    void Text::on_draw(IPainter* painter) {
         painter->set_font_size(_font_size);
         painter->set_font_color(_font_color);
         painter->set_font(_font_name);

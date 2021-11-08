@@ -8,7 +8,7 @@
 
 namespace RolUI {
 
-    class LabelWidget : public Widget {
+    class Text : public Widget {
       private:
         uint32_t _font_size;
         Color _font_color;
@@ -16,8 +16,8 @@ namespace RolUI {
         std::string _text;
 
       public:
-        LabelWidget() noexcept;
-        ~LabelWidget() override;
+        Text() noexcept;
+        ~Text() override;
 
         void set_text(const char* text);
         void set_text(const char* text, uint32_t len) noexcept;

@@ -10,7 +10,7 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/widgets/RectWidget.hpp"
 #include "RolUI/widgets/EllipseWidget.hpp"
-#include "RolUI/widgets/LabelWidget.hpp"
+#include "RolUI/widgets/Text.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     RolUI::RectWidget rw1, cw1, cw2;
     EllipseWidget cw3, cw4;
-    RolUI::LabelWidget cw5;
+    RolUI::Text cw5;
 
     rw1.set_pos(10, 10);
     rw1.set_size(500, 500);
