@@ -6,8 +6,7 @@
 namespace RolUI {
 
     LabelWidget::LabelWidget() noexcept
-        : _text(nullptr), _text_len(0),
-          _font_size(15), _font_color(Color()) {
+        : _font_size(15), _font_color(Color()) {
 
         add_listener(WindowChangeEvent::type(), [this](IEvent* e) {
             this->_update_size();
@@ -20,8 +19,8 @@ namespace RolUI {
     void LabelWidget::_update_size() {
         Window* win = window();
 
-        if (win && _text) {
-            Size s = win->painter()->text_size(_text, _text_len);
+        if (win && !_text.empty()) {
+            Size s = win->painter()->text_size(_text.c_str(), _text.size());
             Widget::set_size(s);
         }
     }
@@ -38,15 +37,11 @@ namespace RolUI {
 
     void LabelWidget::set_text(const char* text) {
         if (text == nullptr) return;
-
         set_text(text, strlen(text));
     }
     void LabelWidget::set_text(const char* text, uint32_t len) noexcept {
         if (text == nullptr) return;
-
-        _text = text;
-        _text_len = len;
-
+        _text = std::string(text, len);
         _update_size();
     }
 
@@ -54,7 +49,7 @@ namespace RolUI {
         painter->set_font_size(_font_size);
         painter->set_font_color(_font_color);
         painter->set_font(_font_name);
-        painter->draw_text(pos(), _text, _text_len);
+        painter->draw_text(pos(), _text.c_str(), _text.size());
     }
 
 } // namespace RolUI
