@@ -4,52 +4,54 @@
 #include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
+    namespace widget {
 
-    Text ::Text() noexcept
-        : _font_size(15), _font_color(Color()) {
+        Text ::Text() noexcept
+            : _font_size(15), _font_color(Color()) {
 
-        add_listener(WindowChangeEvent::type(), [this](IEvent* e) {
-            this->_update_size();
-            return true;
-        });
-    }
-
-    Text::~Text() {}
-
-    void Text::_update_size() {
-        Window* win = window();
-
-        if (win && !_text.empty()) {
-            Size s = win->painter()->text_size(_text.c_str(), _text.size());
-            Widget::set_size(s);
+            add_listener(WindowChangeEvent::type(), [this](IEvent* e) {
+                this->_update_size();
+                return true;
+            });
         }
-    }
 
-    void Text::set_font(const char* name) noexcept {
-        _font_name = name;
-    }
-    void Text::set_font_size(uint32_t size) noexcept {
-        _font_size = size;
-    }
-    void Text::set_font_color(Color c) noexcept {
-        _font_color = c;
-    }
+        Text::~Text() {}
 
-    void Text::set_text(const char* text) {
-        if (text == nullptr) return;
-        set_text(text, strlen(text));
-    }
-    void Text::set_text(const char* text, uint32_t len) noexcept {
-        if (text == nullptr) return;
-        _text = std::string(text, len);
-        _update_size();
-    }
+        void Text::_update_size() {
+            Window* win = window();
 
-    void Text::on_draw(IPainter* painter) {
-        painter->set_font_size(_font_size);
-        painter->set_font_color(_font_color);
-        painter->set_font(_font_name);
-        painter->draw_text(pos(), _text.c_str(), _text.size());
-    }
+            if (win && !_text.empty()) {
+                Size s = win->painter()->text_size(_text.c_str(), _text.size());
+                Widget::set_size(s);
+            }
+        }
 
+        void Text::set_font(const char* name) noexcept {
+            _font_name = name;
+        }
+        void Text::set_font_size(uint32_t size) noexcept {
+            _font_size = size;
+        }
+        void Text::set_font_color(Color c) noexcept {
+            _font_color = c;
+        }
+
+        void Text::set_text(const char* text) {
+            if (text == nullptr) return;
+            set_text(text, strlen(text));
+        }
+        void Text::set_text(const char* text, uint32_t len) noexcept {
+            if (text == nullptr) return;
+            _text = std::string(text, len);
+            _update_size();
+        }
+
+        void Text::on_draw(IPainter* painter) {
+            painter->set_font_size(_font_size);
+            painter->set_font_color(_font_color);
+            painter->set_font(_font_name);
+            painter->draw_text(pos(), _text.c_str(), _text.size());
+        }
+
+    } // namespace widget
 } // namespace RolUI

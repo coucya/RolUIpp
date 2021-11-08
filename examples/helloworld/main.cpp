@@ -36,9 +36,9 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("san", font_path.c_str()) == false)
         throw std::runtime_error("can't load font.");
 
-    RolUI::RectWidget rw1, cw1, cw2;
-    EllipseWidget cw3, cw4;
-    RolUI::Text cw5;
+    widget::Rect rw1, cw1, cw2;
+    widget::EllipseWidget cw3, cw4;
+    widget::Text cw5;
 
     rw1.set_pos(10, 10);
     rw1.set_size(500, 500);
