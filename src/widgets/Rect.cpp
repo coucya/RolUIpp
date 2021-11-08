@@ -1,5 +1,5 @@
 
-#include "RolUI/widgets/RectWidget.hpp"
+#include "RolUI/widgets/Rect.hpp"
 
 namespace RolUI {
     namespace widget {
