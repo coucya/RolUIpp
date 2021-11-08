@@ -1,5 +1,7 @@
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 #include <tuple>
 #include <utility>
@@ -31,14 +33,85 @@ namespace RolUI {
 
     Widget::~Widget() {}
 
-    Point Widget::pos() const noexcept { return _pos; }
+    Point Widget::pos() const noexcept {
+        Point target_base_pos = {0, 0};
+        Widget* target = nullptr;
+        switch (_target_relative) {
+            case PosRelative::parent: target = parent(); break;
+            case PosRelative::prev: {
+                if (is_part() && part_index() > 0)
+                    target = parent()->get_part(part_index() - 1);
+                else if (is_child() && child_index() > 0)
+                    target = parent()->get_child(child_index() - 1);
+                else
+                    target = nullptr;
+                break;
+            }
+            case PosRelative::target: target = nullptr; break;
+        };
+
+        if (target) {
+            if (target != parent())
+                target_base_pos = target->pos();
+            else
+                target_base_pos = {0, 0};
+
+            switch (_target_anchor_point) {
+                case AnchorPoint::left_top: {
+                    target_base_pos += {};
+                    break;
+                }
+                case AnchorPoint::left_bottom: {
+                    Size s = target->size();
+                    target_base_pos += {0, (int32_t)s.height};
+                    break;
+                }
+                case AnchorPoint::right_top: {
+                    Size s = target->size();
+                    target_base_pos += {(int32_t)s.width, 0};
+                    break;
+                }
+                case AnchorPoint::right_bottom: {
+                    Size s = target->size();
+                    target_base_pos += {(int32_t)s.width, (int32_t)s.height};
+                    break;
+                }
+            }
+        }
+
+        Point self_base_pos = {0, 0};
+        switch (_self_anchor_point) {
+            case AnchorPoint::left_top: {
+                self_base_pos = {};
+                break;
+            }
+            case AnchorPoint::left_bottom: {
+                Size s = size();
+                self_base_pos = {0, (int32_t)s.height};
+                break;
+            }
+            case AnchorPoint::right_top: {
+                Size s = size();
+                self_base_pos = {(int32_t)s.width, 0};
+                break;
+            }
+            case AnchorPoint::right_bottom: {
+                Size s = size();
+                self_base_pos = {(int32_t)s.width, (int32_t)s.height};
+                break;
+            }
+        };
+
+        return target_base_pos - self_base_pos + _pos;
+    }
     Size Widget::size() const noexcept { return _size; }
-    Rect Widget::rect() const noexcept { return {_pos, _size}; }
+    Rect Widget::rect() const noexcept { return {pos(), size()}; }
 
     Point Widget::abs_pos() const noexcept {
-        if (_parent == nullptr) return _pos;
-        return _parent->abs_pos() + _pos;
+        if (_parent == nullptr) return pos();
+        return _parent->abs_pos() + pos();
     }
+
     Rect Widget::abs_rect() const noexcept { return {abs_pos(), _size}; }
 
     void Widget::set_pos(const Point& pos) noexcept {
@@ -58,6 +131,12 @@ namespace RolUI {
 
     void Widget::set_pos(int32_t x, int32_t y) noexcept { set_pos({x, y}); }
     void Widget::set_size(uint32_t w, uint32_t h) noexcept { set_size({w, h}); }
+
+    void Widget::set_pos_relative(PosRelative relative, AnchorPoint target, AnchorPoint self) noexcept {
+        _target_relative = relative;
+        _target_anchor_point = target;
+        _self_anchor_point = self;
+    }
 
     Widget* Widget::parent() const noexcept { return _parent; }
 

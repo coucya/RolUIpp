@@ -15,7 +15,7 @@
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
 
-using RolUI::EllipseWidget;
+using namespace RolUI;
 
 std::string get_font_path() {
     std::filesystem::path self_path{__FILE__};
@@ -45,44 +45,53 @@ int main(int argc, char* argv[]) {
     rw1.set_round(10);
     rw1.set_background_color(RolUI::Color(240, 240, 0));
 
-    cw1.set_pos(20, 20);
+    cw1.set_pos(10, 10);
     cw1.set_size(100, 100);
     cw1.set_round(10);
     cw1.set_background_color(RolUI::Color(240, 0, 100));
 
-    cw2.set_pos(150, 10);
+    cw2.set_pos(10, 0);
+    cw2.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
     cw2.set_size(100, 100);
     cw2.set_round(10);
     cw2.set_background_color(RolUI::Color(240, 0, 0));
     cw2.set_border_width(10);
 
-    cw3.set_pos(10, 150);
+    cw3.set_pos(10, 0);
+    cw3.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
     cw3.set_size(100, 200);
     cw3.set_background_color(RolUI::Color(240, 0, 0));
 
-    cw4.set_pos(150, 150);
+    cw4.set_pos(10, 0);
+    cw4.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
     cw4.set_size(100, 200);
     cw4.set_background_color(RolUI::Color(240, 0, 0));
     cw4.set_border_width(10);
 
-    cw5.set_pos(270, 10);
+    cw5.set_pos(20, 0);
+    cw5.set_pos_relative(PosRelative::prev, AnchorPoint::right_top);
     cw5.set_font_size(16);
     cw5.set_font("san");
     cw5.set_text("label widget.");
 
     bool is_lock = false;
-    rw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
+    cw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
         is_lock = true;
         return true;
     });
-    rw1.add_listener(RolUI::MouseReleaseEvent_type(), [&](RolUI::IEvent* e) {
+    cw1.add_listener(RolUI::MouseReleaseEvent_type(), [&](RolUI::IEvent* e) {
         is_lock = false;
         return true;
     });
-    rw1.add_listener(RolUI::MousePosEvent_type(), [&](RolUI::IEvent* e) {
+    cw1.add_listener(RolUI::MouseLeaveEvent_type(), [&](RolUI::IEvent* e) {
+        is_lock = false;
+        return true;
+    });
+    cw1.add_listener(RolUI::MousePosEvent_type(), [&](RolUI::IEvent* e) {
         RolUI::MouseEvent* me = (RolUI::MouseEvent*)e;
-        if (is_lock)
-            rw1.set_pos(rw1.pos() + me->offset());
+        Widget* target = e->target();
+        if (target && is_lock)
+            target->set_pos(target->pos() + me->offset());
 
         return true;
     });
@@ -104,16 +113,14 @@ int main(int argc, char* argv[]) {
         return true;
     });
 
-    // rw1.on_pos_change.connect([](Point p) {
-    //     printf("rw1.on_pos_change: %d, %d \n", p.x, p.y);
-    // });
-
     rw1.add_child(&cw1);
     rw1.add_child(&cw2);
     rw1.add_child(&cw3);
     rw1.add_child(&cw4);
     rw1.add_child(&cw5);
 
+    cw2.pos();
+    
     win.set_content_widget(&rw1);
 
     win.show();

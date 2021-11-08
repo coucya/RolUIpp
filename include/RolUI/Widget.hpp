@@ -8,8 +8,8 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/IWidget.hpp"
 #include "RolUI/IEventListener.hpp"
-#include "RolUI/sigsslot/Signal.hpp"
-#include "RolUI/sigsslot/Slot.hpp"
+#include "RolUI/sigslot/Signal.hpp"
+#include "RolUI/sigslot/Slot.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
@@ -23,6 +23,18 @@ namespace RolUI {
     typedef std::function<bool(IEvent*)> EventCallback;
 
     bool send_event(Widget* w, IEvent* e);
+
+    enum class PosRelative {
+        parent,
+        prev,
+        target,
+    };
+    enum class AnchorPoint {
+        left_top,
+        left_bottom,
+        right_top,
+        right_bottom,
+    };
 
     class Widget : public IWidget, public IEventListener, public HasSlot {
 
@@ -52,6 +64,11 @@ namespace RolUI {
 
         void set_pos(int32_t x, int32_t y) noexcept;
         void set_size(uint32_t w, uint32_t h) noexcept;
+
+        void set_pos_relative(
+            PosRelative relative,
+            AnchorPoint target = AnchorPoint::left_top,
+            AnchorPoint self = AnchorPoint::left_top) noexcept;
 
         Window* window() const noexcept;
 
@@ -116,9 +133,6 @@ namespace RolUI {
         Childrens::iterator _find_part_it(Widget* w) const noexcept;
 
       private:
-        Point _pos;
-        Size _size;
-
         size_t _index = 0;
 
         Widget* _parent = nullptr;
@@ -127,6 +141,12 @@ namespace RolUI {
 
         size_t _part_count = 0;
         Childrens _children;
+
+        Point _pos;
+        Size _size;
+        PosRelative _target_relative = PosRelative::parent;
+        AnchorPoint _self_anchor_point = AnchorPoint::left_top;
+        AnchorPoint _target_anchor_point = AnchorPoint::left_top;
 
         typedef std::tuple<const EventType*, EventCallback, size_t> CallbackItem;
         size_t _event_handle = 0;

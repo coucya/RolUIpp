@@ -3,7 +3,7 @@
 #include <cstdio>
 
 #include "assert.h"
-#include "RolUI/sigsslot/Signal.hpp"
+#include "RolUI/sigslot/Signal.hpp"
 
 using namespace RolUI;
 
