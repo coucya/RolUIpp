@@ -9,6 +9,7 @@
 #include "RolUI/IWidget.hpp"
 #include "RolUI/IEventListener.hpp"
 #include "RolUI/sigsslot/Signal.hpp"
+#include "RolUI/sigsslot/Slot.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
