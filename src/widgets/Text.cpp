@@ -25,6 +25,10 @@ namespace RolUI {
                 Widget::set_size(s);
             }
         }
+        const std::string& Text::text() const noexcept { return _text; }
+        const char* Text::font() const noexcept { return _font_name; }
+        uint32_t Text::font_size() const noexcept { return _font_size; }
+        Color Text::font_color() const noexcept { return _font_color; }
 
         void Text::set_font(const char* name) noexcept {
             _font_name = name;
@@ -36,7 +40,7 @@ namespace RolUI {
             _font_color = c;
         }
 
-        void Text::set_text(const char* text) {
+        void Text::set_text(const char* text) noexcept {
             if (text == nullptr) return;
             set_text(text, strlen(text));
         }
@@ -46,11 +50,19 @@ namespace RolUI {
             _update_size();
         }
 
+        void Text::set_text(const std::string& text) noexcept {
+            _text = text;
+            _update_size();
+        }
+
         void Text::on_draw(IPainter* painter) {
             painter->set_font_size(_font_size);
             painter->set_font_color(_font_color);
-            painter->set_font(_font_name);
-            painter->draw_text(pos(), _text.c_str(), _text.size());
+
+            if (_font_name)
+                painter->set_font(_font_name);
+            if (!_text.empty())
+                painter->draw_text(pos(), _text.c_str(), _text.size());
         }
 
     } // namespace widget

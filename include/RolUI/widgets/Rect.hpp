@@ -1,4 +1,4 @@
-#pragma ocne
+#pragma once
 
 #include <stdint.h>
 
@@ -20,9 +20,15 @@ namespace RolUI {
           public:
             Rect() noexcept {}
             Rect(int32_t x, int32_t y, uint32_t w, uint32_t h,
-                       uint32_t round = 0) noexcept;
+                 uint32_t round = 0) noexcept;
 
             ~Rect() override;
+
+            uint32_t round() const noexcept;
+            uint32_t border_width() const noexcept;
+
+            Color border_color() const noexcept;
+            Color background_color() const noexcept;
 
             void set_round(uint32_t r) noexcept;
             void set_border_width(uint32_t w) noexcept;

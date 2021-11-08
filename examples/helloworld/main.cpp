@@ -11,6 +11,7 @@
 #include "RolUI/widgets/EllipseWidget.hpp"
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
+#include "RolUI/widgets/Label.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -33,12 +34,14 @@ int main(int argc, char* argv[]) {
     app.set_window(&win);
 
     std::string font_path = get_font_path();
-    if (win.painter()->load_font("san", font_path.c_str()) == false)
+    // if (win.painter()->load_font("san", font_path.c_str()) == false)
+    if (win.painter()->load_font("san", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
     widget::Rect rw1, cw1, cw2;
     widget::EllipseWidget cw3, cw4;
     widget::Text cw5;
+    widget::Label label1{"标签标签标签"};
 
     rw1.set_pos(10, 10);
     rw1.set_size(500, 500);
@@ -77,6 +80,9 @@ int main(int argc, char* argv[]) {
     cw5.set_font_size(16);
     cw5.set_font("san");
     cw5.set_text("label widget.");
+
+    label1.set_pos(10, 10);
+    label1.set_font("san");
 
     bool is_lock = false;
     cw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
@@ -131,6 +137,7 @@ int main(int argc, char* argv[]) {
     rw1.add_child(&cw3);
     rw1.add_child(&cw4);
     rw1.add_child(&cw5);
+    rw1.add_child(&label1);
 
     win.set_content_widget(&rw1);
 

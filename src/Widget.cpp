@@ -28,7 +28,7 @@ namespace RolUI {
 
     Widget::Widget(Widget* parent) noexcept {
         _init_event_bind();
-        parent->add_child(this);
+        if (parent) parent->add_child(this);
     }
 
     Widget::~Widget() {}
@@ -104,6 +104,7 @@ namespace RolUI {
 
         return target_base_pos - self_base_pos + _pos;
     }
+
     Size Widget::size() const noexcept { return _size; }
     Rect Widget::rect() const noexcept { return {pos(), size()}; }
 
@@ -229,6 +230,7 @@ namespace RolUI {
         }
         return b;
     }
+    void Widget::on_draw(IPainter* painter) {}
 
     void Widget::_init_event_bind() noexcept {
         add_listener(PosChangeEvent::type(), [this](IEvent* e) {
@@ -305,7 +307,7 @@ namespace RolUI {
                 if (widget->_pos_target == this)
                     widget->_pos_target = nullptr;
             }
-        }    
+        }
 
         Widget* old = _parent;
         _parent = w;

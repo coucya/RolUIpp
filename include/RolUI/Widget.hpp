@@ -18,6 +18,7 @@ namespace RolUI {
 
     class Window;
     class Widget;
+    class IPainter;
 
     typedef bool (*EventCallbackFunc)(IEvent*);
     typedef std::function<bool(IEvent*)> EventCallback;
@@ -101,6 +102,7 @@ namespace RolUI {
         void remove_listener(size_t handle);
 
         bool on_event(IEvent* e) override;
+        void on_draw(IPainter* painter) override;
 
       public:
         Signal<Point> on_pos_change;
