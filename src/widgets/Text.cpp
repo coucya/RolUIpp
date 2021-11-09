@@ -27,13 +27,13 @@ namespace RolUI {
         }
         const std::string& Text::text() const noexcept { return _text; }
         const char* Text::font() const noexcept { return _font_name; }
-        uint32_t Text::font_size() const noexcept { return _font_size; }
+        unsigned Text::font_size() const noexcept { return _font_size; }
         Color Text::font_color() const noexcept { return _font_color; }
 
         void Text::set_font(const char* name) noexcept {
             _font_name = name;
         }
-        void Text::set_font_size(uint32_t size) noexcept {
+        void Text::set_font_size(unsigned size) noexcept {
             _font_size = size;
         }
         void Text::set_font_color(Color c) noexcept {
@@ -44,7 +44,7 @@ namespace RolUI {
             if (text == nullptr) return;
             set_text(text, strlen(text));
         }
-        void Text::set_text(const char* text, uint32_t len) noexcept {
+        void Text::set_text(const char* text, unsigned len) noexcept {
             if (text == nullptr) return;
             _text = std::string(text, len);
             _update_size();

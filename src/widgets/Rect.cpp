@@ -7,26 +7,26 @@ namespace RolUI {
     namespace widget {
 
         Rect::Rect(
-            int32_t x, int32_t y,
-            uint32_t w, uint32_t h,
-            uint32_t round) noexcept
+            int x, int y,
+            unsigned w, unsigned h,
+            unsigned round) noexcept
             : _round(round) {
             set_pos(x, y);
-            set_size(w, h);
+            set_size((int)w, (int)h);
         }
         Rect::~Rect() {}
 
-        uint32_t Rect::round() const noexcept { return _round; }
-        uint32_t Rect::border_width() const noexcept { return _border_width; }
+        unsigned Rect::round() const noexcept { return _round; }
+        unsigned Rect::border_width() const noexcept { return _border_width; }
 
         Color Rect::border_color() const noexcept { return _border_color; }
         Color Rect::background_color() const noexcept { return _background_color; }
 
-        void Rect::set_round(uint32_t r) noexcept {
+        void Rect::set_round(unsigned r) noexcept {
             _round = r;
         }
 
-        void Rect::set_border_width(uint32_t w) noexcept {
+        void Rect::set_border_width(unsigned w) noexcept {
             _border_width = w;
         }
 
@@ -44,12 +44,12 @@ namespace RolUI {
             painter->fill_roundedrect(RolUI::Rect(pos_, size_), _round);
 
             if (_border_width > 0) {
-                int32_t hw = _border_width / 2;
-                int32_t x = pos_.x + hw;
-                int32_t y = pos_.y + hw;
-                uint32_t w = size_.width - _border_width;
-                uint32_t h = size_.height - _border_width;
-                uint32_t r = hw > _round ? 0 : _round - hw;
+                int hw = _border_width / 2;
+                int x = pos_.x + hw;
+                int y = pos_.y + hw;
+                unsigned w = size_.width - _border_width;
+                unsigned h = size_.height - _border_width;
+                unsigned r = hw > _round ? 0 : _round - hw;
 
                 painter->set_stroke_color(_border_color);
                 painter->set_stroke_width(_border_width);

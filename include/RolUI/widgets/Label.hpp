@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstddef>
-#include <cstdint>
 #include <string>
 
 #include "RolUI/Color.hpp"
@@ -24,14 +22,14 @@ namespace RolUI {
             const std::string& text() const noexcept;
 
             const char* font() const noexcept;
-            size_t font_size() const noexcept;
+            unsigned font_size() const noexcept;
 
             Color background_color() const noexcept;
 
-            uint32_t border_width() const noexcept;
+            unsigned border_width() const noexcept;
             Color border_color() const noexcept;
 
-            uint32_t round() const noexcept;
+            unsigned round() const noexcept;
 
             void set_text(std::string text) noexcept;
 
@@ -39,9 +37,9 @@ namespace RolUI {
             void set_font_size(size_t size) noexcept;
 
             void set_background_color(Color c) noexcept;
-            void set_border_width(uint32_t w) noexcept;
+            void set_border_width(unsigned w) noexcept;
             void set_border_color(Color c) noexcept;
-            void set_round(uint32_t r) noexcept;
+            void set_round(unsigned r) noexcept;
 
           private:
             void _init_part(std::string&& text) noexcept;

@@ -24,16 +24,16 @@ namespace RolUI {
             _text_widget.on_size_change.connect([this](Size text_size) {
                 Size size = this->size();
 
-                int32_t tpx = ((int32_t)size.width - (int32_t)text_size.width) / 2;
-                int32_t tpy = ((int32_t)size.height - (int32_t)text_size.height) / 2;
+                int tpx = (size.width - text_size.width) / 2;
+                int tpy = (size.height - text_size.height) / 2;
                 _text_widget.set_pos(tpx, tpy);
                 return true;
             });
 
             on_size_change.connect([&](Size size) {
                 Size text_size = _text_widget.size();
-                int32_t tpx = ((int32_t)size.width - (int32_t)text_size.width) / 2;
-                int32_t tpy = ((int32_t)size.height - (int32_t)text_size.height) / 2;
+                int tpx = (size.width - text_size.width) / 2;
+                int tpy = (size.height - text_size.height) / 2;
                 _text_widget.set_pos(tpx, tpy);
 
                 return true;
@@ -55,14 +55,14 @@ namespace RolUI {
         const std::string& Label::text() const noexcept { return _text_widget.text(); }
 
         const char* Label::font() const noexcept { return _text_widget.font(); }
-        size_t Label::font_size() const noexcept { return _text_widget.font_size(); }
+        unsigned Label::font_size() const noexcept { return _text_widget.font_size(); }
 
         Color Label::background_color() const noexcept { return _rect_widget.background_color(); }
 
-        uint32_t Label::border_width() const noexcept { return _rect_widget.border_width(); }
+        unsigned Label::border_width() const noexcept { return _rect_widget.border_width(); }
         Color Label::border_color() const noexcept { return _rect_widget.border_color(); }
 
-        uint32_t Label::round() const noexcept { return _rect_widget.round(); }
+        unsigned Label::round() const noexcept { return _rect_widget.round(); }
 
         void Label::set_text(std::string text) noexcept {
             _text_widget.set_text(std::move(text));
@@ -78,13 +78,13 @@ namespace RolUI {
         void Label::set_background_color(Color c) noexcept {
             _rect_widget.set_background_color(c);
         }
-        void Label::set_border_width(uint32_t w) noexcept {
+        void Label::set_border_width(unsigned w) noexcept {
             _rect_widget.set_border_width(w);
         }
         void Label::set_border_color(Color c) noexcept {
             _rect_widget.set_border_color(c);
         }
-        void Label::set_round(uint32_t r) noexcept {
+        void Label::set_round(unsigned r) noexcept {
             _rect_widget.set_round(r);
         }
 
