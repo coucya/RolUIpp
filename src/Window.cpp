@@ -22,7 +22,7 @@ namespace RolUI {
         if (widget == nullptr) return;
 
         _content_widget = widget;
-        _content_widget->_set_window(this);
+        _content_widget->_do_window_change(_content_widget->_window, this);
     }
 
     void Window::_draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept {

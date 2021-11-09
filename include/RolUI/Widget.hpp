@@ -118,8 +118,11 @@ namespace RolUI {
         void _add_widget(Childrens::iterator pos, Widget* w) noexcept;
         void _remove_widget(Childrens::iterator pos) noexcept;
 
-        void _set_window(Window* w) noexcept;
-        void _set_parent(Widget* w) noexcept;
+        void _do_attach_tree(Widget* new_parent, size_t idx) noexcept;
+        void _do_detached_tree(Widget* old_parent, size_t idx) noexcept;
+
+        void _do_parent_change(Widget* old, Widget* new_) noexcept;
+        void _do_window_change(Window* old, Window* new_) noexcept;
 
         Childrens::iterator _child_begin_it() const noexcept;
         Childrens::iterator _child_end_it() const noexcept;

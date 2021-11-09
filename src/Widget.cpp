@@ -255,67 +255,69 @@ namespace RolUI {
     void Widget::_add_widget(Childrens::iterator pos, Widget* w) noexcept {
         if (!w || w->parent() == this) return;
 
-        if (w->_parent) {
-            auto it = w->_parent->_find_widget_it(w);
-            w->_parent->_children.erase(it);
+        Widget* w_old_parent = w->parent();
+        Widget* w_new_parent = this;
+
+        if (w_old_parent) {
+            auto it = w_old_parent->_find_widget_it(w);
+            w_old_parent->_children.erase(it);
+            w->_do_detached_tree(w_old_parent, w->_index);
         }
 
-        w->_set_window(_window);
-        w->_set_parent(this);
-
         size_t pos_idx = std::distance(_children.begin(), pos);
-
         _children.insert(pos, w);
 
-        _update_child_index(pos_idx);
+        w->_do_attach_tree(w_new_parent, pos_idx);
+        w->_do_window_change(w_old_parent ? w_old_parent->window() : nullptr, w_new_parent->window());
+        w->_do_parent_change(w_old_parent, w_new_parent);
     }
     void Widget::_remove_widget(Childrens::iterator pos) noexcept {
         if (pos == _children.end()) return;
 
         Widget* w = *pos;
-        w->_set_window(nullptr);
-        w->_set_parent(nullptr);
 
-        size_t pos_idx = std::distance(_children.begin(), pos);
+        if (w->_parent != this) return;
 
         _children.erase(pos);
 
-        _update_child_index(pos_idx);
+        size_t pos_idx = std::distance(_children.begin(), pos);
+        w->_do_detached_tree(this, pos_idx);
+        w->_do_window_change(_window, nullptr);
+        w->_do_parent_change(this, nullptr);
     }
 
-    void Widget::_set_window(Window* w) noexcept {
-        if (_window == w) return;
+    void Widget::_do_attach_tree(Widget* new_parent, size_t idx) noexcept {
+        if (!new_parent) return;
+        new_parent->_update_child_index(idx);
+    }
+    void Widget::_do_detached_tree(Widget* old_parent, size_t idx) noexcept {
+        if (!old_parent) return;
 
-        Window* old = _window;
-        _window = w;
-
-        if (w && w != old) {
-            WindowChangeEvent e{this, w, old};
-            send_event(this, &e);
+        for (Widget* widget : old_parent->_children) {
+            if (widget->_pos_target == this)
+                widget->_pos_target = nullptr;
         }
 
+        old_parent->_update_child_index(idx);
+    }
+
+    void Widget::_do_parent_change(Widget* old, Widget* new_) noexcept {
+        _parent = new_;
+
+        if (old == new_ || !new_) return;
+
+        ParentChangeEvent e(this, new_, old);
+        send_event(this, &e);
+    }
+    void Widget::_do_window_change(Window* old, Window* new_) noexcept {
+        _window = new_;
         for (auto& widget : _children)
-            if (widget->_window != w)
-                widget->_set_window(w);
-    }
+            widget->_do_window_change(old, new_);
 
-    void Widget::_set_parent(Widget* w) noexcept {
-        if (_parent == w) return;
+        if (old == new_ || !new_) return;
 
-        if (_parent) {
-            for (Widget* widget : _parent->_children) {
-                if (widget->_pos_target == this)
-                    widget->_pos_target = nullptr;
-            }
-        }
-
-        Widget* old = _parent;
-        _parent = w;
-
-        if (w && w != old) {
-            ParentChangeEvent e(this, w, old);
-            send_event(this, &e);
-        }
+        WindowChangeEvent e{this, new_, old};
+        send_event(this, &e);
     }
 
     auto Widget::_child_begin_it() const noexcept -> Childrens::iterator {
