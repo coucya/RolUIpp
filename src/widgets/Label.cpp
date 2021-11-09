@@ -2,6 +2,7 @@
 #include "RolUI/widgets/Label.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Size.hpp"
+#include "RolUI/Widget.hpp"
 #include <cstdint>
 
 namespace RolUI {
@@ -12,7 +13,7 @@ namespace RolUI {
             set_size(_text_widget.font_size() * (text.size() + 1) * 0.5, _text_widget.font_size() * 2);
 
             _rect_widget.set_pos(0, 0);
-            _rect_widget.set_size(size());
+            _rect_widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
             _rect_widget.set_background_color({255, 255, 255});
 
             _text_widget.set_text(std::move(text));
@@ -22,7 +23,6 @@ namespace RolUI {
 
             _text_widget.on_size_change.connect([this](Size text_size) {
                 Size size = this->size();
-                _rect_widget.set_size(size);
 
                 int32_t tpx = ((int32_t)size.width - (int32_t)text_size.width) / 2;
                 int32_t tpy = ((int32_t)size.height - (int32_t)text_size.height) / 2;
@@ -31,8 +31,6 @@ namespace RolUI {
             });
 
             on_size_change.connect([&](Size size) {
-                _rect_widget.set_size(size);
-
                 Size text_size = _text_widget.size();
                 int32_t tpx = ((int32_t)size.width - (int32_t)text_size.width) / 2;
                 int32_t tpy = ((int32_t)size.height - (int32_t)text_size.height) / 2;

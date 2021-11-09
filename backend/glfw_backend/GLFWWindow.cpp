@@ -31,7 +31,7 @@ namespace RolUIBackend {
             this->_mouse_dispatcher.set_last_pos((int32_t)mx, (int32_t)my);
             this->_mouse_dispatcher.enter();
         };
-        on_cursor_leave = [this](){
+        on_cursor_leave = [this]() {
             auto [mx, my] = this->cursor_pos();
             this->_mouse_dispatcher.set_pos((int32_t)mx, (int32_t)my);
             this->_mouse_dispatcher.leave();
@@ -43,18 +43,18 @@ namespace RolUIBackend {
             RolUI::MouseKey key;
             RolUI::MouseKeyMode md;
             switch (button) {
-            case GLFW_MOUSE_BUTTON_1: key = RolUI::MouseKey::key1; break;
-            case GLFW_MOUSE_BUTTON_2: key = RolUI::MouseKey::key2; break;
-            case GLFW_MOUSE_BUTTON_3: key = RolUI::MouseKey::key3; break;
-            case GLFW_MOUSE_BUTTON_4: key = RolUI::MouseKey::key4; break;
-            case GLFW_MOUSE_BUTTON_5: key = RolUI::MouseKey::key5; break;
-            case GLFW_MOUSE_BUTTON_6: key = RolUI::MouseKey::key6; break;
-            case GLFW_MOUSE_BUTTON_7: key = RolUI::MouseKey::key7; break;
-            case GLFW_MOUSE_BUTTON_8: key = RolUI::MouseKey::key8; break;
+                case GLFW_MOUSE_BUTTON_1: key = RolUI::MouseKey::key1; break;
+                case GLFW_MOUSE_BUTTON_2: key = RolUI::MouseKey::key2; break;
+                case GLFW_MOUSE_BUTTON_3: key = RolUI::MouseKey::key3; break;
+                case GLFW_MOUSE_BUTTON_4: key = RolUI::MouseKey::key4; break;
+                case GLFW_MOUSE_BUTTON_5: key = RolUI::MouseKey::key5; break;
+                case GLFW_MOUSE_BUTTON_6: key = RolUI::MouseKey::key6; break;
+                case GLFW_MOUSE_BUTTON_7: key = RolUI::MouseKey::key7; break;
+                case GLFW_MOUSE_BUTTON_8: key = RolUI::MouseKey::key8; break;
             };
             switch (action) {
-            case GLFW_PRESS: md = RolUI::MouseKeyMode::press; break;
-            case GLFW_RELEASE: md = RolUI::MouseKeyMode::release; break;
+                case GLFW_PRESS: md = RolUI::MouseKeyMode::press; break;
+                case GLFW_RELEASE: md = RolUI::MouseKeyMode::release; break;
             };
             this->_mouse_dispatcher.set_key_mode(key, md);
         };
@@ -72,7 +72,7 @@ namespace RolUIBackend {
     }
     RolUI::Size GLFWWindow::size() const {
         auto [w, h] = window_size();
-        return {w, h};
+        return {(int)w, (int)h};
     }
 
     RolUI::IPainter* GLFWWindow::painter() { return &_painter; }

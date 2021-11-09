@@ -24,8 +24,8 @@ namespace RolUIBackend {
         float bound[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
         nvgTextBounds(vg, 0, 0, text, text + len, bound);
-        return {(uint32_t)(bound[2] - bound[0]),
-                (uint32_t)(bound[3] - bound[1])};
+        return {(int32_t)(bound[2] - bound[0]),
+                (int32_t)(bound[3] - bound[1])};
     }
 
     void GLFWPainter::set_base_pos(const RolUI::Point& pos) { _pos = pos; }

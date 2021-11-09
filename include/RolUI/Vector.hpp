@@ -1,14 +1,17 @@
 #pragma once
 
-#include <stdint.h>
-
 namespace RolUI {
 
     struct Vector {
-        int32_t x, y;
+        union {
+            int x, width;
+        };
+        union {
+            int y, height;
+        };
 
         Vector() noexcept : x(0), y(0) {}
-        Vector(int32_t x, int32_t y) noexcept
+        Vector(int x, int y) noexcept
             : x(x), y(y) {}
 
         bool operator==(const Vector& v) noexcept {

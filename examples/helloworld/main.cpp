@@ -43,6 +43,13 @@ int main(int argc, char* argv[]) {
     widget::Text cw5;
     widget::Label label1{"标签标签标签"};
 
+    rw1.add_child(&cw1);
+    rw1.add_child(&cw2);
+    rw1.add_child(&cw3);
+    rw1.add_child(&cw4);
+    rw1.add_child(&cw5);
+    rw1.add_child(&label1);
+
     rw1.set_pos(10, 10);
     rw1.set_size(500, 500);
     rw1.set_round(10);
@@ -55,7 +62,7 @@ int main(int argc, char* argv[]) {
 
     cw2.set_pos(0, 0);
     cw2.set_pos_target(&cw1);
-    cw2.set_pos_relative(PosRelative::target, AnchorPoint::right_top);
+    cw2.set_pos_relative(RelativeTarget::target, AnchorPoint::right_top);
     cw2.set_size(100, 100);
     cw2.set_round(10);
     cw2.set_background_color(RolUI::Color(240, 0, 0));
@@ -63,20 +70,20 @@ int main(int argc, char* argv[]) {
 
     cw3.set_pos(0, 0);
     cw3.set_pos_target(&cw1);
-    cw3.set_pos_relative(PosRelative::target, AnchorPoint::left_top, AnchorPoint::right_top);
+    cw3.set_pos_relative(RelativeTarget::target, AnchorPoint::left_top, AnchorPoint::right_top);
     cw3.set_size(100, 200);
     cw3.set_background_color(RolUI::Color(240, 0, 0));
 
     cw4.set_pos(0, 0);
     cw4.set_pos_target(&cw1);
-    cw4.set_pos_relative(PosRelative::target, AnchorPoint::left_bottom, AnchorPoint::left_top);
+    cw4.set_pos_relative(RelativeTarget::target, AnchorPoint::left_bottom, AnchorPoint::left_top);
     cw4.set_size(100, 200);
     cw4.set_background_color(RolUI::Color(240, 0, 0));
     cw4.set_border_width(10);
 
     cw5.set_pos(0, 0);
     cw5.set_pos_target(&cw1);
-    cw5.set_pos_relative(PosRelative::target, AnchorPoint::left_top, AnchorPoint::left_bottom);
+    cw5.set_pos_relative(RelativeTarget::target, AnchorPoint::left_top, AnchorPoint::left_bottom);
     cw5.set_font_size(16);
     cw5.set_font("san");
     cw5.set_text("label widget.");
@@ -132,12 +139,7 @@ int main(int argc, char* argv[]) {
         return true;
     });
 
-    rw1.add_child(&cw1);
-    rw1.add_child(&cw2);
-    rw1.add_child(&cw3);
-    rw1.add_child(&cw4);
-    rw1.add_child(&cw5);
-    rw1.add_child(&label1);
+    cw2.pos();
 
     win.set_content_widget(&rw1);
 

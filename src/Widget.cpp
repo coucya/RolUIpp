@@ -37,8 +37,8 @@ namespace RolUI {
         Point target_base_pos = {0, 0};
         Widget* target = nullptr;
         switch (_pos_relative) {
-            case PosRelative::parent: target = parent(); break;
-            case PosRelative::prev: {
+            case RelativeTarget::parent: target = parent(); break;
+            case RelativeTarget::prev: {
                 if (is_part() && part_index() > 0)
                     target = parent()->get_part(part_index() - 1);
                 else if (is_child() && child_index() > 0)
@@ -47,7 +47,7 @@ namespace RolUI {
                     target = nullptr;
                 break;
             }
-            case PosRelative::target: target = _pos_target; break;
+            case RelativeTarget::target: target = _pos_target; break;
         };
 
         if (target) {
@@ -105,7 +105,37 @@ namespace RolUI {
         return target_base_pos - self_base_pos + _pos;
     }
 
-    Size Widget::size() const noexcept { return _size; }
+    Size Widget::size() const noexcept {
+
+        Widget* target = nullptr;
+        switch (_size_relative) {
+            case RelativeTarget::parent: target = parent(); break;
+            case RelativeTarget::prev: {
+                if (is_part() && part_index() > 0)
+                    target = parent()->get_part(part_index() - 1);
+                else if (is_child() && child_index() > 0)
+                    target = parent()->get_child(child_index() - 1);
+                else
+                    target = nullptr;
+                break;
+            }
+            case RelativeTarget::target: target = _size_target; break;
+        };
+        Size target_size = target ? target->size() : Size();
+
+        Size res;
+        switch (_size_mode) {
+            case SizeMode::none: {
+                res = _size;
+                break;
+            }
+            case SizeMode::relative: {
+                res = target_size + _size;
+                break;
+            }
+        };
+        return res;
+    }
     Rect Widget::rect() const noexcept { return {pos(), size()}; }
 
     Point Widget::abs_pos() const noexcept {
@@ -130,18 +160,29 @@ namespace RolUI {
         send_event(this, &e);
     }
 
-    void Widget::set_pos(int32_t x, int32_t y) noexcept { set_pos({x, y}); }
-    void Widget::set_size(uint32_t w, uint32_t h) noexcept { set_size({w, h}); }
+    void Widget::set_pos(int x, int y) noexcept { set_pos({x, y}); }
+    void Widget::set_size(int w, int h) noexcept { set_size({w, h}); }
 
     void Widget::set_pos_target(Widget* target) noexcept {
-        if (target && target->_parent == _parent)
+        if (target && target->parent() && target->parent() == parent())
             _pos_target = target;
-        _pos_target = target;
+        else
+            _pos_target = nullptr;
     }
-    void Widget::set_pos_relative(PosRelative relative, AnchorPoint target, AnchorPoint self) noexcept {
+    void Widget::set_pos_relative(RelativeTarget relative, AnchorPoint target, AnchorPoint self) noexcept {
         _pos_relative = relative;
         _target_anchor_point = target;
         _self_anchor_point = self;
+    }
+    void Widget::set_size_target(Widget* target) noexcept {
+        if (target && target->parent() && target->parent() == parent())
+            _size_target = target;
+        else
+            _size_target = nullptr;
+    }
+    void Widget::set_size_relative(RelativeTarget relative, SizeMode size_mode) noexcept {
+        _size_relative = relative;
+        _size_mode = size_mode;
     }
 
     Widget* Widget::parent() const noexcept { return _parent; }

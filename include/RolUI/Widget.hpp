@@ -25,7 +25,7 @@ namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e);
 
-    enum class PosRelative {
+    enum class RelativeTarget {
         parent,
         prev,
         target,
@@ -35,6 +35,10 @@ namespace RolUI {
         left_bottom,
         right_top,
         right_bottom,
+    };
+    enum class SizeMode {
+        none,
+        relative,
     };
 
     class Widget : public IWidget, public IEventListener, public HasSlot {
@@ -63,14 +67,17 @@ namespace RolUI {
         void set_pos(const Point& pos) noexcept;
         void set_size(const Size& size) noexcept;
 
-        void set_pos(int32_t x, int32_t y) noexcept;
-        void set_size(uint32_t w, uint32_t h) noexcept;
+        void set_pos(int x, int y) noexcept;
+        void set_size(int w, int h) noexcept;
 
         void set_pos_target(Widget* target) noexcept;
         void set_pos_relative(
-            PosRelative relative,
+            RelativeTarget relative,
             AnchorPoint target = AnchorPoint::left_top,
             AnchorPoint self = AnchorPoint::left_top) noexcept;
+
+        void set_size_target(Widget* target) noexcept;
+        void set_size_relative(RelativeTarget relative, SizeMode size_mode = SizeMode::none) noexcept;
 
         Window* window() const noexcept;
 
@@ -150,10 +157,15 @@ namespace RolUI {
 
         Point _pos;
         Size _size;
+
         Widget* _pos_target = nullptr;
-        PosRelative _pos_relative = PosRelative::parent;
+        RelativeTarget _pos_relative = RelativeTarget::parent;
         AnchorPoint _self_anchor_point = AnchorPoint::left_top;
         AnchorPoint _target_anchor_point = AnchorPoint::left_top;
+
+        Widget* _size_target = nullptr;
+        RelativeTarget _size_relative = RelativeTarget::parent;
+        SizeMode _size_mode = SizeMode::none;
 
         typedef std::tuple<const EventType*, EventCallback, size_t> CallbackItem;
         size_t _event_handle = 0;
