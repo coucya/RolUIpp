@@ -2,6 +2,7 @@
 
 #include "RolUI/Point.hpp"
 #include "RolUI/Size.hpp"
+#include "RolUI/sigslot/Signal.hpp"
 
 namespace RolUI {
 
@@ -18,6 +19,10 @@ namespace RolUI {
 
         virtual Point pos() const = 0;
         virtual Size size() const = 0;
+
+      public:
+        Signal<Point> on_pos_change;
+        Signal<Size> on_size_change;
     };
 
 } // namespace RolUI

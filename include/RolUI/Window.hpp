@@ -7,19 +7,20 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
+#include "RolUI/Size.hpp"
+#include "RolUI/sigslot/Slot.hpp"
 
 namespace RolUI {
 
     class Application;
     class Widget;
 
-    class Window : public IDisplay, public IDispatcher {
+    class Window : public IDisplay, public IDispatcher, public HasSlot {
         friend Application;
 
       public:
-        Window() noexcept {}
-
-        ~Window() override {}
+        Window() noexcept;
+        ~Window() override;
 
         Application* application() const noexcept;
 
@@ -37,7 +38,11 @@ namespace RolUI {
         Widget* get_widget_by_pos(Point pos) const noexcept;
 
       private:
+        void _init_event_bind() noexcept;
+
         void _draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept;
+
+        void _do_size_change(Size s) noexcept;
 
       protected:
         Widget* _content_widget = nullptr;

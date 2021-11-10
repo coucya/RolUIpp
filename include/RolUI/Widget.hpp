@@ -119,7 +119,15 @@ namespace RolUI {
         typedef std::vector<Widget*> Childrens;
 
         void _init_event_bind() noexcept;
+
+        Widget* _prev_widget() noexcept;
+
         void _update_child_index(size_t begin = 0) noexcept;
+
+        void _update_size() noexcept;
+        void _update_pos() noexcept;
+        bool _update_size_and_pos() noexcept;
+        void _update_child_size_and_pos() noexcept;
 
         Widget* _get_widget(size_t idx) const noexcept;
         void _add_widget(Childrens::iterator pos, Widget* w) noexcept;
@@ -155,8 +163,8 @@ namespace RolUI {
         size_t _part_count = 0;
         Childrens _children;
 
-        Point _pos;
-        Size _size;
+        Point _real_pos, _rela_pos;
+        Size _real_size, _rela_size;
 
         Widget* _pos_target = nullptr;
         RelativeTarget _pos_relative = RelativeTarget::parent;
@@ -166,6 +174,8 @@ namespace RolUI {
         Widget* _size_target = nullptr;
         RelativeTarget _size_relative = RelativeTarget::parent;
         SizeMode _size_mode = SizeMode::none;
+
+        bool _is_update = true;
 
         typedef std::tuple<const EventType*, EventCallback, size_t> CallbackItem;
         size_t _event_handle = 0;

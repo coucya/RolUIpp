@@ -9,6 +9,7 @@
 #include "RolUI/Application.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
+#include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
@@ -33,131 +34,30 @@ namespace RolUI {
 
     Widget::~Widget() {}
 
-    Point Widget::pos() const noexcept {
-        Point target_base_pos = {0, 0};
-        Widget* target = nullptr;
-        switch (_pos_relative) {
-            case RelativeTarget::parent: target = parent(); break;
-            case RelativeTarget::prev: {
-                if (is_part() && part_index() > 0)
-                    target = parent()->get_part(part_index() - 1);
-                else if (is_child() && child_index() > 0)
-                    target = parent()->get_child(child_index() - 1);
-                else
-                    target = nullptr;
-                break;
-            }
-            case RelativeTarget::target: target = _pos_target; break;
-        };
+    Point Widget::pos() const noexcept { return _real_pos; }
+    Size Widget::size() const noexcept { return _real_size; }
 
-        if (target) {
-            if (target != parent())
-                target_base_pos = target->pos();
-            else
-                target_base_pos = {0, 0};
-
-            switch (_target_anchor_point) {
-                case AnchorPoint::left_top: {
-                    target_base_pos += {};
-                    break;
-                }
-                case AnchorPoint::left_bottom: {
-                    Size s = target->size();
-                    target_base_pos += {0, (int32_t)s.height};
-                    break;
-                }
-                case AnchorPoint::right_top: {
-                    Size s = target->size();
-                    target_base_pos += {(int32_t)s.width, 0};
-                    break;
-                }
-                case AnchorPoint::right_bottom: {
-                    Size s = target->size();
-                    target_base_pos += {(int32_t)s.width, (int32_t)s.height};
-                    break;
-                }
-            }
-        }
-
-        Point self_base_pos = {0, 0};
-        switch (_self_anchor_point) {
-            case AnchorPoint::left_top: {
-                self_base_pos = {};
-                break;
-            }
-            case AnchorPoint::left_bottom: {
-                Size s = size();
-                self_base_pos = {0, (int32_t)s.height};
-                break;
-            }
-            case AnchorPoint::right_top: {
-                Size s = size();
-                self_base_pos = {(int32_t)s.width, 0};
-                break;
-            }
-            case AnchorPoint::right_bottom: {
-                Size s = size();
-                self_base_pos = {(int32_t)s.width, (int32_t)s.height};
-                break;
-            }
-        };
-
-        return target_base_pos - self_base_pos + _pos;
-    }
-
-    Size Widget::size() const noexcept {
-
-        Widget* target = nullptr;
-        switch (_size_relative) {
-            case RelativeTarget::parent: target = parent(); break;
-            case RelativeTarget::prev: {
-                if (is_part() && part_index() > 0)
-                    target = parent()->get_part(part_index() - 1);
-                else if (is_child() && child_index() > 0)
-                    target = parent()->get_child(child_index() - 1);
-                else
-                    target = nullptr;
-                break;
-            }
-            case RelativeTarget::target: target = _size_target; break;
-        };
-        Size target_size = target ? target->size() : Size();
-
-        Size res;
-        switch (_size_mode) {
-            case SizeMode::none: {
-                res = _size;
-                break;
-            }
-            case SizeMode::relative: {
-                res = target_size + _size;
-                break;
-            }
-        };
-        return res;
-    }
     Rect Widget::rect() const noexcept { return {pos(), size()}; }
 
     Point Widget::abs_pos() const noexcept {
         if (_parent == nullptr) return pos();
         return _parent->abs_pos() + pos();
     }
-
-    Rect Widget::abs_rect() const noexcept { return {abs_pos(), _size}; }
+    Rect Widget::abs_rect() const noexcept { return {abs_pos(), size()}; }
 
     void Widget::set_pos(const Point& pos) noexcept {
-        Point old = _pos;
-        _pos = pos;
-
-        PosChangeEvent e{this, pos, old};
-        send_event(this, &e);
+        _rela_pos = pos;
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
     }
     void Widget::set_size(const Size& size) noexcept {
-        Size old = _size;
-        _size = size;
-
-        SizeChangeEvent e{this, size, old};
-        send_event(this, &e);
+        _rela_size = size;
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
     }
 
     void Widget::set_pos(int x, int y) noexcept { set_pos({x, y}); }
@@ -285,9 +185,127 @@ namespace RolUI {
             return true;
         });
     }
+
+    Widget* Widget::_prev_widget() noexcept {
+        if (is_part() && part_index() > 0)
+            return parent()->get_part(part_index() - 1);
+        else if (is_child() && child_index() > 0)
+            return parent()->get_child(child_index() - 1);
+        else
+            return nullptr;
+    }
+
     void Widget::_update_child_index(size_t begin) noexcept {
         for (size_t i = begin; i < _children.size(); i++)
             _children[i]->_index = i;
+    }
+
+    void Widget::_update_size() noexcept {
+
+        Size target_size = {0, 0};
+        switch (_size_relative) {
+            case RelativeTarget::parent: {
+                if (parent())
+                    target_size = parent()->size();
+                else if (!parent() && window())
+                    target_size = window()->size();
+                break;
+            }
+            case RelativeTarget::prev: target_size = _prev_widget() ? _prev_widget()->size() : target_size; break;
+            case RelativeTarget::target: target_size = _size_target ? _size_target->size() : target_size; break;
+        };
+
+        Size res;
+        switch (_size_mode) {
+            case SizeMode::none: res = _rela_size; break;
+            case SizeMode::relative: res = target_size + _rela_size; break;
+        };
+        _real_size = res;
+    }
+    void Widget::_update_pos() noexcept {
+        Widget* target = nullptr;
+        Rect target_rect = Rect{{0, 0}, {0, 0}};
+        switch (_pos_relative) {
+            case RelativeTarget::parent: {
+                if (parent())
+                    target_rect = Rect{{0, 0}, parent()->size()};
+                else if (!parent() && window())
+                    target_rect = Rect{{0, 0}, window()->size()};
+                break;
+            }
+            case RelativeTarget::prev: target_rect = _prev_widget() ? _prev_widget()->rect() : target_rect; break;
+            case RelativeTarget::target: target_rect = _pos_target ? _pos_target->rect() : target_rect; break;
+        };
+
+        Point target_base_pos = {0, 0};
+        switch (_target_anchor_point) {
+            case AnchorPoint::left_top: target_base_pos = target_rect.left_top(); break;
+            case AnchorPoint::left_bottom: target_base_pos = target_rect.left_bottom(); break;
+            case AnchorPoint::right_top: target_base_pos = target_rect.right_top(); break;
+            case AnchorPoint::right_bottom: target_base_pos = target_rect.right_bottom(); break;
+        }
+
+        Point self_base_pos = {0, 0};
+        Rect self_rect = Rect{{0, 0}, size()};
+        switch (_self_anchor_point) {
+            case AnchorPoint::left_top: self_base_pos = self_rect.left_top(); break;
+            case AnchorPoint::left_bottom: self_base_pos = self_rect.left_bottom(); break;
+            case AnchorPoint::right_top: self_base_pos = self_rect.right_top(); break;
+            case AnchorPoint::right_bottom: self_base_pos = self_rect.right_bottom(); break;
+        };
+
+        _real_pos = target_base_pos - self_base_pos + _rela_pos;
+    }
+    bool Widget::_update_size_and_pos() noexcept {
+
+        Size ols_size = size();
+        Point old_pos = pos();
+
+        if (_size_mode == SizeMode::none) {
+            _update_size();
+        } else if (_size_relative == RelativeTarget::parent) {
+            _update_size();
+        } else if (_pos_relative == RelativeTarget::prev) {
+            _update_size();
+        } else if (_pos_relative == RelativeTarget::target) {
+            if (_size_target && _size_target->_is_update == false)
+                _update_size_and_pos();
+            _update_size();
+        }
+
+        if (_pos_relative == RelativeTarget::parent) {
+            _update_pos();
+        } else if (_pos_relative == RelativeTarget::prev) {
+            _update_pos();
+        } else if (_pos_relative == RelativeTarget::target) {
+            if (_pos_target && _pos_target->_is_update == false)
+                _update_size_and_pos();
+            _update_pos();
+        }
+
+        bool is_change = false;
+        if (ols_size != size()) {
+            is_change = true;
+            SizeChangeEvent e = SizeChangeEvent(this, size(), ols_size);
+            send_event(this, &e);
+        }
+        if (old_pos != pos()) {
+            is_change = true;
+            PosChangeEvent e = PosChangeEvent(this, pos(), old_pos);
+            send_event(this, &e);
+        }
+        return is_change;
+    }
+    void Widget::_update_child_size_and_pos() noexcept {
+        for (Widget* w : _children)
+            w->_is_update = false;
+
+        for (Widget* w : _children) {
+            if (w->_is_update) continue;
+            if (w->_update_size_and_pos())
+                w->_update_child_size_and_pos();
+            w->_is_update = true;
+        }
     }
 
     Widget* Widget::_get_widget(size_t idx) const noexcept {
@@ -330,16 +348,20 @@ namespace RolUI {
     void Widget::_do_attach_tree(Widget* new_parent, size_t idx) noexcept {
         if (!new_parent) return;
         new_parent->_update_child_index(idx);
+        new_parent->_update_child_size_and_pos();
     }
     void Widget::_do_detached_tree(Widget* old_parent, size_t idx) noexcept {
         if (!old_parent) return;
 
         for (Widget* widget : old_parent->_children) {
+            if (widget->_size_target == this)
+                widget->_size_target = nullptr;
             if (widget->_pos_target == this)
                 widget->_pos_target = nullptr;
         }
 
         old_parent->_update_child_index(idx);
+        old_parent->_update_child_size_and_pos();
     }
 
     void Widget::_do_parent_change(Widget* old, Widget* new_) noexcept {

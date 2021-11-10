@@ -139,8 +139,6 @@ int main(int argc, char* argv[]) {
         return true;
     });
 
-    cw2.pos();
-
     win.set_content_widget(&rw1);
 
     win.show();

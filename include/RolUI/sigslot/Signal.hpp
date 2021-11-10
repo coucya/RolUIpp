@@ -27,7 +27,7 @@ namespace RolUI {
         Signal() {}
         ~Signal() override { disconnect_all(); }
 
-        size_t size() const noexcept { return _slots.size(); }
+        size_t slot_count() const noexcept { return _slots.size(); }
 
         size_t connect(FuncPtr fp) noexcept;
 

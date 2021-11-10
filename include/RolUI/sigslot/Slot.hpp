@@ -16,7 +16,7 @@ namespace RolUI {
       public:
         virtual ~HasSlot() { disconnect_all(); }
 
-        size_t size() const noexcept { return _signals.size(); }
+        size_t signals_count() const noexcept { return _signals.size(); }
 
         void disconnect(ISignal* obj) noexcept;
 

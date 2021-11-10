@@ -10,6 +10,19 @@
 
 namespace RolUI {
 
+    Window::Window() noexcept {
+        _init_event_bind();
+    }
+    Window::~Window() {}
+
+    void Window::_init_event_bind() noexcept {
+        on_size_change.connect(this, &Window::_do_size_change);
+    }
+    void Window::_do_size_change(Size s) noexcept {
+        if (_content_widget)
+            _content_widget->_update_size_and_pos();
+    }
+
     IPainter* Window::painter() { return nullptr; }
     void Window::begin_draw() {}
     void Window::end_draw() {}
@@ -23,6 +36,7 @@ namespace RolUI {
 
         _content_widget = widget;
         _content_widget->_do_window_change(_content_widget->_window, this);
+        _content_widget->_update_size_and_pos();
     }
 
     void Window::_draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept {
