@@ -16,7 +16,7 @@ namespace RolUI {
     class HasSlot;
 
     template <typename... Args>
-    class Signal : public ISignal {
+    class Signal : public ISignal, public HasSlot {
       private:
         typedef std::tuple<std::function<void(Args...)>, _details::SlotInfo> Slot;
         typedef std::vector<Slot> SlotList;
