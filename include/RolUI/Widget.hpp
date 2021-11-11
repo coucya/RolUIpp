@@ -35,6 +35,11 @@ namespace RolUI {
         left_bottom,
         right_top,
         right_bottom,
+        centre_top,
+        centre_bottom,
+        left_middle,
+        right_middle,
+        centre_middle,
     };
     enum class SizeMode {
         none,

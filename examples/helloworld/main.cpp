@@ -41,8 +41,7 @@ int main(int argc, char* argv[]) {
 
     win.set_content_widget(&label1);
 
-    label1.set_pos(-10, -10);
-    label1.set_pos_relative(RelativeTarget::parent, AnchorPoint::right_bottom, AnchorPoint::right_bottom);
+    label1.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
     label1.set_font("san");
     label1.set_font_size(30);
     label1.adjust_size();

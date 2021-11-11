@@ -201,7 +201,6 @@ namespace RolUI {
     }
 
     void Widget::_update_size() noexcept {
-
         Size target_size = {0, 0};
         switch (_size_relative) {
             case RelativeTarget::parent: {
@@ -243,6 +242,11 @@ namespace RolUI {
             case AnchorPoint::left_bottom: target_base_pos = target_rect.left_bottom(); break;
             case AnchorPoint::right_top: target_base_pos = target_rect.right_top(); break;
             case AnchorPoint::right_bottom: target_base_pos = target_rect.right_bottom(); break;
+            case AnchorPoint::centre_top: target_base_pos = target_rect.centre_top(); break;
+            case AnchorPoint::centre_bottom: target_base_pos = target_rect.centre_bottom(); break;
+            case AnchorPoint::left_middle: target_base_pos = target_rect.left_middle(); break;
+            case AnchorPoint::right_middle: target_base_pos = target_rect.right_middle(); break;
+            case AnchorPoint::centre_middle: target_base_pos = target_rect.centre_middle(); break;
         }
 
         Point self_base_pos = {0, 0};
@@ -252,6 +256,11 @@ namespace RolUI {
             case AnchorPoint::left_bottom: self_base_pos = self_rect.left_bottom(); break;
             case AnchorPoint::right_top: self_base_pos = self_rect.right_top(); break;
             case AnchorPoint::right_bottom: self_base_pos = self_rect.right_bottom(); break;
+            case AnchorPoint::centre_top: self_base_pos = self_rect.centre_top(); break;
+            case AnchorPoint::centre_bottom: self_base_pos = self_rect.centre_bottom(); break;
+            case AnchorPoint::left_middle: self_base_pos = self_rect.left_middle(); break;
+            case AnchorPoint::right_middle: self_base_pos = self_rect.right_middle(); break;
+            case AnchorPoint::centre_middle: self_base_pos = self_rect.centre_middle(); break;
         };
 
         _real_pos = target_base_pos - self_base_pos + _rela_pos;
