@@ -88,5 +88,9 @@ namespace RolUI {
             _rect_widget.set_round(r);
         }
 
+        void Label::adjust_size() noexcept {
+            set_size(_text_widget.size());
+        }
+
     } // namespace widget
 } // namespace RolUI

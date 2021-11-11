@@ -23,6 +23,7 @@ namespace RolUIBackend {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         float bound[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
+        nvgFontSize(vg, _font_size);
         nvgTextBounds(vg, 0, 0, text, text + len, bound);
         return {(int32_t)(bound[2] - bound[0]),
                 (int32_t)(bound[3] - bound[1])};

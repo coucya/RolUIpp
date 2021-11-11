@@ -41,6 +41,8 @@ namespace RolUI {
             void set_border_color(Color c) noexcept;
             void set_round(unsigned r) noexcept;
 
+            void adjust_size() noexcept;
+
           private:
             void _init_part(std::string&& text) noexcept;
 

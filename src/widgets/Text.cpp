@@ -21,6 +21,7 @@ namespace RolUI {
             Window* win = window();
 
             if (win && !_text.empty()) {
+                win->painter()->set_font_size(_font_size);
                 Size s = win->painter()->text_size(_text.c_str(), _text.size());
                 Widget::set_size(s);
             }
@@ -32,9 +33,11 @@ namespace RolUI {
 
         void Text::set_font(const char* name) noexcept {
             _font_name = name;
+            _update_size();
         }
         void Text::set_font_size(unsigned size) noexcept {
             _font_size = size;
+            _update_size();
         }
         void Text::set_font_color(Color c) noexcept {
             _font_color = c;
