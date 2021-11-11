@@ -1,5 +1,6 @@
 
 #include "RolUI/widgets/Label.hpp"
+#include "RolUI/Color.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
@@ -56,6 +57,7 @@ namespace RolUI {
 
         const char* Label::font() const noexcept { return _text_widget.font(); }
         unsigned Label::font_size() const noexcept { return _text_widget.font_size(); }
+        Color Label::font_color() const noexcept { return _text_widget.font_color(); }
 
         Color Label::background_color() const noexcept { return _rect_widget.background_color(); }
 
@@ -64,7 +66,9 @@ namespace RolUI {
 
         unsigned Label::round() const noexcept { return _rect_widget.round(); }
 
-        Vector Label::padding() const noexcept { return _padding; }
+        Vector Label::padding() const noexcept { return _propertys.padding; }
+
+        const Label::StyleProperty& Label::style_property() const noexcept { return _propertys; }
 
         void Label::set_text(std::string text) noexcept {
             _text_widget.set_text(std::move(text));
@@ -75,6 +79,9 @@ namespace RolUI {
         }
         void Label::set_font_size(size_t size) noexcept {
             _text_widget.set_font_size(size);
+        }
+        void Label::set_font_color(Color c) noexcept {
+            _text_widget.set_font_color(c);
         }
 
         void Label::set_background_color(Color c) noexcept {
@@ -90,12 +97,19 @@ namespace RolUI {
             _rect_widget.set_round(r);
         }
 
-        void Label::set_padding(Vector v) noexcept { _padding = v; }
+        void Label::set_padding(Vector v) noexcept { _propertys.padding = v; }
         void Label::set_padding(int x, int y) noexcept { set_padding({x, y}); }
+
+        void Label::set_style_property(const StyleProperty& property) noexcept {
+            _propertys.padding = property.padding;
+            _text_widget.set_style_property(property);
+            _rect_widget.set_style_property(property);
+        }
 
         void Label::adjust_size() noexcept {
             Size content_size = _text_widget.size();
-            set_size(content_size.width + _padding.x * 2, content_size.height + _padding.y * 2);
+            set_size(content_size.width + _propertys.padding.x * 2,
+                     content_size.height + _propertys.padding.y * 2);
         }
 
     } // namespace widget

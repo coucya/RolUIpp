@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdio>
 #include <string>
 
 #include "RolUI/Widget.hpp"
@@ -9,11 +10,12 @@ namespace RolUI {
     namespace widget {
 
         class Text : public Widget {
-          private:
-            unsigned int _font_size = 12;
-            Color _font_color;
-            const char* _font_name = "";
-            std::string _text;
+          public:
+            struct StyleProperty {
+                unsigned int font_size = 12;
+                Color font_color = {0, 0, 0, 255};
+                const char* font_name = "";
+            };
 
           public:
             Text() noexcept;
@@ -23,6 +25,8 @@ namespace RolUI {
             const char* font() const noexcept;
             unsigned font_size() const noexcept;
             Color font_color() const noexcept;
+
+            const StyleProperty& style_property() const noexcept;
 
             void set_text(const char* text) noexcept;
             void set_text(const char* text, unsigned len) noexcept;
@@ -35,8 +39,14 @@ namespace RolUI {
 
             void on_draw(IPainter* painter) override;
 
+            void set_style_property(const StyleProperty& property) noexcept;
+
           private:
             void _update_size();
+
+          private:
+            StyleProperty _propertys;
+            std::string _text;
         };
 
     } // namespace widget
