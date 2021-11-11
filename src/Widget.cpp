@@ -68,21 +68,41 @@ namespace RolUI {
             _pos_target = target;
         else
             _pos_target = nullptr;
+
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
     }
     void Widget::set_pos_relative(RelativeTarget relative, AnchorPoint target, AnchorPoint self) noexcept {
         _pos_relative = relative;
         _target_anchor_point = target;
         _self_anchor_point = self;
+
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
     }
     void Widget::set_size_target(Widget* target) noexcept {
         if (target && target->parent() && target->parent() == parent())
             _size_target = target;
         else
             _size_target = nullptr;
+
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
     }
     void Widget::set_size_relative(RelativeTarget relative, SizeMode size_mode) noexcept {
         _size_relative = relative;
         _size_mode = size_mode;
+
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
     }
 
     Widget* Widget::parent() const noexcept { return _parent; }

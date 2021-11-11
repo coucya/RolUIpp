@@ -4,6 +4,7 @@
 
 #include "RolUI/Color.hpp"
 #include "RolUI/IEvent.hpp"
+#include "RolUI/Vector.hpp"
 #include "RolUI/Widget.hpp"
 
 #include "./Rect.hpp"
@@ -31,6 +32,8 @@ namespace RolUI {
 
             unsigned round() const noexcept;
 
+            Vector padding() const noexcept;
+
             void set_text(std::string text) noexcept;
 
             void set_font(const char* name) noexcept;
@@ -41,6 +44,9 @@ namespace RolUI {
             void set_border_color(Color c) noexcept;
             void set_round(unsigned r) noexcept;
 
+            void set_padding(Vector ) noexcept;
+            void set_padding(int x, int y) noexcept;
+
             void adjust_size() noexcept;
 
           private:
@@ -49,6 +55,8 @@ namespace RolUI {
           private:
             widget::Rect _rect_widget;
             widget::Text _text_widget;
+
+            Vector _padding = {0, 0};
         };
 
     } // namespace widget

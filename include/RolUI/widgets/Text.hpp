@@ -12,7 +12,7 @@ namespace RolUI {
           private:
             unsigned int _font_size = 12;
             Color _font_color;
-            const char* _font_name;
+            const char* _font_name = "";
             std::string _text;
 
           public:

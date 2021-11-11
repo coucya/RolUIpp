@@ -12,6 +12,7 @@
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Label.hpp"
+#include "RolUI/widgets/Button.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -38,108 +39,22 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("san", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Rect rw1, cw1, cw2;
-    widget::EllipseWidget cw3, cw4;
-    widget::Text cw5;
-    widget::Label label1{"标签标签标签"};
+    widget::Button button{"button"};
 
-    rw1.add_child(&cw1);
-    rw1.add_child(&cw2);
-    rw1.add_child(&cw3);
-    rw1.add_child(&cw4);
-    rw1.add_child(&cw5);
-    rw1.add_child(&label1);
+    win.set_content_widget(&button);
 
-    rw1.set_pos(10, 10);
-    rw1.set_size(500, 500);
-    rw1.set_round(10);
-    rw1.set_background_color(RolUI::Color(240, 240, 0));
+    button.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+    button.set_font("san");
+    button.set_font_size(20);
+    button.set_padding({20, 10});
+    button.adjust_size();
 
-    cw1.set_pos(10, 10);
-    cw1.set_size(100, 100);
-    cw1.set_round(10);
-    cw1.set_background_color(RolUI::Color(240, 0, 100));
-
-    cw2.set_pos(0, 0);
-    cw2.set_pos_target(&cw1);
-    cw2.set_pos_relative(RelativeTarget::target, AnchorPoint::right_top);
-    cw2.set_size(100, 100);
-    cw2.set_round(10);
-    cw2.set_background_color(RolUI::Color(240, 0, 0));
-    cw2.set_border_width(10);
-
-    cw3.set_pos(0, 0);
-    cw3.set_pos_target(&cw1);
-    cw3.set_pos_relative(RelativeTarget::target, AnchorPoint::left_top, AnchorPoint::right_top);
-    cw3.set_size(100, 200);
-    cw3.set_background_color(RolUI::Color(240, 0, 0));
-
-    cw4.set_pos(0, 0);
-    cw4.set_pos_target(&cw1);
-    cw4.set_pos_relative(RelativeTarget::target, AnchorPoint::left_bottom, AnchorPoint::left_top);
-    cw4.set_size(100, 200);
-    cw4.set_background_color(RolUI::Color(240, 0, 0));
-    cw4.set_border_width(10);
-
-    cw5.set_pos(0, 0);
-    cw5.set_pos_target(&cw1);
-    cw5.set_pos_relative(RelativeTarget::target, AnchorPoint::left_top, AnchorPoint::left_bottom);
-    cw5.set_font_size(16);
-    cw5.set_font("san");
-    cw5.set_text("label widget.");
-
-    label1.set_pos(10, 10);
-    label1.set_font("san");
-
-    bool is_lock = false;
-    cw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
-        is_lock = true;
-        return true;
+    int click_count = 0;
+    button.on_click.connect([&]() {
+        click_count++;
+        button.set_text(std::string("click: ") + std::to_string(click_count));
+        button.adjust_size();
     });
-    cw1.add_listener(RolUI::MouseReleaseEvent_type(), [&](RolUI::IEvent* e) {
-        is_lock = false;
-        return true;
-    });
-    cw1.add_listener(RolUI::MouseLeaveEvent_type(), [&](RolUI::IEvent* e) {
-        is_lock = false;
-        return true;
-    });
-    cw1.add_listener(RolUI::MousePosEvent_type(), [&](RolUI::IEvent* e) {
-        RolUI::MouseEvent* me = (RolUI::MouseEvent*)e;
-        Widget* target = e->target();
-        if (target && is_lock)
-            target->set_pos(target->pos() + me->offset());
-
-        return true;
-    });
-
-    rw1.add_listener(RolUI::MousePressEvent_type(), [&](RolUI::IEvent* e) {
-        rw1.remove_widget(&cw1);
-        return true;
-    });
-    rw1.add_listener(RolUI::MouseReleaseEvent_type(), [&](RolUI::IEvent* e) {
-        cw2.pos();
-        return true;
-    });
-
-    rw1.add_listener(RolUI::MouseEnterEvent_type(), [&](RolUI::IEvent* e) {
-        printf("rw1 enter event. \n");
-        return true;
-    });
-    rw1.add_listener(RolUI::MouseLeaveEvent_type(), [&](RolUI::IEvent* e) {
-        printf("rw1 leave event. \n");
-        return true;
-    });
-    cw1.add_listener(RolUI::MouseEnterEvent_type(), [&](RolUI::IEvent* e) {
-        printf("cw1 enter event. \n");
-        return true;
-    });
-    cw1.add_listener(RolUI::MouseLeaveEvent_type(), [&](RolUI::IEvent* e) {
-        printf("cw1 leave event. \n");
-        return true;
-    });
-
-    win.set_content_widget(&rw1);
 
     win.show();
 

@@ -64,6 +64,8 @@ namespace RolUI {
 
         unsigned Label::round() const noexcept { return _rect_widget.round(); }
 
+        Vector Label::padding() const noexcept { return _padding; }
+
         void Label::set_text(std::string text) noexcept {
             _text_widget.set_text(std::move(text));
         }
@@ -88,8 +90,12 @@ namespace RolUI {
             _rect_widget.set_round(r);
         }
 
+        void Label::set_padding(Vector v) noexcept { _padding = v; }
+        void Label::set_padding(int x, int y) noexcept { set_padding({x, y}); }
+
         void Label::adjust_size() noexcept {
-            set_size(_text_widget.size());
+            Size content_size = _text_widget.size();
+            set_size(content_size.width + _padding.x * 2, content_size.height + _padding.y * 2);
         }
 
     } // namespace widget
