@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <numeric>
 
-#include "RolUI/timer.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
@@ -21,6 +20,7 @@
 #include "RolUI/widgets/Button.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
+#include "RolUI/timer.hpp"
 #include "RolUI/Application.hpp"
 
 using namespace RolUI;
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     std::string font_path = get_font_path();
     // if (win.painter()->load_font("san", font_path.c_str()) == false)
-    if (win.painter()->load_font("san", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
+    if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
     widget::Button button{"button"};
@@ -67,23 +67,6 @@ int main(int argc, char* argv[]) {
     win.set_content_widget(&button);
 
     button.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    widget::Button::StyleProperty default_ = button.default_property();
-    widget::Button::StyleProperty hover = button.hover_property();
-    widget::Button::StyleProperty press = button.press_property();
-    default_.font_name = "san";
-    hover.font_name = "san";
-    press.font_name = "san";
-    default_.font_size = 20;
-    hover.font_size = 20;
-    press.font_size = 20;
-    default_.padding = {20, 10};
-    hover.padding = {20, 10};
-    press.padding = {20, 10};
-
-    button.set_default_property(default_);
-    button.set_hover_property(hover);
-    button.set_press_property(press);
-
     button.adjust_size();
 
     Timer timer;

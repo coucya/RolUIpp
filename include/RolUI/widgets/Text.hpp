@@ -12,9 +12,9 @@ namespace RolUI {
         class Text : public Widget {
           public:
             struct StyleProperty {
-                unsigned int font_size = 12;
+                unsigned int font_size = 15;
                 Color font_color = {0, 0, 0, 255};
-                const char* font_name = "";
+                const char* font_name = "default";
             };
 
           public:

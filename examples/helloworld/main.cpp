@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     app.set_window(&win);
 
     std::string font_path = get_font_path();
-    if (win.painter()->load_font("san", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
+    if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
     widget::Label label1{"Hello World!"};
@@ -42,7 +42,6 @@ int main(int argc, char* argv[]) {
     win.set_content_widget(&label1);
 
     label1.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    label1.set_font("san");
     label1.set_font_size(30);
     label1.adjust_size();
 

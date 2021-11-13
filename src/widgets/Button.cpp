@@ -22,6 +22,7 @@ namespace RolUI {
             _default_propertys.border_color = {50, 50, 50};
             _default_propertys.border_width = 1;
             _default_propertys.background_color = {240, 240, 240};
+            _default_propertys.padding = {20, 10};
 
             _hover_propertys = _default_propertys;
             _press_propertys = _default_propertys;

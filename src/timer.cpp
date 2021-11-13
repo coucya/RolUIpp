@@ -31,8 +31,10 @@ namespace RolUI {
         auto it = std::find_if(c.begin(), c.end(), [&](const TimerTask& tt) {
             return tt.handle == handle;
         });
-        c.erase(it);
-        std::make_heap(c.begin(), c.end());
+        if (it != c.end()) {
+            c.erase(it);
+            std::make_heap(c.begin(), c.end());
+        }
     }
 
     double TimerQueue::do_timer() noexcept {
@@ -75,14 +77,14 @@ namespace RolUI {
     void Timer::start(Application* app) noexcept {
         stop();
         if (!(_app = app)) return;
-        _app->set_timeout(Timer::_timeout_cb, _interval, this);
+        _handle = _app->set_timeout(Timer::_timeout_cb, _interval, this);
     }
     void Timer::start(Application* app, double interval, bool single_shot) noexcept {
         stop();
         if (!(_app = app)) return;
         set_interval(interval);
         set_singleShot(single_shot);
-        _app->set_timeout(Timer::_timeout_cb, _interval, this);
+        _handle = _app->set_timeout(Timer::_timeout_cb, _interval, this);
     }
     void Timer::stop() noexcept {
         if (!_app) return;
