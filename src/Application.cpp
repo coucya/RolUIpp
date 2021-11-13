@@ -1,5 +1,4 @@
 
-#include <chrono>
 #include <cstddef>
 
 #include "RolUI/Window.hpp"
@@ -23,12 +22,7 @@ namespace RolUI {
     }
 
     size_t Application::set_timeout(TimeoutCallback cb, double duration, void* arg) {
-        using namespace std::chrono;
-
-        long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
-        unsigned long long target_time = current_time + (duration <= 0.0 ? 0ull : (unsigned long long)duration * 1000000);
-
-        return _timer_queue.push(cb, target_time, arg);
+        return _timer_queue.push(cb, duration, arg);
     }
     void Application::remove_timeout(size_t handle) {
         _timer_queue.remove(handle);
@@ -58,23 +52,6 @@ namespace RolUI {
     }
 
     double Application::_do_timer() noexcept {
-        using namespace std::chrono;
-
-        double timeout = 60.0;
-        unsigned long long tolerance = 10000; // 0.010s.
-        while (!_timer_queue.empty()) {
-            TimerTask tt = _timer_queue.top();
-            unsigned long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
-
-            if (tt.trigger_time > current_time && current_time - tt.trigger_time > tolerance) {
-                timeout = (double)(tt.trigger_time - current_time) / 1000000.0;
-                break;
-            }
-
-            if (tt.callback)
-                tt.callback(tt.arg);
-            _timer_queue.pop();
-        }
-        return std::max(0.0, timeout - tolerance / 1000000.0);
+        return _timer_queue.do_timer();
     }
 } // namespace RolUI
