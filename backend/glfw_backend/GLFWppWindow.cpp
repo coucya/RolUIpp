@@ -175,6 +175,7 @@ namespace RolUIBackend {
 
     void GLFWppWindow::poll_events() { glfwPollEvents(); }
     void GLFWppWindow::wait_events() { glfwWaitEvents(); }
+    void GLFWppWindow::wait_events_timeout(double timeout) { glfwWaitEventsTimeout(timeout); }
 
     void GLFWppWindow::hide() { glfwHideWindow(_glfw_window); }
     void GLFWppWindow::show() { glfwShowWindow(_glfw_window); }

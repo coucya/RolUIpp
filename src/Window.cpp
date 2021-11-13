@@ -27,7 +27,7 @@ namespace RolUI {
     void Window::begin_draw() {}
     void Window::end_draw() {}
 
-    void Window::dispatch_event() {}
+    void Window::dispatch_event(double timeout) {}
 
     Application* Window::application() const noexcept { return _application; }
 

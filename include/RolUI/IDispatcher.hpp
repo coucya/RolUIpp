@@ -7,7 +7,7 @@ namespace RolUI {
       public:
         virtual ~IDispatcher() {}
 
-        virtual void dispatch_event() = 0;
+        virtual void dispatch_event(double timeout) = 0;
 
     };
 

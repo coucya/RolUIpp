@@ -34,7 +34,7 @@ namespace RolUIBackend {
         void begin_draw() override;
         void end_draw() override;
 
-        void dispatch_event() override;
+        void dispatch_event(double timeout) override;
 
       private:
         void _init_nanovg();

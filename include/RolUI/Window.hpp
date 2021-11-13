@@ -33,7 +33,7 @@ namespace RolUI {
 
         void draw() noexcept;
 
-        void dispatch_event() override;
+        void dispatch_event(double timeout) override;
 
         Widget* get_widget_by_pos(Point pos) const noexcept;
 

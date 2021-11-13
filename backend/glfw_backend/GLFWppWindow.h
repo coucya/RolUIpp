@@ -60,6 +60,7 @@ namespace RolUIBackend {
 
         void poll_events();
         void wait_events();
+        void wait_events_timeout(double timeou);
 
         void set_title(const char* title);
         void set_size(int w, int h);

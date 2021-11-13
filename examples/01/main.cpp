@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
-#include <stdexcept>
 #include <type_traits>
+#include <chrono>
+#include <vector>
+#include <algorithm>
+#include <numeric>
 
 #include "glfw_backend/GLFWWindow.h"
 
@@ -24,6 +27,24 @@ std::string get_font_path() {
     std::filesystem::path self_path{__FILE__};
     std::filesystem::path font_path = self_path.parent_path() / ".." / "resources" / "Roboto-Regular.ttf";
     return font_path.string();
+}
+
+std::vector<double> ts;
+void timeout_cb(void* arg) {
+    Application* app = (Application*)arg;
+    app->set_timeout(timeout_cb, 1.0, app);
+
+    using namespace std::chrono;
+    static double last_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count() / 1000000.0;
+    double current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count() / 1000000.0;
+
+    if (current_time - last_time > 0.001)
+        ts.push_back(current_time - last_time);
+
+    double avg = std::reduce(ts.begin(), ts.end(), 0.0) / ts.size();
+
+    printf("timeout at: %.6f, diff: %.6f, avg: %.6f \n", current_time, current_time - last_time, avg);
+    last_time = current_time;
 }
 
 int main(int argc, char* argv[]) {
@@ -72,6 +93,8 @@ int main(int argc, char* argv[]) {
     });
 
     win.show();
+
+    app.set_timeout(timeout_cb, 1.0, &app);
 
     app.run();
 
