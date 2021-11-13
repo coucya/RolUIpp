@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <numeric>
 
+#include "RolUI/timer.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
@@ -31,21 +32,18 @@ std::string get_font_path() {
 }
 
 std::vector<double> ts;
-void timeout_cb(void* arg) {
+void timeout_cb(double interval, void* arg) {
     Application* app = (Application*)arg;
     size_t handle = app->set_timeout(timeout_cb, 1.0, app);
 
     using namespace std::chrono;
-    static double last_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count() / 1000000.0;
     double current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count() / 1000000.0;
 
-    if (current_time - last_time > 0.001)
-        ts.push_back(current_time - last_time);
+    ts.push_back(interval);
 
     double avg = std::reduce(ts.begin(), ts.end(), 0.0) / ts.size();
 
-    printf("timeout at: %.6f, diff: %.6f, avg: %.6f \n", current_time, current_time - last_time, avg);
-    last_time = current_time;
+    printf("timeout at: %.6f, diff: %.6f, avg: %.6f \n", current_time, interval, avg);
 
     if (ts.size() > 5) app->remove_timeout(handle);
 }
@@ -88,11 +86,17 @@ int main(int argc, char* argv[]) {
 
     button.adjust_size();
 
+    Timer timer;
+    timer.on_timeout.connect([](double interval) {
+        printf("timer.on_timeout: %.6f \n", interval);
+    });
+
     int click_count = 0;
     button.on_click.connect([&]() {
         click_count++;
         button.set_text(std::string("click: ") + std::to_string(click_count));
         button.adjust_size();
+        timer.start(&app, 1);
     });
 
     win.show();
