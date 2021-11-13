@@ -1,5 +1,6 @@
 
 #include <chrono>
+#include <cstddef>
 
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
@@ -21,14 +22,16 @@ namespace RolUI {
         }
     }
 
-    void Application::set_timeout(TimeoutCallback cb, double duration, void* arg) {
+    size_t Application::set_timeout(TimeoutCallback cb, double duration, void* arg) {
         using namespace std::chrono;
 
         long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
         unsigned long long target_time = current_time + (duration <= 0.0 ? 0ull : (unsigned long long)duration * 1000000);
 
-        TimerTask tt{target_time, cb, arg};
-        _timers.push(tt);
+        return _timer_queue.push(cb, target_time, arg);
+    }
+    void Application::remove_timeout(size_t handle) {
+        _timer_queue.remove(handle);
     }
 
     void Application::exit() noexcept { _should_exit = true; }
@@ -59,8 +62,8 @@ namespace RolUI {
 
         double timeout = 60.0;
         unsigned long long tolerance = 10000; // 0.010s.
-        while (!_timers.empty()) {
-            TimerTask tt = _timers.top();
+        while (!_timer_queue.empty()) {
+            TimerTask tt = _timer_queue.top();
             unsigned long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
 
             if (tt.trigger_time > current_time && current_time - tt.trigger_time > tolerance) {
@@ -70,7 +73,7 @@ namespace RolUI {
 
             if (tt.callback)
                 tt.callback(tt.arg);
-            _timers.pop();
+            _timer_queue.pop();
         }
         return std::max(0.0, timeout - tolerance / 1000000.0);
     }

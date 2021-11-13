@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iostream>
 #include <string>
 #include <filesystem>
@@ -32,7 +33,7 @@ std::string get_font_path() {
 std::vector<double> ts;
 void timeout_cb(void* arg) {
     Application* app = (Application*)arg;
-    app->set_timeout(timeout_cb, 1.0, app);
+    size_t handle = app->set_timeout(timeout_cb, 1.0, app);
 
     using namespace std::chrono;
     static double last_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count() / 1000000.0;
@@ -45,6 +46,8 @@ void timeout_cb(void* arg) {
 
     printf("timeout at: %.6f, diff: %.6f, avg: %.6f \n", current_time, current_time - last_time, avg);
     last_time = current_time;
+
+    if (ts.size() > 5) app->remove_timeout(handle);
 }
 
 int main(int argc, char* argv[]) {
