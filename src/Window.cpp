@@ -39,24 +39,26 @@ namespace RolUI {
         _content_widget->_update_size_and_pos();
     }
 
-    void Window::_draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept {
+    void Window::_draw_widget(RolUI::Widget* widget, Point base_pos, Rect scissor, RolUI::IPainter* painter) noexcept {
         if (widget == nullptr || painter == nullptr) return;
 
         Point pos = widget->pos();
         Size size = widget->size();
-        Rect new_scissor = {scissor.pos() + pos, size};
+        Point new_base_pos = base_pos + pos;
+        auto new_scissor_opt = scissor.intersected({new_base_pos, size});
+        Rect new_scissor = new_scissor_opt.has_value() ? new_scissor_opt.value() : Rect{scissor.pos(), {0, 0}};
 
         widget->on_draw(painter);
 
-        painter->set_base_pos(new_scissor.pos());
+        painter->set_base_pos(new_base_pos);
         painter->scissor(new_scissor);
 
         for (auto& cw : widget->_children) {
-            _draw_widget(cw, new_scissor, painter);
+            _draw_widget(cw, new_base_pos, new_scissor, painter);
         }
 
         painter->scissor(scissor);
-        painter->set_base_pos(scissor.pos());
+        painter->set_base_pos(base_pos);
     }
     void Window::draw() noexcept {
         Widget* root_widget = this->_content_widget;
@@ -66,7 +68,7 @@ namespace RolUI {
         if (painter == nullptr) return;
 
         begin_draw();
-        _draw_widget(root_widget, Rect{Point(), this->size()}, painter);
+        _draw_widget(root_widget, Point(0, 0), Rect{Point(), this->size()}, painter);
         end_draw();
     }
 

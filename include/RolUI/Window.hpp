@@ -40,7 +40,7 @@ namespace RolUI {
       private:
         void _init_event_bind() noexcept;
 
-        void _draw_widget(RolUI::Widget* widget, Rect scissor, RolUI::IPainter* painter) noexcept;
+        void _draw_widget(RolUI::Widget* widget, Point base_pos, Rect scissor, RolUI::IPainter* painter) noexcept;
 
         void _do_size_change(Size s) noexcept;
 

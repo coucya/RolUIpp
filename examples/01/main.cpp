@@ -11,6 +11,7 @@
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
+#include "RolUI/Vector.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/widgets/EllipseWidget.hpp"
@@ -18,6 +19,7 @@
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Label.hpp"
 #include "RolUI/widgets/Button.hpp"
+#include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/timer.hpp"
@@ -62,29 +64,51 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
+    widget::Scroll scroll{};
     widget::Button button{"button"};
+    // widget::Rect button{};
+    // widget::Label button{"label"};
 
-    win.set_content_widget(&button);
+    win.set_content_widget(&scroll);
+    // win.set_content_widget(&button);
 
-    button.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    button.adjust_size();
+    button.set_size(300, 300);
+    button.set_border_color({0, 0, 0});
+    button.set_border_width(1);
+    button.set_background_color({250, 240, 240});
 
-    Timer timer;
-    timer.on_timeout.connect([](double interval) {
-        printf("timer.on_timeout: %.6f \n", interval);
+    scroll.set_size(200, 200);
+    scroll.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+    scroll.set_widget(&button);
+
+    // button.adjust_size();
+
+    bool is_press = false;
+    button.add_listener(MousePressEvent_type(), [&](IEvent* e) {
+        is_press = true;
+        printf("button press. \n");
+        return true;
     });
-
-    int click_count = 0;
-    button.on_click.connect([&]() {
-        click_count++;
-        button.set_text(std::string("click: ") + std::to_string(click_count));
-        button.adjust_size();
-        timer.start(&app, 1);
+    button.add_listener(MouseReleaseEvent_type(), [&](IEvent* e) {
+        is_press = false;
+        printf("button release. \n");
+        return true;
+    });
+    button.add_listener(MouseLeaveEvent_type(), [&](IEvent* e) {
+        is_press = false;
+        printf("button leave. \n");
+        return true;
+    });
+    button.add_listener(MousePosEvent_type(), [&](IEvent* e) {
+        if (!is_press) return false;
+        MouseEvent* me = (MouseEvent*)e;
+        Vector offset = me->offset();
+        scroll.scroll_by_px(offset.x, offset.y);
+        printf("button move: %d, %d. \n", offset.x, offset.y);
+        return true;
     });
 
     win.show();
-
-    app.set_timeout(timeout_cb, 1.0, &app);
 
     app.run();
 

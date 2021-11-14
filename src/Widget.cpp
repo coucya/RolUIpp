@@ -63,6 +63,15 @@ namespace RolUI {
     void Widget::set_pos(int x, int y) noexcept { set_pos({x, y}); }
     void Widget::set_size(int w, int h) noexcept { set_size({w, h}); }
 
+    void Widget::move(int x, int y) noexcept { move({x, y}); }
+    void Widget::move(Point offset) noexcept {
+        _rela_pos += offset;
+        if (parent())
+            parent()->_update_child_size_and_pos();
+        else
+            _update_size_and_pos();
+    }
+
     void Widget::set_pos_target(Widget* target) noexcept {
         if (target && target->parent() && target->parent() == parent())
             _pos_target = target;

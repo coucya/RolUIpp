@@ -24,8 +24,8 @@ namespace RolUI {
             int min_y = a.y < b.y ? a.y : b.y;
             int max_y = a.y > b.y ? a.y : b.y;
 
-            int width = max_x - min_x + 1;
-            int height = max_y - min_y + 1;
+            int width = max_x - min_x;
+            int height = max_y - min_y;
             int x = min_x, y = min_y;
 
             return {x, y, width, height};
@@ -55,8 +55,8 @@ namespace RolUI {
 
         bool contain(int x, int y) const noexcept {
             if (x < this->x || y < this->y) return false;
-            int rb_x = this->x + this->width - 1;
-            int rb_y = this->y + this->height - 1;
+            int rb_x = this->x + this->width;
+            int rb_y = this->y + this->height;
             if (x > rb_x || y > rb_y) return false;
             return true;
         }
@@ -77,7 +77,7 @@ namespace RolUI {
             int rb_x = self_rb.x > other_rb.x ? self_rb.x : other_rb.x;
             int rb_y = self_rb.y > other_rb.y ? self_rb.y : other_rb.y;
 
-            return Rect(Point(lt_x, lt_y), Point(rb_x, rb_y));
+            return create_with_two_point(Point(lt_x, lt_y), Point(rb_x, rb_y));
         }
         std::optional<Rect> intersected(const Rect& other) const noexcept {
             int lt_x = x > other.x ? x : other.x;
@@ -91,7 +91,7 @@ namespace RolUI {
 
             if (rb_x < lt_x || rb_y < lt_y) return {};
 
-            return Rect(Point(lt_x, lt_y), Point(rb_x, rb_y));
+            return create_with_two_point(Point(lt_x, lt_y), Point(rb_x, rb_y));
         }
     };
 

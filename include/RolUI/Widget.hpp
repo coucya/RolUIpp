@@ -84,6 +84,9 @@ namespace RolUI {
         void set_size_target(Widget* target) noexcept;
         void set_size_relative(RelativeTarget relative, SizeMode size_mode = SizeMode::none) noexcept;
 
+        void move(int x, int y) noexcept;
+        void move(Point offset) noexcept;
+
         Window* window() const noexcept;
 
         Widget* parent() const noexcept;
