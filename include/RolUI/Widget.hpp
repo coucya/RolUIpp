@@ -75,6 +75,9 @@ namespace RolUI {
         void set_pos(int x, int y) noexcept;
         void set_size(int w, int h) noexcept;
 
+        void move(int x, int y) noexcept;
+        void move(Point offset) noexcept;
+
         void set_pos_target(Widget* target) noexcept;
         void set_pos_relative(
             RelativeTarget relative,
@@ -84,8 +87,15 @@ namespace RolUI {
         void set_size_target(Widget* target) noexcept;
         void set_size_relative(RelativeTarget relative, SizeMode size_mode = SizeMode::none) noexcept;
 
-        void move(int x, int y) noexcept;
-        void move(Point offset) noexcept;
+        Point anchor_point() const noexcept;
+        Point anchor_point(AnchorPoint anchor_point) const noexcept;
+
+        Widget* pos_target() const noexcept;
+        Widget* size_target() const noexcept;
+
+        AnchorPoint self_anchor_point() const noexcept;
+        AnchorPoint target_anchor_point() const noexcept;
+        SizeMode size_mode() const noexcept;
 
         Window* window() const noexcept;
 

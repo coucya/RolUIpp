@@ -114,6 +114,33 @@ namespace RolUI {
             _update_size_and_pos();
     }
 
+    Point Widget::anchor_point() const noexcept {
+        return anchor_point(_self_anchor_point);
+    }
+    Point Widget::anchor_point(AnchorPoint anchor_point) const noexcept {
+        Rect self_rect = Rect({0, 0}, size());
+        Point point;
+        switch (anchor_point) {
+            case AnchorPoint::left_top: point = self_rect.left_top(); break;
+            case AnchorPoint::left_bottom: point = self_rect.left_bottom(); break;
+            case AnchorPoint::right_top: point = self_rect.right_top(); break;
+            case AnchorPoint::right_bottom: point = self_rect.right_bottom(); break;
+            case AnchorPoint::centre_top: point = self_rect.centre_top(); break;
+            case AnchorPoint::centre_bottom: point = self_rect.centre_bottom(); break;
+            case AnchorPoint::left_middle: point = self_rect.left_middle(); break;
+            case AnchorPoint::right_middle: point = self_rect.right_middle(); break;
+            case AnchorPoint::centre_middle: point = self_rect.centre_middle(); break;
+        }
+        return point;
+    }
+
+    Widget* Widget::pos_target() const noexcept { return _pos_target; }
+    Widget* Widget::size_target() const noexcept { return _size_target; }
+
+    AnchorPoint Widget::self_anchor_point() const noexcept { return _self_anchor_point; }
+    AnchorPoint Widget::target_anchor_point() const noexcept { return _target_anchor_point; }
+    SizeMode Widget::size_mode() const noexcept { return _size_mode; }
+
     Widget* Widget::parent() const noexcept { return _parent; }
 
     Window* Widget::window() const noexcept { return _window; }
@@ -278,19 +305,7 @@ namespace RolUI {
             case AnchorPoint::centre_middle: target_base_pos = target_rect.centre_middle(); break;
         }
 
-        Point self_base_pos = {0, 0};
-        Rect self_rect = Rect{{0, 0}, size()};
-        switch (_self_anchor_point) {
-            case AnchorPoint::left_top: self_base_pos = self_rect.left_top(); break;
-            case AnchorPoint::left_bottom: self_base_pos = self_rect.left_bottom(); break;
-            case AnchorPoint::right_top: self_base_pos = self_rect.right_top(); break;
-            case AnchorPoint::right_bottom: self_base_pos = self_rect.right_bottom(); break;
-            case AnchorPoint::centre_top: self_base_pos = self_rect.centre_top(); break;
-            case AnchorPoint::centre_bottom: self_base_pos = self_rect.centre_bottom(); break;
-            case AnchorPoint::left_middle: self_base_pos = self_rect.left_middle(); break;
-            case AnchorPoint::right_middle: self_base_pos = self_rect.right_middle(); break;
-            case AnchorPoint::centre_middle: self_base_pos = self_rect.centre_middle(); break;
-        };
+        Point self_base_pos = this->anchor_point();
 
         _real_pos = target_base_pos - self_base_pos + _rela_pos;
     }

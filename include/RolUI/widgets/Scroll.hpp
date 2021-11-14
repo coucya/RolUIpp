@@ -1,8 +1,8 @@
 #pragma once
 
-#include "RolUI/IPainter.hpp"
-#include "RolUI/Widget.hpp"
 #include <cstddef>
+
+#include "RolUI/Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -15,18 +15,25 @@ namespace RolUI {
             Widget* widget() const noexcept;
             void set_widget(Widget* widget) noexcept;
 
+            Point widget_pos() const noexcept;
+            int widget_x() const noexcept;
+            int widget_y() const noexcept;
+            float widget_x_ratio() const noexcept;
+            float widget_y_ratio() const noexcept;
+
             void scroll_by_px(int dx, int dy) noexcept;
             void scroll_by_ratio(float x, float y) noexcept;
             void scroll_x_by_px(int dx) noexcept;
             void scroll_y_by_px(int dy) noexcept;
-            void scroll_x_by_ration(float dx) noexcept;
-            void scroll_y_by_ration(float dy) noexcept;
+            void scroll_x_by_ratio(float x) noexcept;
+            void scroll_y_by_ratio(float y) noexcept;
 
-            void on_draw(IPainter* p) override {
-                p->set_fill_color({155, 240, 240});
-                // p->fill_rect({0, 0, size().width, size().height});
-                p->fill_rect({pos(), size()});
-            }
+            void scroll_to_px(int x, int y) noexcept;
+            void scroll_to_ratio(float x, float y) noexcept;
+            void scroll_x_to_px(int x) noexcept;
+            void scroll_y_to_px(int y) noexcept;
+            void scroll_x_to_ratio(float x) noexcept;
+            void scroll_y_to_ratio(float y) noexcept;
 
           private:
             Widget* _widget = nullptr;
