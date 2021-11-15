@@ -66,11 +66,8 @@ int main(int argc, char* argv[]) {
 
     widget::Scroll scroll{};
     widget::Button button{"button"};
-    // widget::Rect button{};
-    // widget::Label button{"label"};
 
     win.set_content_widget(&scroll);
-    // win.set_content_widget(&button);
 
     button.set_size(300, 300);
     button.set_border_color({0, 0, 0});
@@ -82,6 +79,7 @@ int main(int argc, char* argv[]) {
     scroll.set_widget(&button);
 
     // button.adjust_size();
+    button.visual_rect();
 
     bool is_press = false;
     button.add_listener(MousePressEvent_type(), [&](IEvent* e) {
@@ -92,6 +90,11 @@ int main(int argc, char* argv[]) {
     button.add_listener(MouseReleaseEvent_type(), [&](IEvent* e) {
         is_press = false;
         printf("button release. \n");
+        return true;
+    });
+    button.add_listener(MouseEnterEvent_type(), [&](IEvent* e) {
+        is_press = false;
+        printf("button enter. \n");
         return true;
     });
     button.add_listener(MouseLeaveEvent_type(), [&](IEvent* e) {

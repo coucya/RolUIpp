@@ -53,7 +53,7 @@ namespace RolUI {
     Rect Widget::abs_rect() const noexcept { return {abs_pos(), size()}; }
 
     Rect Widget::visual_rect() const noexcept {
-        if (!parent()) return Rect(abs_pos(), Size(0, 0));
+        if (!parent()) return Rect(abs_pos(), size());
         Rect self_abs_rect = abs_rect();
         auto opt = parent()->visual_rect().intersected(self_abs_rect);
         return opt.has_value() ? opt.value() : Rect(self_abs_rect.pos(), Size(0, 0));
