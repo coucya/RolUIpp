@@ -37,6 +37,13 @@ namespace RolUI {
     Point Widget::pos() const noexcept { return _real_pos; }
     Size Widget::size() const noexcept { return _real_size; }
 
+    Size Widget::visual_size() const noexcept {
+        return visual_rect().size();
+    }
+
+    Point Widget::real_pos() const noexcept { return _real_pos; }
+    Point Widget::rela_pos() const noexcept { return _rela_pos; }
+
     Rect Widget::rect() const noexcept { return {pos(), size()}; }
 
     Point Widget::abs_pos() const noexcept {
@@ -44,6 +51,13 @@ namespace RolUI {
         return _parent->abs_pos() + pos();
     }
     Rect Widget::abs_rect() const noexcept { return {abs_pos(), size()}; }
+
+    Rect Widget::visual_rect() const noexcept {
+        if (!parent()) return Rect(abs_pos(), Size(0, 0));
+        Rect self_abs_rect = abs_rect();
+        auto opt = parent()->visual_rect().intersected(self_abs_rect);
+        return opt.has_value() ? opt.value() : Rect(self_abs_rect.pos(), Size(0, 0));
+    }
 
     void Widget::set_pos(const Point& pos) noexcept {
         _rela_pos = pos;
