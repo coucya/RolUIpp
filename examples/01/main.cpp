@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <numeric>
 
+#include "RolUI/IEventListener.hpp"
+#include "RolUI/events/CharEvent.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
@@ -66,48 +68,18 @@ int main(int argc, char* argv[]) {
 
     widget::Scroll scroll{};
     widget::Button button{"button"};
+    widget::Label label;
 
-    win.set_content_widget(&scroll);
+    win.set_content_widget(&label);
 
-    button.set_size(300, 300);
-    button.set_border_color({0, 0, 0});
-    button.set_border_width(1);
-    button.set_background_color({250, 240, 240});
+    label.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+    label.set_focusable(true);
+    label.set_focus();
 
-    scroll.set_size(200, 200);
-    scroll.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    scroll.set_widget(&button);
-
-    // button.adjust_size();
-    button.visual_rect();
-
-    bool is_press = false;
-    button.add_listener(MousePressEvent_type(), [&](IEvent* e) {
-        is_press = true;
-        printf("button press. \n");
-        return true;
-    });
-    button.add_listener(MouseReleaseEvent_type(), [&](IEvent* e) {
-        is_press = false;
-        printf("button release. \n");
-        return true;
-    });
-    button.add_listener(MouseEnterEvent_type(), [&](IEvent* e) {
-        is_press = false;
-        printf("button enter. \n");
-        return true;
-    });
-    button.add_listener(MouseLeaveEvent_type(), [&](IEvent* e) {
-        is_press = false;
-        printf("button leave. \n");
-        return true;
-    });
-    button.add_listener(MousePosEvent_type(), [&](IEvent* e) {
-        if (!is_press) return false;
-        MouseEvent* me = (MouseEvent*)e;
-        Vector offset = me->offset();
-        scroll.scroll_by_px(offset.x, offset.y);
-        printf("button move: %d, %d. \n", offset.x, offset.y);
+    label.add_listener(CharEvent::type(), [&](IEvent* e) {
+        CharEvent* ce = (CharEvent*)e;
+        label.set_text(label.text() + ce->c_char());
+        label.adjust_size();
         return true;
     });
 

@@ -65,6 +65,10 @@ namespace RolUIBackend {
             on_size_change.emit({w, h});
         };
 
+        on_char = [this](unsigned int c) {
+            _char_dispatcher.push_char(c);
+        };
+
         _mouse_dispatcher.clear_change();
     }
 
@@ -100,6 +104,8 @@ namespace RolUIBackend {
 
         _mouse_dispatcher.dispatch(this);
         _mouse_dispatcher.clear_change();
+
+        _char_dispatcher.dispatch(this);
     }
 
 } // namespace RolUIBackend

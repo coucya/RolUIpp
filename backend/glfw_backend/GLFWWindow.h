@@ -7,6 +7,7 @@
 #include "RolUI/Size.hpp"
 #include "RolUI/IPainter.hpp"
 #include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/events/CharEvent.hpp"
 #include "RolUI/Window.hpp"
 
 #include "GLFWPainter.h"
@@ -46,6 +47,7 @@ namespace RolUIBackend {
         GLFWPainter _painter;
 
         RolUI::MouseDispatcher _mouse_dispatcher;
+        RolUI::CharEventDispatcher _char_dispatcher;
     };
 
 } // namespace RolUIBackend
