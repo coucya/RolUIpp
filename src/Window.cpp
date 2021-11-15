@@ -1,12 +1,15 @@
 
 #include <climits>
 
+#include "RolUI/IEvent.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IPainter.hpp"
+
+#include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
 
@@ -31,12 +34,28 @@ namespace RolUI {
 
     Application* Window::application() const noexcept { return _application; }
 
+    Widget* Window::content_widget() const noexcept { return _content_widget; }
     void Window::set_content_widget(Widget* widget) noexcept {
         if (widget == nullptr) return;
 
         _content_widget = widget;
         _content_widget->_do_window_change(_content_widget->_window, this);
         _content_widget->_update_size_and_pos();
+    }
+
+    Widget* Window::focus_widget() const noexcept { return _focus_widget; }
+    void Window::set_focus_widget(Widget* w) noexcept {
+        if (w->window() != this) return;
+
+        if (_focus_widget && _focus_widget->focusable()) {
+            FocusChangeEvent e{_focus_widget, false, true};
+            send_event(_focus_widget, &e);
+        }
+        _focus_widget = w;
+        if (_focus_widget && _focus_widget->focusable()) {
+            FocusChangeEvent e{_focus_widget, true, false};
+            send_event(_focus_widget, &e);
+        }
     }
 
     void Window::_draw_widget(RolUI::Widget* widget, Point base_pos, Rect scissor, RolUI::IPainter* painter) noexcept {

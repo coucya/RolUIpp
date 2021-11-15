@@ -12,4 +12,6 @@ namespace RolUI {
 
     RolUI_impl_event_type_in_class(SizeChangeEvent);
 
+    RolUI_impl_event_type_in_class(FocusChangeEvent);
+
 } // namespace RolUI

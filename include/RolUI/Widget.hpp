@@ -104,6 +104,12 @@ namespace RolUI {
         AnchorPoint target_anchor_point() const noexcept;
         SizeMode size_mode() const noexcept;
 
+        bool focusable() const noexcept;
+        void set_focusable(bool b) noexcept;
+
+        bool is_focus() const noexcept;
+        void set_focus() noexcept;
+
         Window* window() const noexcept;
 
         Widget* parent() const noexcept;
@@ -139,6 +145,7 @@ namespace RolUI {
       public:
         Signal<Point> on_pos_change;
         Signal<Size> on_size_change;
+        Signal<> on_focus;
 
       private:
         typedef std::vector<Widget*> Childrens;
@@ -187,6 +194,8 @@ namespace RolUI {
 
         size_t _part_count = 0;
         Childrens _children;
+
+        bool _focusable = false;
 
         Point _real_pos, _rela_pos;
         Size _real_size, _rela_size;

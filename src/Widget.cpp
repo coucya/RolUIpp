@@ -155,6 +155,18 @@ namespace RolUI {
     AnchorPoint Widget::target_anchor_point() const noexcept { return _target_anchor_point; }
     SizeMode Widget::size_mode() const noexcept { return _size_mode; }
 
+    bool Widget::focusable() const noexcept { return _focusable; }
+    void Widget::set_focusable(bool b) noexcept { _focusable = b; }
+
+    bool Widget::is_focus() const noexcept {
+        if (window())
+            return window()->focus_widget() == this;
+        return false;
+    }
+    void Widget::set_focus() noexcept {
+        if (window()) window()->set_focus_widget(this);
+    }
+
     Widget* Widget::parent() const noexcept { return _parent; }
 
     Window* Widget::window() const noexcept { return _window; }
@@ -247,12 +259,21 @@ namespace RolUI {
         add_listener(PosChangeEvent::type(), [this](IEvent* e) {
             PosChangeEvent* pe = (PosChangeEvent*)e;
             this->on_pos_change.emit(pe->current_value());
-            return true;
+            return this->on_pos_change.slot_count() > 0;
         });
         add_listener(SizeChangeEvent::type(), [this](IEvent* e) {
             SizeChangeEvent* se = (SizeChangeEvent*)e;
             this->on_size_change.emit(se->current_value());
-            return true;
+            return this->on_size_change.slot_count() > 0;
+        });
+        add_listener(FocusChangeEvent::type(), [this](IEvent* e) {
+            FocusChangeEvent* fe = (FocusChangeEvent*)e;
+            if (fe->current_value()) {
+                this->on_focus.emit();
+                return this->on_size_change.slot_count() > 0;
+            } else {
+                return false;
+            }
         });
     }
 

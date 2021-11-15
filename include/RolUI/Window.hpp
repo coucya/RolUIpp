@@ -27,6 +27,9 @@ namespace RolUI {
         Widget* content_widget() const noexcept;
         void set_content_widget(Widget* w) noexcept;
 
+        Widget* focus_widget() const noexcept;
+        void set_focus_widget(Widget* w) noexcept;
+
         IPainter* painter() override;
         void begin_draw() override;
         void end_draw() override;
@@ -46,6 +49,7 @@ namespace RolUI {
 
       protected:
         Widget* _content_widget = nullptr;
+        Widget* _focus_widget = nullptr;
 
         Application* _application;
     };

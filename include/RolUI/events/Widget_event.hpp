@@ -11,22 +11,26 @@ namespace RolUI {
     class Window;
     class Widget;
 
-    template <typename T>
-    class PropertyChangeEvent : public IEvent {
-      public:
-        PropertyChangeEvent(const EventType* et, Widget* target, T current, T old) noexcept
-            : IEvent(et, target), _current(current), _old(old) {}
+    namespace _details {
 
-        T current_value() const noexcept { return _current; }
-        T old_value() const noexcept { return _old; }
+        template <typename T>
+        class PropertyChangeEvent : public IEvent {
+          public:
+            PropertyChangeEvent(const EventType* et, Widget* target, T current, T old) noexcept
+                : IEvent(et, target), _current(current), _old(old) {}
 
-      private:
-        T _current;
-        T _old;
-    };
+            T current_value() const noexcept { return _current; }
+            T old_value() const noexcept { return _old; }
+
+          private:
+            T _current;
+            T _old;
+        };
+
+    } // namespace _details
 
 #define RulUI_define_property_change_event(name, property_type)                   \
-    class name : public PropertyChangeEvent<property_type> {                      \
+    class name : public _details::PropertyChangeEvent<property_type> {            \
       public:                                                                     \
         RolUI_decl_event_type_in_class(name);                                     \
                                                                                   \
@@ -41,6 +45,8 @@ namespace RolUI {
     RulUI_define_property_change_event(PosChangeEvent, Point);
 
     RulUI_define_property_change_event(SizeChangeEvent, Size);
+
+    RulUI_define_property_change_event(FocusChangeEvent, bool);
 
 #undef RulUI_define_property_change_event
 
