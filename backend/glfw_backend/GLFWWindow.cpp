@@ -7,6 +7,8 @@
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
+#include "stb_image.h"
+
 #include "GLFWWindow.h"
 
 namespace RolUIBackend {
@@ -108,4 +110,11 @@ namespace RolUIBackend {
         _char_dispatcher.dispatch(this);
     }
 
+    int GLFWWindow::load_image(const char* filename) noexcept {
+        int w, h, n;
+        unsigned char* data = stbi_load(filename, &w, &h, &n, 4);
+        int handle = painter()->create_image_with_rgba(data, w, h);
+        stbi_image_free(data);
+        return handle;
+    }
 } // namespace RolUIBackend

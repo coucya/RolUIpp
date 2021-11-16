@@ -35,6 +35,8 @@ namespace RolUIBackend {
         void begin_draw() override;
         void end_draw() override;
 
+        int load_image(const char* filename) noexcept;
+
         void dispatch_event(double timeout) override;
 
       private:

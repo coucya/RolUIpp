@@ -1,4 +1,5 @@
 
+#include "RolUI/Point.hpp"
 #include "nanovg.h"
 
 #include "RolUI/Color.hpp"
@@ -29,6 +30,21 @@ namespace RolUIBackend {
                 (int32_t)(bound[3] - bound[1])};
     }
 
+    int GLFWPainter::create_image_with_rgba(const unsigned char* data, int w, int h) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        return nvgCreateImageRGBA(vg, w, h, 0, data);
+    }
+    RolUI::Size GLFWPainter::image_size(int handle) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        int w, h;
+        nvgImageSize(vg, handle, &w, &h);
+        return {w, h};
+    }
+    void GLFWPainter::delete_image(int handle) {
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        nvgDeleteImage(vg, handle);
+    }
+
     void GLFWPainter::set_base_pos(const RolUI::Point& pos) { _pos = pos; }
     void GLFWPainter::scissor(const RolUI::Rect& rect) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
@@ -57,6 +73,18 @@ namespace RolUIBackend {
         nvgFillColor(vg, rc_to_nc(_font_color));
         nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
         nvgText(vg, p.x, p.y, text, text + len);
+    }
+
+    void GLFWPainter::draw_image(RolUI::Point pos, RolUI::Size size, int handle) {
+        RolUI::Point tp = pos + _pos;
+
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        NVGpaint p = nvgImagePattern(vg, tp.x, tp.y, size.width, size.height, 0, handle, 1.0f);
+
+        nvgBeginPath(vg);
+        nvgRect(vg, tp.x, tp.y, size.width, size.height);
+        nvgFillPaint(vg, p);
+        nvgFill(vg);
     }
 
     void GLFWPainter::draw_line(const RolUI::Point& a, const RolUI::Point& b) {

@@ -67,10 +67,10 @@ namespace RolUI {
         auto new_scissor_opt = scissor.intersected({new_base_pos, size});
         Rect new_scissor = new_scissor_opt.has_value() ? new_scissor_opt.value() : Rect{scissor.pos(), {0, 0}};
 
-        widget->on_draw(painter);
-
         painter->set_base_pos(new_base_pos);
         painter->scissor(new_scissor);
+
+        widget->on_draw(painter);
 
         for (auto& cw : widget->_children) {
             _draw_widget(cw, new_base_pos, new_scissor, painter);
