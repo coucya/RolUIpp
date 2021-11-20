@@ -3,8 +3,8 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Size.hpp"
+#include "RolUI/WidgetState.hpp"
 #include "RolUI/events/Widget_event.hpp"
-#include <optional>
 
 namespace RolUI {
 
@@ -47,6 +47,8 @@ namespace RolUI {
     RulUI_define_property_change_event(SizeChangeEvent, Size);
 
     RulUI_define_property_change_event(FocusChangeEvent, bool);
+
+    RulUI_define_property_change_event(StateChangeEvent, WidgetState);
 
 #undef RulUI_define_property_change_event
 

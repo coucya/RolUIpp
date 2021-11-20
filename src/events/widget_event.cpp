@@ -14,4 +14,6 @@ namespace RolUI {
 
     RolUI_impl_event_type_in_class(FocusChangeEvent);
 
+    RolUI_impl_event_type_in_class(StateChangeEvent);
+
 } // namespace RolUI

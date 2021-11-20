@@ -12,6 +12,7 @@
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
+#include "RolUI/WidgetState.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/events/Widget_event.hpp"
 
@@ -155,12 +156,20 @@ namespace RolUI {
     AnchorPoint Widget::target_anchor_point() const noexcept { return _target_anchor_point; }
     SizeMode Widget::size_mode() const noexcept { return _size_mode; }
 
+    WidgetState Widget::state() const noexcept { return _widget_state; }
+
+    bool Widget::is_enable() const noexcept { return !widget_state_has_state(_widget_state, WIDGET_STATE_DISABLED); };
+    void Widget::set_enable(bool b) noexcept {
+        b ? _clear_state(WIDGET_STATE_DISABLED) : _set_state(WIDGET_STATE_DISABLED);
+    }
+
     bool Widget::focusable() const noexcept { return _focusable; }
     void Widget::set_focusable(bool b) noexcept { _focusable = b; }
 
     bool Widget::is_focus() const noexcept {
         if (window())
-            return window()->focus_widget() == this;
+            return widget_state_has_state(_widget_state, WIDGET_STATE_FOCUS)
+                && window()->focus_widget() == this;
         return false;
     }
     void Widget::set_focus() noexcept {
@@ -394,6 +403,32 @@ namespace RolUI {
                 w->_update_child_size_and_pos();
             w->_is_update = true;
         }
+    }
+
+    void Widget::_set_state(WidgetState s) noexcept {
+        WidgetState old = _widget_state;
+        _widget_state = widget_state_set_state(_widget_state, s);
+        WidgetState new_ = _widget_state;
+
+        StateChangeEvent e{this, new_, old};
+        send_event(this, &e);
+    }
+
+    void Widget::_clear_state(WidgetState s) noexcept {
+        WidgetState old = _widget_state;
+        _widget_state = widget_state_clear_state(_widget_state, s);
+        WidgetState new_ = _widget_state;
+
+        StateChangeEvent e{this, new_, old};
+        send_event(this, &e);
+    }
+    void Widget::_reset_state() noexcept {
+        WidgetState old = _widget_state;
+        _widget_state = WIDGET_STATE_DEFAULT;
+        WidgetState new_ = _widget_state;
+
+        StateChangeEvent e{this, new_, old};
+        send_event(this, &e);
     }
 
     Widget* Widget::_get_widget(size_t idx) const noexcept {

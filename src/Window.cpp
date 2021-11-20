@@ -2,6 +2,7 @@
 #include <climits>
 
 #include "RolUI/IEvent.hpp"
+#include "RolUI/WidgetState.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
@@ -48,11 +49,13 @@ namespace RolUI {
         if (w->window() != this) return;
 
         if (_focus_widget && _focus_widget->focusable()) {
+            _focus_widget->_clear_state(WIDGET_STATE_FOCUS);
             FocusChangeEvent e{_focus_widget, false, true};
             send_event(_focus_widget, &e);
         }
         _focus_widget = w;
         if (_focus_widget && _focus_widget->focusable()) {
+            _focus_widget->_set_state(WIDGET_STATE_FOCUS);
             FocusChangeEvent e{_focus_widget, true, false};
             send_event(_focus_widget, &e);
         }

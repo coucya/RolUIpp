@@ -1,18 +1,20 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <vector>
 #include <tuple>
 
-#include "RolUI/IEvent.hpp"
-#include "RolUI/IWidget.hpp"
-#include "RolUI/IEventListener.hpp"
-#include "RolUI/sigslot/Signal.hpp"
-#include "RolUI/sigslot/Slot.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
+#include "RolUI/IEvent.hpp"
+#include "RolUI/IWidget.hpp"
+#include "RolUI/IEventListener.hpp"
+#include "RolUI/WidgetState.hpp"
+#include "RolUI/sigslot/Signal.hpp"
+#include "RolUI/sigslot/Slot.hpp"
 
 namespace RolUI {
 
@@ -104,6 +106,11 @@ namespace RolUI {
         AnchorPoint target_anchor_point() const noexcept;
         SizeMode size_mode() const noexcept;
 
+        WidgetState state() const noexcept;
+
+        bool is_enable() const noexcept;
+        void set_enable(bool b) noexcept;
+
         bool focusable() const noexcept;
         void set_focusable(bool b) noexcept;
 
@@ -161,6 +168,10 @@ namespace RolUI {
         bool _update_size_and_pos() noexcept;
         void _update_child_size_and_pos() noexcept;
 
+        void _set_state(WidgetState s) noexcept;
+        void _clear_state(WidgetState s) noexcept;
+        void _reset_state() noexcept;
+
         Widget* _get_widget(size_t idx) const noexcept;
         void _add_widget(Childrens::iterator pos, Widget* w) noexcept;
         void _remove_widget(Childrens::iterator pos) noexcept;
@@ -196,6 +207,7 @@ namespace RolUI {
         Childrens _children;
 
         bool _focusable = false;
+        WidgetState _widget_state = WIDGET_STATE_DEFAULT;
 
         Point _real_pos, _rela_pos;
         Size _real_size, _rela_size;
