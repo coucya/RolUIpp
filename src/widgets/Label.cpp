@@ -55,6 +55,7 @@ namespace RolUI {
         void Label::set_style(const Style& style) {
             _rect_widget.set_style(style);
             _text_widget.set_style(style);
+            padding = style.padding;
         }
 
     } // namespace widget

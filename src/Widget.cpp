@@ -14,6 +14,7 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/WidgetState.hpp"
 #include "RolUI/Window.hpp"
+#include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
@@ -255,6 +256,13 @@ namespace RolUI {
     }
 
     void Widget::set_style(const Style& style) {}
+    void Widget::set_style_sheet(const StyleSheet& style_sheet) {
+        add_listener(StateChangeEvent::type(), [this, style_sheet](IEvent* e) {
+            Style s = style_sheet.merge_with(this->state());
+            this->set_style(s);
+            return false;
+        });
+    }
 
     bool Widget::on_event(IEvent* e) {
         bool b = false;
@@ -285,6 +293,23 @@ namespace RolUI {
             } else {
                 return false;
             }
+        });
+        add_listener(MousePressEvent_type(), [this](IEvent* e) {
+            _set_state(WIDGET_STATE_PRESS);
+            return false;
+        });
+        add_listener(MouseReleaseEvent_type(), [this](IEvent* e) {
+            _clear_state(WIDGET_STATE_PRESS);
+            return false;
+        });
+        add_listener(MouseEnterEvent_type(), [this](IEvent* e) {
+            _set_state(WIDGET_STATE_HOVER);
+            return false;
+        });
+        add_listener(MouseLeaveEvent_type(), [this](IEvent* e) {
+            _clear_state(WIDGET_STATE_HOVER);
+            _clear_state(WIDGET_STATE_PRESS);
+            return false;
         });
     }
 

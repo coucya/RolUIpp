@@ -8,10 +8,10 @@ namespace RolUI {
     typedef uint8_t WidgetState;
 
     constexpr WidgetState WIDGET_STATE_DEFAULT = 1;
-    constexpr WidgetState WIDGET_STATE_DISABLED = 2;
+    constexpr WidgetState WIDGET_STATE_HOVER = 2;
     constexpr WidgetState WIDGET_STATE_FOCUS = 4;
-    constexpr WidgetState WIDGET_STATE_HOVER = 8;
-    constexpr WidgetState WIDGET_STATE_PRESS = 16;
+    constexpr WidgetState WIDGET_STATE_PRESS = 8;
+    constexpr WidgetState WIDGET_STATE_DISABLED = 16;
     constexpr WidgetState WIDGET_STATE_USER_STATE_1 = 32;
     constexpr WidgetState WIDGET_STATE_USER_STATE_2 = 64;
     constexpr WidgetState WIDGET_STATE_USER_STATE_3 = 128;
@@ -53,7 +53,7 @@ namespace RolUI {
         return state | target;
     }
     inline WidgetState widget_state_clear_state(WidgetState state, WidgetState target) {
-        return state & !target;
+        return state & ~target;
     }
 
     template <typename F, typename = std::enable_if_t<std::is_invocable_v<F, WidgetState, unsigned>>>

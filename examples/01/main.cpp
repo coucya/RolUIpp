@@ -70,12 +70,17 @@ int main(int argc, char* argv[]) {
     win.set_content_widget(&button);
 
     // image.set_size(400, 400);
-    // button.adjust_size();
-    button.set_size(100, 100);
+    button.adjust_size();
+    // button.set_size(100, 100);
     button.border_width = 1;
 
     // image.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
     button.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+
+    int click_count = 0;
+    button.on_click.connect([&] {
+        button.text = std::string("click: ") + std::to_string(++click_count);
+    });
 
     win.show();
 

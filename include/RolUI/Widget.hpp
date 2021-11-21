@@ -148,6 +148,7 @@ namespace RolUI {
         void remove_listener(size_t handle);
 
         void set_style(const Style& style) override;
+        void set_style_sheet(const StyleSheet& style_sheet);
 
         bool on_event(IEvent* e) override;
         void on_draw(IPainter* painter) override;
