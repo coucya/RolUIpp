@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     win.set_content_widget(&label1);
 
     label1.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    label1.set_font_size(30);
+    label1.font_size = 30;
     label1.adjust_size();
 
     win.show();

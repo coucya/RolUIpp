@@ -1,44 +1,37 @@
 
-#include "RolUI/widgets/Label.hpp"
 #include "RolUI/Color.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/Widget.hpp"
-#include <cstdint>
+
+#include "RolUI/widgets/Label.hpp"
 
 namespace RolUI {
     namespace widget {
 
         void Label::_init_part(std::string&& text) noexcept {
 
-            set_size(_text_widget.font_size() * (text.size() + 1) * 0.5, _text_widget.font_size() * 2);
+            set_size(_text_widget.font_size * (text.size() + 1) * 0.5, _text_widget.font_size * 2);
 
             _rect_widget.set_pos(0, 0);
             _rect_widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
-            _rect_widget.set_background_color({255, 255, 255});
+            _text_widget.set_pos(0, 0);
+            _text_widget.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
 
-            _text_widget.set_text(std::move(text));
+            this->text.on_change.connect(&_text_widget.text);
+            font_color.on_change.connect(&_text_widget.font_color);
+            font_name.on_change.connect(&_text_widget.font_name);
+            font_size.on_change.connect(&_text_widget.font_size);
+
+            round.on_change.connect(&_rect_widget.round);
+            border_color.on_change.connect(&_rect_widget.border_color);
+            border_width.on_change.connect(&_rect_widget.border_width);
+            background_color.on_change.connect(&_rect_widget.background_color);
 
             add_part(&_rect_widget);
             add_part(&_text_widget);
 
-            _text_widget.on_size_change.connect([this](Size text_size) {
-                Size size = this->size();
-
-                int tpx = (size.width - text_size.width) / 2;
-                int tpy = (size.height - text_size.height) / 2;
-                _text_widget.set_pos(tpx, tpy);
-                return true;
-            });
-
-            on_size_change.connect([&](Size size) {
-                Size text_size = _text_widget.size();
-                int tpx = (size.width - text_size.width) / 2;
-                int tpy = (size.height - text_size.height) / 2;
-                _text_widget.set_pos(tpx, tpy);
-
-                return true;
-            });
+            this->text = std::move(text);
         }
 
         Label::Label() noexcept {
@@ -53,63 +46,15 @@ namespace RolUI {
         }
         Label::~Label() {}
 
-        const std::string& Label::text() const noexcept { return _text_widget.text(); }
-
-        const char* Label::font() const noexcept { return _text_widget.font(); }
-        unsigned Label::font_size() const noexcept { return _text_widget.font_size(); }
-        Color Label::font_color() const noexcept { return _text_widget.font_color(); }
-
-        Color Label::background_color() const noexcept { return _rect_widget.background_color(); }
-
-        unsigned Label::border_width() const noexcept { return _rect_widget.border_width(); }
-        Color Label::border_color() const noexcept { return _rect_widget.border_color(); }
-
-        unsigned Label::round() const noexcept { return _rect_widget.round(); }
-
-        Vector Label::padding() const noexcept { return _propertys.padding; }
-
-        const Label::StyleProperty& Label::style_property() const noexcept { return _propertys; }
-
-        void Label::set_text(std::string text) noexcept {
-            _text_widget.set_text(std::move(text));
-        }
-
-        void Label::set_font(const char* name) noexcept {
-            _text_widget.set_font(name);
-        }
-        void Label::set_font_size(size_t size) noexcept {
-            _text_widget.set_font_size(size);
-        }
-        void Label::set_font_color(Color c) noexcept {
-            _text_widget.set_font_color(c);
-        }
-
-        void Label::set_background_color(Color c) noexcept {
-            _rect_widget.set_background_color(c);
-        }
-        void Label::set_border_width(unsigned w) noexcept {
-            _rect_widget.set_border_width(w);
-        }
-        void Label::set_border_color(Color c) noexcept {
-            _rect_widget.set_border_color(c);
-        }
-        void Label::set_round(unsigned r) noexcept {
-            _rect_widget.set_round(r);
-        }
-
-        void Label::set_padding(Vector v) noexcept { _propertys.padding = v; }
-        void Label::set_padding(int x, int y) noexcept { set_padding({x, y}); }
-
-        void Label::set_style_property(const StyleProperty& property) noexcept {
-            _propertys.padding = property.padding;
-            _text_widget.set_style_property(property);
-            _rect_widget.set_style_property(property);
-        }
-
         void Label::adjust_size() noexcept {
             Size content_size = _text_widget.size();
-            set_size(content_size.width + _propertys.padding.x * 2,
-                     content_size.height + _propertys.padding.y * 2);
+            set_size(content_size.width + padding.get().x * 2,
+                     content_size.height + padding.get().y * 2);
+        }
+
+        void Label::set_style(const Style& style) {
+            _rect_widget.set_style(style);
+            _text_widget.set_style(style);
         }
 
     } // namespace widget

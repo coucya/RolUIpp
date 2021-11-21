@@ -254,6 +254,8 @@ namespace RolUI {
             _callbacks.end());
     }
 
+    void Widget::set_style(const Style& style) {}
+
     bool Widget::on_event(IEvent* e) {
         bool b = false;
         for (const auto& [et, cb, handle] : _callbacks) {
@@ -391,6 +393,10 @@ namespace RolUI {
             PosChangeEvent e = PosChangeEvent(this, pos(), old_pos);
             send_event(this, &e);
         }
+
+        if (is_change)
+            _update_child_size_and_pos();
+
         return is_change;
     }
     void Widget::_update_child_size_and_pos() noexcept {
@@ -399,8 +405,7 @@ namespace RolUI {
 
         for (Widget* w : _children) {
             if (w->_is_update) continue;
-            if (w->_update_size_and_pos())
-                w->_update_child_size_and_pos();
+            w->_update_size_and_pos();
             w->_is_update = true;
         }
     }
@@ -410,8 +415,10 @@ namespace RolUI {
         _widget_state = widget_state_set_state(_widget_state, s);
         WidgetState new_ = _widget_state;
 
-        StateChangeEvent e{this, new_, old};
-        send_event(this, &e);
+        if (old != new_) {
+            StateChangeEvent e{this, new_, old};
+            send_event(this, &e);
+        }
     }
 
     void Widget::_clear_state(WidgetState s) noexcept {
@@ -419,16 +426,20 @@ namespace RolUI {
         _widget_state = widget_state_clear_state(_widget_state, s);
         WidgetState new_ = _widget_state;
 
-        StateChangeEvent e{this, new_, old};
-        send_event(this, &e);
+        if (old != new_) {
+            StateChangeEvent e{this, new_, old};
+            send_event(this, &e);
+        }
     }
     void Widget::_reset_state() noexcept {
         WidgetState old = _widget_state;
         _widget_state = WIDGET_STATE_DEFAULT;
         WidgetState new_ = _widget_state;
 
-        StateChangeEvent e{this, new_, old};
-        send_event(this, &e);
+        if (old != new_) {
+            StateChangeEvent e{this, new_, old};
+            send_event(this, &e);
+        }
     }
 
     Widget* Widget::_get_widget(size_t idx) const noexcept {

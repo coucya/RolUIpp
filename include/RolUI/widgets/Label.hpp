@@ -4,6 +4,7 @@
 
 #include "RolUI/Color.hpp"
 #include "RolUI/IEvent.hpp"
+#include "RolUI/Property.hpp"
 #include "RolUI/Vector.hpp"
 #include "RolUI/Widget.hpp"
 
@@ -15,9 +16,17 @@ namespace RolUI {
 
         class Label : public Widget {
           public:
-            struct StyleProperty : public Text::StyleProperty, public Rect::StyleProperty {
-                Vector padding = {0, 0};
-            };
+            Property<unsigned> round{this, 0};
+            Property<unsigned> border_width{this, 0};
+            Property<Color> border_color{this, {0, 0, 0, 255}};
+            Property<Color> background_color{this, {255, 255, 255, 255}};
+
+            Property<unsigned> font_size{this, 15};
+            Property<Color> font_color{this, {0, 0, 0, 255}};
+            Property<std::string> font_name{this, "default"};
+            Property<std::string> text{this};
+
+            Property<Vector> padding{this, {0, 0}};
 
           public:
             Label() noexcept;
@@ -25,40 +34,9 @@ namespace RolUI {
             Label(std::string text, Widget* parent) noexcept;
             ~Label();
 
-            const std::string& text() const noexcept;
-
-            const char* font() const noexcept;
-            unsigned font_size() const noexcept;
-            Color font_color() const noexcept;
-
-            Color background_color() const noexcept;
-
-            unsigned border_width() const noexcept;
-            Color border_color() const noexcept;
-
-            unsigned round() const noexcept;
-
-            Vector padding() const noexcept;
-
-            const StyleProperty& style_property() const noexcept;
-
-            void set_text(std::string text) noexcept;
-
-            void set_font(const char* name) noexcept;
-            void set_font_size(size_t size) noexcept;
-            void set_font_color(Color c) noexcept;
-
-            void set_background_color(Color c) noexcept;
-            void set_border_width(unsigned w) noexcept;
-            void set_border_color(Color c) noexcept;
-            void set_round(unsigned r) noexcept;
-
-            void set_padding(Vector) noexcept;
-            void set_padding(int x, int y) noexcept;
-
-            void set_style_property(const StyleProperty& property) noexcept;
-
             void adjust_size() noexcept;
+
+            void set_style(const Style& style) override;
 
           private:
             void _init_part(std::string&& text) noexcept;
@@ -66,8 +44,6 @@ namespace RolUI {
           private:
             widget::Rect _rect_widget;
             widget::Text _text_widget;
-
-            StyleProperty _propertys;
         };
 
     } // namespace widget

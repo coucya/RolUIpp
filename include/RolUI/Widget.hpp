@@ -13,6 +13,7 @@
 #include "RolUI/IWidget.hpp"
 #include "RolUI/IEventListener.hpp"
 #include "RolUI/WidgetState.hpp"
+#include "RolUI/Style.hpp"
 #include "RolUI/sigslot/Signal.hpp"
 #include "RolUI/sigslot/Slot.hpp"
 
@@ -145,6 +146,8 @@ namespace RolUI {
 
         size_t add_listener(const EventType* et, EventCallback&& callback);
         void remove_listener(size_t handle);
+
+        void set_style(const Style& style) override;
 
         bool on_event(IEvent* e) override;
         void on_draw(IPainter* painter) override;

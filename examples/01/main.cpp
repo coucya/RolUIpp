@@ -59,17 +59,23 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Image image{nullptr};
+    // widget::Image image{nullptr};
+    widget::Button button{"button"};
 
     std::string huaji_path = get_image_huaji_path();
     int huaji = win.load_image(huaji_path.c_str());
-    image.set_image(huaji);
+    // image.set_image(huaji);
 
-    win.set_content_widget(&image);
+    // win.set_content_widget(&image);
+    win.set_content_widget(&button);
 
-    image.set_size(400, 400);
+    // image.set_size(400, 400);
+    // button.adjust_size();
+    button.set_size(100, 100);
+    button.border_width = 1;
 
-    image.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+    // image.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+    button.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
 
     win.show();
 
