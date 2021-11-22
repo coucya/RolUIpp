@@ -20,7 +20,7 @@ namespace RolUI {
         using namespace std::chrono;
 
         long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
-        unsigned long long target_time = current_time + (interval <= 0.0 ? 0ull : (unsigned long long)interval * 1000000);
+        unsigned long long target_time = current_time + (interval <= 0.0 ? 0ull : (unsigned long long)(interval * 1000000));
         TimerTask tt{(unsigned long long)current_time, target_time, cb, arg, _timer_handle++};
 
         priority_queue::push(tt);
@@ -46,7 +46,7 @@ namespace RolUI {
             TimerTask tt = top();
             unsigned long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
 
-            if (tt.trigger_time > current_time && current_time - tt.trigger_time > tolerance) {
+            if (tt.trigger_time > current_time) {
                 timeout = (double)(tt.trigger_time - current_time) / 1000000.0;
                 break;
             }

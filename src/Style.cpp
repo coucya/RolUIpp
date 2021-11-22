@@ -22,7 +22,7 @@ namespace RolUI {
         merge(font_name);
         merge(font_size);
         merge(round);
-        merge(border_color);
+        merge(border_width);
         merge(border_color);
         merge(background_color);
         merge(padding);

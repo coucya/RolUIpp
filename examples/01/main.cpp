@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <numeric>
 
+#include "RolUI/Window.hpp"
+#include "RolUI/widgets/TextBox.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
@@ -60,27 +62,21 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     // widget::Image image{nullptr};
-    widget::Button button{"button"};
+    Widget widget;
+    widget::Button button{"button", &widget};
+    widget::TextBox textbox{&widget};
 
-    std::string huaji_path = get_image_huaji_path();
-    int huaji = win.load_image(huaji_path.c_str());
-    // image.set_image(huaji);
+    widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
 
-    // win.set_content_widget(&image);
-    win.set_content_widget(&button);
+    win.set_content_widget(&widget);
 
-    // image.set_size(400, 400);
-    button.adjust_size();
-    // button.set_size(100, 100);
-    button.border_width = 1;
+    textbox.text = std::string{u8"输入框"};
+    textbox.set_size(100, 30);
+    textbox.border_width = 1;
+    textbox.border_color = {0, 0, 0};
 
-    // image.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    button.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-
-    int click_count = 0;
-    button.on_click.connect([&] {
-        button.text = std::string("click: ") + std::to_string(++click_count);
-    });
+    textbox.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
+    button.on_click.connect([&] { win.set_focus_widget(nullptr); });
 
     win.show();
 
