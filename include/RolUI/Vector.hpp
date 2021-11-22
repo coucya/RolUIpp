@@ -1,18 +1,19 @@
 #pragma once
 
+#include <type_traits>
 namespace RolUI {
 
+    template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
     struct Vector {
         union {
-            int x, width;
+            T x, width;
         };
         union {
-            int y, height;
+            T y, height;
         };
 
         Vector() noexcept : x(0), y(0) {}
-        Vector(int x, int y) noexcept
-            : x(x), y(y) {}
+        Vector(T x, T y) noexcept : x(x), y(y) {}
 
         bool operator==(const Vector& v) noexcept {
             return x == v.x && y == v.y;
@@ -30,12 +31,35 @@ namespace RolUI {
             return *this;
         }
 
+        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
+        Vector& operator*=(const N& v) noexcept {
+            x *= v, y *= v;
+            return *this;
+        }
+        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
+        Vector& operator/=(const N& v) noexcept {
+            x /= v, y /= v;
+            return *this;
+        }
+
         Vector operator+(const Vector& v) const noexcept {
             return {x + v.x, y + v.y};
         }
         Vector operator-(const Vector& v) const noexcept {
             return {x - v.x, y - v.y};
         }
+
+        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
+        Vector operator*(const N& v) const noexcept {
+            return {x * v, y * v};
+        }
+        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
+        Vector operator/(const N& v) const noexcept {
+            return {x / v, y / v};
+        }
     };
+
+    typedef Vector<int> Vec2i;
+    typedef Vector<float> Vec2f;
 
 } // namespace RolUI

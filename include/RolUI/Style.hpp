@@ -22,7 +22,7 @@ namespace RolUI {
 
         std::optional<Color> background_color;
 
-        std::optional<Vector> padding;
+        std::optional<Vector<int>> padding;
     };
 
     Style merge_style(const Style& a, const Style& b);

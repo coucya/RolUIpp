@@ -1,6 +1,7 @@
 
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
+#include "RolUI/Vector.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/events/MouseEvent.hpp"
@@ -150,7 +151,7 @@ namespace RolUI {
     Point MouseEvent::pos() const noexcept {
         return _dispatcher->pos();
     }
-    Vector MouseEvent::offset() const noexcept {
+    Vec2i MouseEvent::offset() const noexcept {
         return _dispatcher->offset();
     }
 

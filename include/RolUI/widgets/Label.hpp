@@ -26,7 +26,7 @@ namespace RolUI {
             Property<std::string> font_name{this, "default"};
             Property<std::string> text{this};
 
-            Property<Vector> padding{this, {0, 0}};
+            Property<Vec2i> padding{this, {0, 0}};
 
           public:
             Label() noexcept;

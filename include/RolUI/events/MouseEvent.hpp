@@ -43,7 +43,7 @@ namespace RolUI {
 
       public:
         Point pos() const noexcept;
-        Vector offset() const noexcept;
+        Vec2i offset() const noexcept;
 
         MouseKey action() const noexcept;
         MouseKeyMode button(MouseKey key) const noexcept;
@@ -67,7 +67,7 @@ namespace RolUI {
         MouseDispatcher() noexcept;
 
         Point pos() const noexcept { return _current_pos; }
-        Vector offset() const noexcept { return _current_pos - _last_pos; }
+        Vec2i offset() const noexcept { return _current_pos - _last_pos; }
 
         MouseKeyMode button(MouseKey key) const noexcept;
 
