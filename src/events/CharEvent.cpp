@@ -4,6 +4,8 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/events/CharEvent.hpp"
 
+#include "RolUI/utility/utf8.h"
+
 namespace RolUI {
 
     static bool codepoint_size(unsigned int codepoint, unsigned* size_out) {
@@ -152,17 +154,11 @@ namespace RolUI {
         : IEvent(type(), target), _codepoint(cp) {
         for (int i = 0; i < sizeof(_c_str) / sizeof(char); i++)
             _c_str[i] = 0;
-
-        int s = codepoint_to_c_char(cp, _c_str);
-        if (s < 0) {
-            for (int i = 0; i < sizeof(_c_str) / sizeof(char); i++)
-                _c_str[i] = 0;
-        }
+        utf8catcodepoint(_c_str, cp, sizeof(_c_str) / sizeof(char));
     }
     CharEvent::~CharEvent() {}
 
     unsigned int CharEvent::codepoint() const noexcept { return _codepoint; }
-    unsigned int CharEvent::char_() const noexcept { return _codepoint; }
     const char* CharEvent::c_char() const noexcept { return _c_str; }
 
     void CharEventDispatcher::push_char(unsigned int c) noexcept {

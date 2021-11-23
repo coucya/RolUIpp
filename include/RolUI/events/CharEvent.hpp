@@ -17,7 +17,6 @@ namespace RolUI {
         ~CharEvent();
 
         unsigned int codepoint() const noexcept;
-        unsigned int char_() const noexcept;
         const char* c_char() const noexcept;
 
       private:
