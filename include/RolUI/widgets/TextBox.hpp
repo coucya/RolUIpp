@@ -33,9 +33,16 @@ namespace RolUI {
           public:
             TextBox(Widget* parent = nullptr) noexcept;
 
+            unsigned cursor_index() const noexcept;
             void cursor_to_prev_char() noexcept;
             void cursor_to_next_char() noexcept;
             void cursor_to_index(unsigned idx) noexcept;
+
+            void insert_at_index(unsigned idx, const char* str, unsigned len) noexcept;
+
+            void delete_at_index(unsigned idx) noexcept;
+            void delete_cursor_prev() noexcept;
+            void delete_cursor_next() noexcept;
 
             void set_style(const Style& style) override;
 
@@ -48,7 +55,16 @@ namespace RolUI {
             void _init_part() noexcept;
             void _init_event_bind() noexcept;
 
-            void _corsor_timer_func(double interval) noexcept;
+            unsigned _pos_to_index(Point pos) const noexcept;
+            Point _index_to_pos(unsigned idx) const noexcept;
+
+            unsigned _pos_to_index__text_widget(Point pos) const noexcept;
+            Point _index_to_pos__text_widget(unsigned idx) const noexcept;
+
+            void _cursor_to_index(unsigned idx) noexcept;
+            void _update_text_pos() noexcept;
+
+            void _cursor_timer_func(double interval) noexcept;
 
           private:
             Text _text_widget;

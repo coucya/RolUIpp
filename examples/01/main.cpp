@@ -63,20 +63,36 @@ int main(int argc, char* argv[]) {
 
     // widget::Image image{nullptr};
     Widget widget;
-    widget::Button button{"button", &widget};
-    widget::TextBox textbox{&widget};
+    widget::Button blur{"blur", &widget};
+    widget::Button prev{"prev", &widget};
+    widget::Button next{"next", &widget};
+    widget::Button del_prev{"del prev", &widget};
+    widget::Button del_next{"del next", &widget};
 
-    widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
+    widget::TextBox textbox{&widget};
 
     win.set_content_widget(&widget);
 
-    textbox.text = std::string{u8"输入框"};
+    widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
+
+    // blur.set_pos_relative(RelativeTarget::parent, AnchorPoint::left_bottom);
+    prev.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
+    next.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
+    del_prev.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
+    del_next.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
+
+    textbox.text = std::string{u8"abcdefg"};
     textbox.set_size(100, 30);
     textbox.border_width = 1;
     textbox.border_color = {0, 0, 0};
 
     textbox.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    button.on_click.connect([&] { win.set_focus_widget(nullptr); });
+
+    blur.on_click.connect([&] { win.set_focus_widget(nullptr); });
+    prev.on_click.connect([&] { textbox.cursor_to_prev_char(); });
+    next.on_click.connect([&] { textbox.cursor_to_next_char(); });
+    del_prev.on_click.connect([&] { textbox.delete_cursor_prev(); });
+    del_next.on_click.connect([&] { textbox.delete_cursor_next(); });
 
     win.show();
 

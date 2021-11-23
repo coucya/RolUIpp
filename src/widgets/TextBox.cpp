@@ -10,6 +10,7 @@
 #include "RolUI/IPainter.hpp"
 #include "RolUI/WidgetState.hpp"
 #include "RolUI/Window.hpp"
+#include "RolUI/events/CharEvent.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/widgets/TextBox.hpp"
@@ -28,7 +29,7 @@ namespace RolUI {
 
             _cursor_timer.set_interval(0.5);
             _cursor_timer.set_singleShot(false);
-            _cursor_timer.on_timeout.connect(this, &TextBox::_corsor_timer_func);
+            _cursor_timer.on_timeout.connect(this, &TextBox::_cursor_timer_func);
 
             set_focusable(true);
 
@@ -79,7 +80,17 @@ namespace RolUI {
             });
 
             add_listener(MousePressEvent_type(), [this](IEvent* e) {
+                MouseEvent* me = (MouseEvent*)e;
+                Point pos = me->pos() - this->abs_pos();
+
                 this->set_focus();
+                this->cursor_to_index(this->pos_to_index(pos));
+                return true;
+            });
+
+            add_listener(CharEvent::type(), [this](IEvent* e) {
+                CharEvent* ce = (CharEvent*)e;
+                this->insert_at_index(this->cursor_index(), ce->c_char(), strlen(ce->c_char()));
                 return true;
             });
         }
@@ -97,7 +108,7 @@ namespace RolUI {
 
             _padding_widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
             _padding_widget.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-            _padding_widget.set_size(-5, -5);
+            _padding_widget.set_size(-10, -5);
 
             _text_widget.set_pos_relative(RelativeTarget::parent, AnchorPoint::left_middle, AnchorPoint::left_middle);
 
@@ -106,63 +117,64 @@ namespace RolUI {
             _cursor_widget.background_color = {0, 0, 0};
             _cursor_widget.set_pos_relative(RelativeTarget::parent, AnchorPoint::left_middle, AnchorPoint::centre_middle);
 
+            _padding_widget.add_part(&_text_widget);
+
             add_part(&_rect_widget);
             add_part(&_padding_widget);
-
-            _padding_widget.add_part(&_text_widget);
-            _padding_widget.add_part(&_cursor_widget);
+            add_part(&_cursor_widget);
         }
 
-        void TextBox::_corsor_timer_func(double interval) noexcept {
+        void TextBox::_cursor_timer_func(double interval) noexcept {
             if (_cursor_widget.pos().x >= 0) {
                 _cursor_widget.set_pos(-10, 0);
             } else
-                _cursor_widget.set_pos(_cursor_pos);
+                _cursor_widget.set_pos(_cursor_pos.x, 0);
         }
 
         unsigned TextBox::pos_to_index(Point pos) const noexcept {
-            unsigned maybe_idx = ((float)pos.x / (float)_text_widget.size().width) * text.get().size();
-            Point maybe_pos = index_to_pos(maybe_idx);
-
-            for (unsigned i = maybe_idx; i > 0; i--) {
-                Point pos_t = index_to_pos(i - 1);
-                if (std::abs(pos_t.x - pos.x) < std::abs(maybe_pos.x - pos.x)) {
-                    maybe_pos = pos_t;
-                    maybe_idx = i - 1;
-                } else
-                    break;
-            }
-
-            for (unsigned i = maybe_idx + 1; i < text.get().size() + 1; i++) {
-                Point pos_t = index_to_pos(i);
-                if (std::abs(pos_t.x - pos.x) < std::abs(maybe_pos.x - pos.x)) {
-                    maybe_pos = pos_t;
-                    maybe_idx = i;
-                } else
-                    break;
-            }
-
-            return maybe_idx;
+            return _pos_to_index(pos);
         }
         Point TextBox::index_to_pos(unsigned idx) const noexcept {
-            if (!window()) return {0, 0};
-            IPainter* painter = window()->painter();
-            Size s = painter->text_size(text.get().c_str(), idx);
-            return {s.width, 0};
+            return _index_to_pos(idx);
         }
 
+        unsigned TextBox::cursor_index() const noexcept { return _cursor_index; }
+
         void TextBox::cursor_to_prev_char() noexcept {
-            unsigned i = std::max<int>(0, (int)_cursor_index - 1);
+            unsigned i = std::max<int>(0, (int)cursor_index() - 1);
             cursor_to_index(i);
         }
         void TextBox::cursor_to_next_char() noexcept {
-            unsigned i = std::min<int>(0, (int)_cursor_index + 1);
+            unsigned i = std::min<int>(text.get().size(), (int)cursor_index() + 1);
             cursor_to_index(i);
         }
+
         void TextBox::cursor_to_index(unsigned idx) noexcept {
-            unsigned idx_t = std::clamp<unsigned>(idx, 0, text.get().size());
-            _cursor_index = idx;
-            _cursor_pos = index_to_pos(idx);
+            _cursor_to_index(idx);
+            _update_text_pos();
+        }
+
+        void TextBox::insert_at_index(unsigned idx, const char* str, unsigned len) noexcept {
+            std::string ts = text.get();
+            ts.insert(idx, str, len);
+            text = ts;
+            cursor_to_index(_cursor_index + len);
+        }
+        void TextBox::delete_at_index(unsigned idx) noexcept {
+            std::string ts = text.get();
+            ts.erase(idx, 1);
+            text = ts;
+            if (idx < cursor_index())
+                cursor_to_index(_cursor_index - 1);
+            else
+                cursor_to_index(_cursor_index);
+        }
+        void TextBox::delete_cursor_prev() noexcept {
+            if (cursor_index() == 0) return;
+            delete_at_index(cursor_index() - 1);
+        }
+        void TextBox::delete_cursor_next() noexcept {
+            delete_at_index(cursor_index());
         }
 
         void TextBox::set_style(const Style& style) {
@@ -175,6 +187,70 @@ namespace RolUI {
             font_size = style.font_size;
 
             color = style.color;
+        }
+
+        unsigned TextBox::_pos_to_index(Point pos) const noexcept {
+            Point text_pos = _text_widget.pos() + _padding_widget.pos();
+            Point p = pos - text_pos;
+            return _pos_to_index__text_widget(p);
+        }
+        Point TextBox::_index_to_pos(unsigned idx) const noexcept {
+            Point text_pos = _text_widget.pos() + _padding_widget.pos();
+            Point idx_pos = _index_to_pos__text_widget(idx);
+            return idx_pos + text_pos;
+        }
+
+        unsigned TextBox::_pos_to_index__text_widget(Point pos) const noexcept {
+            unsigned maybe_idx = ((float)pos.x / (float)_text_widget.size().width) * (float)text.get().size();
+            Point maybe_pos = _index_to_pos__text_widget(maybe_idx);
+
+            if (maybe_idx > text.get().size())
+                maybe_idx = text.get().size();
+
+            for (unsigned i = maybe_idx; i > 0; i--) {
+                Point pos_t = _index_to_pos__text_widget(i - 1);
+                if (std::abs(pos_t.x - pos.x) <= std::abs(maybe_pos.x - pos.x)) {
+                    maybe_pos = pos_t;
+                    maybe_idx = i - 1;
+                } else
+                    break;
+            }
+
+            for (unsigned i = maybe_idx + 1; i < text.get().size(); i++) {
+                Point pos_t = _index_to_pos__text_widget(i);
+                if (std::abs(pos_t.x - pos.x) <= std::abs(maybe_pos.x - pos.x)) {
+                    maybe_pos = pos_t;
+                    maybe_idx = i;
+                } else
+                    break;
+            }
+
+            return maybe_idx;
+        }
+
+        Point TextBox::_index_to_pos__text_widget(unsigned idx) const noexcept {
+            if (!window()) return {0, 0};
+            IPainter* painter = window()->painter();
+            Size s = painter->text_size(text.get().c_str(), idx);
+            return {s.width, 0};
+        }
+
+        void TextBox::_cursor_to_index(unsigned idx) noexcept {
+            unsigned idx_t = std::clamp<unsigned>(idx, 0, text.get().size());
+            _cursor_index = idx;
+            _cursor_pos = _index_to_pos(idx);
+            _cursor_widget.set_pos(-10, 0);
+        }
+        void TextBox::_update_text_pos() noexcept {
+            Point _cursor_pos__padding = _cursor_pos - _padding_widget.pos();
+            if (_cursor_pos__padding.x > _padding_widget.size().width) {
+                int offset = _cursor_pos__padding.x - _padding_widget.size().width;
+                _text_widget.move(-offset, 0);
+            } else if (_cursor_pos__padding.x < 0) {
+                int offset = -_cursor_pos__padding.x;
+                _text_widget.move(offset, 0);
+            }
+            _cursor_to_index(cursor_index());
         }
 
     } // namespace widget
