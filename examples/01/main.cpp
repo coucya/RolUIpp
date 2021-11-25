@@ -81,18 +81,24 @@ int main(int argc, char* argv[]) {
     del_prev.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
     del_next.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
 
-    textbox.text = std::string{u8"abcdefg"};
-    textbox.set_size(100, 30);
-    textbox.border_width = 1;
-    textbox.border_color = {0, 0, 0};
+    textbox.text = std::string{u8"输入框测试"};
+    textbox.adjust_size();
 
     textbox.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
 
     blur.on_click.connect([&] { win.set_focus_widget(nullptr); });
-    prev.on_click.connect([&] { textbox.cursor_to_prev_char(); });
-    next.on_click.connect([&] { textbox.cursor_to_next_char(); });
-    del_prev.on_click.connect([&] { textbox.delete_cursor_prev(); });
-    del_next.on_click.connect([&] { textbox.delete_cursor_next(); });
+    prev.on_click.connect([&] {
+        textbox.cursor_to_prev_char();
+    });
+    next.on_click.connect([&] {
+        textbox.cursor_to_next_char();
+    });
+    del_prev.on_click.connect([&] {
+        textbox.delete_cursor_prev();
+    });
+    del_next.on_click.connect([&] {
+        textbox.delete_cursor_next();
+    });
 
     win.show();
 

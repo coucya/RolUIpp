@@ -44,6 +44,8 @@ namespace RolUI {
             void delete_cursor_prev() noexcept;
             void delete_cursor_next() noexcept;
 
+            void adjust_size() noexcept;
+
             void set_style(const Style& style) override;
 
           protected:
@@ -55,11 +57,15 @@ namespace RolUI {
             void _init_part() noexcept;
             void _init_event_bind() noexcept;
 
+            bool _insert_at_index(unsigned idx, const char* str, unsigned len) noexcept;
+            bool _delete_at_index(unsigned idx, unsigned len) noexcept;
+
             unsigned _pos_to_index(Point pos) const noexcept;
             Point _index_to_pos(unsigned idx) const noexcept;
 
             unsigned _pos_to_index__text_widget(Point pos) const noexcept;
             Point _index_to_pos__text_widget(unsigned idx) const noexcept;
+            Point _index_to_pos__text_widget__utf8(unsigned idx) const noexcept;
 
             void _cursor_to_index(unsigned idx) noexcept;
             void _update_text_pos() noexcept;
@@ -71,8 +77,11 @@ namespace RolUI {
             Rect _rect_widget;
             Widget _padding_widget;
 
+            unsigned _codepoint_count = 0;
+
             unsigned _cursor_index = 0;
             Point _cursor_pos = {0, 0};
+
             Rect _cursor_widget;
             Timer _cursor_timer;
         };
