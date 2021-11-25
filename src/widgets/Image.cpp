@@ -17,9 +17,6 @@ namespace RolUI {
         int Image::image() const noexcept { return _image_handle; }
         void Image::set_image(int img_handle) noexcept { _image_handle = img_handle; }
 
-        const Image::StyleProperty& Image::style_property() const noexcept { return _propertys; }
-        void Image::set_style_property(const StyleProperty& property) noexcept {}
-
         void Image::adjust_size() noexcept {
             Window* win = window();
             if (win) {
