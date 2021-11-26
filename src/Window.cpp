@@ -33,8 +33,6 @@ namespace RolUI {
 
     void Window::dispatch_event(double timeout) {}
 
-    Application* Window::application() const noexcept { return _application; }
-
     Widget* Window::content_widget() const noexcept { return _content_widget; }
     void Window::set_content_widget(Widget* widget) noexcept {
         if (widget == nullptr) return;
@@ -47,7 +45,7 @@ namespace RolUI {
     Widget* Window::focus_widget() const noexcept { return _focus_widget; }
     void Window::set_focus_widget(Widget* w) noexcept {
         if (w && w->window() != this) return;
-        if(_focus_widget == w) return;
+        if (_focus_widget == w) return;
 
         if (_focus_widget && _focus_widget->focusable()) {
             _focus_widget->_clear_state(WIDGET_STATE_FOCUS);

@@ -27,11 +27,10 @@ std::string get_font_path() {
 int main(int argc, char* argv[]) {
     using namespace RolUI;
 
-    RolUI::Application app;
     RolUIBackend::GLFWWindow win(800, 600, "helloworld");
-    win.on_exit = [&] { app.exit(); };
+    win.on_exit = [&] { RolUI::Application::exit(); };
 
-    app.set_window(&win);
+    RolUI::Application::init(&win);
 
     std::string font_path = get_font_path();
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
@@ -47,7 +46,7 @@ int main(int argc, char* argv[]) {
 
     win.show();
 
-    app.run();
+    Application::run();
 
     return 0;
 }

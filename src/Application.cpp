@@ -1,25 +1,24 @@
 
 #include <cstddef>
 
+#include "RolUI/timer.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Application.hpp"
 
 namespace RolUI {
 
-    Application::Application() {}
-    Application::~Application() {}
+    // Application::Application() {}
+    // Application::~Application() {}
 
-    void Application::set_window(Window* w) noexcept {
-        _window = w;
-        _window->_application = this;
-    }
-    void Application::remove_window(Window* w) noexcept {
-        if (_window == w) {
-            _window = nullptr;
-            w->_application = nullptr;
-        }
-    }
+    static bool _should_exit = false;
+    static Window* _window = nullptr;
+
+    static TimerQueue _timer_queue = {};
+
+    void Application::init(Window* w) noexcept { _window = w; }
+
+    Window* Application::window() noexcept { return _window; }
 
     size_t Application::set_timeout(TimeoutCallback cb, double duration, void* arg) {
         return _timer_queue.push(cb, duration, arg);

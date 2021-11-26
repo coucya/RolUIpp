@@ -52,11 +52,10 @@ std::string get_image_huaji_path() {
 int main(int argc, char* argv[]) {
     using namespace RolUI;
 
-    RolUI::Application app;
     RolUIBackend::GLFWWindow win(800, 600, "01");
-    win.on_exit = [&] { app.exit(); };
+    win.on_exit = [&] { RolUI::Application::exit(); };
 
-    app.set_window(&win);
+    RolUI::Application::init(&win);
 
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
@@ -102,7 +101,7 @@ int main(int argc, char* argv[]) {
 
     win.show();
 
-    app.run();
+    Application::run();
 
     return 0;
 }

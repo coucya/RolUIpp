@@ -48,22 +48,16 @@ namespace RolUI {
         size_t _timer_handle = 0;
     };
 
-    class Application;
-
     class Timer {
       public:
         ~Timer();
 
-        bool is_action() const noexcept { return _app != nullptr; }
+        bool is_action() const noexcept { return _is_action; }
         bool is_singleShot() const noexcept { return _singleShot; }
 
         double interval() const noexcept { return _interval; }
 
-        void set_interval(double interval) noexcept { _interval = interval; }
-        void set_singleShot(bool singleShot) noexcept { _singleShot = singleShot; }
-
-        void start(Application* app) noexcept;
-        void start(Application* app, double interval, bool single_shot = true) noexcept;
+        void start(double interval, bool single_shot = true) noexcept;
         void stop() noexcept;
 
       public:
@@ -74,11 +68,11 @@ namespace RolUI {
 
       private:
         double _interval = 0.0;
+        bool _is_action = false;
         bool _singleShot = true;
 
         double _start_timepoint;
 
-        Application* _app = nullptr;
         size_t _handle;
     };
 

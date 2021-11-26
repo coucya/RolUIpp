@@ -29,8 +29,6 @@ namespace RolUI {
             _init_part();
             _init_event_bind();
 
-            _cursor_timer.set_interval(0.5);
-            _cursor_timer.set_singleShot(false);
             _cursor_timer.on_timeout.connect(this, &TextBox::_cursor_timer_func);
             _cursor_pos = {_padding_widget.pos().x, 0};
 
@@ -81,7 +79,7 @@ namespace RolUI {
                 FocusChangeEvent* fce = (FocusChangeEvent*)e;
                 if (fce->current_value() == true) {
                     cursor_to_index(this->_codepoint_count);
-                    _cursor_timer.start(window()->application());
+                    _cursor_timer.start(0.5, false);
                 } else {
                     _cursor_widget.set_pos(-10, 0);
                     _cursor_timer.stop();

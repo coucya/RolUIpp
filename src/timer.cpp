@@ -65,31 +65,25 @@ namespace RolUI {
         using namespace std::chrono;
         Timer* timer = (Timer*)arg;
 
-        if (timer->_app && !timer->is_singleShot())
-            timer->_handle = timer->_app->set_timeout(_timeout_cb, timer->interval(), timer);
-
+        if (!timer->is_singleShot()) {
+            timer->_handle = Application::set_timeout(_timeout_cb, timer->interval(), timer);
+        } else {
+            timer->_is_action = false;
+        }
         timer->on_timeout.emit(interval);
-
-        if (timer->_app && timer->is_singleShot())
-            timer->_app = nullptr;
     }
 
-    void Timer::start(Application* app) noexcept {
-        stop();
-        if (!(_app = app)) return;
-        _handle = _app->set_timeout(Timer::_timeout_cb, _interval, this);
-    }
-    void Timer::start(Application* app, double interval, bool single_shot) noexcept {
-        stop();
-        if (!(_app = app)) return;
-        set_interval(interval);
-        set_singleShot(single_shot);
-        _handle = _app->set_timeout(Timer::_timeout_cb, _interval, this);
+    void Timer::start(double interval, bool single_shot) noexcept {
+        if (is_action()) stop();
+        _interval = interval;
+        _singleShot = single_shot;
+        _is_action = true;
+        Application::set_timeout(Timer::_timeout_cb, _interval, this);
     }
     void Timer::stop() noexcept {
-        if (!_app) return;
-        _app->remove_timeout(_handle);
-        _app = nullptr;
+        if (is_action()) {
+            Application::remove_timeout(_handle);
+        }
     }
 
 } // namespace RolUI

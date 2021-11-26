@@ -20,7 +20,7 @@
 namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e) {
-        if (!w || !w->window() || !w->window()->application()) return false;
+        if (!w || !w->window()) return false;
         e->_target = w;
         return w->do_event(e);
     }

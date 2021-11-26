@@ -2,46 +2,37 @@
 
 #include <cstddef>
 
-#include "RolUI/timer.hpp"
-
 namespace RolUI {
 
     class Window;
     class Widget;
     class IEvent;
 
+    typedef void (*TimeoutCallback)(double, void*);
+
     class Application {
       public:
-        Application();
-
         Application(const Application&) = delete;
         Application(Application&&) = delete;
-
-        ~Application();
-
         Application& operator=(const Application&) = delete;
         Application& operator=(Application&&) = delete;
 
-        void set_window(Window* w) noexcept;
-        void remove_window(Window* w) noexcept;
+        static void init(Window* w) noexcept;
+        static Window* window() noexcept;
 
-        size_t set_timeout(TimeoutCallback cb, double duration, void* arg = nullptr);
-        void remove_timeout(size_t handle);
+        static size_t set_timeout(TimeoutCallback cb, double duration, void* arg = nullptr);
+        static void remove_timeout(size_t handle);
 
-        void run() noexcept;
-        void exit() noexcept;
-
-      private:
-        void _draw_window() noexcept;
-        void _dispatch_event(double timeout) noexcept;
-
-        double _do_timer() noexcept;
+        static void run() noexcept;
+        static void exit() noexcept;
 
       private:
-        bool _should_exit = false;
-        Window* _window = nullptr;
+        static void _draw_window() noexcept;
+        static void _dispatch_event(double timeout) noexcept;
 
-        TimerQueue _timer_queue;
+        static double _do_timer() noexcept;
+
+      private:
     };
 
 } // namespace RolUI

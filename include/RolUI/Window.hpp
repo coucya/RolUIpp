@@ -22,8 +22,6 @@ namespace RolUI {
         Window() noexcept;
         ~Window() override;
 
-        Application* application() const noexcept;
-
         Widget* content_widget() const noexcept;
         void set_content_widget(Widget* w) noexcept;
 
@@ -50,8 +48,6 @@ namespace RolUI {
       protected:
         Widget* _content_widget = nullptr;
         Widget* _focus_widget = nullptr;
-
-        Application* _application;
     };
 
 } // namespace RolUI
