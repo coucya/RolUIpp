@@ -4,6 +4,7 @@
 
 #include "RolUI/Color.hpp"
 #include "GLFWPainter.h"
+#include <cstdint>
 
 namespace RolUIBackend {
 
@@ -30,7 +31,7 @@ namespace RolUIBackend {
                 (int32_t)(bound[3] - bound[1])};
     }
 
-    int GLFWPainter::create_image_with_rgba(const unsigned char* data, int w, int h) {
+    int GLFWPainter::create_image_with_rgba(const uint8_t* data, int w, int h) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         return nvgCreateImageRGBA(vg, w, h, 0, data);
     }
@@ -45,8 +46,8 @@ namespace RolUIBackend {
         nvgDeleteImage(vg, handle);
     }
 
-    void GLFWPainter::set_base_pos(const RolUI::Point& pos) { _pos = pos; }
-    void GLFWPainter::scissor(const RolUI::Rect& rect) {
+    void GLFWPainter::set_base_pos( RolUI::Point pos) { _pos = pos; }
+    void GLFWPainter::scissor( RolUI::Rect rect) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgScissor(vg, rect.x, rect.y, rect.width, rect.height);
     }
@@ -63,7 +64,7 @@ namespace RolUIBackend {
 
     void GLFWPainter::set_stroke_width(uint32_t w) { _stroke_width = w; }
 
-    void GLFWPainter::draw_text(const RolUI::Point& pos, const char* text, uint32_t len) {
+    void GLFWPainter::draw_text( RolUI::Point pos, const char* text, uint32_t len) {
         if (!text || len == 0) return;
 
         RolUI::Point p = _pos + pos;
@@ -87,7 +88,7 @@ namespace RolUIBackend {
         nvgFill(vg);
     }
 
-    void GLFWPainter::draw_line(const RolUI::Point& a, const RolUI::Point& b) {
+    void GLFWPainter::draw_line( RolUI::Point a,  RolUI::Point b) {
         RolUI::Point pa = _pos + a;
         RolUI::Point pb = _pos + b;
 
@@ -100,7 +101,7 @@ namespace RolUIBackend {
         nvgStroke(vg);
     }
 
-    void GLFWPainter::draw_rect(const RolUI::Rect& rect) {
+    void GLFWPainter::draw_rect( RolUI::Rect rect) {
         RolUI::Point p = _pos + rect.pos();
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
@@ -111,7 +112,7 @@ namespace RolUIBackend {
         nvgStroke(vg);
     }
 
-    void GLFWPainter::draw_roundedrect(const RolUI::Rect& rect, uint32_t round) {
+    void GLFWPainter::draw_roundedrect( RolUI::Rect rect, uint32_t round) {
         RolUI::Point p = _pos + rect.pos();
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
@@ -122,7 +123,7 @@ namespace RolUIBackend {
         nvgStroke(vg);
     }
 
-    void GLFWPainter::draw_ellipse(const RolUI::Rect& rect) {
+    void GLFWPainter::draw_ellipse( RolUI::Rect rect) {
         RolUI::Point centre = rect.centre_middle();
         float rx = (float)rect.width / 2.0;
         float ry = (float)rect.height / 2.0;
@@ -138,7 +139,7 @@ namespace RolUIBackend {
         nvgStroke(vg);
     }
 
-    void GLFWPainter::draw_circle(const RolUI::Point& centre, uint32_t r) {
+    void GLFWPainter::draw_circle( RolUI::Point centre, uint32_t r) {
         RolUI::Point pc = _pos + centre;
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
@@ -149,7 +150,7 @@ namespace RolUIBackend {
         nvgStroke(vg);
     }
 
-    void GLFWPainter::fill_rect(const RolUI::Rect& rect) {
+    void GLFWPainter::fill_rect( RolUI::Rect rect) {
         RolUI::Point p = _pos + rect.pos();
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
@@ -159,7 +160,7 @@ namespace RolUIBackend {
         nvgFill(vg);
     }
 
-    void GLFWPainter::fill_roundedrect(const RolUI::Rect& rect, uint32_t round) {
+    void GLFWPainter::fill_roundedrect( RolUI::Rect rect, uint32_t round) {
         RolUI::Point p = _pos + rect.pos();
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
@@ -169,7 +170,7 @@ namespace RolUIBackend {
         nvgFill(vg);
     }
 
-    void GLFWPainter::fill_ellipse(const RolUI::Rect& rect) {
+    void GLFWPainter::fill_ellipse( RolUI::Rect rect) {
         RolUI::Point centre = rect.centre_middle();
         float rx = (float)rect.width / 2.0;
         float ry = (float)rect.height / 2.0;
@@ -184,7 +185,7 @@ namespace RolUIBackend {
         nvgFill(vg);
     }
 
-    void GLFWPainter::fill_circle(const RolUI::Point& centre, uint32_t r) {
+    void GLFWPainter::fill_circle( RolUI::Point centre, uint32_t r) {
         RolUI::Point pc = _pos + centre;
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;

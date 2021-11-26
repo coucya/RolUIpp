@@ -21,14 +21,14 @@ namespace RolUIBackend {
 
         virtual RolUI::Size text_size(const char* text, uint32_t len) const override;
 
-        virtual void set_base_pos(const RolUI::Point& pos) override;
-        virtual void scissor(const RolUI::Rect& rect) override;
+        virtual void set_base_pos(RolUI::Point pos) override;
+        virtual void scissor(RolUI::Rect rect) override;
 
         virtual void set_font_size(uint32_t s) override;
         virtual void set_font_color(RolUI::Color color) override;
         virtual void set_font(const char* name) override;
 
-        virtual int create_image_with_rgba(const unsigned char* data, int w, int h) override;
+        virtual int create_image_with_rgba(const uint8_t* data, int w, int h) override;
         virtual RolUI::Size image_size(int handle) override;
         virtual void delete_image(int handle) override;
 
@@ -37,20 +37,20 @@ namespace RolUIBackend {
 
         virtual void set_stroke_width(uint32_t w) override;
 
-        virtual void draw_text(const RolUI::Point& pos, const char* text, uint32_t len) override;
+        virtual void draw_text(RolUI::Point pos, const char* text, uint32_t len) override;
 
         virtual void draw_image(RolUI::Point pos, RolUI::Size size, int handle) override;
 
-        virtual void draw_line(const RolUI::Point& a, const RolUI::Point& b) override;
-        virtual void draw_rect(const RolUI::Rect& rect) override;
-        virtual void draw_circle(const RolUI::Point& centre, uint32_t r) override;
-        virtual void draw_ellipse(const RolUI::Rect& rect) override;
-        virtual void draw_roundedrect(const RolUI::Rect& rect, uint32_t round) override;
+        virtual void draw_line(RolUI::Point a, RolUI::Point b) override;
+        virtual void draw_rect(RolUI::Rect rect) override;
+        virtual void draw_circle(RolUI::Point centre, uint32_t r) override;
+        virtual void draw_ellipse(RolUI::Rect rect) override;
+        virtual void draw_roundedrect(RolUI::Rect rect, uint32_t round) override;
 
-        virtual void fill_rect(const RolUI::Rect& rect) override;
-        virtual void fill_roundedrect(const RolUI::Rect& rect, uint32_t round) override;
-        virtual void fill_ellipse(const RolUI::Rect& rect) override;
-        virtual void fill_circle(const RolUI::Point& centre, uint32_t r) override;
+        virtual void fill_rect(RolUI::Rect rect) override;
+        virtual void fill_roundedrect(RolUI::Rect rect, uint32_t round) override;
+        virtual void fill_ellipse(RolUI::Rect rect) override;
+        virtual void fill_circle(RolUI::Point centre, uint32_t r) override;
 
       private:
         GLFWPainter(void* nvg_context);

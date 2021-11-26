@@ -8,7 +8,6 @@
 #include "RolUI/Point.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
-#include "RolUI/widgets/EllipseWidget.hpp"
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Label.hpp"

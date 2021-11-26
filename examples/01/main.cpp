@@ -17,7 +17,6 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IEventListener.hpp"
-#include "RolUI/widgets/EllipseWidget.hpp"
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Label.hpp"

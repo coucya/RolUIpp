@@ -1,14 +1,11 @@
 #pragma once
 
-#include <cstring>
 #include <stdint.h>
 
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
-#include "Size.hpp"
-#include "Rect.hpp"
-#include "Color.hpp"
+#include "RolUI/Color.hpp"
 
 namespace RolUI {
 
@@ -20,12 +17,12 @@ namespace RolUI {
 
         virtual Size text_size(const char* text, uint32_t len) const = 0;
 
-        virtual int create_image_with_rgba(const unsigned char* data, int w, int h) = 0;
-        virtual Size image_size(int handle) = 0;
+        virtual int create_image_with_rgba(const uint8_t* data, int w, int h) = 0;
         virtual void delete_image(int handle) = 0;
+        virtual Size image_size(int handle) = 0;
 
-        virtual void set_base_pos(const Point& pos) = 0;
-        virtual void scissor(const Rect& rect) = 0;
+        virtual void set_base_pos(Point pos) = 0;
+        virtual void scissor(Rect rect) = 0;
 
         virtual void set_font_size(uint32_t s) = 0;
         virtual void set_font_color(Color color) = 0;
@@ -36,81 +33,32 @@ namespace RolUI {
 
         virtual void set_stroke_width(uint32_t w) = 0;
 
-        virtual void draw_text(const Point& pos, const char* text, uint32_t len) = 0;
+        virtual void draw_text(Point pos, const char* text, uint32_t len) = 0;
 
         virtual Size text_size(const char* text) const {
-            return text_size(text, strlen(text));
-        }
-
-        virtual void draw_text(int32_t x, int32_t y, const char* text, uint32_t len) {
-            draw_text(Point(x, y), text, len);
-        }
-        virtual void draw_text(const Point& pos, const char* text) {
-            draw_text(pos, text, strlen(text));
-        }
-        virtual void draw_text(int32_t x, int32_t y, const char* text) {
-            draw_text(Point(x, y), text);
+            const char* it = text;
+            while (*it != '\0') it++;
+            return text_size(text, it - text);
         }
 
         virtual void draw_image(Point pos, Size size, int handle) = 0;
 
-        virtual void draw_line(const Point& a, const Point& b) = 0;
-        virtual void draw_rect(const Rect& rect) = 0;
-        virtual void draw_circle(const Point& centre, uint32_t r) = 0;
-        virtual void draw_ellipse(const Rect& rect) = 0;
-        virtual void draw_roundedrect(const Rect& rect, uint32_t round) = 0;
+        virtual void draw_line(Point a, Point b) = 0;
+        virtual void draw_rect(Rect rect) = 0;
+        virtual void draw_circle(Point centre, uint32_t r) = 0;
+        virtual void draw_ellipse(Rect rect) = 0;
+        virtual void draw_roundedrect(Rect rect, uint32_t round) = 0;
 
-        virtual void fill_rect(const Rect& rect) = 0;
-        virtual void fill_roundedrect(const Rect& rect, uint32_t round) = 0;
-        virtual void fill_ellipse(const Rect& rect) = 0;
-        virtual void fill_circle(const Point& centre, uint32_t r) = 0;
+        virtual void fill_rect(Rect rect) = 0;
+        virtual void fill_roundedrect(Rect rect, uint32_t round) = 0;
+        virtual void fill_ellipse(Rect rect) = 0;
+        virtual void fill_circle(Point centre, uint32_t r) = 0;
 
-        virtual void draw_line(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {
-            draw_line(Point(x1, y1), Point(x2, y2));
-        }
-        virtual void draw_hline(const Point& a, uint32_t len) {
+        virtual void draw_hline(Point a, uint32_t len) {
             draw_line(a, Point(a.x + len, a.y));
         }
-        virtual void draw_vline(const Point& a, uint32_t len) {
+        virtual void draw_vline(Point a, uint32_t len) {
             draw_line(a, Point(a.x, a.y + len));
-        }
-        virtual void draw_hline(int32_t x, int32_t y, uint32_t len) {
-            draw_line(Point(x, y), Point(x + len, y));
-        }
-        virtual void draw_vline(int32_t x, int32_t y, uint32_t len) {
-            draw_line(Point(x, y), Point(x, y + len));
-        }
-
-        virtual void draw_rect(int32_t x, int32_t y, uint32_t w, uint32_t h) {
-            draw_rect(Rect(x, y, w, h));
-        }
-
-        virtual void draw_roundedrect(int32_t x, int32_t y, uint32_t w, uint32_t h, uint32_t round) {
-            draw_roundedrect(Rect(x, y, w, h), round);
-        }
-
-        virtual void draw_ellipse(int32_t x, int32_t y, uint32_t w, uint32_t h) {
-            draw_ellipse(Rect(x, y, w, h));
-        }
-
-        virtual void draw_circle(int32_t x, int32_t y, uint32_t r) {
-            draw_circle(Point(x, y), r);
-        }
-
-        virtual void fill_rect(int32_t x, int32_t y, uint32_t w, uint32_t h) {
-            fill_rect(Rect(x, y, w, h));
-        }
-
-        virtual void fill_roundedrect(int32_t x, int32_t y, uint32_t w, uint32_t h, uint32_t round) {
-            fill_roundedrect(Rect(x, y, w, h), round);
-        }
-
-        virtual void fill_ellipse(int32_t x, int32_t y, uint32_t w, uint32_t h) {
-            fill_ellipse(Rect(x, y, w, h));
-        }
-
-        virtual void fill_circle(int32_t x, int32_t y, uint32_t r) {
-            fill_circle(Point(x, y), r);
         }
     };
 
