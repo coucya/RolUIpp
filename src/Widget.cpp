@@ -257,11 +257,15 @@ namespace RolUI {
 
     void Widget::set_style(const Style& style) {}
     void Widget::set_style_sheet(const StyleSheet& style_sheet) {
-        add_listener(StateChangeEvent::type(), [this, style_sheet](IEvent* e) {
+        if (_has_style_sheet)
+            remove_listener(_style_sheet_handle);
+
+        _style_sheet_handle = add_listener(StateChangeEvent::type(), [this, style_sheet](IEvent* e) {
             Style s = style_sheet.merge_with(this->state());
             this->set_style(s);
             return false;
         });
+        _has_style_sheet = true;
     }
 
     bool Widget::on_event(IEvent* e) {

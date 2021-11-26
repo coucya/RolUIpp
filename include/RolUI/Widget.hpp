@@ -227,6 +227,9 @@ namespace RolUI {
 
         bool _is_update = true;
 
+        bool _has_style_sheet = false;
+        bool _style_sheet_handle = 0;
+
         typedef std::tuple<const EventType*, EventCallback, size_t> CallbackItem;
         size_t _event_handle = 0;
         std::vector<CallbackItem> _callbacks;
