@@ -1,4 +1,5 @@
 
+#include "RolUI/Application.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/WidgetState.hpp"
@@ -10,10 +11,7 @@ namespace RolUI {
     namespace widget {
 
         Text ::Text() noexcept {
-            add_listener(WindowChangeEvent::type(), [this](IEvent* e) {
-                this->_update_size();
-                return false;
-            });
+            _update_size();
             font_size.on_change.connect([this](const unsigned&) { this->_update_size(); });
             font_color.on_change.connect([this](const Color&) { this->_update_size(); });
             font_name.on_change.connect([this](const std::string&) { this->_update_size(); });
@@ -23,13 +21,12 @@ namespace RolUI {
         Text::~Text() {}
 
         void Text::_update_size() {
-            Window* win = window();
-            const std::string& text_ = text;
-            if (win && !text_.empty()) {
+            Window* win = Application::window();
+            if (!text->empty()) {
                 win->painter()->set_font_size(font_size);
-                const std::string& fn = font_name;
-                if (!fn.empty()) win->painter()->set_font(fn.c_str());
-                Size s = win->painter()->text_size(text_.c_str(), text_.size());
+                if (!font_name->empty())
+                    win->painter()->set_font(font_name->c_str());
+                Size s = win->painter()->text_size(text->c_str(), text->size());
                 Widget::set_size(s);
             }
         }
@@ -38,12 +35,11 @@ namespace RolUI {
             painter->set_font_size(font_size);
             painter->set_font_color(font_color);
 
-            const std::string& fn = font_name;
-            if (!fn.empty()) painter->set_font(fn.c_str());
+            if (!font_name->empty())
+                painter->set_font(font_name->c_str());
 
-            const std::string& text_ = text;
-            if (!text_.empty())
-                painter->draw_text({0, 0}, text_.c_str(), text_.size());
+            if (!text->empty())
+                painter->draw_text({0, 0}, text->c_str(), text->size());
         }
 
         void Text::set_style(const Style& style) {
