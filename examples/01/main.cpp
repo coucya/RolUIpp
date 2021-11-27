@@ -8,8 +8,6 @@
 #include <algorithm>
 #include <numeric>
 
-#include "RolUI/Window.hpp"
-#include "RolUI/widgets/TextBox.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
@@ -28,6 +26,8 @@
 #include "RolUI/events/CharEvent.hpp"
 #include "RolUI/timer.hpp"
 #include "RolUI/Application.hpp"
+#include "RolUI/Window.hpp"
+#include "RolUI/widgets/TextBox.hpp"
 
 using namespace RolUI;
 

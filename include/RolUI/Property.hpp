@@ -38,6 +38,9 @@ namespace RolUI {
         Property& operator()(const T& v) noexcept;
         Property& operator()(T&& v) noexcept;
 
+        T* operator->() noexcept;
+        const T* operator->() const noexcept;
+
         operator T const&() const;
 
         const T& get() const noexcept;
@@ -102,6 +105,11 @@ namespace RolUI {
         set(std::move(v));
         return *this;
     }
+
+    template <typename T>
+    T* Property<T>::operator->() noexcept { return &_data; }
+    template <typename T>
+    const T* Property<T>::operator->() const noexcept { return &_data; }
 
     template <typename T>
     Property<T>::operator T const&() const { return get(); }

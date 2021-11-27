@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RolUI/Image.hpp"
+#include "RolUI/Property.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IPainter.hpp"
 
@@ -8,19 +10,17 @@ namespace RolUI {
 
         class Image : public Widget {
           public:
-            Image(Widget* parent) noexcept;
-            Image(Widget* parent, int image_handle) noexcept;
-            ~Image() override;
+            Property<RolUI::Image> image{this};
 
-            int image() const noexcept;
-            void set_image(int img_handle) noexcept;
+          public:
+            Image(Widget* parent) noexcept;
+            Image(Widget* parent, RolUI::Image image) noexcept;
+            ~Image() override;
 
             void adjust_size() noexcept;
 
             void on_draw(IPainter* painter) override;
-
-          private:
-            int _image_handle;
         };
+
     } // namespace widget
 } // namespace RolUI
