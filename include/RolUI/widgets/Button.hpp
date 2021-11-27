@@ -12,9 +12,8 @@ namespace RolUI {
 
         class Button : public Label {
           public:
-            Button() noexcept;
-            Button(std::string text) noexcept;
-            Button(std::string text, Widget* parent) noexcept;
+            Button(Widget* parent = nullptr) noexcept;
+            Button(Widget* parent, std::string text) noexcept;
             ~Button();
 
           public:

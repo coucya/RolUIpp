@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Label label1{"Hello World!"};
+    widget::Label label1{nullptr, "Hello World!"};
 
     win.set_content_widget(&label1);
 

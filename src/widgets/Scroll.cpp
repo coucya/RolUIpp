@@ -10,7 +10,6 @@
 namespace RolUI {
     namespace widget {
 
-        Scroll::Scroll() noexcept {}
         Scroll::Scroll(Widget* parent) noexcept
             : Widget(parent) {}
 

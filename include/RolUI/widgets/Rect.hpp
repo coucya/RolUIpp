@@ -17,8 +17,8 @@ namespace RolUI {
             Property<Color> background_color{this, {255, 255, 255, 255}};
 
           public:
-            Rect() noexcept {}
-            Rect(int x, int y, unsigned w, unsigned h,
+            Rect(Widget* parent = nullptr) noexcept;
+            Rect(Widget* parent, int x, int y, unsigned w, unsigned h,
                  unsigned round = 0) noexcept;
 
             ~Rect() override;

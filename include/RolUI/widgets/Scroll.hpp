@@ -9,8 +9,7 @@ namespace RolUI {
 
         class Scroll : public Widget {
           public:
-            Scroll() noexcept;
-            Scroll(Widget* parent) noexcept;
+            Scroll(Widget* parent = nullptr) noexcept;
 
             Widget* widget() const noexcept;
             void set_widget(Widget* widget) noexcept;

@@ -10,7 +10,7 @@
 namespace RolUI {
     namespace widget {
 
-        Text ::Text() noexcept {
+        Text ::Text(Widget* parent) noexcept : Widget(parent) {
             _update_size();
             font_size.on_change.connect([this](const unsigned&) { this->_update_size(); });
             font_color.on_change.connect([this](const Color&) { this->_update_size(); });

@@ -29,9 +29,8 @@ namespace RolUI {
             Property<Vec2i> padding{this, {0, 0}};
 
           public:
-            Label() noexcept;
-            Label(std::string text) noexcept;
-            Label(std::string text, Widget* parent) noexcept;
+            Label(Widget* parent = nullptr) noexcept;
+            Label(Widget* parent, std::string text) noexcept;
             ~Label();
 
             void adjust_size() noexcept;

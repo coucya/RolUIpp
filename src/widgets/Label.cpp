@@ -34,13 +34,11 @@ namespace RolUI {
             this->text = std::move(text);
         }
 
-        Label::Label() noexcept {
+        Label::Label(Widget* parent) noexcept
+            : Widget(parent) {
             _init_part("");
         }
-        Label::Label(std::string text) noexcept {
-            _init_part(std::move(text));
-        }
-        Label::Label(std::string text, Widget* parent) noexcept
+        Label::Label(Widget* parent, std::string text) noexcept
             : Widget(parent) {
             _init_part(std::move(text));
         }

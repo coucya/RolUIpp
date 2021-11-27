@@ -15,18 +15,18 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IEventListener.hpp"
+#include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/events/Widget_event.hpp"
+#include "RolUI/events/CharEvent.hpp"
+#include "RolUI/timer.hpp"
+#include "RolUI/Application.hpp"
+
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Label.hpp"
 #include "RolUI/widgets/Button.hpp"
 #include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/widgets/Image.hpp"
-#include "RolUI/events/MouseEvent.hpp"
-#include "RolUI/events/Widget_event.hpp"
-#include "RolUI/events/CharEvent.hpp"
-#include "RolUI/timer.hpp"
-#include "RolUI/Application.hpp"
-#include "RolUI/Window.hpp"
 #include "RolUI/widgets/TextBox.hpp"
 
 using namespace RolUI;
@@ -61,11 +61,11 @@ int main(int argc, char* argv[]) {
 
     // widget::Image image{nullptr};
     Widget widget;
-    widget::Button blur{"blur", &widget};
-    widget::Button prev{"prev", &widget};
-    widget::Button next{"next", &widget};
-    widget::Button del_prev{"del prev", &widget};
-    widget::Button del_next{"del next", &widget};
+    widget::Button blur{&widget, "blur"};
+    widget::Button prev{&widget, "prev"};
+    widget::Button next{&widget, "next"};
+    widget::Button del_prev{&widget, "del prev"};
+    widget::Button del_next{&widget, "del next"};
 
     widget::TextBox textbox{&widget};
 

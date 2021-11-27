@@ -1,12 +1,16 @@
 
-#include "RolUI/widgets/Rect.hpp"
+#include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Size.hpp"
+#include "RolUI/widgets/Rect.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        Rect::Rect(int x, int y, unsigned w, unsigned h, unsigned round) noexcept {
+        Rect::Rect(Widget* parent) noexcept
+            : Widget(parent) {}
+        Rect::Rect(Widget* parent, int x, int y, unsigned w, unsigned h, unsigned round) noexcept
+            : Widget(parent) {
             set_pos(x, y);
             set_size((int)w, (int)h);
             round = round;

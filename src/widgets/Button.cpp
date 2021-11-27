@@ -1,20 +1,20 @@
 
-#include "RolUI/widgets/Button.hpp"
+#include <cstddef>
+
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Style.hpp"
-#include "RolUI/WidgetState.hpp"
 #include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/WidgetState.hpp"
 #include "RolUI/widgets/Label.hpp"
-#include <cstddef>
+#include "RolUI/widgets/Button.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        Button::Button() noexcept { _init(); }
-        Button::Button(std::string text) noexcept
-            : Label(std::move(text)) { _init(); }
-        Button::Button(std::string text, Widget* parent) noexcept
-            : Label(std::move(text), parent) { _init(); }
+        Button::Button(Widget* parent) noexcept
+            : Label(parent) { _init(); }
+        Button::Button(Widget* parent, std::string text) noexcept
+            : Label(parent, std::move(text)) { _init(); }
 
         Button::~Button() {}
 

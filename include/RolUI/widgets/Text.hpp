@@ -18,7 +18,7 @@ namespace RolUI {
             Property<std::string> text{this};
 
           public:
-            Text() noexcept;
+            Text(Widget* parent = nullptr) noexcept;
             ~Text() override;
 
             void on_draw(IPainter* painter) override;
