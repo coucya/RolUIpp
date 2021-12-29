@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <cstring>
 
 #include "RolUI/utility/utf8.h"
 #include "RolUI/utility/utf8ext.h"
