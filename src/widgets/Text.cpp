@@ -10,7 +10,8 @@
 namespace RolUI {
     namespace widget {
 
-        Text ::Text(Widget* parent) noexcept : Widget(parent) {
+        Text ::Text(const std::string& str) noexcept {
+            text = str;
             _update_size();
             font_size.on_change.connect([this](const unsigned&) { this->_update_size(); });
             font_color.on_change.connect([this](const Color&) { this->_update_size(); });
@@ -20,14 +21,15 @@ namespace RolUI {
 
         Text::~Text() {}
 
-        void Text::_update_size() {
+        void Text::_update_size() noexcept {
             Window* win = Application::window();
             if (!text->empty()) {
                 win->painter()->set_font_size(font_size);
                 if (!font_name->empty())
                     win->painter()->set_font(font_name->c_str());
-                Size s = win->painter()->text_size(text->c_str(), text->size());
-                Widget::set_size(s);
+                _text_size = win->painter()->text_size(text->c_str(), text->size());
+            } else {
+                _text_size = Size(0, 0);
             }
         }
 
@@ -37,15 +39,15 @@ namespace RolUI {
 
             if (!font_name->empty())
                 painter->set_font(font_name->c_str());
+            else
+                painter->set_font("default");
 
             if (!text->empty())
                 painter->draw_text({0, 0}, text->c_str(), text->size());
         }
 
-        void Text::set_style(const Style& style) {
-            font_size = style.font_size;
-            font_color = style.color;
-            font_name = style.font_name;
+        Size Text::perlayout(Constraint constraint) {
+            return _text_size;
         }
 
     } // namespace widget

@@ -179,14 +179,14 @@ namespace RolUI {
     bool CharEventDispatcher::empty() const noexcept { return _char_queue.empty(); }
 
     void CharEventDispatcher::dispatch(Window* w) noexcept {
-        if (!w || !w->focus_widget()) return;
+        // if (!w || !w->focus_widget()) return;
 
-        Widget* focus_widget = w->focus_widget();
+        // Widget* focus_widget = w->focus_widget();
 
-        while (!empty()) {
-            CharEvent e{focus_widget, pop_char()};
-            send_event(focus_widget, &e);
-        }
+        // while (!empty()) {
+        //     CharEvent e{focus_widget, pop_char()};
+        //     send_event(focus_widget, &e);
+        // }
     }
 
 } // namespace RolUI

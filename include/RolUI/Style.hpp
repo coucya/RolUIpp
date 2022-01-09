@@ -3,9 +3,9 @@
 #include <string>
 #include <optional>
 
-#include "RolUI/Color.hpp"
-#include "RolUI/Vector.hpp"
-#include "RolUI/WidgetState.hpp"
+#include "Color.hpp"
+#include "Vector.hpp"
+#include "WidgetState.hpp"
 
 namespace RolUI {
 

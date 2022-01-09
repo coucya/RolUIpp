@@ -18,14 +18,17 @@ namespace RolUI {
             Property<std::string> text{this};
 
           public:
-            Text(Widget* parent = nullptr) noexcept;
+            Text(const std::string& text) noexcept;
             ~Text() override;
 
-            void on_draw(IPainter* painter) override;
-            void set_style(const Style& style) override;
+          protected:
+            virtual void on_draw(IPainter* painter) override;
+            virtual Size perlayout(Constraint constraint) override;
 
           private:
-            void _update_size();
+            void _update_size() noexcept;
+
+            Size _text_size;
         };
 
     } // namespace widget

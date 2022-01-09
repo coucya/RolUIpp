@@ -3,8 +3,8 @@
 #include <cstddef>
 #include <queue>
 
-#include "RolUI/sigslot/Signal.hpp"
-#include "RolUI/sigslot/Slot.hpp"
+#include "./sigslot/Signal.hpp"
+#include "./sigslot/Slot.hpp"
 
 namespace RolUI {
 

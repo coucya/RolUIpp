@@ -7,14 +7,7 @@
 namespace RolUI {
     namespace widget {
 
-        Rect::Rect(Widget* parent) noexcept
-            : Widget(parent) {}
-        Rect::Rect(Widget* parent, int x, int y, unsigned w, unsigned h, unsigned round) noexcept
-            : Widget(parent) {
-            set_pos(x, y);
-            set_size((int)w, (int)h);
-            round = round;
-        }
+        Rect::Rect(unsigned round) noexcept { this->round = round; }
         Rect::~Rect() {}
 
         void Rect::on_draw(IPainter* painter) {
@@ -28,12 +21,12 @@ namespace RolUI {
                 painter->draw_roundedrect(rect_, round);
             }
         }
-        void Rect::set_style(const Style& style) {
-            round = style.round;
-            border_color = style.border_color;
-            border_width = style.border_width;
-            background_color = style.background_color;
-        }
 
+        Size Rect::perlayout(Constraint constraint) {
+            if (child_count() == 0) return {0, 0};
+            Size s = RolUI::perlayout(get_child(0), constraint);
+            RolUI::set_rect(get_child(0), {{0, 0}, s});
+            return s;
+        }
     } // namespace widget
 } // namespace RolUI

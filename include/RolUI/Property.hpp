@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "RolUI/sigslot/Signal.hpp"
-#include "RolUI/sigslot/Slot.hpp"
+#include "./sigslot/Signal.hpp"
+#include "./sigslot/Slot.hpp"
 
 namespace RolUI {
 
@@ -41,7 +41,7 @@ namespace RolUI {
         T* operator->() noexcept;
         const T* operator->() const noexcept;
 
-        operator T const&() const;
+        operator T const &() const;
 
         const T& get() const noexcept;
 
@@ -112,7 +112,7 @@ namespace RolUI {
     const T* Property<T>::operator->() const noexcept { return &_data; }
 
     template <typename T>
-    Property<T>::operator T const&() const { return get(); }
+    Property<T>::operator T const &() const { return get(); }
 
     template <typename T>
     const T& Property<T>::get() const noexcept { return _data; }

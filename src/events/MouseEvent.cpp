@@ -78,7 +78,7 @@ namespace RolUI {
 
         if (is_move() && !_is_enter && !_is_leave) {
             Widget* tw = _current_widget;
-            while (tw && tw->visual_rect().contain(mouse_pos) == false) {
+            while (tw && tw->abs_rect().contain(mouse_pos) == false) {
                 MouseEvent me = MouseEvent(MouseLeaveEvent_type(), tw, this);
                 send_event(tw, &me);
 
@@ -86,7 +86,7 @@ namespace RolUI {
             }
 
             tw = widget;
-            while (tw && tw->visual_rect().contain(_last_pos) == false) {
+            while (tw && tw->abs_rect().contain(_last_pos) == false) {
                 MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
                 send_event(tw, &me);
 

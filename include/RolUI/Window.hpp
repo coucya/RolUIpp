@@ -2,13 +2,13 @@
 
 #include <stdint.h>
 
-#include "RolUI/IDisplay.hpp"
-#include "RolUI/IDispatcher.hpp"
-#include "RolUI/IEvent.hpp"
-#include "RolUI/Point.hpp"
-#include "RolUI/Rect.hpp"
-#include "RolUI/Size.hpp"
-#include "RolUI/sigslot/Slot.hpp"
+#include "./IDisplay.hpp"
+#include "./IDispatcher.hpp"
+#include "./IEvent.hpp"
+#include "./Point.hpp"
+#include "./Rect.hpp"
+#include "./Size.hpp"
+#include "./sigslot/Slot.hpp"
 
 namespace RolUI {
 
@@ -25,9 +25,6 @@ namespace RolUI {
         Widget* content_widget() const noexcept;
         void set_content_widget(Widget* w) noexcept;
 
-        Widget* focus_widget() const noexcept;
-        void set_focus_widget(Widget* w) noexcept;
-
         IPainter* painter() override;
         void begin_draw() override;
         void end_draw() override;
@@ -43,11 +40,9 @@ namespace RolUI {
 
         void _draw_widget(RolUI::Widget* widget, Point base_pos, Rect scissor, RolUI::IPainter* painter) noexcept;
 
-        void _do_size_change(Size s) noexcept;
-
       protected:
         Widget* _content_widget = nullptr;
-        Widget* _focus_widget = nullptr;
+        // Widget* _focus_widget = nullptr;
     };
 
 } // namespace RolUI

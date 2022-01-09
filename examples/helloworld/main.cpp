@@ -10,7 +10,7 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
-#include "RolUI/widgets/Label.hpp"
+// #include "RolUI/widgets/Label.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -35,13 +35,12 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Label label1{nullptr, "Hello World!"};
+    widget::Text label1{"Hello World!"};
+    widget::Rect box{5};
+    box.background_color = {255, 0, 0};
+    box.add_child(&label1);
 
-    win.set_content_widget(&label1);
-
-    label1.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    label1.font_size = 30;
-    label1.adjust_size();
+    win.set_content_widget(&box);
 
     win.show();
 

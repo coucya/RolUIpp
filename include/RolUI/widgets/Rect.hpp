@@ -1,10 +1,10 @@
 #pragma once
 
-#include "RolUI/Color.hpp"
-#include "RolUI/Property.hpp"
-#include "RolUI/Rect.hpp"
-#include "RolUI/Widget.hpp"
-#include "RolUI/IPainter.hpp"
+#include "../Color.hpp"
+#include "../Property.hpp"
+#include "../Rect.hpp"
+#include "../Widget.hpp"
+#include "../IPainter.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -17,15 +17,12 @@ namespace RolUI {
             Property<Color> background_color{this, {255, 255, 255, 255}};
 
           public:
-            Rect(Widget* parent = nullptr) noexcept;
-            Rect(Widget* parent, int x, int y, unsigned w, unsigned h,
-                 unsigned round = 0) noexcept;
-
+            Rect(unsigned round = 0) noexcept;
             ~Rect() override;
 
-            void on_draw(IPainter* painter) override;
-
-            void set_style(const Style& style) override;
+          protected:
+            virtual void on_draw(IPainter* painter) override;
+            virtual Size perlayout(Constraint constraint) override;
 
           private:
         };

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "RolUI/IEvent.hpp"
-#include "RolUI/IWidget.hpp"
 #include <stdint.h>
 #include <string_view>
+
+#include "./IEvent.hpp"
+#include "./IWidget.hpp"
 
 #define RolUI_define_event_type_in_class(tp) \
     static const EventType* type() {         \

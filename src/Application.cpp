@@ -37,6 +37,11 @@ namespace RolUI {
                 timeout = _do_timer();
             } while (timeout == 0.0);
 
+            if (_window->content_widget()) {
+                Size s = perlayout(_window->content_widget(), {{0, 0}, _window->size()});
+                _window->content_widget()->_pos = {0, 0};
+                _window->content_widget()->_size = s;
+            }
             _draw_window();
         }
     }

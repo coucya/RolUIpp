@@ -1,8 +1,8 @@
 #pragma once
 
-#include "RolUI/Point.hpp"
-#include "RolUI/Size.hpp"
-#include "RolUI/sigslot/Signal.hpp"
+#include "./Point.hpp"
+#include "./Size.hpp"
+#include "./sigslot/Signal.hpp"
 
 namespace RolUI {
 

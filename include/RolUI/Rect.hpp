@@ -2,9 +2,8 @@
 
 #include <optional>
 
-#include "Point.hpp"
-#include "RolUI/Point.hpp"
-#include "Size.hpp"
+#include "./Point.hpp"
+#include "./Size.hpp"
 
 namespace RolUI {
 
