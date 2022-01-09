@@ -48,10 +48,11 @@ std::string get_image_huaji_path() {
     return font_path.string();
 }
 
-int main(int argc, char* argv[]) {
-    using namespace RolUI;
+using namespace RolUI;
 
-    RolUIBackend::GLFWWindow win(800, 600, "01");
+int main(int argc, char* argv[]) {
+
+    RolUIBackend::GLFWWindow win(800, 600, "text box");
     win.on_exit = [&] { RolUI::Application::exit(); };
 
     RolUI::Application::init(&win);
@@ -59,44 +60,13 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    // widget::Image image{nullptr};
     Widget widget;
-    widget::Button blur{&widget, "blur"};
-    widget::Button prev{&widget, "prev"};
-    widget::Button next{&widget, "next"};
-    widget::Button del_prev{&widget, "del prev"};
-    widget::Button del_next{&widget, "del next"};
+    widget::TextBox textbox{nullptr};
 
-    widget::TextBox textbox{&widget};
-
-    win.set_content_widget(&widget);
-
-    widget.set_size_relative(RelativeTarget::parent, SizeMode::relative);
-
-    // blur.set_pos_relative(RelativeTarget::parent, AnchorPoint::left_bottom);
-    prev.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
-    next.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
-    del_prev.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
-    del_next.set_pos_relative(RelativeTarget::prev, AnchorPoint::left_bottom);
-
-    textbox.text = std::string{u8"输入框测试"};
-    textbox.adjust_size();
+    win.set_content_widget(&textbox);
 
     textbox.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-
-    blur.on_click.connect([&] { win.set_focus_widget(nullptr); });
-    prev.on_click.connect([&] {
-        textbox.cursor_to_prev_char();
-    });
-    next.on_click.connect([&] {
-        textbox.cursor_to_next_char();
-    });
-    del_prev.on_click.connect([&] {
-        textbox.delete_cursor_prev();
-    });
-    del_next.on_click.connect([&] {
-        textbox.delete_cursor_next();
-    });
+    textbox.set_size(100, 30);
 
     win.show();
 
