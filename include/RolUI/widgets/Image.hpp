@@ -1,25 +1,32 @@
 #pragma once
 
-#include "RolUI/Image.hpp"
-#include "RolUI/Property.hpp"
-#include "RolUI/Widget.hpp"
-#include "RolUI/IPainter.hpp"
+#include "../Image.hpp"
+#include "../Property.hpp"
+#include "../Widget.hpp"
+#include "../IPainter.hpp"
 
 namespace RolUI {
     namespace widget {
 
         class Image : public Widget {
           public:
-            Property<RolUI::Image> image{this};
+            enum Fit {
+                fill,
+                cover,
+                contain,
+            };
 
           public:
-            Image(Widget* parent) noexcept;
-            Image(Widget* parent, RolUI::Image image) noexcept;
+            Property<RolUI::Image> image{this};
+            Property<Fit> fit{this};
+
+          public:
+            Image(RolUI::Image image, Fit fit = Fit::contain) noexcept;
             ~Image() override;
 
-            void adjust_size() noexcept;
-
+          protected:
             void on_draw(IPainter* painter) override;
+            Size perlayout(Constraint constraint) override;
         };
 
     } // namespace widget

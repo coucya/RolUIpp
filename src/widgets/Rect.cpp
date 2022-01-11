@@ -23,10 +23,7 @@ namespace RolUI {
         }
 
         Size Rect::perlayout(Constraint constraint) {
-            if (child_count() == 0) return {0, 0};
-            Size s = RolUI::perlayout(get_child(0), constraint);
-            RolUI::set_rect(get_child(0), {{0, 0}, s});
-            return s;
+            return Widget::perlayout(constraint);
         }
     } // namespace widget
 } // namespace RolUI

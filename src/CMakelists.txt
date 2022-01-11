@@ -3,7 +3,8 @@ aux_source_directory(${RolUI_SOURCE_DIR} RolUI_source)
 # aux_source_directory(${RolUI_SOURCE_DIR}/widgets RolUI_widgets_source)
 aux_source_directory(${RolUI_SOURCE_DIR}/events  RolUI_events_source)
 set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/Text.cpp 
-                            ${RolUI_SOURCE_DIR}/widgets/Rect.cpp)
+                            ${RolUI_SOURCE_DIR}/widgets/Rect.cpp
+                            ${RolUI_SOURCE_DIR}/widgets/Image.cpp)
 
 add_library(RolUI STATIC ${RolUI_source} ${RolUI_widgets_source} ${RolUI_events_source})
 target_include_directories(RolUI PRIVATE ${RolUI_INCLUDE_DIR})

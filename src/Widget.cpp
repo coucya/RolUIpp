@@ -95,8 +95,9 @@ namespace RolUI {
         Size res = constraint.min;
         for (auto it = _child_begin_it(); it != _child_end_it(); ++it) {
             Widget* w = *it;
-            w->_pos = Point{0, 0};
             Size size = w->perlayout(constraint);
+            w->_pos = Point{0, 0};
+            w->_size = size;
             res.width = std::max(res.width, size.width);
             res.height = std::max(res.height, size.height);
         }
