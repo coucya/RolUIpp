@@ -3,9 +3,9 @@
 #include <cstdio>
 #include <string>
 
-#include "RolUI/Widget.hpp"
-#include "RolUI/IPainter.hpp"
-#include "RolUI/Property.hpp"
+#include "../Widget.hpp"
+#include "../IPainter.hpp"
+#include "../Property.hpp"
 
 namespace RolUI {
     namespace widget {

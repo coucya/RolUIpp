@@ -3,13 +3,13 @@
 #include <cstddef>
 #include <string>
 
-#include "RolUI/Point.hpp"
-#include "RolUI/Property.hpp"
-#include "RolUI/Vector.hpp"
-#include "RolUI/Widget.hpp"
-#include "RolUI/timer.hpp"
-#include "RolUI/widgets/Text.hpp"
-#include "RolUI/widgets/Rect.hpp"
+#include "../Point.hpp"
+#include "../Property.hpp"
+#include "../Vector.hpp"
+#include "../Widget.hpp"
+#include "../timer.hpp"
+#include "../widgets/Text.hpp"
+#include "../widgets/Rect.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -45,8 +45,6 @@ namespace RolUI {
             void delete_cursor_next() noexcept;
 
             void adjust_size() noexcept;
-
-            void set_style(const Style& style) override;
 
           protected:
             unsigned pos_to_index(Point pos) const noexcept;

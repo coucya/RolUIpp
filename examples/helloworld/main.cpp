@@ -10,7 +10,7 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
-// #include "RolUI/widgets/Label.hpp"
+#include "RolUI/widgets/Margin.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -37,8 +37,12 @@ int main(int argc, char* argv[]) {
 
     widget::Text label1{"Hello World!"};
     widget::Rect box{5};
+    widget::Margin m{10};
+
     box.background_color = {255, 0, 0};
-    box.add_child(&label1);
+
+    m.add_child(&label1);
+    box.add_child(&m);
 
     win.set_content_widget(&box);
 
