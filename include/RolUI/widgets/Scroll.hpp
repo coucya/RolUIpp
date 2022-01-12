@@ -2,14 +2,18 @@
 
 #include <cstddef>
 
-#include "RolUI/Widget.hpp"
+#include "../Widget.hpp"
+#include "../Property.hpp"
 
 namespace RolUI {
     namespace widget {
 
         class Scroll : public Widget {
           public:
-            Scroll(Widget* parent = nullptr) noexcept;
+            Property<Point> offset{this};
+
+          public:
+            Scroll() noexcept;
 
             Widget* widget() const noexcept;
             void set_widget(Widget* widget) noexcept;
@@ -34,8 +38,8 @@ namespace RolUI {
             void scroll_x_to_ratio(float x) noexcept;
             void scroll_y_to_ratio(float y) noexcept;
 
-          private:
-            Widget* _widget = nullptr;
+          protected:
+            Size perlayout(Constraint constraint) override;
         };
 
     } // namespace widget
