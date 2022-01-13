@@ -6,6 +6,7 @@ set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/Text.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Rect.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Scroll.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Margin.cpp
+                            ${RolUI_SOURCE_DIR}/widgets/Align.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Image.cpp)
 
 add_library(RolUI STATIC ${RolUI_source} ${RolUI_widgets_source} ${RolUI_events_source})

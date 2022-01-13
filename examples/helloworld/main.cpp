@@ -11,9 +11,11 @@
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Margin.hpp"
+#include "RolUI/widgets/Align.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
+#include "RolUI/timer.hpp"
 
 using namespace RolUI;
 
@@ -36,17 +38,30 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     widget::Text label1{"Hello World!"};
-    widget::Rect box{5};
-    widget::Margin m{10};
+    widget::Rect box{16};
+    widget::Margin m{32};
+    widget::Align align{};
 
+    label1.font_size = 30;
     box.background_color = {255, 0, 0};
 
     m.add_child(&label1);
     box.add_child(&m);
+    align.add_child(&box);
 
-    win.set_content_widget(&box);
+    win.set_content_widget(&align);
 
     win.show();
+
+    // RolUI::Timer t;
+    // t.on_timeout.connect([&](double timeout) {
+    //     float ax = align.align_x.get();
+    //     ax += 0.01;
+    //     if (ax > 1.0f)
+    //         ax = 0.0f;
+    //     align.align_x = ax;
+    // });
+    // t.start(0.03, false);
 
     Application::run();
 
