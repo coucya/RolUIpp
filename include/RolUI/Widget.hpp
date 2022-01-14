@@ -82,12 +82,6 @@ namespace RolUI {
       private:
         typedef std::vector<Widget*> Childrens;
 
-        // void _init_event_bind() noexcept;
-
-        // Widget* _prev_widget() noexcept;
-
-        // void _update_child_index(size_t begin = 0) noexcept;
-
         Widget* _get_child(size_t idx) const noexcept;
         void _add_child(Childrens::iterator pos, Widget* w) noexcept;
         void _remove_child(Childrens::iterator pos) noexcept;
@@ -100,8 +94,6 @@ namespace RolUI {
         Childrens::iterator _find_child_it(Widget* w) const noexcept;
 
       private:
-        // size_t _index = 0;
-
         Widget* _parent = nullptr;
 
         Point _pos;

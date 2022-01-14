@@ -23,8 +23,6 @@
 
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
-#include "RolUI/widgets/Label.hpp"
-#include "RolUI/widgets/Button.hpp"
 #include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/widgets/Image.hpp"
 #include "RolUI/widgets/TextBox.hpp"

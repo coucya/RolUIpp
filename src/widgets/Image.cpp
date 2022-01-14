@@ -56,7 +56,7 @@ namespace RolUI {
             }
         }
         Size Image::perlayout(Constraint constraint) {
-            return constraint.max;
+            return constraint.max();
         }
     } // namespace widget
 } // namespace RolUI

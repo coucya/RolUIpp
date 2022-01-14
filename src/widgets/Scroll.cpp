@@ -125,7 +125,7 @@ namespace RolUI {
                 Size s = RolUI::perlayout(widget, Constraint{{0, 0}, {n, n}});
                 RolUI::set_rect(widget, {offset.get(), s});
             }
-            return constraint.max;
+            return constraint.max();
         }
     } // namespace widget
 } // namespace RolUI

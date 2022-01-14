@@ -12,6 +12,7 @@
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Margin.hpp"
 #include "RolUI/widgets/Align.hpp"
+#include "RolUI/widgets/Column.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -23,6 +24,23 @@ std::string get_font_path() {
     std::filesystem::path self_path{__FILE__};
     std::filesystem::path font_path = self_path.parent_path() / ".." / "resources" / "Roboto-Regular.ttf";
     return font_path.string();
+}
+
+Widget* make_label(std::string str, Color fg = Color(255, 255, 255), Color bg = Color(255, 100, 100)) {
+    widget::Text* text = new widget::Text{str};
+    widget::Rect* box = new widget::Rect{8};
+    widget::Margin* padding = new widget::Margin{16};
+    widget::Margin* margin = new widget::Margin{8};
+
+    text->font_size = 20;
+    text->font_color = fg;
+    box->background_color = bg;
+
+    padding->add_child(text);
+    box->add_child(padding);
+    margin->add_child(box);
+
+    return margin;
 }
 
 int main(int argc, char* argv[]) {
@@ -37,17 +55,15 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Text label1{"Hello World!"};
-    widget::Rect box{16};
-    widget::Margin m{32};
     widget::Align align{};
+    widget::Column column{};
 
-    label1.font_size = 30;
-    box.background_color = {255, 0, 0};
+    align.add_child(&column);
 
-    m.add_child(&label1);
-    box.add_child(&m);
-    align.add_child(&box);
+    for (int i = 0; i < 5; i++) {
+        Widget* widget = make_label(std::string("label") + std::to_string(i));
+        column.add_child(widget);
+    }
 
     win.set_content_widget(&align);
 

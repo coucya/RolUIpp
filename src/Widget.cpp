@@ -92,7 +92,7 @@ namespace RolUI {
     void Widget::on_draw(IPainter* painter) {}
 
     Size Widget::perlayout(Constraint constraint) {
-        Size res = constraint.min;
+        Size res = constraint.min();
         for (auto it = _child_begin_it(); it != _child_end_it(); ++it) {
             Widget* w = *it;
             Size size = w->perlayout(constraint);

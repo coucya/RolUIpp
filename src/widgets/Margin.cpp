@@ -27,7 +27,7 @@ namespace RolUI {
         }
 
         Size Margin::perlayout(Constraint constraint) {
-            Size m = constraint.max;
+            Size m = constraint.max();
             int cw = m.width - int(left.get() + right.get());
             int ch = m.height - int(top.get() + bottom.get());
             cw = std::max(cw, 0);
