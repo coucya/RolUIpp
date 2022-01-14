@@ -7,6 +7,7 @@ set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/Text.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Scroll.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Margin.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Align.cpp
+                            ${RolUI_SOURCE_DIR}/widgets/Row.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Column.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Image.cpp)
 

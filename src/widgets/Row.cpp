@@ -1,13 +1,13 @@
 
 
-#include "RolUI/widgets/Column.hpp"
+#include "RolUI/widgets/Row.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        Column::Column() noexcept {}
+        Row::Row() noexcept {}
 
-        Size Column::perlayout(Constraint constraint) {
+        Size Row::perlayout(Constraint constraint) {
             Size self_size = constraint.max();
             int cw = constraint.max_width();
             int ch = constraint.max_height();
@@ -17,36 +17,36 @@ namespace RolUI {
                 Constraint nc = Constraint::zero_to(cw, ch);
                 Size s = RolUI::perlayout(child, nc);
                 RolUI::set_rect(child, {{0, 0}, s});
-                ch = std::max(ch - s.height, 0);
+                cw = std::max(cw - s.width, 0);
             }
 
-            int max_w = 0;
-            int total_h = 0;
+            int max_h = 0;
+            int total_w = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = get_child(i);
-                if (child->size().width > max_w)
-                    max_w = child->size().width;
-                total_h = total_h + child->size().height;
+                if (child->size().height > max_h)
+                    max_h = child->size().height;
+                total_w = total_w + child->size().width;
             }
 
-            int cy = 0;
+            int cx = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = get_child(i);
                 float r = 0;
-                if (cross_axis_alignment.get() == left)
+                if (cross_axis_alignment.get() == top)
                     r = 0.0f;
                 else if (cross_axis_alignment.get() == center)
                     r = 0.5f;
-                else if (cross_axis_alignment.get() == right)
+                else if (cross_axis_alignment.get() == bottom)
                     r = 1.0f;
 
-                int cx = float(max_w - child->size().width) * r;
+                int cy = float(max_h - child->size().height) * r;
                 RolUI::set_rect(child, {{cx, cy}, child->size()});
 
-                cy = cy + child->size().height;
+                cx = cx + child->size().width;
             }
 
-            return {max_w, total_h};
+            return {total_w, max_h};
         }
 
     } // namespace widget

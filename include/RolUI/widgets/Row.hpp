@@ -6,19 +6,19 @@
 namespace RolUI {
     namespace widget {
 
-        class Column : public Widget {
+        class Row : public Widget {
           public:
             enum CrossAxisAlignment {
-                left,
+                top,
                 center,
-                right
+                bottom
             };
 
           public:
             Property<CrossAxisAlignment> cross_axis_alignment{this, center};
 
           public:
-            Column() noexcept;
+            Row() noexcept;
 
           protected:
             Size perlayout(Constraint constraint) override;

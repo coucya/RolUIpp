@@ -13,6 +13,7 @@
 #include "RolUI/widgets/Margin.hpp"
 #include "RolUI/widgets/Align.hpp"
 #include "RolUI/widgets/Column.hpp"
+#include "RolUI/widgets/Row.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -58,10 +59,12 @@ int main(int argc, char* argv[]) {
     widget::Align align{};
     widget::Column column{};
 
+    column.cross_axis_alignment = widget::Column::right;
+
     align.add_child(&column);
 
     for (int i = 0; i < 5; i++) {
-        Widget* widget = make_label(std::string("label") + std::to_string(i));
+        Widget* widget = make_label(std::string("label") + std::to_string(i % 2 ? i * 100 : i));
         column.add_child(widget);
     }
 
