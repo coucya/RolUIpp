@@ -30,7 +30,15 @@ namespace RolUI {
     void Application::exit() noexcept { _should_exit = true; }
     void Application::run() noexcept {
         _draw_window();
+
         double timeout = 0.0;
+
+        if (_window->content_widget()) {
+            Size s = perlayout(_window->content_widget(), {{0, 0}, _window->size()});
+            _window->content_widget()->_pos = {0, 0};
+            _window->content_widget()->_size = s;
+        }
+
         while (!_should_exit) {
             _dispatch_event(timeout);
             do {

@@ -73,6 +73,7 @@ namespace RolUI {
         if (w == nullptr) return;
 
         Point mouse_pos = this->pos();
+        // Point mouse_pos = {17, 17};
 
         Widget* widget = w->get_widget_by_pos(mouse_pos);
 
@@ -128,6 +129,7 @@ namespace RolUI {
         for (int i = 0; i < sizeof(_key_is_change); i++) {
             if (is_action((MouseKey)i)) {
                 Widget* tw = widget;
+                Widget* wi = w->get_widget_by_pos(mouse_pos);
                 while (tw) {
                     const EventType* et = button((MouseKey)i) == MouseKeyMode::press
                                             ? MousePressEvent_type()

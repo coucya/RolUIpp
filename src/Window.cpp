@@ -72,6 +72,9 @@ namespace RolUI {
         Widget* widget = nullptr;
         Widget* w_it = _content_widget;
         Point pos_it = pos - _content_widget->pos();
+
+        if (w_it->hit_test(pos_it) == false) return nullptr;
+
         while (true) {
             Widget* w = w_it->get_child_by_pos(pos_it);
             if (w == nullptr) return w_it;

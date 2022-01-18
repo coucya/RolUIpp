@@ -57,11 +57,13 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     widget::Align align{};
+    widget::Rect box{};
     widget::Column column{};
 
     column.cross_axis_alignment = widget::Column::right;
-
-    align.add_child(&column);
+    box.background_color = {100, 100, 255};
+    box.add_child(&column);
+    align.add_child(&box);
 
     for (int i = 0; i < 5; i++) {
         Widget* widget = make_label(std::string("label") + std::to_string(i % 2 ? i * 100 : i));

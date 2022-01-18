@@ -53,7 +53,7 @@ namespace RolUI {
         virtual void on_draw(IPainter* painter) {}
 
         virtual Size perlayout(Constraint constraint) = 0;
-        virtual bool hit_test(Point pos) = 0;
+        virtual bool hit_test(Point pos) const = 0;
     };
 
 } // namespace RolUI

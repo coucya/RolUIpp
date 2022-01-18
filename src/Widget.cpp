@@ -19,7 +19,7 @@
 namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e) {
-        if (!w || !w->parent()) return false;
+        if (!w) return false;
         e->_target = w;
         return w->do_event(e);
     }
@@ -61,6 +61,8 @@ namespace RolUI {
     }
 
     Widget* Widget::get_child_by_pos(Point pos) const noexcept {
+        // if (hit_test(pos) == false) return nullptr;
+
         for (auto it = _child_rbegin_it(), ed = _child_rend_it(); it != ed; ++it) {
             Widget* w = *it;
             if (w->hit_test(pos - w->pos()))
@@ -104,8 +106,8 @@ namespace RolUI {
         return res;
     }
 
-    bool Widget::hit_test(Point local_pos) {
-        return rect().contain(local_pos);
+    bool Widget::hit_test(Point local_pos) const {
+        return RolUI::Rect{{0, 0}, size()}.contain(local_pos);
     }
 
     Widget* Widget::_get_child(size_t idx) const noexcept {

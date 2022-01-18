@@ -1,11 +1,9 @@
 #pragma once
 
-#include "RolUI/Color.hpp"
-#include "RolUI/IEvent.hpp"
-#include "RolUI/Widget.hpp"
-#include "RolUI/sigslot/Slot.hpp"
-
-#include "./Label.hpp"
+#include "../Color.hpp"
+#include "../IEvent.hpp"
+#include "../Widget.hpp"
+#include "../sigslot/Slot.hpp"
 
 namespace RolUI {
     namespace widget {

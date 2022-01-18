@@ -23,9 +23,10 @@
 
 #include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Text.hpp"
-#include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/widgets/Image.hpp"
-#include "RolUI/widgets/TextBox.hpp"
+#include "RolUI/widgets/Margin.hpp"
+#include "RolUI/widgets/Column.hpp"
+#include "RolUI/widgets/PointerListener.hpp"
 
 using namespace RolUI;
 
@@ -48,6 +49,31 @@ std::string get_image_huaji_path() {
 
 using namespace RolUI;
 
+template <typename PF, typename HF>
+Widget* make_button(std::string str, PF&& pf, HF&& hf) {
+    Color fg = {55, 55, 255};
+    Color bg = {255, 155, 155};
+
+    widget::PointerListener* pl = new widget::PointerListener();
+    widget::Text* text = new widget::Text{str};
+    widget::Rect* box = new widget::Rect{8};
+    widget::Margin* padding = new widget::Margin{16};
+    widget::Margin* margin = new widget::Margin{8};
+
+    text->font_size = 50;
+    text->font_color = fg;
+    box->background_color = bg;
+    pl->on_down.connect(std::forward<PF>(pf));
+    pl->on_hover.connect(std::forward<HF>(hf));
+
+    padding->add_child(text);
+    box->add_child(padding);
+    pl->add_child(box);
+    // margin->add_child(pl);
+
+    return pl;
+}
+
 int main(int argc, char* argv[]) {
 
     RolUIBackend::GLFWWindow win(800, 600, "text box");
@@ -58,13 +84,19 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    Widget widget;
-    widget::TextBox textbox{nullptr};
+    widget::Column c{};
 
-    win.set_content_widget(&textbox);
+    for (int i = 0; i < 5; i++) {
+        auto w = make_button(
+            "button" + std::to_string(i),
+            [](Point p) { std::cout << "button press: x: " << p.x << " y: " << p.y << std::endl; },
+            [&, i](bool b) {
+                std::cout << "button hover(" << i << "): " << (b ? "true" : "false") << std::endl;
+            });
+        c.add_child(w);
+    }
 
-    textbox.set_pos_relative(RelativeTarget::parent, AnchorPoint::centre_middle, AnchorPoint::centre_middle);
-    textbox.set_size(100, 30);
+    win.set_content_widget(&c);
 
     win.show();
 

@@ -77,7 +77,7 @@ namespace RolUI {
 
         virtual Size perlayout(Constraint constraint) override;
 
-        virtual bool hit_test(Point local_pos) override;
+        virtual bool hit_test(Point local_pos) const override;
 
       private:
         typedef std::vector<Widget*> Childrens;
