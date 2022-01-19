@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <unordered_set>
 
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
@@ -107,9 +108,10 @@ namespace RolUI {
         bool _key_is_change[MOUSE_KEY_COUNT + 1];
         MouseKeyMode _key_mode[MOUSE_KEY_COUNT + 1];
 
-        Widget* _current_widget = nullptr;
         bool _is_enter = false;
         bool _is_leave = false;
+
+        std::unordered_set<Widget*> _hover_widgets;
     };
 
 } // namespace RolUI

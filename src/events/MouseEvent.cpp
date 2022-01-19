@@ -1,4 +1,6 @@
 
+#include <unordered_set>
+
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
@@ -73,45 +75,47 @@ namespace RolUI {
         if (w == nullptr) return;
 
         Point mouse_pos = this->pos();
-        // Point mouse_pos = {17, 17};
 
         Widget* widget = w->get_widget_by_pos(mouse_pos);
 
         if (is_move() && !_is_enter && !_is_leave) {
-            Widget* tw = _current_widget;
-            while (tw && tw->abs_rect().contain(mouse_pos) == false) {
-                MouseEvent me = MouseEvent(MouseLeaveEvent_type(), tw, this);
-                send_event(tw, &me);
-
-                tw = tw->parent();
+            for (auto it = _hover_widgets.begin(); it != _hover_widgets.end();) {
+                Widget* w = *it;
+                if (w && w->abs_rect().contain(mouse_pos) == false) {
+                    MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
+                    send_event(w, &me);
+                    it = _hover_widgets.erase(it);
+                } else
+                    ++it;
             }
 
-            tw = widget;
-            while (tw && tw->abs_rect().contain(_last_pos) == false) {
+            Widget* tw = widget;
+            while (tw && tw->abs_rect().contain(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
+                _hover_widgets.insert(tw);
+
                 MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
                 send_event(tw, &me);
 
                 tw = tw->parent();
             }
-            _current_widget = widget;
         } else if (_is_enter) {
             Widget* tw = widget;
             while (tw) {
+                _hover_widgets.insert(tw);
+
                 MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
                 send_event(tw, &me);
 
                 tw = tw->parent();
             }
-            _current_widget = widget;
         } else if (_is_leave) {
-            Widget* tw = _current_widget;
-            while (tw) {
-                MouseEvent me = MouseEvent(MouseLeaveEvent_type(), tw, this);
-                send_event(tw, &me);
-
-                tw = tw->parent();
+            for (Widget* w : _hover_widgets) {
+                if (w && w->abs_rect().contain(mouse_pos) == false) {
+                    MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
+                    send_event(w, &me);
+                }
             }
-            _current_widget = nullptr;
+            _hover_widgets.clear();
         }
 
         if (is_move()) {
