@@ -5,20 +5,15 @@ namespace RolUI {
 
     template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
     struct Vector {
-        union {
-            T x, width;
-        };
-        union {
-            T y, height;
-        };
+        T x, y;
 
         Vector() noexcept : x(0), y(0) {}
         Vector(T x, T y) noexcept : x(x), y(y) {}
 
-        bool operator==(const Vector& v) noexcept {
+        bool operator==(const Vector& v) const noexcept {
             return x == v.x && y == v.y;
         }
-        bool operator!=(const Vector& v) noexcept {
+        bool operator!=(const Vector& v) const noexcept {
             return x != v.x || y != v.y;
         }
 

@@ -16,6 +16,16 @@ namespace RolUI {
             : x(x), y(y), width(w), height(h) {}
         Rect(const Point& pos, const Size& size) noexcept
             : x(pos.x), y(pos.y), width(size.width), height(size.height) {}
+        Rect(const Point& a, const Point& b) noexcept {
+            int min_x = a.x < b.x ? a.x : b.x;
+            int max_x = a.x > b.x ? a.x : b.x;
+            int min_y = a.y < b.y ? a.y : b.y;
+            int max_y = a.y > b.y ? a.y : b.y;
+
+            width = max_x - min_x;
+            height = max_y - min_y;
+            x = min_x, y = min_y;
+        }
 
         static Rect create_with_two_point(const Point& a, const Point& b) noexcept {
             int min_x = a.x < b.x ? a.x : b.x;

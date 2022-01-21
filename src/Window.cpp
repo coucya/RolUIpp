@@ -40,7 +40,7 @@ namespace RolUI {
         Size size = widget->size();
         Point new_base_pos = base_pos + pos;
         auto new_scissor_opt = scissor.intersected({new_base_pos, size});
-        Rect new_scissor = new_scissor_opt.has_value() ? new_scissor_opt.value() : Rect{scissor.pos(), {0, 0}};
+        Rect new_scissor = new_scissor_opt.has_value() ? new_scissor_opt.value() : Rect{scissor.pos(), Size{0, 0}};
 
         painter->set_base_pos(new_base_pos);
         painter->scissor(new_scissor);
