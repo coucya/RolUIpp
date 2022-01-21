@@ -35,11 +35,11 @@ namespace RolUI {
             int cx = left.get();
             int cy = top.get();
 
-            if (child_count() == 0 || get_child(0) == nullptr)
+            if (this->child() == nullptr)
                 return {int(left.get() + right.get()), int(top.get() + bottom.get())};
 
-            Widget* child = get_child(0);
-            Size s = RolUI::perlayout(child, {{0, 0}, {cw, ch}});
+            Widget* child = this->child();
+            Size s = child->perlayout({{0, 0}, {cw, ch}});
             RolUI::set_rect(child, Rect{{cx, cy}, s});
             return {int(left.get() + right.get() + s.width), int(top.get() + bottom.get() + s.height)};
         }

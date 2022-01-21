@@ -23,6 +23,7 @@ namespace RolUIBackend {
 
         virtual void set_base_pos(RolUI::Point pos) override;
         virtual void scissor(RolUI::Rect rect) override;
+        virtual RolUI::Rect get_scissor() const override;
 
         virtual void set_font_size(uint32_t s) override;
         virtual void set_font_color(RolUI::Color color) override;
@@ -65,6 +66,7 @@ namespace RolUIBackend {
         RolUI::Color _font_color;
 
         RolUI::Point _pos;
+        RolUI::Rect _scissor;
     };
 
 } // namespace RolUIBackend

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Widget.hpp"
 #include "../Property.hpp"
+#include "./container.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        class Row : public Widget {
+        class Row : public MultiChildWidget {
           public:
             enum CrossAxisAlignment {
                 top,
@@ -20,7 +20,6 @@ namespace RolUI {
           public:
             Row() noexcept;
 
-          protected:
             Size perlayout(Constraint constraint) override;
         };
 

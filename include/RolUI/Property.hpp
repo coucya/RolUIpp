@@ -43,6 +43,7 @@ namespace RolUI {
 
         operator T const &() const;
 
+        T& get() noexcept;
         const T& get() const noexcept;
 
         void set(const T& v) noexcept;
@@ -114,6 +115,8 @@ namespace RolUI {
     template <typename T>
     Property<T>::operator T const &() const { return get(); }
 
+    template <typename T>
+    T& Property<T>::get() noexcept { return _data; }
     template <typename T>
     const T& Property<T>::get() const noexcept { return _data; }
 

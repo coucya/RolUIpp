@@ -13,9 +13,9 @@ namespace RolUI {
             int ch = constraint.max_height();
 
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = get_child(i);
+                Widget* child = this->child(i);
                 Constraint nc = Constraint::zero_to(cw, ch);
-                Size s = RolUI::perlayout(child, nc);
+                Size s = child->perlayout(nc);
                 RolUI::set_rect(child, {{0, 0}, s});
                 cw = std::max(cw - s.width, 0);
             }
@@ -23,7 +23,7 @@ namespace RolUI {
             int max_h = 0;
             int total_w = 0;
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = get_child(i);
+                Widget* child = this->child(i);
                 if (child->size().height > max_h)
                     max_h = child->size().height;
                 total_w = total_w + child->size().width;
@@ -31,7 +31,7 @@ namespace RolUI {
 
             int cx = 0;
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = get_child(i);
+                Widget* child = this->child(i);
                 float r = 0;
                 if (cross_axis_alignment.get() == top)
                     r = 0.0f;

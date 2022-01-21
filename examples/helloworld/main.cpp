@@ -37,9 +37,9 @@ Widget* make_label(std::string str, Color fg = Color(255, 255, 255), Color bg = 
     text->font_color = fg;
     box->background_color = bg;
 
-    padding->add_child(text);
-    box->add_child(padding);
-    margin->add_child(box);
+    padding->set_child(text);
+    box->set_child(padding);
+    margin->set_child(box);
 
     return margin;
 }
@@ -62,8 +62,8 @@ int main(int argc, char* argv[]) {
 
     column.cross_axis_alignment = widget::Column::right;
     box.background_color = {100, 100, 255};
-    box.add_child(&column);
-    align.add_child(&box);
+    box.set_child(&column);
+    align.set_child(&box);
 
     for (int i = 0; i < 5; i++) {
         Widget* widget = make_label(std::string("label") + std::to_string(i % 2 ? i * 100 : i));

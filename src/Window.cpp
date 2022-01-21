@@ -47,9 +47,9 @@ namespace RolUI {
 
         widget->on_draw(painter);
 
-        for (auto& cw : widget->_children) {
-            _draw_widget(cw, new_base_pos, new_scissor, painter);
-        }
+        // for (auto& cw : widget->_children) {
+        //     _draw_widget(cw, new_base_pos, new_scissor, painter);
+        // }
 
         painter->scissor(scissor);
         painter->set_base_pos(base_pos);
@@ -62,7 +62,9 @@ namespace RolUI {
         if (painter == nullptr) return;
 
         begin_draw();
-        _draw_widget(root_widget, Point(0, 0), Rect{Point(), this->size()}, painter);
+        // _draw_widget(root_widget, Point(0, 0), Rect{Point(), this->size()}, painter);
+        painter->scissor(Rect{Point(), this->size()});
+        root_widget->on_draw(painter);
         end_draw();
     }
 

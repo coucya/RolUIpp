@@ -23,6 +23,7 @@ namespace RolUI {
 
         virtual void set_base_pos(Point pos) = 0;
         virtual void scissor(Rect rect) = 0;
+        virtual Rect get_scissor() const = 0;
 
         virtual void set_font_size(uint32_t s) = 0;
         virtual void set_font_color(Color color) = 0;

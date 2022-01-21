@@ -20,10 +20,9 @@ namespace RolUI {
                 painter->set_stroke_width(border_width * 2);
                 painter->draw_roundedrect(rect_, round);
             }
+
+            SingleChildWidget::on_draw(painter);
         }
 
-        Size Rect::perlayout(Constraint constraint) {
-            return Widget::perlayout(constraint);
-        }
     } // namespace widget
 } // namespace RolUI

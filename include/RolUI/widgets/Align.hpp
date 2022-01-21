@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Widget.hpp"
 #include "../Property.hpp"
+#include "./container.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        class Align : public Widget {
+        class Align : public SingleChildWidget {
           public:
             Property<float> align_x{this, 0.5f};
             Property<float> align_y{this, 0.5f};
@@ -15,7 +15,6 @@ namespace RolUI {
             Align() noexcept;
             Align(float x, float y) noexcept;
 
-          protected:
             Size perlayout(Constraint constraint) override;
         };
 

@@ -49,25 +49,7 @@ namespace RolUI {
 
     Widget* Widget::parent() const noexcept { return _parent; }
 
-    size_t Widget::child_count() const noexcept { return _children.size(); }
-    Widget* Widget::get_child(size_t idx) const noexcept { return _get_child(idx); }
-
-    void Widget::add_child(Widget* w) noexcept {
-        _add_child(_child_end_it(), w);
-    }
-    void Widget::remove_child(Widget* w) noexcept {
-        auto it = _find_child_it(w);
-        _remove_child(it);
-    }
-
     Widget* Widget::get_child_by_pos(Point pos) const noexcept {
-        // if (hit_test(pos) == false) return nullptr;
-
-        for (auto it = _child_rbegin_it(), ed = _child_rend_it(); it != ed; ++it) {
-            Widget* w = *it;
-            if (w->hit_test(pos - w->pos()))
-                return w;
-        }
         return nullptr;
     }
 
@@ -93,65 +75,10 @@ namespace RolUI {
     }
     void Widget::on_draw(IPainter* painter) {}
 
-    Size Widget::perlayout(Constraint constraint) {
-        Size res = constraint.min();
-        for (auto it = _child_begin_it(); it != _child_end_it(); ++it) {
-            Widget* w = *it;
-            Size size = w->perlayout(constraint);
-            w->_pos = Point{0, 0};
-            w->_size = size;
-            res.width = std::max(res.width, size.width);
-            res.height = std::max(res.height, size.height);
-        }
-        return res;
-    }
+    Size Widget::perlayout(Constraint constraint) { return {0, 0}; }
 
     bool Widget::hit_test(Point local_pos) const {
         return RolUI::Rect{{0, 0}, size()}.contain(local_pos);
-    }
-
-    Widget* Widget::_get_child(size_t idx) const noexcept {
-        return idx < _children.size() ? _children[idx] : nullptr;
-    }
-    void Widget::_add_child(Childrens::iterator pos, Widget* w) noexcept {
-        if (!w || w->parent() == this) return;
-
-        Widget* w_old_parent = w->parent();
-        Widget* w_new_parent = this;
-
-        if (w_old_parent) {
-            auto it = w_old_parent->_find_child_it(w);
-            w_old_parent->_remove_child(it);
-        }
-
-        _children.insert(pos, w);
-        w->_parent = w_new_parent;
-    }
-    void Widget::_remove_child(Childrens::iterator pos) noexcept {
-        if (pos == _children.end()) return;
-
-        Widget* w = *pos;
-
-        if (w->_parent != this) return;
-
-        _children.erase(pos);
-        w->_parent = nullptr;
-    }
-
-    auto Widget::_child_begin_it() const noexcept -> Childrens::iterator {
-        return const_cast<Widget*>(this)->_children.begin();
-    }
-    auto Widget::_child_end_it() const noexcept -> Childrens::iterator {
-        return const_cast<Widget*>(this)->_children.end();
-    }
-    auto Widget::_child_rbegin_it() const noexcept -> Childrens::reverse_iterator {
-        return const_cast<Widget*>(this)->_children.rbegin();
-    }
-    auto Widget::_child_rend_it() const noexcept -> Childrens::reverse_iterator {
-        return const_cast<Widget*>(this)->_children.rend();
-    }
-    auto Widget::_find_child_it(Widget* w) const noexcept -> Childrens::iterator {
-        return std::find(_child_begin_it(), _child_end_it(), w);
     }
 
 } // namespace RolUI

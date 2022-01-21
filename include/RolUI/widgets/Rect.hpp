@@ -5,11 +5,12 @@
 #include "../Rect.hpp"
 #include "../Widget.hpp"
 #include "../IPainter.hpp"
+#include "./container.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        class Rect : public Widget {
+        class Rect : public SingleChildWidget {
           public:
             Property<unsigned> round{this, 0};
             Property<unsigned> border_width{this, 0};
@@ -22,7 +23,6 @@ namespace RolUI {
 
           protected:
             virtual void on_draw(IPainter* painter) override;
-            virtual Size perlayout(Constraint constraint) override;
 
           private:
         };

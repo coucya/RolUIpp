@@ -66,9 +66,9 @@ Widget* make_button(std::string str, PF&& pf, HF&& hf) {
     pl->on_down.connect(std::forward<PF>(pf));
     pl->on_hover.connect(std::forward<HF>(hf));
 
-    padding->add_child(text);
-    box->add_child(padding);
-    pl->add_child(box);
+    padding->set_child(text);
+    box->set_child(padding);
+    pl->set_child(box);
     // margin->add_child(pl);
 
     return pl;

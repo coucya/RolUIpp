@@ -2,21 +2,18 @@
 
 #include <cstddef>
 
-#include "../Widget.hpp"
 #include "../Property.hpp"
+#include "./container.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        class Scroll : public Widget {
+        class Scroll : public SingleChildWidget {
           public:
             Property<Point> offset{this};
 
           public:
             Scroll() noexcept;
-
-            Widget* widget() const noexcept;
-            void set_widget(Widget* widget) noexcept;
 
             Point widget_pos() const noexcept;
             int widget_x() const noexcept;

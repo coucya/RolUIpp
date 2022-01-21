@@ -33,23 +33,13 @@ namespace RolUI {
             });
         }
 
-        void PointerListener::on_draw(IPainter* painter) {
-            // if (!painter) return;
-            // painter->set_stroke_width(2);
-            // painter->set_stroke_color({0, 0, 0});
-            // painter->draw_roundedrect(Rect{{0, 0}, this->size()}, 0);
-        }
-        Size PointerListener::perlayout(Constraint constraint) {
-            if (child_count() == 0) return Size{0, 0};
-
-            Widget* w = get_child(0);
-            if (w == nullptr) return Size{0, 0};
-
-            Size s = RolUI::perlayout(w, constraint);
-            RolUI::set_rect(w, {{0, 0}, s});
-
-            return s;
-        }
+        // void PointerListener::on_draw(IPainter* painter) {
+        //     if (!painter) return;
+        //     painter->set_stroke_width(2);
+        //     painter->set_stroke_color({0, 0, 0});
+        //     painter->draw_roundedrect(Rect{{0, 0}, this->size()}, 0);
+        //     SingleChildWidget::on_draw(painter);
+        // }
 
     } // namespace widget
 } // namespace RolUI

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../Color.hpp"
-#include "../Widget.hpp"
 #include "../sigslot/Signal.hpp"
 #include "../sigslot/Slot.hpp"
+#include "./container.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        class PointerListener : public Widget {
+        class PointerListener : public SingleChildWidget {
           public:
             Signal<Point> on_up;
             Signal<Point> on_down;
@@ -19,10 +19,6 @@ namespace RolUI {
           public:
             PointerListener() noexcept;
             ~PointerListener() override;
-
-          protected:
-            void on_draw(IPainter* painter) override;
-            Size perlayout(Constraint constraint) override;
 
           private:
             void _init_event_bind() noexcept;
