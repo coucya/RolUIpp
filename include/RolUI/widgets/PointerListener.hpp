@@ -20,8 +20,7 @@ namespace RolUI {
             PointerListener() noexcept;
             ~PointerListener() override;
 
-          private:
-            void _init_event_bind() noexcept;
+            virtual bool handle_event(IEvent* e) override;
         };
 
     } // namespace widget

@@ -6,31 +6,30 @@
 namespace RolUI {
     namespace widget {
 
-        PointerListener::PointerListener() noexcept {
-            _init_event_bind();
-        }
+        PointerListener::PointerListener() noexcept {}
 
         PointerListener::~PointerListener() {}
 
-        void PointerListener::_init_event_bind() noexcept {
-            add_listener(MouseEnterEvent_type(), [this](IEvent* event) {
+        bool PointerListener::handle_event(IEvent* e) {
+            if (!e) return false;
+
+            MouseEvent* mouseEvent = (MouseEvent*)e;
+            const EventType* et = e->event_type();
+
+            if (et == MouseEnterEvent_type()) {
                 this->on_hover.emit(true);
                 return true;
-            });
-            add_listener(MouseLeaveEvent_type(), [this](IEvent* event) {
+            } else if (et == MouseLeaveEvent_type()) {
                 this->on_hover.emit(false);
                 return true;
-            });
-            add_listener(MousePressEvent_type(), [this](IEvent* event) {
-                MouseEvent* mouseEvent = (MouseEvent*)event;
+            } else if (et == MousePressEvent_type()) {
                 this->on_down(mouseEvent->pos());
                 return true;
-            });
-            add_listener(MouseReleaseEvent_type(), [this](IEvent* event) {
-                MouseEvent* mouseEvent = (MouseEvent*)event;
+            } else if (et == MouseReleaseEvent_type()) {
                 this->on_up(mouseEvent->pos());
                 return true;
-            });
+            }
+            return false;
         }
 
         // void PointerListener::on_draw(IPainter* painter) {

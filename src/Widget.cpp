@@ -21,7 +21,7 @@ namespace RolUI {
     bool send_event(Widget* w, IEvent* e) {
         if (!w) return false;
         e->_target = w;
-        return w->do_event(e);
+        return w->handle_event(e);
     }
 
     Size perlayout(Widget* w, Constraint constraint) {
@@ -53,26 +53,7 @@ namespace RolUI {
         return nullptr;
     }
 
-    size_t Widget::add_listener(const EventType* et, EventCallback&& callback) {
-        _callbacks.push_back(std::make_tuple(et, std::move(callback), _event_handle));
-        return _event_handle++;
-    }
-    void Widget::remove_listener(size_t handle) {
-        _callbacks.erase(
-            std::remove_if(
-                std::begin(_callbacks), std::end(_callbacks),
-                [=](const CallbackItem& cbi) { return std::get<2>(cbi) == handle; }),
-            _callbacks.end());
-    }
-
-    bool Widget::on_event(IEvent* e) {
-        bool b = false;
-        for (const auto& [et, cb, handle] : _callbacks) {
-            if (e->event_type() != et) continue;
-            b = (cb ? cb(e) : false) || b;
-        }
-        return b;
-    }
+    bool Widget::handle_event(IEvent* e) { return false; }
     void Widget::on_draw(IPainter* painter) {}
 
     Size Widget::perlayout(Constraint constraint) { return {0, 0}; }

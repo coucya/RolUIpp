@@ -65,10 +65,7 @@ namespace RolUI {
 
         Widget* parent() const noexcept;
 
-        size_t add_listener(const EventType* et, EventCallback&& callback);
-        void remove_listener(size_t handle);
-
-        bool on_event(IEvent* e) override;
+        virtual bool handle_event(IEvent* e) override;
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept;
 
@@ -83,10 +80,6 @@ namespace RolUI {
 
         Point _pos;
         Size _size;
-
-        typedef std::tuple<const EventType*, EventCallback, size_t> CallbackItem;
-        size_t _event_handle = 0;
-        std::vector<CallbackItem> _callbacks;
     };
 
 } // namespace RolUI
