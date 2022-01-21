@@ -1,5 +1,5 @@
 
-#include "RolUI/widgets/Stack.hpp"
+#include "RolUI/widgets/layer.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -37,6 +37,39 @@ namespace RolUI {
             }
 
             return {max_w, max_h};
+        }
+
+        Deck::Deck() noexcept {}
+        Deck::Deck(unsigned selected) noexcept {
+            this->selected = selected;
+        }
+
+        Size Deck::perlayout(Constraint constraint) {
+            if (selected.get() >= this->child_count()) return {0, 0};
+
+            Widget* sw = this->child(selected.get());
+            if (sw == nullptr) return {0, 0};
+
+            Size s = sw->perlayout(constraint);
+            RolUI::set_rect(sw, {0, 0, s.width, s.height});
+            return s;
+        }
+
+        void Deck::on_draw(IPainter* painter) {
+            if (selected.get() >= this->child_count()) return;
+
+            Widget* sw = this->child(selected.get());
+            if (sw == nullptr) return;
+
+            RolUI::Rect ar = abs_rect();
+            RolUI::Rect current_scissor = painter->get_scissor();
+            painter->scissor(
+                current_scissor
+                    .intersected(ar)
+                    .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
+            painter->set_base_pos(ar.pos() + sw->pos());
+            sw->on_draw(painter);
+            painter->scissor(current_scissor);
         }
 
     } // namespace widget

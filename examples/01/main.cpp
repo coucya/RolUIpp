@@ -26,7 +26,7 @@
 #include "RolUI/widgets/Image.hpp"
 #include "RolUI/widgets/Margin.hpp"
 #include "RolUI/widgets/Column.hpp"
-#include "RolUI/widgets/Stack.hpp"
+#include "RolUI/widgets/layer.hpp"
 #include "RolUI/widgets/PointerListener.hpp"
 
 using namespace RolUI;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Stack c{};
+    widget::Deck c{};
 
     for (int i = 0; i < 5; i++) {
         auto w = make_button(
@@ -96,6 +96,15 @@ int main(int argc, char* argv[]) {
             });
         c.add_child(w);
     }
+
+    int i = 0;
+    Timer timer;
+    timer.on_timeout.connect([&](double timeout) {
+        if (i >= 5) i = 0;
+        c.selected = i;
+        i++;
+    });
+    timer.start(1, false);
 
     win.set_content_widget(&c);
 
