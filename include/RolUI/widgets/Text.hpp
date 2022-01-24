@@ -21,14 +21,19 @@ namespace RolUI {
             Text(const std::string& text) noexcept;
             ~Text() override;
 
+            unsigned pos_to_index(Point pos) const noexcept;
+            Point index_to_pos(unsigned index) const noexcept;
+            unsigned line_height() const noexcept;
+
           protected:
             virtual void on_draw(IPainter* painter) override;
             virtual Size perlayout(Constraint constraint) override;
 
           private:
             void _update_size() noexcept;
+            Point _index_to_pos(unsigned index) const noexcept;
 
-            Size _text_size;
+            Size _size;
         };
 
     } // namespace widget

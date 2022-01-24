@@ -86,6 +86,8 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     widget::Deck c{};
+    widget::Text text{"Text test."};
+    widget::PointerListener pl{};
 
     for (int i = 0; i < 5; i++) {
         auto w = make_button(
@@ -97,16 +99,15 @@ int main(int argc, char* argv[]) {
         c.add_child(w);
     }
 
-    int i = 0;
-    Timer timer;
-    timer.on_timeout.connect([&](double timeout) {
-        if (i >= 5) i = 0;
-        c.selected = i;
-        i++;
-    });
-    timer.start(1, false);
+    text.font_size = 30;
+    pl.set_child(&text);
+    pl.on_down.connect([&](Point p) {
+        int idx = text.pos_to_index(p);
 
-    win.set_content_widget(&c);
+        std::cout << "click: (" << p.x << "," << p.y << "), idx: " << idx << std::endl;
+    });
+
+    win.set_content_widget(&pl);
 
     win.show();
 

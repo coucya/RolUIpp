@@ -13,7 +13,7 @@ namespace RolUI {
             Signal<Point> on_up;
             Signal<Point> on_down;
             Signal<Point> on_click;
-            Signal<Size> on_move;
+            Signal<Vec2i> on_move;
             Signal<bool> on_hover;
 
           public:
@@ -21,6 +21,9 @@ namespace RolUI {
             ~PointerListener() override;
 
             virtual bool handle_event(IEvent* e) override;
+
+          private:
+            bool _is_press = false;
         };
 
     } // namespace widget

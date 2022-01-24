@@ -20,13 +20,22 @@ namespace RolUI {
                 this->on_hover.emit(true);
                 return true;
             } else if (et == MouseLeaveEvent_type()) {
+                _is_press = false;
                 this->on_hover.emit(false);
                 return true;
             } else if (et == MousePressEvent_type()) {
-                this->on_down(mouseEvent->pos());
+                _is_press = true;
+                this->on_down.emit(mouseEvent->pos());
                 return true;
             } else if (et == MouseReleaseEvent_type()) {
-                this->on_up(mouseEvent->pos());
+                this->on_up.emit(mouseEvent->pos());
+                if (_is_press)
+                    this->on_click.emit(mouseEvent->pos());
+                _is_press = false;
+                return true;
+            } else if (et == MousePosEvent_type()) {
+                _is_press = false;
+                this->on_move.emit(mouseEvent->offset());
                 return true;
             }
             return false;
