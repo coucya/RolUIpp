@@ -7,6 +7,8 @@
 #include "RolUI/IPainter.hpp"
 #include "RolUI/Application.hpp"
 
+#include "RolUI/events/Widget_event.hpp"
+
 namespace RolUI {
 
     // Application::Application() {}
@@ -25,6 +27,21 @@ namespace RolUI {
 
     void Application::set_content_widget(Widget* w) noexcept { _content_widget = w; }
     Widget* Application::content_widget() noexcept { return _content_widget; }
+
+    bool Application::has_focus_widget(Widget* w) noexcept { return _focus_widget != nullptr; }
+    Widget* Application::focus_widget() noexcept { return _focus_widget; }
+    void Application::set_focus_widget(Widget* w) noexcept {
+        if (_focus_widget) {
+            FocusChangeEvent fce{_focus_widget, false, true};
+            send_event(_focus_widget, &fce);
+        }
+
+        _focus_widget = w;
+        if (_focus_widget) {
+            FocusChangeEvent fce{_focus_widget, true, false};
+            send_event(_focus_widget, &fce);
+        }
+    }
 
     Widget* Application::get_widget_by_pos(Point pos) noexcept {
         if (_content_widget == nullptr) return nullptr;

@@ -28,6 +28,10 @@ namespace RolUI {
         static void set_content_widget(Widget* w) noexcept;
         static Widget* content_widget() noexcept;
 
+        static bool has_focus_widget(Widget* w) noexcept;
+        static void set_focus_widget(Widget* w) noexcept;
+        static Widget* focus_widget() noexcept;
+
         static Widget* get_widget_by_pos(Point pos) noexcept;
 
         static void layout() noexcept;

@@ -16,18 +16,10 @@ namespace RolUI {
 
             void focus() noexcept;
             void unfocus() noexcept;
+
+            bool handle_event(IEvent* e) override;
         };
 
     } // namespace widget
-
-    class FocusManager {
-      public:
-        static bool has_focus_widget() noexcept;
-        static widget::Focus* focus_widget() noexcept;
-        static void set_focus_widget(widget::Focus* widget) noexcept;
-
-      private:
-        static widget::Focus* _focus_widget;
-    };
 
 } // namespace RolUI

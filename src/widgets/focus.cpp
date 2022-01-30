@@ -1,5 +1,7 @@
 
-#include "RolUI/widgets/focus.hpp"
+#include "RolUI/Application.hpp"
+#include "RolUI/events/Widget_event.hpp"
+#include "RolUI/widgets/Focus.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -7,25 +9,21 @@ namespace RolUI {
         Focus::Focus() noexcept {}
 
         void Focus::focus() noexcept {
-            FocusManager::set_focus_widget(this);
+            Application::set_focus_widget(this);
         }
         void Focus::unfocus() noexcept {
-            if (FocusManager::focus_widget() == this)
-                FocusManager::set_focus_widget(nullptr);
+            if (Application::focus_widget() == this)
+                Application::set_focus_widget(nullptr);
+        }
+
+        bool Focus::handle_event(IEvent* e) {
+            if (e->event_type() == FocusChangeEvent::type()) {
+                FocusChangeEvent* event = static_cast<FocusChangeEvent*>(e);
+                on_focus.emit(event->current_value());
+                return true;
+            }
+            return false;
         }
 
     } // namespace widget
-
-    widget::Focus* FocusManager::_focus_widget = nullptr;
-
-    bool FocusManager::has_focus_widget() noexcept { return _focus_widget != nullptr; }
-    widget::Focus* FocusManager::focus_widget() noexcept { return _focus_widget; }
-    void FocusManager::set_focus_widget(widget::Focus* widget) noexcept {
-        if (_focus_widget != nullptr)
-            _focus_widget->on_focus.emit(false);
-
-        _focus_widget = widget;
-        _focus_widget->on_focus.emit(true);
-    }
-
 } // namespace RolUI
