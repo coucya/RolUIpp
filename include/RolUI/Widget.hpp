@@ -12,7 +12,6 @@
 #include "./IEvent.hpp"
 #include "./IWidget.hpp"
 #include "./IEventListener.hpp"
-#include "./WidgetState.hpp"
 #include "./sigslot/Signal.hpp"
 #include "./sigslot/Slot.hpp"
 
