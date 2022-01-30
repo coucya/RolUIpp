@@ -1,9 +1,8 @@
 #pragma once
 
-#include "RolUI/IEvent.hpp"
-#include "RolUI/Point.hpp"
-#include "RolUI/Size.hpp"
-#include "RolUI/events/Widget_event.hpp"
+#include "../IEvent.hpp"
+#include "../Point.hpp"
+#include "../Size.hpp"
 
 namespace RolUI {
 

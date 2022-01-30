@@ -93,5 +93,73 @@ namespace RolUI {
             return {s.width, 0};
         }
 
+        EditableText::EditableText() noexcept : Text("") {
+            _blink_timer.on_timeout.connect([this](double timeout) {
+                this->_show_cursor = !this->_show_cursor;
+            });
+            cursor_index.on_change.connect([this](unsigned int index) {
+                this->_update_cursor_pos();
+            });
+            text.on_change.connect([this](const std::string& text) {
+                this->_update_cursor_pos();
+            });
+        }
+        EditableText::~EditableText() {}
+
+        bool EditableText::cursor_blinks() const noexcept {
+            return _blink_timer.is_action();
+        }
+        void EditableText::set_cursor_blinks(bool blink) noexcept {
+            if (blink && !cursor_blinks()) {
+                _blink_timer.start(0.5, false);
+            } else if (!blink)
+                _blink_timer.stop();
+        }
+
+        void EditableText::delete_front() noexcept {
+            _delete_at_index(std::max(0, int(cursor_index.get()) - 1), 1);
+            if (cursor_index > 0)
+                cursor_index = cursor_index - 1;
+        }
+        void EditableText::delete_back() noexcept {
+            _delete_at_index(cursor_index.get() + 1, 1);
+        }
+
+        void EditableText::insert_char(unsigned idx, uint32_t char_) noexcept {
+            char str[7] = {0, 0, 0, 0, 0, 0, 0};
+            utf8catcodepoint(str, char_, 6);
+            insert_str(idx, str);
+        }
+        void EditableText::insert_str(unsigned idx, const char* str) noexcept {
+            insert_str(idx, str, strlen(str));
+        }
+        void EditableText::insert_str(unsigned idx, const char* str, unsigned len) noexcept {
+            std::string ts = text;
+            ts.insert(idx, str, len);
+            text = std::move(ts);
+        }
+
+        void EditableText::on_draw(IPainter* painter) {
+            Text::on_draw(painter);
+            if (_show_cursor) {
+                int ts = font_size.get();
+                painter->set_stroke_width(2);
+                painter->set_stroke_color({0, 0, 0});
+                painter->draw_vline(_cursor_pos, ts);
+            }
+        }
+
+        void EditableText::_delete_at_index(unsigned idx, unsigned len) noexcept {
+            int utf8_idx = utf8utf8index(text->c_str(), idx);
+            int utf8_len = utf8_idx + utf8utf8index(text->c_str() + utf8_idx, len);
+            std::string ts = text;
+            ts.erase(utf8_idx, utf8_len);
+            text = std::move(ts);
+        }
+        void EditableText::_update_cursor_pos() noexcept {
+            _cursor_pos = index_to_pos(cursor_index.get());
+            return;
+        }
+
     } // namespace widget
 } // namespace RolUI

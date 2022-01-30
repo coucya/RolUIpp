@@ -3,10 +3,10 @@
 #include <stdint.h>
 #include <unordered_set>
 
-#include "RolUI/Point.hpp"
-#include "RolUI/Vector.hpp"
-#include "RolUI/IEvent.hpp"
-#include "RolUI/Window.hpp"
+#include "../Point.hpp"
+#include "../Vector.hpp"
+#include "../IEvent.hpp"
+#include "../Window.hpp"
 
 namespace RolUI {
 

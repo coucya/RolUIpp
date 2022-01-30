@@ -7,6 +7,11 @@
 #include "../IPainter.hpp"
 #include "../Property.hpp"
 
+#include "../events/MouseEvent.hpp"
+#include "../events/CharEvent.hpp"
+#include "../events/Widget_event.hpp"
+#include "../timer.hpp"
+
 namespace RolUI {
     namespace widget {
 
@@ -34,6 +39,35 @@ namespace RolUI {
             Point _index_to_pos(unsigned index) const noexcept;
 
             Size _size;
+        };
+
+        class EditableText : public Text {
+          public:
+            Property<unsigned int> cursor_index{this, 0};
+
+            EditableText() noexcept;
+            ~EditableText() override;
+            bool cursor_blinks() const noexcept;
+            void set_cursor_blinks(bool blink) noexcept;
+
+            void delete_front() noexcept;
+            void delete_back() noexcept;
+
+            void insert_char(unsigned idx, uint32_t char_) noexcept;
+            void insert_str(unsigned idx, const char* str) noexcept;
+
+            void insert_str(unsigned idx, const char* str, unsigned len) noexcept;
+
+            void on_draw(IPainter* painter) override;
+
+          private:
+            void _delete_at_index(unsigned idx, unsigned len) noexcept;
+            void _update_cursor_pos() noexcept;
+
+          private:
+            Point _cursor_pos;
+            Timer _blink_timer;
+            bool _show_cursor = false;
         };
 
     } // namespace widget

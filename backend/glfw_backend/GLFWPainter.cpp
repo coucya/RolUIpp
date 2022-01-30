@@ -98,7 +98,7 @@ namespace RolUIBackend {
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgMoveTo(vg, pa.x, pb.x);
+        nvgMoveTo(vg, pa.x, pa.y);
         nvgLineTo(vg, pb.x, pb.y);
         nvgStrokeColor(vg, rc_to_nc(_stroke_color));
         nvgStrokeWidth(vg, _stroke_width);

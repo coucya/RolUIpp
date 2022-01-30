@@ -87,24 +87,16 @@ int main(int argc, char* argv[]) {
 
     widget::Deck c{};
     widget::Text text{"Text test."};
+    widget::EditableText et{};
     widget::PointerListener pl{};
 
-    for (int i = 0; i < 5; i++) {
-        auto w = make_button(
-            "button" + std::to_string(i),
-            [](Point p) { std::cout << "button press: x: " << p.x << " y: " << p.y << std::endl; },
-            [&, i](bool b) {
-                std::cout << "button hover(" << i << "): " << (b ? "true" : "false") << std::endl;
-            });
-        c.add_child(w);
-    }
+    pl.set_child(&et);
+    et.text = "text";
+    et.font_size = 32;
 
-    text.font_size = 30;
-    pl.set_child(&text);
-    pl.on_down.connect([&](Point p) {
-        int idx = text.pos_to_index(p);
-
-        std::cout << "click: (" << p.x << "," << p.y << "), idx: " << idx << std::endl;
+    pl.on_click.connect([&et](Point pos) {
+        et.set_cursor_blinks(true);
+        et.cursor_index = et.pos_to_index(pos);
     });
 
     win.show();

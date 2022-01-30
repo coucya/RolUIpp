@@ -12,7 +12,7 @@ namespace RolUI {
             Application::set_focus_widget(this);
         }
         void Focus::unfocus() noexcept {
-            if (Application::focus_widget() == this)
+            if (Application::focus_widget() == static_cast<Widget*>(this))
                 Application::set_focus_widget(nullptr);
         }
 
