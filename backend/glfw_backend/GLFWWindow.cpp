@@ -63,7 +63,6 @@ namespace RolUIBackend {
 
         on_size = [this](int w, int h) {
             glViewport(0, 0, w, h);
-            draw();
             on_size_change.emit({w, h});
         };
 

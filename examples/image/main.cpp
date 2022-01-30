@@ -63,11 +63,9 @@ int main(int argc, char* argv[]) {
     RolUI::Image img = load_image(img_huaji_path);
     widget::Image image1{img};
 
-    win.set_content_widget(&image1);
-
     win.show();
 
-    Application::run();
+    Application::run(&image1);
 
     return 0;
 }

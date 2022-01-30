@@ -22,26 +22,26 @@ namespace RolUI {
         Window() noexcept;
         ~Window() override;
 
-        Widget* content_widget() const noexcept;
-        void set_content_widget(Widget* w) noexcept;
+        // Widget* content_widget() const noexcept;
+        // void set_content_widget(Widget* w) noexcept;
 
         IPainter* painter() override;
         void begin_draw() override;
         void end_draw() override;
 
-        void draw() noexcept;
+        // void draw() noexcept;
 
         void dispatch_event(double timeout) override;
 
-        Widget* get_widget_by_pos(Point pos) const noexcept;
+        // Widget* get_widget_by_pos(Point pos) const noexcept;
 
       private:
-        void _init_event_bind() noexcept;
+        // void _init_event_bind() noexcept;
 
-        void _draw_widget(RolUI::Widget* widget, Point base_pos, Rect scissor, RolUI::IPainter* painter) noexcept;
+        // void _draw_widget(RolUI::Widget* widget, Point base_pos, Rect scissor, RolUI::IPainter* painter) noexcept;
 
       protected:
-        Widget* _content_widget = nullptr;
+        // Widget* _content_widget = nullptr;
         // Widget* _focus_widget = nullptr;
     };
 

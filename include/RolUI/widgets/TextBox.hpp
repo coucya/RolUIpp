@@ -16,15 +16,9 @@ namespace RolUI {
 
         class TextBox : public Widget {
           public:
-            Property<unsigned> round{this, 0};
-            Property<unsigned> border_width{this, 0};
-            Property<Color> border_color{this, {0, 0, 0, 255}};
-            Property<Color> background_color{this, {255, 255, 255, 255}};
-
             Property<unsigned> font_size{this, 15};
             Property<std::string> font_name{this, "default"};
 
-            Property<Vec2i> padding{this, {3, 3}};
             Property<unsigned> cursor_width{this, 1};
 
             Property<Color> color{this, {0, 0, 0, 255}};

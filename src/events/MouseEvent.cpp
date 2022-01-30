@@ -6,6 +6,7 @@
 #include "RolUI/Vector.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
+#include "RolUI/Application.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 
 namespace RolUI {
@@ -76,7 +77,7 @@ namespace RolUI {
 
         Point mouse_pos = this->pos();
 
-        Widget* widget = w->get_widget_by_pos(mouse_pos);
+        Widget* widget = Application::get_widget_by_pos(mouse_pos);
 
         if (is_move() && !_is_enter && !_is_leave) {
             for (auto it = _hover_widgets.begin(); it != _hover_widgets.end();) {
@@ -133,7 +134,7 @@ namespace RolUI {
         for (int i = 0; i < sizeof(_key_is_change); i++) {
             if (is_action((MouseKey)i)) {
                 Widget* tw = widget;
-                Widget* wi = w->get_widget_by_pos(mouse_pos);
+                Widget* wi = Application::get_widget_by_pos(mouse_pos);
                 while (tw) {
                     const EventType* et = button((MouseKey)i) == MouseKeyMode::press
                                             ? MousePressEvent_type()

@@ -107,11 +107,9 @@ int main(int argc, char* argv[]) {
         std::cout << "click: (" << p.x << "," << p.y << "), idx: " << idx << std::endl;
     });
 
-    win.set_content_widget(&pl);
-
     win.show();
 
-    Application::run();
+    Application::run(&pl);
 
     return 0;
 }

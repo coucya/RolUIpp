@@ -70,8 +70,6 @@ int main(int argc, char* argv[]) {
         column.add_child(widget);
     }
 
-    win.set_content_widget(&align);
-
     win.show();
 
     // RolUI::Timer t;
@@ -84,7 +82,7 @@ int main(int argc, char* argv[]) {
     // });
     // t.start(0.03, false);
 
-    Application::run();
+    Application::run(&align);
 
     return 0;
 }
