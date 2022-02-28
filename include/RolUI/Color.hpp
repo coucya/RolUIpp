@@ -20,7 +20,7 @@ namespace RolUI {
             return r == c.r && g == c.g && b == c.b && a == c.a;
         }
         bool operator!=(const Color& c) const noexcept {
-            return r != c.r && g != c.g && b != c.b && a != c.a;
+            return r != c.r || g != c.g || b != c.b || a != c.a;
         }
     };
 
