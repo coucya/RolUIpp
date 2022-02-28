@@ -13,7 +13,7 @@ namespace RolUI {
 
     static size_t image_new_rgba_mem(const uint8_t* data, size_t w, size_t h) {
         size_t handle = Application::window()->painter()->create_image_with_rgba(data, w, h);
-        image_rc[handle] = 1;
+        image_rc[handle] = 0;
         return handle;
     }
     static void image_inc(size_t handle) {
@@ -39,7 +39,13 @@ namespace RolUI {
 
     Image::Image() noexcept : _has_image(false), _handle(0) {}
 
-    Image::Image(size_t handle) noexcept : _has_image(true), _handle(handle) {}
+    Image::Image(size_t handle) noexcept : _has_image(true), _handle(handle) {
+        image_inc(handle);
+    }
+
+    Image::~Image() noexcept {
+        if (_has_image) image_dec(_handle);
+    }
 
     Image::Image(const Image& other) noexcept
         : _has_image(other._has_image), _handle(other._handle) {
@@ -54,12 +60,14 @@ namespace RolUI {
         if (_has_image) image_dec(_handle);
         _has_image = other._has_image;
         _handle = other._handle;
+        if (_has_image) image_inc(_handle);
         return *this;
     }
     Image& Image::operator=(Image&& other) noexcept {
         if (_has_image) image_dec(_handle);
         _has_image = other._has_image;
         _handle = other._handle;
+        if (_has_image) image_inc(_handle);
         return *this;
     }
 

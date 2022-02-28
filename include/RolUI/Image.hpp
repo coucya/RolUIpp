@@ -14,6 +14,8 @@ namespace RolUI {
         Image(const Image& other) noexcept;
         Image(Image&& other) noexcept;
 
+        ~Image() noexcept;
+
         Image& operator=(const Image& other) noexcept;
         Image& operator=(Image&& other) noexcept;
 
