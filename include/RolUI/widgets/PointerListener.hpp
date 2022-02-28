@@ -6,7 +6,7 @@
 #include "../Widget.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class PointerListener : public SingleChildWidget {
           public:
@@ -26,5 +26,5 @@ namespace RolUI {
             bool _is_press = false;
         };
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

@@ -9,7 +9,7 @@
 #include "RolUI/widgets/Button.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Button::Button(Widget* parent) noexcept
             : Label(parent) { _init(); }
@@ -65,5 +65,5 @@ namespace RolUI {
             });
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

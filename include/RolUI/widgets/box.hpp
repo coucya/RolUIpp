@@ -6,7 +6,7 @@
 #include "../Widget.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class Box : public SingleChildWidget {
           public:
@@ -25,5 +25,5 @@ namespace RolUI {
           private:
         };
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

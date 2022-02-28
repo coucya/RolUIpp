@@ -6,7 +6,7 @@
 #include "RolUI/widgets/Scroll.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Scroll::Scroll() noexcept {}
 
@@ -114,5 +114,5 @@ namespace RolUI {
             }
             return constraint.max();
         }
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

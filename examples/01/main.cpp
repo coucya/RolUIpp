@@ -54,11 +54,11 @@ Widget* make_button(std::string str, PF&& pf, HF&& hf) {
     Color fg = {55, 55, 255};
     Color bg = {255, 155, 155};
 
-    widget::PointerListener* pl = new widget::PointerListener();
-    widget::Text* text = new widget::Text{str};
-    widget::Box* box = new widget::Box{8};
-    widget::Margin* padding = new widget::Margin{16};
-    widget::Margin* margin = new widget::Margin{8};
+    widgets::PointerListener* pl = new widgets::PointerListener();
+    widgets::Text* text = new widgets::Text{str};
+    widgets::Box* box = new widgets::Box{8};
+    widgets::Margin* padding = new widgets::Margin{16};
+    widgets::Margin* margin = new widgets::Margin{8};
 
     text->font_size = 50;
     text->font_color = fg;
@@ -84,10 +84,10 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widget::Deck c{};
-    widget::Text text{"Text test."};
-    widget::EditableText et{};
-    widget::PointerListener pl{};
+    widgets::Deck c{};
+    widgets::Text text{"Text test."};
+    widgets::EditableText et{};
+    widgets::PointerListener pl{};
 
     pl.set_child(&et);
     et.text = "text";

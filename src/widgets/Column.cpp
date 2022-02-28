@@ -2,7 +2,7 @@
 #include "RolUI/widgets/Column.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Column::Column() noexcept {}
 
@@ -48,5 +48,5 @@ namespace RolUI {
             return {max_w, total_h};
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

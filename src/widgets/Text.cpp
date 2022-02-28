@@ -8,7 +8,7 @@
 #include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Text ::Text(const std::string& str) noexcept {
             text = str;
@@ -161,5 +161,5 @@ namespace RolUI {
             return;
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

@@ -13,7 +13,7 @@
 #include "../timer.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class Text : public Widget {
           public:
@@ -70,5 +70,5 @@ namespace RolUI {
             bool _show_cursor = false;
         };
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

@@ -4,7 +4,7 @@
 #include "RolUI/IPainter.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         PointerListener::PointerListener() noexcept {}
 
@@ -49,5 +49,5 @@ namespace RolUI {
         //     SingleChildWidget::on_draw(painter);
         // }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

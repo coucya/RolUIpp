@@ -6,7 +6,7 @@
 #include "RolUI/widgets/box.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Box::Box(unsigned round) noexcept { this->round = round; }
         Box::~Box() {}
@@ -25,5 +25,5 @@ namespace RolUI {
             SingleChildWidget::draw(painter);
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

@@ -4,7 +4,7 @@
 #include "../Widget.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class Column : public MultiChildWidget {
           public:
@@ -23,5 +23,5 @@ namespace RolUI {
             Size layout(Constraint constraint) noexcept override;
         };
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

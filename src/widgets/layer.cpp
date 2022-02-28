@@ -3,7 +3,7 @@
 #include "RolUI/IPainter.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Stack::Stack() noexcept {}
         Stack::Stack(float x, float y) noexcept {
@@ -80,5 +80,5 @@ namespace RolUI {
             painter->scissor(current_scissor);
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

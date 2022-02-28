@@ -6,7 +6,7 @@
 #include "../Widget.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class Scroll : public SingleChildWidget {
           public:
@@ -39,5 +39,5 @@ namespace RolUI {
             Size layout(Constraint constraint) noexcept override;
         };
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

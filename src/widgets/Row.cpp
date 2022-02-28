@@ -3,7 +3,7 @@
 #include "RolUI/widgets/Row.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Row::Row() noexcept {}
 
@@ -49,5 +49,5 @@ namespace RolUI {
             return {total_w, max_h};
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

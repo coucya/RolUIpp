@@ -19,7 +19,7 @@
 #include "RolUI/widgets/TextBox.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         TextBox::TextBox(Widget* parent) noexcept
             : Widget(parent) {
@@ -312,5 +312,5 @@ namespace RolUI {
             _cursor_to_index(cursor_index());
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

@@ -7,7 +7,7 @@
 #include "RolUI/widgets/Image.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Image::Image(RolUI::Image image, Fit fit) noexcept {
             this->image = image;
@@ -58,5 +58,5 @@ namespace RolUI {
         Size Image::layout(Constraint constraint) noexcept {
             return constraint.max();
         }
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

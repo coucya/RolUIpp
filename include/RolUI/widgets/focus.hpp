@@ -5,7 +5,7 @@
 #include "../Widget.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class Focus : public SingleChildWidget {
           public:
@@ -20,6 +20,6 @@ namespace RolUI {
             bool handle_event(IEvent* e) noexcept override;
         };
 
-    } // namespace widget
+    } // namespace widgets
 
 } // namespace RolUI

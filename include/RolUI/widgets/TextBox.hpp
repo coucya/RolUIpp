@@ -12,7 +12,7 @@
 #include "../widgets/Rect.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         class TextBox : public Widget {
           public:
@@ -78,5 +78,5 @@ namespace RolUI {
             Timer _cursor_timer;
         };
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

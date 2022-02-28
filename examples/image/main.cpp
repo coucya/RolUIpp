@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     RolUI::Image img = load_image(img_huaji_path);
-    widget::Image image1{img};
+    widgets::Image image1{img};
 
     win.show();
 

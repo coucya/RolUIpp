@@ -4,7 +4,7 @@
 #include "RolUI/widgets/Focus.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Focus::Focus() noexcept {}
 
@@ -25,5 +25,5 @@ namespace RolUI {
             return false;
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

@@ -4,7 +4,7 @@
 #include "RolUI/widgets/Margin.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Margin::Margin() noexcept {}
         Margin::Margin(unsigned margin) noexcept {
@@ -44,5 +44,5 @@ namespace RolUI {
             return {int(left.get() + right.get() + s.width), int(top.get() + bottom.get() + s.height)};
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI

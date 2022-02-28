@@ -3,7 +3,7 @@
 #include "RolUI/widgets/Align.hpp"
 
 namespace RolUI {
-    namespace widget {
+    namespace widgets {
 
         Align::Align() noexcept {}
         Align::Align(float x, float y) noexcept {
@@ -27,5 +27,5 @@ namespace RolUI {
             return constraint.max();
         }
 
-    } // namespace widget
+    } // namespace widgets
 } // namespace RolUI
