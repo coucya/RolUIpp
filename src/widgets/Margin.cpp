@@ -26,7 +26,7 @@ namespace RolUI {
             right = right;
         }
 
-        Size Margin::perlayout(Constraint constraint) {
+        Size Margin::layout(Constraint constraint) noexcept {
             Size m = constraint.max();
             int cw = m.width - int(left.get() + right.get());
             int ch = m.height - int(top.get() + bottom.get());
@@ -39,7 +39,7 @@ namespace RolUI {
                 return {int(left.get() + right.get()), int(top.get() + bottom.get())};
 
             Widget* child = this->child();
-            Size s = child->perlayout({{0, 0}, {cw, ch}});
+            Size s = child->layout({{0, 0}, {cw, ch}});
             RolUI::set_rect(child, Rect{{cx, cy}, s});
             return {int(left.get() + right.get() + s.width), int(top.get() + bottom.get() + s.height)};
         }

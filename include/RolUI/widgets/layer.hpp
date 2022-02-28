@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Property.hpp"
-#include "./container.hpp"
+#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -15,7 +15,7 @@ namespace RolUI {
             Stack() noexcept;
             Stack(float x, float y) noexcept;
 
-            Size perlayout(Constraint constraint) override;
+            Size layout(Constraint constraint) noexcept override;
         };
 
         class Deck : public MultiChildWidget {
@@ -26,8 +26,10 @@ namespace RolUI {
             Deck() noexcept;
             Deck(unsigned selected) noexcept;
 
-            void on_draw(IPainter* painter) override;
-            Size perlayout(Constraint constraint) override;
+            Widget* get_child_by_pos(Point pos) const noexcept override;
+
+            void draw(IPainter* painter) noexcept override;
+            Size layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widget

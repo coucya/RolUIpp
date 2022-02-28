@@ -11,14 +11,14 @@ namespace RolUI {
             align_y = y;
         }
 
-        Size Align::perlayout(Constraint constraint) {
+        Size Align::layout(Constraint constraint) noexcept {
             Size self_size = constraint.max();
 
             Widget* cw = child();
             if (cw == nullptr)
                 return constraint.max();
 
-            Size cs = cw->perlayout(constraint);
+            Size cs = cw->layout(constraint);
 
             int cx = float(self_size.width - cs.width) * align_x.get();
             int cy = float(self_size.height - cs.height) * align_y.get();

@@ -3,7 +3,7 @@
 #include "../Color.hpp"
 #include "../sigslot/Signal.hpp"
 #include "../sigslot/Slot.hpp"
-#include "./container.hpp"
+#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -20,7 +20,7 @@ namespace RolUI {
             PointerListener() noexcept;
             ~PointerListener() override;
 
-            virtual bool handle_event(IEvent* e) override;
+            virtual bool handle_event(IEvent* e) noexcept override;
 
           private:
             bool _is_press = false;

@@ -5,7 +5,7 @@
 #include "../Rect.hpp"
 #include "../Widget.hpp"
 #include "../IPainter.hpp"
-#include "./container.hpp"
+#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -22,7 +22,7 @@ namespace RolUI {
             ~Rect() override;
 
           protected:
-            virtual void on_draw(IPainter* painter) override;
+            virtual void draw(IPainter* painter) noexcept override;
 
           private:
         };

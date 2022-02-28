@@ -33,7 +33,7 @@ namespace RolUI {
             }
         }
 
-        void Text::on_draw(IPainter* painter) {
+        void Text::draw(IPainter* painter) noexcept {
             painter->set_font_size(font_size);
             painter->set_font_color(font_color);
 
@@ -43,10 +43,10 @@ namespace RolUI {
                 painter->set_font("default");
 
             if (!text->empty())
-                painter->draw_text({0, 0}, text->c_str(), text->size());
+                painter->draw_text(abs_pos(), text->c_str(), text->size());
         }
 
-        Size Text::perlayout(Constraint constraint) {
+        Size Text::layout(Constraint constraint) noexcept {
             return _size;
         }
 
@@ -139,8 +139,8 @@ namespace RolUI {
             text = std::move(ts);
         }
 
-        void EditableText::on_draw(IPainter* painter) {
-            Text::on_draw(painter);
+        void EditableText::draw(IPainter* painter) noexcept {
+            Text::draw(painter);
             if (_show_cursor) {
                 int ts = font_size.get();
                 painter->set_stroke_width(2);

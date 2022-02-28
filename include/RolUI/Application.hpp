@@ -34,7 +34,9 @@ namespace RolUI {
 
         static Widget* get_widget_by_pos(Point pos) noexcept;
 
-        static void layout() noexcept;
+        static void flush_layout() noexcept;
+        static void flush_draw() noexcept;
+        static void flush_frame() noexcept;
 
         static void run() noexcept;
         static void run(Widget* w) noexcept;
@@ -42,7 +44,6 @@ namespace RolUI {
         static void exit() noexcept;
 
       private:
-        static void _draw_window() noexcept;
         static void _dispatch_event(double timeout) noexcept;
 
         static double _do_timer() noexcept;

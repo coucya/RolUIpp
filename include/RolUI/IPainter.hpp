@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <limits>
 
 #include "./Point.hpp"
 #include "./Rect.hpp"
@@ -21,7 +22,7 @@ namespace RolUI {
         virtual void delete_image(int handle) = 0;
         virtual Size image_size(int handle) = 0;
 
-        virtual void set_base_pos(Point pos) = 0;
+        // virtual void set_base_pos(Point pos) = 0;
         virtual void scissor(Rect rect) = 0;
         virtual Rect get_scissor() const = 0;
 

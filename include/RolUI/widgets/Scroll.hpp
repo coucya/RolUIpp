@@ -3,7 +3,7 @@
 #include <cstddef>
 
 #include "../Property.hpp"
-#include "./container.hpp"
+#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -36,7 +36,7 @@ namespace RolUI {
             void scroll_y_to_ratio(float y) noexcept;
 
           protected:
-            Size perlayout(Constraint constraint) override;
+            Size layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widget

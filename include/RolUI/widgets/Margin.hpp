@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Property.hpp"
-#include "./container.hpp"
+#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -19,7 +19,7 @@ namespace RolUI {
             Margin(unsigned x, unsigned y) noexcept;
             Margin(unsigned top, unsigned bottom, unsigned left, unsigned right) noexcept;
 
-            Size perlayout(Constraint constraint) override;
+            Size layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widget

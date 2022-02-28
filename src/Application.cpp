@@ -69,34 +69,39 @@ namespace RolUI {
     }
 
     void Application::exit() noexcept { _should_exit = true; }
-    void Application::run() noexcept {
-
-        double timeout = 0.0;
-
-        layout();
-        _draw_window();
-
-        while (!_should_exit) {
-            _dispatch_event(timeout);
-            timeout = _do_timer();
-            layout();
-            _draw_window();
-        }
-    }
-
-    void Application::layout() noexcept {
-        if (content_widget()) {
-            Size s = content_widget()->perlayout({{0, 0}, _window->size()});
-            RolUI::set_rect(content_widget(), Rect{{0, 0}, s});
-        }
-    }
 
     void Application::run(Widget* w) noexcept {
         set_content_widget(w);
         run();
     }
+    void Application::run() noexcept {
 
-    void Application::_draw_window() noexcept {
+        double timeout = 0.0;
+
+        flush_frame();
+
+        while (!_should_exit) {
+            _dispatch_event(timeout);
+            timeout = _do_timer();
+            flush_frame();
+        }
+    }
+
+    void Application::flush_frame() noexcept {
+        flush_layout();
+        flush_draw();
+    }
+    void Application::flush_layout() noexcept {
+        if (content_widget()) {
+            Size s = content_widget()->layout({{0, 0}, _window->size()});
+            RolUI::set_rect(content_widget(), Rect{{0, 0}, s});
+        }
+        if (content_widget()) {
+            content_widget()->update_pos();
+        }
+    }
+
+    void Application::flush_draw() noexcept {
         if (!_window) return;
         Widget* root_widget = _content_widget;
         IPainter* painter = _window->painter();
@@ -106,7 +111,7 @@ namespace RolUI {
 
         _window->begin_draw();
         painter->scissor(Rect{Point(), _window->size()});
-        root_widget->on_draw(painter);
+        root_widget->draw(painter);
         _window->end_draw();
     }
     void Application::_dispatch_event(double timeout) noexcept {

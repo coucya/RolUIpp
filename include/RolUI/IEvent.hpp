@@ -4,7 +4,6 @@
 #include <string_view>
 
 #include "./IEvent.hpp"
-#include "./IWidget.hpp"
 
 #define RolUI_define_event_type_in_class(tp) \
     static const EventType* type() {         \

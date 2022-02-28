@@ -10,18 +10,18 @@ namespace RolUI {
         Rect::Rect(unsigned round) noexcept { this->round = round; }
         Rect::~Rect() {}
 
-        void Rect::on_draw(IPainter* painter) {
-            RolUI::Rect rect_ = {{0, 0}, size()};
+        void Rect::draw(IPainter* painter) noexcept {
+            RolUI::Rect rect = abs_rect();
             painter->set_fill_color(background_color);
-            painter->fill_roundedrect(rect_, round);
+            painter->fill_roundedrect(rect, round);
 
             if (border_width > 0) {
                 painter->set_stroke_color(border_color);
                 painter->set_stroke_width(border_width * 2);
-                painter->draw_roundedrect(rect_, round);
+                painter->draw_roundedrect(rect, round);
             }
 
-            SingleChildWidget::on_draw(painter);
+            SingleChildWidget::draw(painter);
         }
 
     } // namespace widget

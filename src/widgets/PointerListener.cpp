@@ -10,7 +10,7 @@ namespace RolUI {
 
         PointerListener::~PointerListener() {}
 
-        bool PointerListener::handle_event(IEvent* e) {
+        bool PointerListener::handle_event(IEvent* e) noexcept {
             if (!e) return false;
 
             MouseEvent* mouseEvent = (MouseEvent*)e;

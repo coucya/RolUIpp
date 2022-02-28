@@ -1,5 +1,6 @@
 
 #include "RolUI/widgets/layer.hpp"
+#include "RolUI/IPainter.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -10,7 +11,7 @@ namespace RolUI {
             align_y = y;
         }
 
-        Size Stack::perlayout(Constraint constraint) {
+        Size Stack::layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
 
@@ -20,7 +21,7 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
                 Constraint nc = Constraint::zero_to(cw, ch);
-                Size s = child->perlayout(nc);
+                Size s = child->layout(nc);
                 RolUI::set_rect(child, {{0, 0}, s});
 
                 max_w = std::max(max_w, s.width);
@@ -44,18 +45,25 @@ namespace RolUI {
             this->selected = selected;
         }
 
-        Size Deck::perlayout(Constraint constraint) {
+        Widget* Deck::get_child_by_pos(Point pos) const noexcept {
+            Widget* sw = child(selected.get());
+            if (sw == nullptr) return nullptr;
+            if (sw->hit_test(pos)) return sw;
+            return nullptr;
+        }
+
+        Size Deck::layout(Constraint constraint) noexcept {
             if (selected.get() >= this->child_count()) return {0, 0};
 
             Widget* sw = this->child(selected.get());
             if (sw == nullptr) return {0, 0};
 
-            Size s = sw->perlayout(constraint);
+            Size s = sw->layout(constraint);
             RolUI::set_rect(sw, {0, 0, s.width, s.height});
             return s;
         }
 
-        void Deck::on_draw(IPainter* painter) {
+        void Deck::draw(IPainter* painter) noexcept {
             if (selected.get() >= this->child_count()) return;
 
             Widget* sw = this->child(selected.get());
@@ -67,8 +75,8 @@ namespace RolUI {
                 current_scissor
                     .intersected(ar)
                     .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
-            painter->set_base_pos(ar.pos() + sw->pos());
-            sw->on_draw(painter);
+            // painter->set_base_pos(ar.pos() + sw->pos());
+            sw->draw(painter);
             painter->scissor(current_scissor);
         }
 

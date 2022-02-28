@@ -2,7 +2,7 @@
 #include "../sigslot/Signal.hpp"
 
 #include "../Widget.hpp"
-#include "./container.hpp"
+#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
@@ -17,7 +17,7 @@ namespace RolUI {
             void focus() noexcept;
             void unfocus() noexcept;
 
-            bool handle_event(IEvent* e) override;
+            bool handle_event(IEvent* e) noexcept override;
         };
 
     } // namespace widget

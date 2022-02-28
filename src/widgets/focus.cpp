@@ -16,7 +16,7 @@ namespace RolUI {
                 Application::set_focus_widget(nullptr);
         }
 
-        bool Focus::handle_event(IEvent* e) {
+        bool Focus::handle_event(IEvent* e) noexcept {
             if (e->event_type() == FocusChangeEvent::type()) {
                 FocusChangeEvent* event = static_cast<FocusChangeEvent*>(e);
                 on_focus.emit(event->current_value());

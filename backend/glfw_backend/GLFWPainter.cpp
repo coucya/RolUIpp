@@ -46,7 +46,7 @@ namespace RolUIBackend {
         nvgDeleteImage(vg, handle);
     }
 
-    void GLFWPainter::set_base_pos(RolUI::Point pos) { _pos = pos; }
+    // void GLFWPainter::set_base_pos(RolUI::Point pos) { _pos = pos; }
     void GLFWPainter::scissor(RolUI::Rect rect) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgScissor(vg, rect.x, rect.y, rect.width, rect.height);
@@ -71,31 +71,24 @@ namespace RolUIBackend {
     void GLFWPainter::draw_text(RolUI::Point pos, const char* text, uint32_t len) {
         if (!text || len == 0) return;
 
-        RolUI::Point p = _pos + pos;
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgFontSize(vg, _font_size);
         nvgFillColor(vg, rc_to_nc(_font_color));
         nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgText(vg, p.x, p.y, text, text + len);
+        nvgText(vg, pos.x, pos.y, text, text + len);
     }
 
     void GLFWPainter::draw_image(RolUI::Point pos, RolUI::Size size, int handle) {
-        RolUI::Point tp = pos + _pos;
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
-        NVGpaint p = nvgImagePattern(vg, tp.x, tp.y, size.width, size.height, 0, handle, 1.0f);
+        NVGpaint p = nvgImagePattern(vg, pos.x, pos.y, size.width, size.height, 0, handle, 1.0f);
 
         nvgBeginPath(vg);
-        nvgRect(vg, tp.x, tp.y, size.width, size.height);
+        nvgRect(vg, pos.x, pos.y, size.width, size.height);
         nvgFillPaint(vg, p);
         nvgFill(vg);
     }
 
-    void GLFWPainter::draw_line(RolUI::Point a, RolUI::Point b) {
-        RolUI::Point pa = _pos + a;
-        RolUI::Point pb = _pos + b;
-
+    void GLFWPainter::draw_line(RolUI::Point pa, RolUI::Point pb) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
         nvgMoveTo(vg, pa.x, pa.y);
@@ -106,22 +99,18 @@ namespace RolUIBackend {
     }
 
     void GLFWPainter::draw_rect(RolUI::Rect rect) {
-        RolUI::Point p = _pos + rect.pos();
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgRect(vg, p.x, p.y, rect.width, rect.height);
+        nvgRect(vg, rect.x, rect.y, rect.width, rect.height);
         nvgStrokeColor(vg, rc_to_nc(_stroke_color));
         nvgStrokeWidth(vg, _stroke_width);
         nvgStroke(vg);
     }
 
     void GLFWPainter::draw_roundedrect(RolUI::Rect rect, uint32_t round) {
-        RolUI::Point p = _pos + rect.pos();
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgRoundedRect(vg, p.x, p.y, rect.width, rect.height, round);
+        nvgRoundedRect(vg, rect.x, rect.y, rect.width, rect.height, round);
         nvgStrokeColor(vg, rc_to_nc(_stroke_color));
         nvgStrokeWidth(vg, _stroke_width);
         nvgStroke(vg);
@@ -132,44 +121,36 @@ namespace RolUIBackend {
         float rx = (float)rect.width / 2.0;
         float ry = (float)rect.height / 2.0;
 
-        RolUI::Point pc = _pos + centre;
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
 
         nvgBeginPath(vg);
-        nvgEllipse(vg, pc.x, pc.y, rx, ry);
+        nvgEllipse(vg, centre.x, centre.y, rx, ry);
         nvgStrokeColor(vg, rc_to_nc(_stroke_color));
         nvgStrokeWidth(vg, _stroke_width);
         nvgStroke(vg);
     }
 
     void GLFWPainter::draw_circle(RolUI::Point centre, uint32_t r) {
-        RolUI::Point pc = _pos + centre;
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgCircle(vg, pc.x, pc.y, r);
+        nvgCircle(vg, centre.x, centre.y, r);
         nvgStrokeColor(vg, rc_to_nc(_stroke_color));
         nvgStrokeWidth(vg, _stroke_width);
         nvgStroke(vg);
     }
 
     void GLFWPainter::fill_rect(RolUI::Rect rect) {
-        RolUI::Point p = _pos + rect.pos();
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgRect(vg, p.x, p.y, rect.width, rect.height);
+        nvgRect(vg, rect.x, rect.y, rect.width, rect.height);
         nvgFillColor(vg, rc_to_nc(_fill_color));
         nvgFill(vg);
     }
 
     void GLFWPainter::fill_roundedrect(RolUI::Rect rect, uint32_t round) {
-        RolUI::Point p = _pos + rect.pos();
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgRoundedRect(vg, p.x, p.y, rect.width, rect.height, round);
+        nvgRoundedRect(vg, rect.x, rect.y, rect.width, rect.height, round);
         nvgFillColor(vg, rc_to_nc(_fill_color));
         nvgFill(vg);
     }
@@ -179,22 +160,18 @@ namespace RolUIBackend {
         float rx = (float)rect.width / 2.0;
         float ry = (float)rect.height / 2.0;
 
-        RolUI::Point pc = _pos + centre;
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
 
         nvgBeginPath(vg);
-        nvgEllipse(vg, pc.x, pc.y, rx, ry);
+        nvgEllipse(vg, centre.x, centre.y, rx, ry);
         nvgFillColor(vg, rc_to_nc(_fill_color));
         nvgFill(vg);
     }
 
     void GLFWPainter::fill_circle(RolUI::Point centre, uint32_t r) {
-        RolUI::Point pc = _pos + centre;
-
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgBeginPath(vg);
-        nvgCircle(vg, pc.x, pc.y, r);
+        nvgCircle(vg, centre.x, centre.y, r);
         nvgFillColor(vg, rc_to_nc(_fill_color));
         nvgFill(vg);
     }

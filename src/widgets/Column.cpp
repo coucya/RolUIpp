@@ -1,5 +1,4 @@
 
-
 #include "RolUI/widgets/Column.hpp"
 
 namespace RolUI {
@@ -7,7 +6,7 @@ namespace RolUI {
 
         Column::Column() noexcept {}
 
-        Size Column::perlayout(Constraint constraint) {
+        Size Column::layout(Constraint constraint) noexcept {
             Size self_size = constraint.max();
             int cw = constraint.max_width();
             int ch = constraint.max_height();
@@ -15,7 +14,7 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
                 Constraint nc = Constraint::zero_to(cw, ch);
-                Size s = child->perlayout(nc);
+                Size s = child->layout(nc);
                 RolUI::set_rect(child, {{0, 0}, s});
                 ch = std::max(ch - s.height, 0);
             }

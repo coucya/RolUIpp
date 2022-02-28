@@ -7,7 +7,7 @@ namespace RolUI {
 
         Row::Row() noexcept {}
 
-        Size Row::perlayout(Constraint constraint) {
+        Size Row::layout(Constraint constraint) noexcept {
             Size self_size = constraint.max();
             int cw = constraint.max_width();
             int ch = constraint.max_height();
@@ -15,7 +15,7 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
                 Constraint nc = Constraint::zero_to(cw, ch);
-                Size s = child->perlayout(nc);
+                Size s = child->layout(nc);
                 RolUI::set_rect(child, {{0, 0}, s});
                 cw = std::max(cw - s.width, 0);
             }
