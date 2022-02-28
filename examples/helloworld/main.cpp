@@ -8,7 +8,7 @@
 #include "RolUI/Point.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Widget.hpp"
-#include "RolUI/widgets/Rect.hpp"
+#include "RolUI/widgets/box.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Margin.hpp"
 #include "RolUI/widgets/Align.hpp"
@@ -29,7 +29,7 @@ std::string get_font_path() {
 
 Widget* make_label(std::string str, Color fg = Color(255, 255, 255), Color bg = Color(255, 100, 100)) {
     widget::Text* text = new widget::Text{str};
-    widget::Rect* box = new widget::Rect{8};
+    widget::Box* box = new widget::Box{8};
     widget::Margin* padding = new widget::Margin{16};
     widget::Margin* margin = new widget::Margin{8};
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     widget::Align align{};
-    widget::Rect box{};
+    widget::Box box{};
     widget::Column column{};
 
     column.cross_axis_alignment = widget::Column::right;

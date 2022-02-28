@@ -100,7 +100,6 @@ namespace RolUI {
             content_widget()->update_pos();
         }
     }
-
     void Application::flush_draw() noexcept {
         if (!_window) return;
         Widget* root_widget = _content_widget;
@@ -114,6 +113,7 @@ namespace RolUI {
         root_widget->draw(painter);
         _window->end_draw();
     }
+
     void Application::_dispatch_event(double timeout) noexcept {
         if (!_window) return;
         _window->dispatch_event(timeout);

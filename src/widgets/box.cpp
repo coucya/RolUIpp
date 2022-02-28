@@ -2,16 +2,17 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Size.hpp"
-#include "RolUI/widgets/Rect.hpp"
+#include "RolUI/IPainter.hpp"
+#include "RolUI/widgets/box.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        Rect::Rect(unsigned round) noexcept { this->round = round; }
-        Rect::~Rect() {}
+        Box::Box(unsigned round) noexcept { this->round = round; }
+        Box::~Box() {}
 
-        void Rect::draw(IPainter* painter) noexcept {
-            RolUI::Rect rect = abs_rect();
+        void Box::draw(IPainter* painter) noexcept {
+            Rect rect = abs_rect();
             painter->set_fill_color(background_color);
             painter->fill_roundedrect(rect, round);
 

@@ -4,13 +4,11 @@
 #include "../Property.hpp"
 #include "../Rect.hpp"
 #include "../Widget.hpp"
-#include "../IPainter.hpp"
-#include "../Widget.hpp"
 
 namespace RolUI {
     namespace widget {
 
-        class Rect : public SingleChildWidget {
+        class Box : public SingleChildWidget {
           public:
             Property<unsigned> round{this, 0};
             Property<unsigned> border_width{this, 0};
@@ -18,8 +16,8 @@ namespace RolUI {
             Property<Color> background_color{this, {255, 255, 255, 255}};
 
           public:
-            Rect(unsigned round = 0) noexcept;
-            ~Rect() override;
+            Box(unsigned round = 0) noexcept;
+            ~Box() override;
 
           protected:
             virtual void draw(IPainter* painter) noexcept override;

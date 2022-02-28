@@ -3,7 +3,6 @@
 #include <limits>
 
 #include "RolUI/Point.hpp"
-#include "RolUI/widgets/Rect.hpp"
 #include "RolUI/widgets/Scroll.hpp"
 
 namespace RolUI {

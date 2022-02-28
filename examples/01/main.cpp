@@ -20,7 +20,7 @@
 #include "RolUI/timer.hpp"
 #include "RolUI/Application.hpp"
 
-#include "RolUI/widgets/Rect.hpp"
+#include "RolUI/widgets/box.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Image.hpp"
 #include "RolUI/widgets/Margin.hpp"
@@ -56,7 +56,7 @@ Widget* make_button(std::string str, PF&& pf, HF&& hf) {
 
     widget::PointerListener* pl = new widget::PointerListener();
     widget::Text* text = new widget::Text{str};
-    widget::Rect* box = new widget::Rect{8};
+    widget::Box* box = new widget::Box{8};
     widget::Margin* padding = new widget::Margin{16};
     widget::Margin* margin = new widget::Margin{8};
 
