@@ -23,6 +23,7 @@
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Image.hpp"
 #include "RolUI/widgets/layer.hpp"
+#include "RolUI/widgets/flow.hpp"
 #include "RolUI/widgets/container.hpp"
 #include "RolUI/widgets/PointerListener.hpp"
 
@@ -72,6 +73,14 @@ Widget* make_button(std::string str, PF&& pf, HF&& hf) {
     return pl;
 }
 
+Widget* make_box(Color c) {
+    widgets::Box* box = new widgets::Box();
+    widgets::SizedBox* sb = new widgets::SizedBox();
+    box->set_child(sb);
+    box->background_color = c;
+    return box;
+}
+
 int main(int argc, char* argv[]) {
 
     RolUIBackend::GLFWWindow win(800, 600, "text box");
@@ -82,23 +91,24 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widgets::Deck c{};
-    widgets::Text text{"Text test."};
-    widgets::EditableText et{};
-    widgets::PointerListener pl{};
+    widgets::Align center;
+    widgets::SizedBox sb;
+    widgets::ColumnGrid rg;
 
-    pl.set_child(&et);
-    et.text = "text";
-    et.font_size = 32;
+    rg.add_child(make_box({255, 0, 0}));
+    rg.add_child(make_box({0, 255, 0}), 2);
+    rg.add_child(make_box({0, 0, 255}));
+    rg.add_child(make_box({255, 255, 0}), 4);
 
-    pl.on_click.connect([&et](Point pos) {
-        et.set_cursor_blinks(true);
-        et.cursor_index = et.pos_to_index(pos);
-    });
+    sb.width = widgets::SizeUnit::percentage(0.9f);
+    sb.height = widgets::SizeUnit::percentage(0.9f);
+
+    sb.set_child(&rg);
+    center.set_child(&sb);
 
     win.show();
 
-    Application::run(&pl);
+    Application::run(&center);
 
     return 0;
 }

@@ -24,6 +24,23 @@ namespace RolUI {
 
             SingleChildWidget::draw(painter);
         }
+
+        SizedBox::SizedBox() noexcept {}
+        SizedBox::SizedBox(SizeUnit w, SizeUnit h) noexcept {
+            width = w, height = h;
+        }
+
+        Size SizedBox::perform_layout(Constraint constraint) noexcept {
+            int w = width().type() == SizeUnitType::pixel
+                      ? width().pixel()
+                      : width().percentage() * constraint.max_width();
+            int h = height().type() == SizeUnitType::pixel
+                      ? height().pixel()
+                      : height().percentage() * constraint.max_height();
+            layout_child(Constraint::zero_to({w, h}), [](Size) { return Point{0, 0}; });
+            return {w, h};
+        }
+
         Align::Align() noexcept {}
         Align::Align(float x, float y) noexcept {
             align_x = x;

@@ -8,6 +8,45 @@
 namespace RolUI {
     namespace widgets {
 
+        enum class SizeUnitType {
+            pixel,
+            percentage
+        };
+        class SizeUnit {
+          public:
+            SizeUnit() noexcept : _tp(SizeUnitType::percentage), _per(1.0f) {}
+
+            bool operator==(const SizeUnit& su) const noexcept {
+                return _tp == su._tp && _px == su._px;
+            }
+            bool operator!=(const SizeUnit& su) const noexcept {
+                return _tp != su._tp || _px != su._px;
+            }
+
+            SizeUnitType type() const noexcept { return _tp; }
+            int pixel() const noexcept { return _px; }
+            float percentage() const noexcept { return _per; }
+
+          public:
+            static SizeUnit pixel(int p) noexcept {
+                SizeUnit su;
+                su._px = p, su._tp = SizeUnitType::pixel;
+                return su;
+            }
+            static SizeUnit percentage(float p) noexcept {
+                SizeUnit su;
+                su._per = p, su._tp = SizeUnitType::percentage;
+                return su;
+            }
+
+          private:
+            SizeUnitType _tp;
+            union {
+                float _per;
+                int _px;
+            };
+        };
+
         class Box : public SingleChildWidget {
           public:
             Property<unsigned> round{this, 0};
@@ -21,6 +60,18 @@ namespace RolUI {
 
           protected:
             virtual void draw(IPainter* painter) noexcept override;
+        };
+
+        class SizedBox : public SingleChildWidget {
+          public:
+            Property<SizeUnit> width{this, SizeUnit::percentage(1.0f)};
+            Property<SizeUnit> height{this, SizeUnit::percentage(1.0f)};
+
+          public:
+            SizedBox() noexcept;
+            SizedBox(SizeUnit w, SizeUnit h) noexcept;
+
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
         class Align : public SingleChildWidget {

@@ -86,5 +86,84 @@ namespace RolUI {
             return self_size;
         }
 
+        namespace _details {
+
+            FlowGridWidgetBase::FlowGridWidgetBase() noexcept {}
+
+            float FlowGridWidgetBase::flex_of(int index) const noexcept {
+                if (index < 0 || index >= _flexs.size()) return 0.0f;
+                return _flexs[index];
+            }
+
+            float FlowGridWidgetBase::flex_sum() const noexcept {
+                float sum = 0.0f;
+                for (float flex : _flexs) sum += flex;
+                return sum;
+            }
+
+            void FlowGridWidgetBase::add_child(Widget* child, float flex) noexcept {
+                MultiChildWidget::add_child(child);
+                _flexs.push_back(flex);
+            }
+            void FlowGridWidgetBase::set_child(int index, Widget* child, float flex) noexcept {
+                if (index < 0 || index >= child_count()) return;
+                MultiChildWidget::set_child(index, child);
+                _flexs[index] = flex;
+            }
+
+            void FlowGridWidgetBase::remove_child(Widget* child) noexcept {
+                int child_index = -1;
+                for (int i = 0; i < child_count(); i++) {
+                    if (this->child(i) == child) {
+                        child_index = i;
+                        break;
+                    }
+                }
+                if (child_index != -1)
+                    remove_child(child_index);
+            }
+            void FlowGridWidgetBase::remove_child(int index) noexcept {
+                if (index < 0 || index >= child_count()) return;
+                MultiChildWidget::remove_child(index);
+                _flexs.erase(_flexs.begin() + index);
+            }
+
+        } // namespace _details
+
+        ColumnGrid::ColumnGrid() noexcept {}
+
+        Size ColumnGrid::perform_layout(Constraint constraint) noexcept {
+            int cw = constraint.max_width();
+            int ch = constraint.max_height();
+            float fsum = flex_sum();
+            float current_hpos = 0.0f;
+
+            for (int i = 0; i < child_count(); i++) {
+                int nh = ch * (flex_of(i) / fsum);
+                Constraint nc = Constraint::zero_to(cw, nh);
+                child(i)->layout(nc);
+                RolUI::set_pos(child(i), Point{0, int(current_hpos / fsum * ch)});
+                current_hpos += flex_of(i);
+            }
+            return constraint.max();
+        }
+
+        RowGrid::RowGrid() noexcept {}
+        Size RowGrid::perform_layout(Constraint constraint) noexcept {
+            int cw = constraint.max_width();
+            int ch = constraint.max_height();
+            float fsum = flex_sum();
+            float current_wpos = 0.0f;
+
+            for (int i = 0; i < child_count(); i++) {
+                int nw = cw * (flex_of(i) / fsum);
+                Constraint nc = Constraint::zero_to(nw, ch);
+                child(i)->layout(nc);
+                RolUI::set_pos(child(i), Point{int(current_wpos / fsum * cw), 0});
+                current_wpos += flex_of(i);
+            }
+            return constraint.max();
+        }
+
     } // namespace widgets
 } // namespace RolUI
