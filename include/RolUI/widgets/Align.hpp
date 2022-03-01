@@ -15,7 +15,7 @@ namespace RolUI {
             Align() noexcept;
             Align(float x, float y) noexcept;
 
-            Size layout(Constraint constraint) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets

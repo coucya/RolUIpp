@@ -37,7 +37,7 @@ namespace RolUI {
         typedef std::priority_queue<TimerTask> priority_queue;
 
       public:
-        size_t push(TimeoutCallback cb, unsigned long long target_time, void* arg = nullptr) noexcept;
+        // size_t push(TimeoutCallback cb, unsigned long long target_time, void* arg = nullptr) noexcept;
         size_t push(TimeoutCallback cb, double interval, void* arg = nullptr) noexcept;
 
         void remove(size_t handle) noexcept;

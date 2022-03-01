@@ -25,13 +25,9 @@ namespace RolUI {
         return w->handle_event(e);
     }
 
-    Size perlayout(Widget* w, Constraint constraint) {
-        return w->layout(constraint);
-    }
-    void set_rect(Widget* w, Rect rect) {
+    void set_pos(Widget* w, Point pos) {
         if (!w) return;
-        w->_pos = rect.pos();
-        w->_size = rect.size();
+        w->_pos = pos;
     }
 
     Widget::Widget() noexcept {}
@@ -48,13 +44,18 @@ namespace RolUI {
 
     Widget* Widget::parent() const noexcept { return _parent; }
 
+    Size Widget::layout(Constraint constraint) noexcept {
+        _size = perform_layout(constraint);
+        return _size;
+    }
+
     Widget* Widget::get_child_by_pos(Point pos) const noexcept { return nullptr; }
 
     bool Widget::handle_event(IEvent* e) noexcept { return false; }
 
     void Widget::draw(IPainter* painter) noexcept {}
 
-    Size Widget::layout(Constraint constraint) noexcept { return {0, 0}; }
+    Size Widget::perform_layout(Constraint constraint) noexcept { return {0, 0}; }
 
     bool Widget::hit_test(Point pos) const noexcept {
         return abs_rect().contain(pos);
@@ -92,16 +93,13 @@ namespace RolUI {
             current_scissor
                 .intersected(ar)
                 .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
-        // painter->set_base_pos(ar.pos() + _child->pos());
         _child->draw(painter);
         painter->scissor(current_scissor);
     }
 
-    Size SingleChildWidget::layout(Constraint constraint) noexcept {
-        if (_child == nullptr) return {0, 0};
-        Size s = _child->layout(constraint);
-        RolUI::set_rect(_child, RolUI::Rect{Point{0, 0}, s});
-        return s;
+    Size SingleChildWidget::perform_layout(Constraint constraint) noexcept {
+        Size child_size = layout_child(constraint, [](Size) { return Point{0, 0}; });
+        return child_size;
     }
 
     void SingleChildWidget::update_pos() noexcept {
@@ -157,23 +155,22 @@ namespace RolUI {
                 .intersected(ar)
                 .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
         for (Widget* w : _children) {
-            // painter->set_base_pos(ar.pos() + w->pos());
             w->draw(painter);
         }
         painter->scissor(current_scissor);
     }
 
-    Size MultiChildWidget::layout(Constraint constraint) noexcept {
+    Size MultiChildWidget::perform_layout(Constraint constraint) noexcept {
         if (_children.size() == 0) return {0, 0};
 
-        Size res{0, 0};
+        Size self_size{0, 0};
         for (Widget* w : _children) {
             Size size = w->layout(constraint);
-            RolUI::set_rect(w, {Point{0, 0}, size});
-            res.width = std::max(res.width, size.width);
-            res.height = std::max(res.height, size.height);
+            RolUI::set_pos(w, Point{0, 0});
+            self_size.width = std::max(self_size.width, size.width);
+            self_size.height = std::max(self_size.height, size.height);
         }
-        return res;
+        return self_size;
     }
     void MultiChildWidget::update_pos() noexcept {
         Widget::update_pos();

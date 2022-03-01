@@ -93,8 +93,8 @@ namespace RolUI {
     }
     void Application::flush_layout() noexcept {
         if (content_widget()) {
-            Size s = content_widget()->layout({{0, 0}, _window->size()});
-            RolUI::set_rect(content_widget(), Rect{{0, 0}, s});
+            content_widget()->layout({{0, 0}, _window->size()});
+            RolUI::set_pos(content_widget(), {0, 0});
         }
         if (content_widget()) {
             content_widget()->update_pos();

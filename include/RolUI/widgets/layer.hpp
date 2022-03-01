@@ -15,7 +15,7 @@ namespace RolUI {
             Stack() noexcept;
             Stack(float x, float y) noexcept;
 
-            Size layout(Constraint constraint) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
         class Deck : public MultiChildWidget {
@@ -29,7 +29,7 @@ namespace RolUI {
             Widget* get_child_by_pos(Point pos) const noexcept override;
 
             void draw(IPainter* painter) noexcept override;
-            Size layout(Constraint constraint) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets

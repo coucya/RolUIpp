@@ -19,7 +19,7 @@ namespace RolUI {
             Margin(unsigned x, unsigned y) noexcept;
             Margin(unsigned top, unsigned bottom, unsigned left, unsigned right) noexcept;
 
-            Size layout(Constraint constraint) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets

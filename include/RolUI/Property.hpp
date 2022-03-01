@@ -35,13 +35,16 @@ namespace RolUI {
         // Property& operator=(const std::optional<T>& v) noexcept;
         // Property& operator=(std::optional<T>&& v) noexcept;
 
-        Property& operator()(const T& v) noexcept;
-        Property& operator()(T&& v) noexcept;
+        T& operator()(const T& v) noexcept;
+        T& operator()(T&& v) noexcept;
+
+        T& operator()() noexcept;
+        const T& operator()() const noexcept;
 
         T* operator->() noexcept;
         const T* operator->() const noexcept;
 
-        operator T const &() const;
+        operator T const&() const;
 
         T& get() noexcept;
         const T& get() const noexcept;
@@ -97,15 +100,20 @@ namespace RolUI {
     // }
 
     template <typename T>
-    Property<T>& Property<T>::operator()(const T& v) noexcept {
+    T& Property<T>::operator()(const T& v) noexcept {
         set(v);
-        return *this;
+        return _data;
     }
     template <typename T>
-    Property<T>& Property<T>::operator()(T&& v) noexcept {
+    T& Property<T>::operator()(T&& v) noexcept {
         set(std::move(v));
-        return *this;
+        return _data;
     }
+
+    template <typename T>
+    T& Property<T>::operator()() noexcept { return _data; }
+    template <typename T>
+    const T& Property<T>::operator()() const noexcept { return _data; }
 
     template <typename T>
     T* Property<T>::operator->() noexcept { return &_data; }
@@ -113,7 +121,7 @@ namespace RolUI {
     const T* Property<T>::operator->() const noexcept { return &_data; }
 
     template <typename T>
-    Property<T>::operator T const &() const { return get(); }
+    Property<T>::operator T const&() const { return get(); }
 
     template <typename T>
     T& Property<T>::get() noexcept { return _data; }

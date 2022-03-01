@@ -32,7 +32,7 @@ namespace RolUI {
 
           protected:
             virtual void draw(IPainter* painter) noexcept override;
-            virtual Size layout(Constraint constraint) noexcept override;
+            virtual Size perform_layout(Constraint constraint) noexcept override;
 
           private:
             void _update_size() noexcept;

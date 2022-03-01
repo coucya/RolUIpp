@@ -26,7 +26,7 @@ namespace RolUI {
 
           protected:
             void draw(IPainter* painter) noexcept override;
-            Size layout(Constraint constraint) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets

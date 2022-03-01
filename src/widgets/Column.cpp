@@ -6,16 +6,13 @@ namespace RolUI {
 
         Column::Column() noexcept {}
 
-        Size Column::layout(Constraint constraint) noexcept {
-            Size self_size = constraint.max();
+        Size Column::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
 
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = this->child(i);
                 Constraint nc = Constraint::zero_to(cw, ch);
-                Size s = child->layout(nc);
-                RolUI::set_rect(child, {{0, 0}, s});
+                Size s = child(i)->layout(nc);
                 ch = std::max(ch - s.height, 0);
             }
 
@@ -40,12 +37,12 @@ namespace RolUI {
                     r = 1.0f;
 
                 int cx = float(max_w - child->size().width) * r;
-                RolUI::set_rect(child, {{cx, cy}, child->size()});
+                RolUI::set_pos(child, {cx, cy});
 
                 cy = cy + child->size().height;
             }
-
-            return {max_w, total_h};
+            Size self_size = {max_w, total_h};
+            return self_size;
         }
 
     } // namespace widgets

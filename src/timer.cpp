@@ -6,21 +6,21 @@
 
 namespace RolUI {
 
-    size_t TimerQueue::push(TimeoutCallback cb, unsigned long long target_time, void* arg) noexcept {
-        using namespace std::chrono;
+    // size_t TimerQueue::push(TimeoutCallback cb, unsigned long long target_time, void* arg) noexcept {
+    //     using namespace std::chrono;
 
-        long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
-        TimerTask tt{(unsigned long long)current_time, target_time, cb, arg, _timer_handle++};
+    //     long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
+    //     TimerTask tt{(unsigned long long)current_time, target_time, cb, arg, _timer_handle++};
 
-        priority_queue::push(tt);
-        return tt.handle;
-    }
+    //     priority_queue::push(tt);
+    //     return tt.handle;
+    // }
 
     size_t TimerQueue::push(TimeoutCallback cb, double interval, void* arg) noexcept {
         using namespace std::chrono;
 
         long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
-        unsigned long long target_time = current_time + (interval <= 0.0 ? 0ull : (unsigned long long)(interval * 1000000));
+        unsigned long long target_time = current_time + std::max(interval, 0.0) * 1000000.0;
         TimerTask tt{(unsigned long long)current_time, target_time, cb, arg, _timer_handle++};
 
         priority_queue::push(tt);
@@ -41,7 +41,6 @@ namespace RolUI {
         using namespace std::chrono;
 
         double timeout = 60.0;
-        unsigned long long tolerance = 10000; // 0.010s.
         while (!empty()) {
             TimerTask tt = top();
             unsigned long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
@@ -56,7 +55,7 @@ namespace RolUI {
                 tt.callback(dur, tt.arg);
             pop();
         }
-        return std::max(0.0, timeout - tolerance / 1000000.0);
+        return std::max(0.0, timeout);
     }
 
     Timer::~Timer() { stop(); }

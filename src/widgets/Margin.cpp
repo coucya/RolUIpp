@@ -26,22 +26,23 @@ namespace RolUI {
             right = right;
         }
 
-        Size Margin::layout(Constraint constraint) noexcept {
+        Size Margin::perform_layout(Constraint constraint) noexcept {
             Size m = constraint.max();
-            int cw = m.width - int(left.get() + right.get());
-            int ch = m.height - int(top.get() + bottom.get());
-            cw = std::max(cw, 0);
-            ch = std::max(ch, 0);
-            int cx = left.get();
-            int cy = top.get();
+            int cw = std::max(m.width - int(left() + right()), 0);
+            int ch = std::max(m.height - int(top() + bottom()), 0);
+            int cx = left();
+            int cy = top();
 
-            if (this->child() == nullptr)
-                return {int(left.get() + right.get()), int(top.get() + bottom.get())};
+            Size child_size = layout_child(Constraint::zero_to(cw, ch), [&](Size s) {
+                return Point{cx, cy};
+            });
 
-            Widget* child = this->child();
-            Size s = child->layout({{0, 0}, {cw, ch}});
-            RolUI::set_rect(child, Rect{{cx, cy}, s});
-            return {int(left.get() + right.get() + s.width), int(top.get() + bottom.get() + s.height)};
+            Size self_size;
+            if (this->child())
+                self_size = {int(left() + right() + child_size.width), int(top() + bottom() + child_size.height)};
+            else
+                self_size = {int(left() + right()), int(top() + bottom())};
+            return self_size;
         }
 
     } // namespace widgets

@@ -5,6 +5,7 @@
 #include <functional>
 #include <vector>
 #include <tuple>
+#include <type_traits>
 
 #include "./Point.hpp"
 #include "./Rect.hpp"
@@ -28,7 +29,7 @@ namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e);
 
-    void set_rect(Widget* w, Rect rect);
+    void set_pos(Widget* w, Point pos);
 
     class Constraint {
       public:
@@ -72,7 +73,7 @@ namespace RolUI {
         friend class SingleChildWidget;
         friend class MultiChildWidget;
 
-        friend void set_rect(Widget* w, Rect rect);
+        friend void set_pos(Widget*, Point);
 
       public:
         Widget() noexcept;
@@ -95,13 +96,16 @@ namespace RolUI {
 
         Widget* parent() const noexcept;
 
+        Size layout(Constraint constraint) noexcept;
+
         virtual Widget* get_child_by_pos(Point pos) const noexcept;
 
         virtual bool handle_event(IEvent* e) noexcept;
 
         virtual void draw(IPainter* painter) noexcept;
 
-        virtual Size layout(Constraint constraint) noexcept;
+        virtual Size perform_layout(Constraint constraint) noexcept;
+
         virtual void update_pos() noexcept;
 
         virtual bool hit_test(Point pos) const noexcept;
@@ -127,8 +131,21 @@ namespace RolUI {
         virtual Widget* get_child_by_pos(Point pos) const noexcept override;
 
         virtual void draw(IPainter* painter) noexcept override;
-        virtual Size layout(Constraint constraint) noexcept override;
+        virtual Size perform_layout(Constraint constraint) noexcept override;
         virtual void update_pos() noexcept override;
+
+      protected:
+        template <typename F,
+                  typename = std::enable_if_t<std::is_invocable_r_v<Point, F, Size>>>
+        Size layout_child(Constraint constraint, F&& f) noexcept {
+            if (child()) {
+                Size child_size = child()->layout(constraint);
+                Point child_pos = f(child_size);
+                RolUI::set_pos(child(), child_pos);
+                return child_size;
+            }
+            return {0, 0};
+        }
     };
 
     class MultiChildWidget : public Widget {
@@ -153,7 +170,7 @@ namespace RolUI {
 
         virtual void draw(IPainter* painter) noexcept override;
 
-        virtual Size layout(Constraint constraint) noexcept override;
+        virtual Size perform_layout(Constraint constraint) noexcept override;
         virtual void update_pos() noexcept override;
     };
 

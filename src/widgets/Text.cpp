@@ -46,7 +46,7 @@ namespace RolUI {
                 painter->draw_text(abs_pos(), text->c_str(), text->size());
         }
 
-        Size Text::layout(Constraint constraint) noexcept {
+        Size Text::perform_layout(Constraint constraint) noexcept {
             return _size;
         }
 

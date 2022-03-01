@@ -105,13 +105,11 @@ namespace RolUI {
             scroll_to_ratio(child()->pos().x, h_dis * y);
         }
 
-        Size Scroll::layout(Constraint constraint) noexcept {
-            if (child()) {
-                Widget* widget = child();
-                int n = std::numeric_limits<int>::max();
-                Size s = widget->layout(Constraint{{0, 0}, {n, n}});
-                RolUI::set_rect(widget, {offset.get(), s});
-            }
+        Size Scroll::perform_layout(Constraint constraint) noexcept {
+            int n = std::numeric_limits<int>::max();
+            layout_child(Constraint::zero_to({n, n}), [&](Size) {
+                return offset();
+            });
             return constraint.max();
         }
     } // namespace widgets

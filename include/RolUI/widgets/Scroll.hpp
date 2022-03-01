@@ -36,7 +36,7 @@ namespace RolUI {
             void scroll_y_to_ratio(float y) noexcept;
 
           protected:
-            Size layout(Constraint constraint) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets

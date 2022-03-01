@@ -11,7 +11,7 @@ namespace RolUI {
             align_y = y;
         }
 
-        Size Stack::layout(Constraint constraint) noexcept {
+        Size Stack::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
 
@@ -22,7 +22,6 @@ namespace RolUI {
                 Widget* child = this->child(i);
                 Constraint nc = Constraint::zero_to(cw, ch);
                 Size s = child->layout(nc);
-                RolUI::set_rect(child, {{0, 0}, s});
 
                 max_w = std::max(max_w, s.width);
                 max_h = std::max(max_h, s.height);
@@ -34,7 +33,7 @@ namespace RolUI {
                 int cx = float(max_w - cs.width) * this->align_x;
                 int cy = float(max_h - cs.height) * this->align_y;
 
-                RolUI::set_rect(child, {{cx, cy}, cs});
+                RolUI::set_pos(child, {cx, cy});
             }
 
             return {max_w, max_h};
@@ -52,14 +51,13 @@ namespace RolUI {
             return nullptr;
         }
 
-        Size Deck::layout(Constraint constraint) noexcept {
+        Size Deck::perform_layout(Constraint constraint) noexcept {
             if (selected.get() >= this->child_count()) return {0, 0};
 
             Widget* sw = this->child(selected.get());
             if (sw == nullptr) return {0, 0};
 
             Size s = sw->layout(constraint);
-            RolUI::set_rect(sw, {0, 0, s.width, s.height});
             return s;
         }
 

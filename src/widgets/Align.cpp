@@ -11,20 +11,16 @@ namespace RolUI {
             align_y = y;
         }
 
-        Size Align::layout(Constraint constraint) noexcept {
+        Size Align::perform_layout(Constraint constraint) noexcept {
             Size self_size = constraint.max();
 
-            Widget* cw = child();
-            if (cw == nullptr)
-                return constraint.max();
+            layout_child(constraint, [&](Size s) {
+                int cx = float(self_size.width - s.width) * align_x.get();
+                int cy = float(self_size.height - s.height) * align_y.get();
+                return Point{cx, cy};
+            });
 
-            Size cs = cw->layout(constraint);
-
-            int cx = float(self_size.width - cs.width) * align_x.get();
-            int cy = float(self_size.height - cs.height) * align_y.get();
-
-            RolUI::set_rect(cw, Rect{{cx, cy}, cs});
-            return constraint.max();
+            return self_size;
         }
 
     } // namespace widgets

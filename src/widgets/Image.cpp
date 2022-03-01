@@ -55,7 +55,7 @@ namespace RolUI {
                 }
             }
         }
-        Size Image::layout(Constraint constraint) noexcept {
+        Size Image::perform_layout(Constraint constraint) noexcept {
             return constraint.max();
         }
     } // namespace widgets
