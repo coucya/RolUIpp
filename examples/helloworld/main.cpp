@@ -12,8 +12,7 @@
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Margin.hpp"
 #include "RolUI/widgets/Align.hpp"
-#include "RolUI/widgets/Column.hpp"
-#include "RolUI/widgets/Row.hpp"
+#include "RolUI/widgets/flow.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -60,7 +59,7 @@ int main(int argc, char* argv[]) {
     widgets::Box box{};
     widgets::Column column{};
 
-    column.cross_axis_alignment = widgets::Column::right;
+    column.cross_axis_alignment = widgets::CrossAxisAlignment::end;
     box.background_color = {100, 100, 255};
     box.set_child(&column);
     align.set_child(&box);
