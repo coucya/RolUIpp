@@ -53,11 +53,11 @@ Widget* make_button(std::string str, PF&& pf, HF&& hf) {
     Color fg = {55, 55, 255};
     Color bg = {255, 155, 155};
 
-    widgets::PointerListener* pl = new widgets::PointerListener();
-    widgets::Text* text = new widgets::Text{str};
-    widgets::Box* box = new widgets::Box{8};
-    widgets::Margin* padding = new widgets::Margin{16};
-    widgets::Margin* margin = new widgets::Margin{8};
+    widgets::PointerListenerWidget* pl = new widgets::PointerListenerWidget();
+    widgets::TextWidget* text = new widgets::TextWidget{str};
+    widgets::BoxWidget* box = new widgets::BoxWidget{8};
+    widgets::MarginWidget* padding = new widgets::MarginWidget{16};
+    widgets::MarginWidget* margin = new widgets::MarginWidget{8};
 
     text->font_size = 50;
     text->font_color = fg;
@@ -74,8 +74,8 @@ Widget* make_button(std::string str, PF&& pf, HF&& hf) {
 }
 
 Widget* make_box(Color c) {
-    widgets::Box* box = new widgets::Box();
-    widgets::SizedBox* sb = new widgets::SizedBox();
+    widgets::BoxWidget* box = new widgets::BoxWidget();
+    widgets::SizedBoxWidget* sb = new widgets::SizedBoxWidget();
     box->set_child(sb);
     box->background_color = c;
     return box;
@@ -91,9 +91,9 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widgets::Align center;
-    widgets::SizedBox sb;
-    widgets::ColumnGrid rg;
+    widgets::AlignWidget center;
+    widgets::SizedBoxWidget sb;
+    widgets::ColumnGridWidget rg;
 
     rg.add_child(make_box({255, 0, 0}));
     rg.add_child(make_box({0, 255, 0}), 2);

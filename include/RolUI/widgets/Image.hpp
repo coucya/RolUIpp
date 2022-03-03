@@ -8,7 +8,7 @@
 namespace RolUI {
     namespace widgets {
 
-        class Image : public Widget {
+        class ImageWidget : public Widget {
           public:
             enum Fit {
                 fill,
@@ -21,8 +21,8 @@ namespace RolUI {
             Property<Fit> fit{this};
 
           public:
-            Image(RolUI::Image image, Fit fit = Fit::contain) noexcept;
-            ~Image() override;
+            ImageWidget(RolUI::Image image, Fit fit = Fit::contain) noexcept;
+            ~ImageWidget() override;
 
           protected:
             void draw(IPainter* painter) noexcept override;

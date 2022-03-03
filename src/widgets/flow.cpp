@@ -3,9 +3,9 @@
 namespace RolUI {
     namespace widgets {
 
-        Column::Column() noexcept {}
+        ColumnWidget::ColumnWidget() noexcept {}
 
-        Size Column::perform_layout(Constraint constraint) noexcept {
+        Size ColumnWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
 
@@ -44,9 +44,9 @@ namespace RolUI {
             return self_size;
         }
 
-        Row::Row() noexcept {}
+        RowWidget::RowWidget() noexcept {}
 
-        Size Row::perform_layout(Constraint constraint) noexcept {
+        Size RowWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
 
@@ -130,9 +130,9 @@ namespace RolUI {
 
         } // namespace _details
 
-        ColumnGrid::ColumnGrid() noexcept {}
+        ColumnGridWidget::ColumnGridWidget() noexcept {}
 
-        Size ColumnGrid::perform_layout(Constraint constraint) noexcept {
+        Size ColumnGridWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
             float fsum = flex_sum();
@@ -148,8 +148,8 @@ namespace RolUI {
             return constraint.max();
         }
 
-        RowGrid::RowGrid() noexcept {}
-        Size RowGrid::perform_layout(Constraint constraint) noexcept {
+        RowGridWidget::RowGridWidget() noexcept {}
+        Size RowGridWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
             float fsum = flex_sum();

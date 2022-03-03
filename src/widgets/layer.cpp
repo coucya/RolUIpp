@@ -5,13 +5,13 @@
 namespace RolUI {
     namespace widgets {
 
-        Stack::Stack() noexcept {}
-        Stack::Stack(float x, float y) noexcept {
+        StackWidget::StackWidget() noexcept {}
+        StackWidget::StackWidget(float x, float y) noexcept {
             align_x = x;
             align_y = y;
         }
 
-        Size Stack::perform_layout(Constraint constraint) noexcept {
+        Size StackWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
 
@@ -39,19 +39,19 @@ namespace RolUI {
             return {max_w, max_h};
         }
 
-        Deck::Deck() noexcept {}
-        Deck::Deck(unsigned selected) noexcept {
+        DeckWidget::DeckWidget() noexcept {}
+        DeckWidget::DeckWidget(unsigned selected) noexcept {
             this->selected = selected;
         }
 
-        Widget* Deck::get_child_by_pos(Point pos) const noexcept {
+        Widget* DeckWidget::get_child_by_pos(Point pos) const noexcept {
             Widget* sw = child(selected.get());
             if (sw == nullptr) return nullptr;
             if (sw->hit_test(pos)) return sw;
             return nullptr;
         }
 
-        Size Deck::perform_layout(Constraint constraint) noexcept {
+        Size DeckWidget::perform_layout(Constraint constraint) noexcept {
             if (selected.get() >= this->child_count()) return {0, 0};
 
             Widget* sw = this->child(selected.get());
@@ -61,7 +61,7 @@ namespace RolUI {
             return s;
         }
 
-        void Deck::draw(IPainter* painter) noexcept {
+        void DeckWidget::draw(IPainter* painter) noexcept {
             if (selected.get() >= this->child_count()) return;
 
             Widget* sw = this->child(selected.get());

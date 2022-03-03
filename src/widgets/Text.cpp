@@ -10,7 +10,7 @@
 namespace RolUI {
     namespace widgets {
 
-        Text ::Text(const std::string& str) noexcept {
+        TextWidget ::TextWidget(const std::string& str) noexcept {
             text = str;
             _update_size();
             font_size.on_change.connect([this](const unsigned&) { this->_update_size(); });
@@ -19,9 +19,9 @@ namespace RolUI {
             text.on_change.connect([this](const std::string&) { this->_update_size(); });
         }
 
-        Text::~Text() {}
+        TextWidget::~TextWidget() {}
 
-        void Text::_update_size() noexcept {
+        void TextWidget::_update_size() noexcept {
             Window* win = Application::window();
             if (!text->empty()) {
                 win->painter()->set_font_size(font_size);
@@ -33,7 +33,7 @@ namespace RolUI {
             }
         }
 
-        void Text::draw(IPainter* painter) noexcept {
+        void TextWidget::draw(IPainter* painter) noexcept {
             painter->set_font_size(font_size);
             painter->set_font_color(font_color);
 
@@ -46,14 +46,14 @@ namespace RolUI {
                 painter->draw_text(abs_pos(), text->c_str(), text->size());
         }
 
-        Size Text::perform_layout(Constraint constraint) noexcept {
+        Size TextWidget::perform_layout(Constraint constraint) noexcept {
             return _size;
         }
 
-        unsigned Text::line_height() const noexcept {
+        unsigned TextWidget::line_height() const noexcept {
             return font_size.get();
         }
-        unsigned Text::pos_to_index(Point pos) const noexcept {
+        unsigned TextWidget::pos_to_index(Point pos) const noexcept {
             unsigned maybe_idx = float(pos.x) / float(size().width) * text->size();
             Point maybe_pos = _index_to_pos(maybe_idx);
 
@@ -80,11 +80,11 @@ namespace RolUI {
 
             return utf8codepointindex(text->c_str(), maybe_idx);
         }
-        Point Text::index_to_pos(unsigned index) const noexcept {
+        Point TextWidget::index_to_pos(unsigned index) const noexcept {
             return _index_to_pos(index);
         }
 
-        Point Text::_index_to_pos(unsigned index) const noexcept {
+        Point TextWidget::_index_to_pos(unsigned index) const noexcept {
             if (index == 0) return {0, 0};
 
             unsigned utf8_idx = utf8utf8index(text->c_str(), index);
@@ -93,7 +93,7 @@ namespace RolUI {
             return {s.width, 0};
         }
 
-        EditableText::EditableText() noexcept : Text("") {
+        EditableTextWidget::EditableTextWidget() noexcept : TextWidget("") {
             _blink_timer.on_timeout.connect([this](double timeout) {
                 this->_show_cursor = !this->_show_cursor;
             });
@@ -104,43 +104,43 @@ namespace RolUI {
                 this->_update_cursor_pos();
             });
         }
-        EditableText::~EditableText() {}
+        EditableTextWidget::~EditableTextWidget() {}
 
-        bool EditableText::cursor_blinks() const noexcept {
+        bool EditableTextWidget::cursor_blinks() const noexcept {
             return _blink_timer.is_action();
         }
-        void EditableText::set_cursor_blinks(bool blink) noexcept {
+        void EditableTextWidget::set_cursor_blinks(bool blink) noexcept {
             if (blink && !cursor_blinks()) {
                 _blink_timer.start(0.5, false);
             } else if (!blink)
                 _blink_timer.stop();
         }
 
-        void EditableText::delete_front() noexcept {
+        void EditableTextWidget::delete_front() noexcept {
             _delete_at_index(std::max(0, int(cursor_index.get()) - 1), 1);
             if (cursor_index > 0)
                 cursor_index = cursor_index - 1;
         }
-        void EditableText::delete_back() noexcept {
+        void EditableTextWidget::delete_back() noexcept {
             _delete_at_index(cursor_index.get() + 1, 1);
         }
 
-        void EditableText::insert_char(unsigned idx, uint32_t char_) noexcept {
+        void EditableTextWidget::insert_char(unsigned idx, uint32_t char_) noexcept {
             char str[7] = {0, 0, 0, 0, 0, 0, 0};
             utf8catcodepoint(str, char_, 6);
             insert_str(idx, str);
         }
-        void EditableText::insert_str(unsigned idx, const char* str) noexcept {
+        void EditableTextWidget::insert_str(unsigned idx, const char* str) noexcept {
             insert_str(idx, str, strlen(str));
         }
-        void EditableText::insert_str(unsigned idx, const char* str, unsigned len) noexcept {
+        void EditableTextWidget::insert_str(unsigned idx, const char* str, unsigned len) noexcept {
             std::string ts = text;
             ts.insert(idx, str, len);
             text = std::move(ts);
         }
 
-        void EditableText::draw(IPainter* painter) noexcept {
-            Text::draw(painter);
+        void EditableTextWidget::draw(IPainter* painter) noexcept {
+            TextWidget::draw(painter);
             if (_show_cursor) {
                 int ts = font_size.get();
                 painter->set_stroke_width(2);
@@ -149,14 +149,14 @@ namespace RolUI {
             }
         }
 
-        void EditableText::_delete_at_index(unsigned idx, unsigned len) noexcept {
+        void EditableTextWidget::_delete_at_index(unsigned idx, unsigned len) noexcept {
             int utf8_idx = utf8utf8index(text->c_str(), idx);
             int utf8_len = utf8_idx + utf8utf8index(text->c_str() + utf8_idx, len);
             std::string ts = text;
             ts.erase(utf8_idx, utf8_len);
             text = std::move(ts);
         }
-        void EditableText::_update_cursor_pos() noexcept {
+        void EditableTextWidget::_update_cursor_pos() noexcept {
             _cursor_pos = index_to_pos(cursor_index.get());
             return;
         }

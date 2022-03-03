@@ -25,10 +25,10 @@ std::string get_font_path() {
 }
 
 Widget* make_label(std::string str, Color fg = Color(255, 255, 255), Color bg = Color(255, 100, 100)) {
-    widgets::Text* text = new widgets::Text{str};
-    widgets::Box* box = new widgets::Box{8};
-    widgets::Margin* padding = new widgets::Margin{16};
-    widgets::Margin* margin = new widgets::Margin{8};
+    widgets::TextWidget* text = new widgets::TextWidget{str};
+    widgets::BoxWidget* box = new widgets::BoxWidget{8};
+    widgets::MarginWidget* padding = new widgets::MarginWidget{16};
+    widgets::MarginWidget* margin = new widgets::MarginWidget{8};
 
     text->font_size = 20;
     text->font_color = fg;
@@ -53,9 +53,9 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widgets::Align align{};
-    widgets::Box box{};
-    widgets::Column column{};
+    widgets::AlignWidget align{};
+    widgets::BoxWidget box{};
+    widgets::ColumnWidget column{};
 
     column.cross_axis_alignment = widgets::CrossAxisAlignment::end;
     box.background_color = {100, 100, 255};

@@ -47,7 +47,7 @@ namespace RolUI {
             };
         };
 
-        class Box : public SingleChildWidget {
+        class BoxWidget : public SingleChildWidget {
           public:
             Property<unsigned> round{this, 0};
             Property<unsigned> border_width{this, 0};
@@ -55,38 +55,38 @@ namespace RolUI {
             Property<Color> background_color{this, {255, 255, 255, 255}};
 
           public:
-            Box(unsigned round = 0) noexcept;
-            ~Box() override;
+            BoxWidget(unsigned round = 0) noexcept;
+            ~BoxWidget() override;
 
           protected:
             virtual void draw(IPainter* painter) noexcept override;
         };
 
-        class SizedBox : public SingleChildWidget {
+        class SizedBoxWidget : public SingleChildWidget {
           public:
             Property<SizeUnit> width{this, SizeUnit::percentage(1.0f)};
             Property<SizeUnit> height{this, SizeUnit::percentage(1.0f)};
 
           public:
-            SizedBox() noexcept;
-            SizedBox(SizeUnit w, SizeUnit h) noexcept;
+            SizedBoxWidget() noexcept;
+            SizedBoxWidget(SizeUnit w, SizeUnit h) noexcept;
 
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
-        class Align : public SingleChildWidget {
+        class AlignWidget : public SingleChildWidget {
           public:
             Property<float> align_x{this, 0.5f};
             Property<float> align_y{this, 0.5f};
 
           public:
-            Align() noexcept;
-            Align(float x, float y) noexcept;
+            AlignWidget() noexcept;
+            AlignWidget(float x, float y) noexcept;
 
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
-        class Margin : public SingleChildWidget {
+        class MarginWidget : public SingleChildWidget {
           public:
             Property<unsigned> top{this, 0};
             Property<unsigned> bottom{this, 0};
@@ -94,10 +94,10 @@ namespace RolUI {
             Property<unsigned> right{this, 0};
 
           public:
-            Margin() noexcept;
-            Margin(unsigned margin) noexcept;
-            Margin(unsigned x, unsigned y) noexcept;
-            Margin(unsigned top, unsigned bottom, unsigned left, unsigned right) noexcept;
+            MarginWidget() noexcept;
+            MarginWidget(unsigned margin) noexcept;
+            MarginWidget(unsigned x, unsigned y) noexcept;
+            MarginWidget(unsigned top, unsigned bottom, unsigned left, unsigned right) noexcept;
 
             Size perform_layout(Constraint constraint) noexcept override;
         };

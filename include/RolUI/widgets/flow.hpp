@@ -14,21 +14,21 @@ namespace RolUI {
             end
         };
 
-        class Column : public MultiChildWidget {
+        class ColumnWidget : public MultiChildWidget {
           public:
             Property<CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
 
           public:
-            Column() noexcept;
+            ColumnWidget() noexcept;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
-        class Row : public MultiChildWidget {
+        class RowWidget : public MultiChildWidget {
           public:
             Property<CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
 
           public:
-            Row() noexcept;
+            RowWidget() noexcept;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -52,15 +52,15 @@ namespace RolUI {
 
         } // namespace _details
 
-        class ColumnGrid : public _details::FlowGridWidgetBase {
+        class ColumnGridWidget : public _details::FlowGridWidgetBase {
           public:
-            ColumnGrid() noexcept;
+            ColumnGridWidget() noexcept;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
-        class RowGrid : public _details::FlowGridWidgetBase {
+        class RowGridWidget : public _details::FlowGridWidgetBase {
           public:
-            RowGrid() noexcept;
+            RowGridWidget() noexcept;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 

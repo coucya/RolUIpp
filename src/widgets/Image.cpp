@@ -9,14 +9,14 @@
 namespace RolUI {
     namespace widgets {
 
-        Image::Image(RolUI::Image image, Fit fit) noexcept {
+        ImageWidget::ImageWidget(RolUI::Image image, Fit fit) noexcept {
             this->image = image;
             this->fit = fit;
         }
 
-        Image::~Image() {}
+        ImageWidget::~ImageWidget() {}
 
-        void Image::draw(IPainter* painter) noexcept {
+        void ImageWidget::draw(IPainter* painter) noexcept {
             Fit fit = this->fit.get();
             int img_handle = image->handle();
             Size img_size = painter->image_size(this->image.get().handle());
@@ -55,7 +55,7 @@ namespace RolUI {
                 }
             }
         }
-        Size Image::perform_layout(Constraint constraint) noexcept {
+        Size ImageWidget::perform_layout(Constraint constraint) noexcept {
             return constraint.max();
         }
     } // namespace widgets

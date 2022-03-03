@@ -8,7 +8,7 @@
 namespace RolUI {
     namespace widgets {
 
-        class PointerListener : public SingleChildWidget {
+        class PointerListenerWidget : public SingleChildWidget {
           public:
             Signal<Point> on_up;
             Signal<Point> on_down;
@@ -17,8 +17,8 @@ namespace RolUI {
             Signal<bool> on_hover;
 
           public:
-            PointerListener() noexcept;
-            ~PointerListener() override;
+            PointerListenerWidget() noexcept;
+            ~PointerListenerWidget() override;
 
             virtual bool handle_event(IEvent* e) noexcept override;
 

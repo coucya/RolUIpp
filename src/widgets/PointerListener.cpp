@@ -6,11 +6,11 @@
 namespace RolUI {
     namespace widgets {
 
-        PointerListener::PointerListener() noexcept {}
+        PointerListenerWidget::PointerListenerWidget() noexcept {}
 
-        PointerListener::~PointerListener() {}
+        PointerListenerWidget::~PointerListenerWidget() {}
 
-        bool PointerListener::handle_event(IEvent* e) noexcept {
+        bool PointerListenerWidget::handle_event(IEvent* e) noexcept {
             if (!e) return false;
 
             MouseEvent* mouseEvent = (MouseEvent*)e;
@@ -40,14 +40,6 @@ namespace RolUI {
             }
             return false;
         }
-
-        // void PointerListener::on_draw(IPainter* painter) {
-        //     if (!painter) return;
-        //     painter->set_stroke_width(2);
-        //     painter->set_stroke_color({0, 0, 0});
-        //     painter->draw_roundedrect(Rect{{0, 0}, this->size()}, 0);
-        //     SingleChildWidget::on_draw(painter);
-        // }
 
     } // namespace widgets
 } // namespace RolUI

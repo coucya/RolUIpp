@@ -7,12 +7,12 @@
 namespace RolUI {
     namespace widgets {
 
-        class Focus : public SingleChildWidget {
+        class FocusWidget : public SingleChildWidget {
           public:
             Signal<bool> on_focus;
 
           public:
-            Focus() noexcept;
+            FocusWidget() noexcept;
 
             void focus() noexcept;
             void unfocus() noexcept;

@@ -15,7 +15,7 @@
 namespace RolUI {
     namespace widgets {
 
-        class Text : public Widget {
+        class TextWidget : public Widget {
           public:
             Property<unsigned> font_size{this, 15};
             Property<Color> font_color{this, {0, 0, 0, 255}};
@@ -23,8 +23,8 @@ namespace RolUI {
             Property<std::string> text{this};
 
           public:
-            Text(const std::string& text) noexcept;
-            ~Text() override;
+            TextWidget(const std::string& text) noexcept;
+            ~TextWidget() override;
 
             unsigned pos_to_index(Point pos) const noexcept;
             Point index_to_pos(unsigned index) const noexcept;
@@ -41,12 +41,12 @@ namespace RolUI {
             Size _size;
         };
 
-        class EditableText : public Text {
+        class EditableTextWidget : public TextWidget {
           public:
             Property<unsigned int> cursor_index{this, 0};
 
-            EditableText() noexcept;
-            ~EditableText() override;
+            EditableTextWidget() noexcept;
+            ~EditableTextWidget() override;
             bool cursor_blinks() const noexcept;
             void set_cursor_blinks(bool blink) noexcept;
 

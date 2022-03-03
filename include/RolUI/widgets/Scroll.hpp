@@ -8,12 +8,12 @@
 namespace RolUI {
     namespace widgets {
 
-        class Scroll : public SingleChildWidget {
+        class ScrollWidget : public SingleChildWidget {
           public:
             Property<Point> offset{this};
 
           public:
-            Scroll() noexcept;
+            ScrollWidget() noexcept;
 
             Point widget_pos() const noexcept;
             int widget_x() const noexcept;

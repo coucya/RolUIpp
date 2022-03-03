@@ -6,17 +6,17 @@
 namespace RolUI {
     namespace widgets {
 
-        Focus::Focus() noexcept {}
+        FocusWidget::FocusWidget() noexcept {}
 
-        void Focus::focus() noexcept {
+        void FocusWidget::focus() noexcept {
             Application::set_focus_widget(this);
         }
-        void Focus::unfocus() noexcept {
+        void FocusWidget::unfocus() noexcept {
             if (Application::focus_widget() == static_cast<Widget*>(this))
                 Application::set_focus_widget(nullptr);
         }
 
-        bool Focus::handle_event(IEvent* e) noexcept {
+        bool FocusWidget::handle_event(IEvent* e) noexcept {
             if (e->event_type() == FocusChangeEvent::type()) {
                 FocusChangeEvent* event = static_cast<FocusChangeEvent*>(e);
                 on_focus.emit(event->current_value());
