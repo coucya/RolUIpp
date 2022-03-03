@@ -17,10 +17,10 @@ namespace RolUI {
 
         class TextWidget : public Widget {
           public:
-            Property<unsigned> font_size{this, 15};
-            Property<Color> font_color{this, {0, 0, 0, 255}};
-            Property<std::string> font_name{this, "default"};
-            Property<std::string> text{this};
+            Property<TextWidget, unsigned> font_size{this, 15};
+            Property<TextWidget, Color> font_color{this, {0, 0, 0, 255}};
+            Property<TextWidget, std::string> font_name{this, "default"};
+            Property<TextWidget, std::string> text{this};
 
           public:
             TextWidget(const std::string& text) noexcept;
@@ -43,7 +43,7 @@ namespace RolUI {
 
         class EditableTextWidget : public TextWidget {
           public:
-            Property<unsigned int> cursor_index{this, 0};
+            Property<EditableTextWidget, unsigned int> cursor_index{this, 0};
 
             EditableTextWidget() noexcept;
             ~EditableTextWidget() override;

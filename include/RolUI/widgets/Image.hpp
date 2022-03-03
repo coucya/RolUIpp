@@ -17,8 +17,8 @@ namespace RolUI {
             };
 
           public:
-            Property<RolUI::Image> image{this};
-            Property<Fit> fit{this};
+            Property<ImageWidget, RolUI::Image> image{this};
+            Property<ImageWidget, Fit> fit{this};
 
           public:
             ImageWidget(RolUI::Image image, Fit fit = Fit::contain) noexcept;

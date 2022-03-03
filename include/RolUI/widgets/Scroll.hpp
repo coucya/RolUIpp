@@ -10,7 +10,7 @@ namespace RolUI {
 
         class ScrollWidget : public SingleChildWidget {
           public:
-            Property<Point> offset{this};
+            Property<ScrollWidget, Point> offset{this};
 
           public:
             ScrollWidget() noexcept;

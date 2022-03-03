@@ -68,11 +68,12 @@ namespace RolUI {
     SingleChildWidget::SingleChildWidget() noexcept {}
 
     Widget* SingleChildWidget::child() const noexcept { return _child; }
-    void SingleChildWidget::set_child(Widget* child) noexcept {
+    SingleChildWidget* SingleChildWidget::set_child(Widget* child) noexcept {
         if (_child != nullptr)
             _child->_parent = nullptr;
         _child = child;
         _child->_parent = this;
+        return this;
     }
 
     Widget* SingleChildWidget::get_child_by_pos(Point pos) const noexcept {
@@ -114,20 +115,21 @@ namespace RolUI {
         if (index < 0 || index >= _children.size()) return nullptr;
         return _children[index];
     }
-    void MultiChildWidget::add_child(Widget* child) noexcept {
+    MultiChildWidget* MultiChildWidget::add_child(Widget* child) noexcept {
         child->_parent = this;
         _children.push_back(child);
+        return this;
     }
-    void MultiChildWidget::set_child(int index, Widget* child) noexcept {
-        if (index < 0 || index > _children.size()) return;
-        if (index == _children.size()) {
-            add_child(child);
-            return;
-        }
+    MultiChildWidget* MultiChildWidget::set_child(int index, Widget* child) noexcept {
+        if (index < 0 || index > _children.size()) return this;
+        if (index == _children.size())
+            return add_child(child);
+
         _children[index]->_parent = nullptr;
 
         child->_parent = this;
         _children[index] = child;
+        return this;
     }
 
     void MultiChildWidget::remove_child(Widget* child) noexcept {

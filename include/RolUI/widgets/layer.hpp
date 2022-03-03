@@ -8,8 +8,8 @@ namespace RolUI {
 
         class StackWidget : public MultiChildWidget {
           public:
-            Property<float> align_x{this, 0.5f};
-            Property<float> align_y{this, 0.5f};
+            Property<StackWidget, float> align_x{this, 0.5f};
+            Property<StackWidget, float> align_y{this, 0.5f};
 
           public:
             StackWidget() noexcept;
@@ -20,7 +20,7 @@ namespace RolUI {
 
         class DeckWidget : public MultiChildWidget {
           public:
-            Property<unsigned> selected{this, 0};
+            Property<DeckWidget, unsigned> selected{this, 0};
 
           public:
             DeckWidget() noexcept;

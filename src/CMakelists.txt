@@ -2,7 +2,8 @@
 aux_source_directory(${RolUI_SOURCE_DIR} RolUI_source)
 # aux_source_directory(${RolUI_SOURCE_DIR}/widgets RolUI_widgets_source)
 aux_source_directory(${RolUI_SOURCE_DIR}/events  RolUI_events_source)
-set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/Text.cpp 
+set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/widgets.cpp 
+                            ${RolUI_SOURCE_DIR}/widgets/Text.cpp
                             ${RolUI_SOURCE_DIR}/widgets/container.cpp
                             ${RolUI_SOURCE_DIR}/widgets/flow.cpp
                             ${RolUI_SOURCE_DIR}/widgets/layer.cpp

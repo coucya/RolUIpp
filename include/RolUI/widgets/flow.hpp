@@ -16,7 +16,7 @@ namespace RolUI {
 
         class ColumnWidget : public MultiChildWidget {
           public:
-            Property<CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
+            Property<ColumnWidget, CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
 
           public:
             ColumnWidget() noexcept;
@@ -25,7 +25,7 @@ namespace RolUI {
 
         class RowWidget : public MultiChildWidget {
           public:
-            Property<CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
+            Property<RowWidget, CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
 
           public:
             RowWidget() noexcept;

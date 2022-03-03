@@ -49,10 +49,10 @@ namespace RolUI {
 
         class BoxWidget : public SingleChildWidget {
           public:
-            Property<unsigned> round{this, 0};
-            Property<unsigned> border_width{this, 0};
-            Property<Color> border_color{this, {0, 0, 0, 255}};
-            Property<Color> background_color{this, {255, 255, 255, 255}};
+            Property<BoxWidget, unsigned> round{this};
+            Property<BoxWidget, unsigned> border_width{this, 0};
+            Property<BoxWidget, Color> border_color{this, {0, 0, 0, 255}};
+            Property<BoxWidget, Color> background_color{this, {255, 255, 255, 255}};
 
           public:
             BoxWidget(unsigned round = 0) noexcept;
@@ -64,8 +64,8 @@ namespace RolUI {
 
         class SizedBoxWidget : public SingleChildWidget {
           public:
-            Property<SizeUnit> width{this, SizeUnit::percentage(1.0f)};
-            Property<SizeUnit> height{this, SizeUnit::percentage(1.0f)};
+            Property<SizedBoxWidget, SizeUnit> width{this, SizeUnit::percentage(1.0f)};
+            Property<SizedBoxWidget, SizeUnit> height{this, SizeUnit::percentage(1.0f)};
 
           public:
             SizedBoxWidget() noexcept;
@@ -76,8 +76,8 @@ namespace RolUI {
 
         class AlignWidget : public SingleChildWidget {
           public:
-            Property<float> align_x{this, 0.5f};
-            Property<float> align_y{this, 0.5f};
+            Property<AlignWidget, float> align_x{this, 0.5f};
+            Property<AlignWidget, float> align_y{this, 0.5f};
 
           public:
             AlignWidget() noexcept;
@@ -88,10 +88,10 @@ namespace RolUI {
 
         class MarginWidget : public SingleChildWidget {
           public:
-            Property<unsigned> top{this, 0};
-            Property<unsigned> bottom{this, 0};
-            Property<unsigned> left{this, 0};
-            Property<unsigned> right{this, 0};
+            Property<MarginWidget, unsigned> top{this, 0};
+            Property<MarginWidget, unsigned> bottom{this, 0};
+            Property<MarginWidget, unsigned> left{this, 0};
+            Property<MarginWidget, unsigned> right{this, 0};
 
           public:
             MarginWidget() noexcept;
