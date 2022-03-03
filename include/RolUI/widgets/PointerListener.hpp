@@ -14,6 +14,7 @@ namespace RolUI {
             Signal<Point> on_down;
             Signal<Point> on_click;
             Signal<Vec2i> on_move;
+            Signal<Vec2i> on_drag;
             Signal<bool> on_hover;
 
           public:
