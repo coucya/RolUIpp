@@ -38,7 +38,7 @@ Widget* make_label(std::string str, Color fg = Color(255, 255, 255), Color bg = 
     box->set_child(padding);
     margin->set_child(box);
 
-    return margin;
+    return box;
 }
 
 int main(int argc, char* argv[]) {
@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
     box.set_child(&column);
     align.set_child(&box);
 
+    column.gap(10);
     for (int i = 0; i < 5; i++) {
         Widget* widget = make_label(std::string("label") + std::to_string(i % 2 ? i * 100 : i));
         column.add_child(widget);

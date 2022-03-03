@@ -12,7 +12,7 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 Constraint nc = Constraint::zero_to(cw, ch);
                 Size s = child(i)->layout(nc);
-                ch = std::max(ch - s.height, 0);
+                ch = std::max(ch - s.height - gap(), 0);
             }
 
             int max_w = 0;
@@ -23,6 +23,7 @@ namespace RolUI {
                     max_w = child->size().width;
                 total_h = total_h + child->size().height;
             }
+            total_h += std::max(child_count() - 1, 0) * gap();
 
             int cy = 0;
             for (int i = 0; i < child_count(); i++) {
@@ -38,7 +39,7 @@ namespace RolUI {
                 int cx = float(max_w - child->size().width) * r;
                 RolUI::set_pos(child, {cx, cy});
 
-                cy = cy + child->size().height;
+                cy = cy + child->size().height + gap();
             }
             Size self_size = {max_w, total_h};
             return self_size;
@@ -53,7 +54,7 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 Constraint nc = Constraint::zero_to(cw, ch);
                 Size s = child(i)->layout(nc);
-                cw = std::max(cw - s.width, 0);
+                cw = std::max(cw - s.width - gap(), 0);
             }
 
             int max_h = 0;
@@ -64,6 +65,7 @@ namespace RolUI {
                     max_h = child_size.height;
                 total_w = total_w + child_size.width;
             }
+            total_w += std::max(child_count() - 1, 0) * gap();
 
             int cx = 0;
             for (int i = 0; i < child_count(); i++) {
@@ -79,7 +81,7 @@ namespace RolUI {
                 int cy = float(max_h - child->size().height) * r;
                 RolUI::set_pos(child, {cx, cy});
 
-                cx = cx + child->size().width;
+                cx = cx + child->size().width + gap();
             }
 
             Size self_size = {total_w, max_h};
