@@ -9,6 +9,7 @@
 namespace RolUI {
     namespace widgets {
 
+        ImageWidget::ImageWidget() noexcept {}
         ImageWidget::ImageWidget(RolUI::Image image, Fit fit) noexcept {
             this->image = image;
             this->fit = fit;

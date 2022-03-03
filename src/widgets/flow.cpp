@@ -103,14 +103,16 @@ namespace RolUI {
                 return sum;
             }
 
-            void FlowGridWidgetBase::add_child(Widget* child, float flex) noexcept {
+            FlowGridWidgetBase* FlowGridWidgetBase::add_child(Widget* child, float flex) noexcept {
                 MultiChildWidget::add_child(child);
                 _flexs.push_back(flex);
+                return this;
             }
-            void FlowGridWidgetBase::set_child(int index, Widget* child, float flex) noexcept {
-                if (index < 0 || index >= child_count()) return;
+            FlowGridWidgetBase* FlowGridWidgetBase::set_child(int index, Widget* child, float flex) noexcept {
+                if (index < 0 || index >= child_count()) return this;
                 MultiChildWidget::set_child(index, child);
                 _flexs[index] = flex;
+                return this;
             }
 
             void FlowGridWidgetBase::remove_child(Widget* child) noexcept {

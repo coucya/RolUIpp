@@ -42,8 +42,8 @@ namespace RolUI {
                 float flex_of(int index) const noexcept;
                 float flex_sum() const noexcept;
 
-                void add_child(Widget* child, float flex = 1.0f) noexcept;
-                void set_child(int index, Widget* child, float flex = 1.0f) noexcept;
+                FlowGridWidgetBase* add_child(Widget* child, float flex = 1.0f) noexcept;
+                FlowGridWidgetBase* set_child(int index, Widget* child, float flex = 1.0f) noexcept;
 
                 void remove_child(Widget* child) noexcept;
                 void remove_child(int index) noexcept;

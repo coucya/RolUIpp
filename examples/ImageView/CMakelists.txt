@@ -1,0 +1,12 @@
+
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/examples_bin/)
+
+aux_source_directory(./ image_view_source)
+add_executable(ImageView ${image_view_source})
+target_include_directories(ImageView PRIVATE ${RolUI_INCLUDE_DIR})
+target_include_directories(ImageView PRIVATE ${BACKEND_DIR})
+target_include_directories(ImageView PRIVATE ${3RDPARTY_DIR}/glfw/include)
+target_include_directories(ImageView PRIVATE ${3RDPARTY_DIR}/stb)
+target_link_libraries(ImageView RolUI_glfw_backend)
+target_link_libraries(ImageView RolUI)
+target_compile_options(ImageView PRIVATE -std=c++17)

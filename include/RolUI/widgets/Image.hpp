@@ -21,6 +21,7 @@ namespace RolUI {
             Property<ImageWidget, Fit> fit{this};
 
           public:
+            ImageWidget() noexcept;
             ImageWidget(RolUI::Image image, Fit fit = Fit::contain) noexcept;
             ~ImageWidget() override;
 

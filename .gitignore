@@ -1,4 +1,5 @@
 /build
+/examples_bin
 /.vscode
 
 /3rdparty/glad
