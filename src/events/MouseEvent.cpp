@@ -82,7 +82,7 @@ namespace RolUI {
         if (is_move() && !_is_enter && !_is_leave) {
             for (auto it = _hover_widgets.begin(); it != _hover_widgets.end();) {
                 Widget* w = *it;
-                if (w && w->abs_rect().contain(mouse_pos) == false) {
+                if (w && w->hit_test(mouse_pos) == false) {
                     MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
                     send_event(w, &me);
                     it = _hover_widgets.erase(it);
@@ -91,7 +91,7 @@ namespace RolUI {
             }
 
             Widget* tw = widget;
-            while (tw && tw->abs_rect().contain(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
+            while (tw && tw->hit_test(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
                 _hover_widgets.insert(tw);
 
                 MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
@@ -111,10 +111,10 @@ namespace RolUI {
             }
         } else if (_is_leave) {
             for (Widget* w : _hover_widgets) {
-                if (w && w->abs_rect().contain(mouse_pos) == false) {
-                    MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
-                    send_event(w, &me);
-                }
+                // if (w && w->abs_rect().contain(mouse_pos) == false) {
+                MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
+                send_event(w, &me);
+                // }
             }
             _hover_widgets.clear();
         }

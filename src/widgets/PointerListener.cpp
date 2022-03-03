@@ -41,5 +41,12 @@ namespace RolUI {
             return false;
         }
 
+        void PointerListenerWidget::draw(IPainter* painter) noexcept {
+            SingleChildWidget::draw(painter);
+            // painter->set_stroke_color({255, 0, 0});
+            // painter->set_stroke_width(2);
+            // painter->draw_rect(abs_rect());
+        }
+
     } // namespace widgets
 } // namespace RolUI

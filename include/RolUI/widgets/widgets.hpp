@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "../Image.hpp"
 
 #include "../Widget.hpp"
@@ -17,10 +19,18 @@ namespace RolUI {
 
         Widget* image(Image image);
 
-        Widget* sized(unsigned width, unsigned height, Widget* child);
+        Widget* button(const char* str,
+                       std::function<void(Point)> callback,
+                       unsigned round = 0,
+                       Color text_color = {0, 0, 0},
+                       Color color = {240, 240, 240},
+                       Color hover = {230, 230, 230},
+                       Color press = {250, 250, 250});
+
+        Widget* sized(int width, int height, Widget* child);
         Widget* sized(float width, float height, Widget* child);
-        Widget* sized(unsigned width, float height, Widget* child);
-        Widget* sized(float width, unsigned height, Widget* child);
+        Widget* sized(int width, float height, Widget* child);
+        Widget* sized(float width, int height, Widget* child);
 
         template <typename WT, typename... Args>
         WT* mk_widget(Args&&... args) { return new WT(args...); }

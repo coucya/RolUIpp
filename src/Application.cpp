@@ -48,17 +48,14 @@ namespace RolUI {
 
         Widget* widget = nullptr;
         Widget* w_it = _content_widget;
-        Point pos_it = pos - _content_widget->pos();
-
-        if (w_it->hit_test(pos_it) == false) return nullptr;
 
         while (true) {
-            Widget* w = w_it->get_child_by_pos(pos_it);
+            Widget* w = w_it->get_child_by_pos(pos);
             if (w == nullptr) return w_it;
             w_it = w;
-            pos_it = pos_it - w_it->pos();
         }
-        return widget;
+
+        return widget->hit_test(pos) ? widget : nullptr;
     }
 
     size_t Application::set_timeout(TimeoutCallback cb, double duration, void* arg) {
