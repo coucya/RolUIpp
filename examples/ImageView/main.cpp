@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <algorithm>
+#include <tuple>
 
 #include "glfw_backend/GLFWWindow.h"
 
@@ -17,6 +18,7 @@
 #include "RolUI/widgets/container.hpp"
 #include "RolUI/widgets/flow.hpp"
 #include "RolUI/widgets/Image.hpp"
+#include "RolUI/widgets/PointerListener.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
@@ -57,6 +59,8 @@ Image load_image(std::string filename) {
 std::string image_dir;
 std::vector<std::string> image_paths;
 int image_selected = 0;
+float image_scale = 1.0f;
+Point image_offset = {0, 0};
 
 void image_idx_inc() {
     if (image_paths.size() == 0) return;
@@ -69,8 +73,6 @@ void image_idx_dec() {
     image_selected--;
     if (image_selected < 0)
         image_selected = std::max<int>(image_paths.size() - 1, 0);
-}
-void update_image() {
 }
 
 void init(int argc, char* argv[]) {
@@ -92,26 +94,62 @@ Widget* build_button(const char* text, F&& callback) {
                  button(text, std::forward<F>(callback)));
 }
 
-template <typename F>
-Widget* build_control_bar(F&& update_image) {
+template <typename F1, typename F2>
+Widget* build_control_bar(F1&& update_image, F2&& set_scale) {
     return mk_widget<AlignWidget>()
         ->set_child(
             mk_widget<RowWidget>()
                 ->gap(50)
                 ->add_child(build_button("上一个", [=](Point) { image_idx_dec(); update_image(); }))
+                ->add_child(build_button("放大", [=](Point) { image_scale *= 1.1; set_scale(image_scale); }))
+                ->add_child(build_button("缩小", [=](Point) { image_scale *= 0.9; set_scale(image_scale); }))
                 ->add_child(build_button("下一个", [=](Point) { image_idx_inc(); update_image(); })));
+}
+std::tuple<RolUI::Widget*,
+           std::function<void(Image)>,
+           std::function<void(Point)>,
+           std::function<void(float)>>
+build_image_view() {
+    PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
+    ScrollWidget* sw = mk_widget<ScrollWidget>();
+    SizedBoxWidget* sbw = mk_widget<SizedBoxWidget>()
+                              ->width(SizeUnit::pixel(800))
+                              ->height(SizeUnit::pixel(600));
+    ImageWidget* image_w = mk_widget<ImageWidget>()->fit(ImageWidget::contain);
+    plw->set_child(sw->set_child(sbw->set_child(image_w)));
+
+    plw->on_drag.connect([=](Point offset) {
+        sw->scroll_by_px(offset.x, offset.y);
+    });
+    std::function<void(Image)> set_image{[=](Image image) {
+        image_w->image(image);
+    }};
+    std::function<void(Point)> set_offset{[=](Point offset) {
+        sw->scroll_to_px(offset.x, offset.y);
+    }};
+    std::function<void(float)> set_scale{[=](float scale) {
+        int w = plw->size().width * scale;
+        int h = plw->size().height * scale;
+        sbw->width(SizeUnit::pixel(w));
+        sbw->height(SizeUnit::pixel(h));
+    }};
+
+    return {plw, std::move(set_image), std::move(set_offset), std::move(set_scale)};
 }
 
 Widget* build_ui() {
-    ImageWidget* img_widget = mk_widget<ImageWidget>();
-    auto update_image = [=]() {
+    auto [img_view, set_image, set_offset, set_scale] = build_image_view();
+
+    auto update_image = [=, set_image = set_image, set_offset = set_offset, set_scale = set_scale]() {
         if (image_selected >= image_paths.size()) return;
         Image img = load_image(image_paths[image_selected]);
-        img_widget->image(img);
+        set_image(img);
+        set_offset({0, 0});
+        set_scale(1.0f);
     };
     return mk_widget<ColumnGridWidget>()
-        ->add_child(img_widget, 9)
-        ->add_child(build_control_bar(update_image));
+        ->add_child(img_view, 9)
+        ->add_child(build_control_bar(update_image, set_scale));
 }
 
 int main(int argc, char* argv[]) {
