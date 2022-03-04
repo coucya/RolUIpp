@@ -21,5 +21,4 @@ namespace RolUI {
         };
 
     } // namespace widgets
-
 } // namespace RolUI
