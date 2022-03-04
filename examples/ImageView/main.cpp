@@ -98,10 +98,9 @@ void init(int argc, char* argv[]) {
 
 template <typename F>
 Widget* build_button(const char* text, F&& callback) {
-    return mk_widget<AlignWidget>()
-        ->set_child(button(text, callback,
-                           50, 0,
-                           {255, 255, 255}, {0, 0, 0, 0}, {88, 88, 88, 50}, {0, 0, 0, 0}));
+    return button(label("", 0, {0, 0, 0, 0}, {0, 0, 0, 0}),
+                  label(text, 50, {255, 255, 255}, {88, 88, 88, 50}),
+                  label(text, 50, {255, 255, 255}, {88, 88, 88, 0}), callback);
 }
 
 std::tuple<RolUI::Widget*,
@@ -161,9 +160,9 @@ Widget* build_ui() {
                         ->add_child(img_view)
                         ->add_child(
                             mk_widget<RowGridWidget>()
-                                ->add_child(build_button("<", [=](Point) {image_idx_dec(); update_image(); }), 1.0)
+                                ->add_child(build_button("<", [=] { image_idx_dec(); update_image(); }), 1.0)
                                 ->add_child(plw->set_child(mk_widget<SizedBoxWidget>()), 9.0)
-                                ->add_child(build_button(">", [=](Point) {image_idx_inc(); update_image(); }), 1.0)));
+                                ->add_child(build_button(">", [=] { image_idx_inc(); update_image(); }), 1.0)));
 }
 
 int main(int argc, char* argv[]) {

@@ -17,15 +17,23 @@ namespace RolUI {
 
         Widget* text(const char* str, unsigned size = 16, Color color = {0, 0, 0});
 
+        Widget* label(const char* str, unsigned size = 16,
+                      Color color = {0, 0, 0}, Color background_color = {255, 255, 255},
+                      unsigned round = 0);
+
         Widget* image(Image image);
 
         Widget* button(const char* str,
-                       std::function<void(Point)> callback,
-                       unsigned text_size = 16, unsigned round = 0,
+                       std::function<void()> callback,
+                       unsigned text_size = 16,
                        Color text_color = {0, 0, 0},
-                       Color color = {240, 240, 240},
+                       Color normal = {240, 240, 240},
                        Color hover = {230, 230, 230},
-                       Color press = {250, 250, 250});
+                       Color press = {250, 250, 250},
+                       unsigned round = 0);
+
+        Widget* button(Widget* normal, Widget* hover, Widget* press,
+                       std::function<void()> callback);
 
         Widget* sized(int width, int height, Widget* child);
         Widget* sized(float width, float height, Widget* child);

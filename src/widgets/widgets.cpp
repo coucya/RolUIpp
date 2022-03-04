@@ -20,33 +20,46 @@ namespace RolUI {
             return (new ImageWidget(image));
         }
 
+        Widget* label(const char* str, unsigned size, Color color,
+                      Color background_color, unsigned round) {
+            return mk_widget<BoxWidget>()
+                ->round(round)
+                ->background_color(background_color)
+                ->set_child(
+                    mk_widget<AlignWidget>()
+                        ->set_child(text(str, size, color)));
+        }
+
+        Widget* button(Widget* normal, Widget* hover, Widget* press,
+                       std::function<void()> callback) {
+            DeckWidget* dw = mk_widget<DeckWidget>();
+            dw->add_child(normal)->add_child(hover)->add_child(press);
+
+            PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
+            plw->set_child(dw);
+
+            plw->on_hover.connect([=](bool b) { dw->selected(b ? 1 : 0); });
+            plw->on_down.connect([=](Point) { dw->selected(2); });
+            plw->on_up.connect([=](Point) { dw->selected(1); });
+            plw->on_click.connect([cb = std::move(callback)](Point) { if(cb) cb(); });
+            return plw;
+        }
+
         Widget* button(const char* str,
-                       std::function<void(Point)> callback,
-                       unsigned text_size, unsigned round,
-                       Color text_color, Color color,
-                       Color hover, Color press) {
-            BoxWidget* box =
-                (BoxWidget*)mk_widget<BoxWidget>()
-                    ->round(round)
-                    ->background_color(color)
-                    ->set_child(mk_widget<AlignWidget>()
-                                    ->set_child(text(str, text_size, text_color)));
+                       std::function<void()> callback,
+                       unsigned text_size, Color text_color,
+                       Color normal, Color hover, Color press, unsigned round) {
+            BoxWidget* box = mk_widget<BoxWidget>();
+            box->round(round)
+                ->background_color(normal)
+                ->set_child(mk_widget<AlignWidget>()
+                                ->set_child(text(str, text_size, text_color)));
             PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
             plw->set_child(box);
-            plw->on_hover.connect([=](bool b) {
-                if (b) {
-                    box->background_color = hover;
-                } else {
-                    box->background_color = color;
-                }
-            });
-            plw->on_down.connect([=](Point) {
-                box->background_color = press;
-            });
-            plw->on_up.connect([=](Point) {
-                box->background_color = hover;
-            });
-            plw->on_click.connect(std::move(callback));
+            plw->on_hover.connect([=](bool b) { box->background_color(b ? hover : normal); });
+            plw->on_down.connect([=](Point) { box->background_color(press); });
+            plw->on_up.connect([=](Point) { box->background_color(hover); });
+            plw->on_click.connect([cb = std::move(callback)](Point) { if (cb) cb(); });
             return plw;
         }
 
