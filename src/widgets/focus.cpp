@@ -1,7 +1,7 @@
 
 #include "RolUI/Application.hpp"
 #include "RolUI/events/Widget_event.hpp"
-#include "RolUI/widgets/Focus.hpp"
+#include "RolUI/widgets/focus.hpp"
 
 namespace RolUI {
     namespace widgets {
