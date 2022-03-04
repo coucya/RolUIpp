@@ -21,7 +21,7 @@ namespace RolUI {
 
         Widget* button(const char* str,
                        std::function<void(Point)> callback,
-                       unsigned round = 0,
+                       unsigned text_size = 16, unsigned round = 0,
                        Color text_color = {0, 0, 0},
                        Color color = {240, 240, 240},
                        Color hover = {230, 230, 230},

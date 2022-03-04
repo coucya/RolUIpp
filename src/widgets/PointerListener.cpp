@@ -39,6 +39,8 @@ namespace RolUI {
                 if (mouseEvent->button(MouseKey::left) == MouseKeyMode::press)
                     this->on_drag(mouseEvent->offset());
                 return true;
+            } else if (et == MouseScrollEvent_type()) {
+                this->on_scroll.emit(((MouseScrollEvent*)e)->offset());
             }
             return false;
         }

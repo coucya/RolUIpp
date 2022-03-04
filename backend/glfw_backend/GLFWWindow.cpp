@@ -69,6 +69,9 @@ namespace RolUIBackend {
         on_char = [this](unsigned int c) {
             _char_dispatcher.push_char(c);
         };
+        on_scroll = [this](double x, double y) {
+            this->_mouse_dispatcher.set_scroll_offset({int(x), int(y)});
+        };
 
         _mouse_dispatcher.clear_change();
     }

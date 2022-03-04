@@ -22,7 +22,7 @@ namespace RolUI {
 
         Widget* button(const char* str,
                        std::function<void(Point)> callback,
-                       unsigned round,
+                       unsigned text_size, unsigned round,
                        Color text_color, Color color,
                        Color hover, Color press) {
             BoxWidget* box =
@@ -30,7 +30,7 @@ namespace RolUI {
                     ->round(round)
                     ->background_color(color)
                     ->set_child(mk_widget<AlignWidget>()
-                                    ->set_child(text(str, 16, text_color)));
+                                    ->set_child(text(str, text_size, text_color)));
             PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
             plw->set_child(box);
             plw->on_hover.connect([=](bool b) {

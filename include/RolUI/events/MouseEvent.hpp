@@ -57,11 +57,24 @@ namespace RolUI {
         const MouseDispatcher* _dispatcher;
     };
 
+    class MouseScrollEvent : public IEvent {
+        friend class MouseDispatcher;
+
+      public:
+        MouseScrollEvent(Widget* target, Vec2i offset) noexcept;
+
+        Vec2i offset() const noexcept;
+
+      private:
+        Vec2i _offset;
+    };
+
     RolUI_decl_event_type(MousePosEvent);
     RolUI_decl_event_type(MousePressEvent);
     RolUI_decl_event_type(MouseReleaseEvent);
     RolUI_decl_event_type(MouseEnterEvent);
     RolUI_decl_event_type(MouseLeaveEvent);
+    RolUI_decl_event_type(MouseScrollEvent);
 
     class MouseDispatcher {
       public:
@@ -72,16 +85,22 @@ namespace RolUI {
 
         MouseKeyMode button(MouseKey key) const noexcept;
 
+        Vec2i scroll_offset() const noexcept { return _scroll; }
+
         bool is_pos_change() const noexcept { return _pos_is_change; }
         bool is_move() const noexcept { return _pos_is_change; }
 
         bool is_action(MouseKey key) const noexcept;
+
+        bool is_scrolling() const noexcept { return _is_scrolling; }
 
         void set_pos(Point pos) noexcept;
         void set_pos(int32_t x, int32_t y) noexcept;
 
         void set_last_pos(Point pos) noexcept;
         void set_last_pos(int32_t x, int32_t y) noexcept;
+
+        void set_scroll_offset(Vec2i scroll) noexcept;
 
         void set_key_mode(MouseKey key, MouseKeyMode mode) noexcept;
 
@@ -107,6 +126,9 @@ namespace RolUI {
 
         bool _key_is_change[MOUSE_KEY_COUNT + 1];
         MouseKeyMode _key_mode[MOUSE_KEY_COUNT + 1];
+
+        bool _is_scrolling = false;
+        Vec2i _scroll;
 
         bool _is_enter = false;
         bool _is_leave = false;

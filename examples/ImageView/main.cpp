@@ -61,6 +61,7 @@ std::vector<std::string> image_paths;
 int image_selected = 0;
 float image_scale = 1.0f;
 Point image_offset = {0, 0};
+Image first_image;
 
 void image_idx_inc() {
     if (image_paths.size() == 0) return;
@@ -76,6 +77,7 @@ void image_idx_dec() {
 }
 
 void init(int argc, char* argv[]) {
+    using namespace std::filesystem;
     if (argc < 2)
         image_dir = std::filesystem::current_path().string();
     else
@@ -86,28 +88,25 @@ void init(int argc, char* argv[]) {
         if (en == ".png" || en == ".jpg" || en == ".jpeg" || en == ".bmp")
             image_paths.push_back(item.path().string());
     }
+
+    if (argc > 1 && is_regular_file(path(argv[1]))) {
+        first_image = load_image(argv[1]);
+    } else if (!image_paths.empty()) {
+        first_image = load_image(image_paths[0]);
+    }
 }
 
 template <typename F>
 Widget* build_button(const char* text, F&& callback) {
-    return sized(75, 35,
-                 button(text, std::forward<F>(callback)));
+    return mk_widget<AlignWidget>()
+        ->set_child(button(text, callback,
+                           50, 0,
+                           {255, 255, 255}, {0, 0, 0, 0}, {88, 88, 88, 50}, {0, 0, 0, 0}));
 }
 
-template <typename F1, typename F2>
-Widget* build_control_bar(F1&& update_image, F2&& set_scale) {
-    return mk_widget<AlignWidget>()
-        ->set_child(
-            mk_widget<RowWidget>()
-                ->gap(50)
-                ->add_child(build_button("上一个", [=](Point) { image_idx_dec(); update_image(); }))
-                ->add_child(build_button("放大", [=](Point) { image_scale *= 1.1; set_scale(image_scale); }))
-                ->add_child(build_button("缩小", [=](Point) { image_scale *= 0.9; set_scale(image_scale); }))
-                ->add_child(build_button("下一个", [=](Point) { image_idx_inc(); update_image(); })));
-}
 std::tuple<RolUI::Widget*,
            std::function<void(Image)>,
-           std::function<void(Point)>,
+           std::function<void(Point, bool)>,
            std::function<void(float)>>
 build_image_view() {
     PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
@@ -118,14 +117,16 @@ build_image_view() {
     ImageWidget* image_w = mk_widget<ImageWidget>()->fit(ImageWidget::contain);
     plw->set_child(sw->set_child(sbw->set_child(image_w)));
 
-    plw->on_drag.connect([=](Point offset) {
-        sw->scroll_by_px(offset.x, offset.y);
-    });
+    image_w->image(first_image);
+
     std::function<void(Image)> set_image{[=](Image image) {
         image_w->image(image);
     }};
-    std::function<void(Point)> set_offset{[=](Point offset) {
-        sw->scroll_to_px(offset.x, offset.y);
+    std::function<void(Point, bool)> set_offset{[=](Point offset, bool is_offset = false) {
+        if (is_offset)
+            sw->scroll_by_px(offset.x, offset.y);
+        else
+            sw->scroll_to_px(offset.x, offset.y);
     }};
     std::function<void(float)> set_scale{[=](float scale) {
         int w = plw->size().width * scale;
@@ -144,24 +145,37 @@ Widget* build_ui() {
         if (image_selected >= image_paths.size()) return;
         Image img = load_image(image_paths[image_selected]);
         set_image(img);
-        set_offset({0, 0});
+        set_offset({0, 0}, false);
         set_scale(1.0f);
     };
-    return mk_widget<ColumnGridWidget>()
-        ->add_child(img_view, 9)
-        ->add_child(build_control_bar(update_image, set_scale));
+    PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
+    plw->on_drag.connect([=, set_offset = set_offset](Vec2i offset) {
+        set_offset(offset, true);
+    });
+    plw->on_scroll.connect([=, set_scale = set_scale](Vec2i offset) {
+        set_scale(image_scale = image_scale + double(offset.y) * 0.1);
+    });
+    return mk_widget<BoxWidget>()
+        ->background_color({40, 44, 52})
+        ->set_child(mk_widget<StackWidget>()
+                        ->add_child(img_view)
+                        ->add_child(
+                            mk_widget<RowGridWidget>()
+                                ->add_child(build_button("<", [=](Point) {image_idx_dec(); update_image(); }), 1.0)
+                                ->add_child(plw->set_child(mk_widget<SizedBoxWidget>()), 9.0)
+                                ->add_child(build_button(">", [=](Point) {image_idx_inc(); update_image(); }), 1.0)));
 }
 
 int main(int argc, char* argv[]) {
     using namespace RolUI;
     using namespace RolUI::widgets;
 
-    init(argc, argv);
-
     RolUIBackend::GLFWWindow win(800, 600, "image");
     win.on_exit = [&] { RolUI::Application::exit(); };
 
     RolUI::Application::init(&win);
+
+    init(argc, argv);
 
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");

@@ -16,6 +16,7 @@ namespace RolUI {
     RolUI_impl_event_type(MouseReleaseEvent);
     RolUI_impl_event_type(MouseEnterEvent);
     RolUI_impl_event_type(MouseLeaveEvent);
+    RolUI_impl_event_type(MouseScrollEvent);
 
     MouseDispatcher::MouseDispatcher() noexcept {
         _init();
@@ -50,6 +51,11 @@ namespace RolUI {
         set_last_pos({x, y});
     }
 
+    void MouseDispatcher::set_scroll_offset(Vec2i scroll) noexcept {
+        _is_scrolling = true;
+        _scroll = scroll;
+    }
+
     void MouseDispatcher::set_key_mode(MouseKey key, MouseKeyMode mode) noexcept {
         int idx = (int)key;
         if (_key_mode[idx] != mode)
@@ -70,6 +76,8 @@ namespace RolUI {
             _key_is_change[i] = false;
         }
         _is_enter = _is_leave = false;
+        _is_scrolling = false;
+        _scroll = {0, 0};
     }
 
     void MouseDispatcher::dispatch(Window* w) noexcept {
@@ -148,6 +156,13 @@ namespace RolUI {
                 }
             }
         }
+
+        if (is_scrolling()) {
+            for (auto w : _hover_widgets) {
+                MouseScrollEvent mse{w, scroll_offset()};
+                send_event(w, &mse);
+            }
+        }
     }
 
     MouseEvent::MouseEvent(const EventType* et, Widget* target, const MouseDispatcher* dispatcher) noexcept
@@ -170,5 +185,10 @@ namespace RolUI {
     }
 
     void MouseEvent::_set_action_key(MouseKey key) { _action_key = key; }
+
+    MouseScrollEvent::MouseScrollEvent(Widget* target, Vec2i offset) noexcept
+        : IEvent(MouseScrollEvent_type(), target), _offset(offset) {}
+
+    Vec2i MouseScrollEvent::offset() const noexcept { return _offset; }
 
 } // namespace RolUI

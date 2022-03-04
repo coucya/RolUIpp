@@ -2,6 +2,7 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
+#include "RolUI/Application.hpp"
 #include "RolUI/events/CharEvent.hpp"
 
 #include "RolUI/utility/utf8.h"
@@ -179,14 +180,14 @@ namespace RolUI {
     bool CharEventDispatcher::empty() const noexcept { return _char_queue.empty(); }
 
     void CharEventDispatcher::dispatch(Window* w) noexcept {
-        // if (!w || !w->focus_widget()) return;
+        if (!w || !Application::focus_widget()) return;
 
-        // Widget* focus_widget = w->focus_widget();
+        Widget* focus_widget = Application::focus_widget();
 
-        // while (!empty()) {
-        //     CharEvent e{focus_widget, pop_char()};
-        //     send_event(focus_widget, &e);
-        // }
+        while (!empty()) {
+            CharEvent e{focus_widget, pop_char()};
+            send_event(focus_widget, &e);
+        }
     }
 
 } // namespace RolUI
