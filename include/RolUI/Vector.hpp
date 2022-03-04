@@ -17,26 +17,6 @@ namespace RolUI {
             return x != v.x || y != v.y;
         }
 
-        Vector& operator+=(const Vector& v) noexcept {
-            x += v.x, y += v.y;
-            return *this;
-        }
-        Vector& operator-=(const Vector& v) noexcept {
-            x -= v.x, y -= v.y;
-            return *this;
-        }
-
-        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
-        Vector& operator*=(const N& v) noexcept {
-            x *= v, y *= v;
-            return *this;
-        }
-        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
-        Vector& operator/=(const N& v) noexcept {
-            x /= v, y /= v;
-            return *this;
-        }
-
         Vector operator+(const Vector& v) const noexcept {
             return {x + v.x, y + v.y};
         }
@@ -44,13 +24,24 @@ namespace RolUI {
             return {x - v.x, y - v.y};
         }
 
-        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
-        Vector operator*(const N& v) const noexcept {
-            return {x * v, y * v};
+        Vector operator*(float v) const noexcept {
+            return {T(float(x) * v), T(float(y) * v)};
         }
-        template <typename N, typename = std::enable_if_t<std::is_arithmetic_v<N>>>
-        Vector operator/(const N& v) const noexcept {
-            return {x / v, y / v};
+        Vector operator*(double v) const noexcept {
+            return {T(double(x) * v), T(double(y) * v)};
+        }
+        Vector operator*(int v) const noexcept {
+            return {T(x * v), T(y * v)};
+        }
+
+        Vector operator/(float v) const noexcept {
+            return {T(float(x) / v), T(float(y) / v)};
+        }
+        Vector operator/(double v) const noexcept {
+            return {T(double(x) / v), T(double(y) / v)};
+        }
+        Vector operator/(int v) const noexcept {
+            return {T(x / v), T(y / v)};
         }
     };
 
