@@ -170,7 +170,7 @@ int main(int argc, char* argv[]) {
     using namespace RolUI;
     using namespace RolUI::widgets;
 
-    RolUIBackend::GLFWWindow win(800, 600, "image");
+    RolUIBackend::GLFWWindow win(800, 600, "image view");
     win.on_exit = [&] { RolUI::Application::exit(); };
 
     RolUI::Application::init(&win);
