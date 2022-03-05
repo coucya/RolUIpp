@@ -121,6 +121,8 @@ static Image load_image(const char* filename) {
     stbi_image_free(image_data);
     return img;
 }
+
+void bind_widgets(py::module_& m);
 static void bind_geometry(py::module_& m) {
     class_<Vec2i>(m, "Vec2i")
         .def(py::init())
@@ -200,6 +202,7 @@ static void bind_geometry(py::module_& m) {
 
     class_<Color>(m, "Color")
         .def(py::init())
+        .def(py::init<uint8_t, uint8_t, uint8_t>())
         .def(py::init<uint8_t, uint8_t, uint8_t, uint8_t>())
         .def_readwrite("r", &Color::r)
         .def_readwrite("g", &Color::g)
@@ -280,6 +283,17 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("perform_layout", &Widget::perform_layout)
         .def("update_pos", &Widget::update_pos)
         .def("hit_test", &Widget::hit_test);
+    class_<SingleChildWidget, Widget>(m, "SingleChildWidget")
+        .def(py::init())
+        .def("child", &SingleChildWidget::child, return_value_policy::reference)
+        .def("set_child", &SingleChildWidget::set_child, return_value_policy::reference);
+    class_<MultiChildWidget, Widget>(m, "MultiChildWidget")
+        .def(py::init())
+        .def("child", &MultiChildWidget::child, return_value_policy::reference)
+        .def("add_child", &MultiChildWidget::add_child, return_value_policy::reference)
+        .def("set_child", &MultiChildWidget::set_child, return_value_policy::reference)
+        .def("remove_child", [](MultiChildWidget& self, Widget* child) { self.remove_child(child); })
+        .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); });
 
     class_<Application>(m, "Application")
         .def_static("init", Application::init)
@@ -296,4 +310,6 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def_static("run", static_cast<void (*)()>(&Application::run))
         .def_static("run", static_cast<void (*)(Widget*)>(&Application::run))
         .def_static("exit", Application::exit);
+
+    bind_widgets(m);
 }

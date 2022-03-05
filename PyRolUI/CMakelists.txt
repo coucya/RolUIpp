@@ -4,7 +4,8 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/examples_bin/)
 
 set(PyRolUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-set(PyRolUI_source ${PyRolUI_SOURCE_DIR}/PyRolUI.cpp)
+set(PyRolUI_source  ${PyRolUI_SOURCE_DIR}/PyRolUI.cpp 
+                    ${PyRolUI_SOURCE_DIR}/PyRolUI_widgets.cpp)
 set(PyRolUI_glfw_source ${PyRolUI_SOURCE_DIR}/PyRolUI_glfw.cpp)
 
 find_package(Python COMPONENTS Interpreter Development)

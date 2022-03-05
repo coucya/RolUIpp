@@ -104,11 +104,13 @@ namespace RolUI {
             }
 
             FlowGridWidgetBase* FlowGridWidgetBase::add_child(Widget* child, float flex) noexcept {
+                if (!child) return this;
                 MultiChildWidget::add_child(child);
                 _flexs.push_back(flex);
                 return this;
             }
             FlowGridWidgetBase* FlowGridWidgetBase::set_child(int index, Widget* child, float flex) noexcept {
+                if (!child) return this;
                 if (index < 0 || index >= child_count()) return this;
                 MultiChildWidget::set_child(index, child);
                 _flexs[index] = flex;
@@ -116,6 +118,7 @@ namespace RolUI {
             }
 
             void FlowGridWidgetBase::remove_child(Widget* child) noexcept {
+                if (!child) return;
                 int child_index = -1;
                 for (int i = 0; i < child_count(); i++) {
                     if (this->child(i) == child) {
