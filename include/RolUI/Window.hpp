@@ -2,31 +2,36 @@
 
 #include <stdint.h>
 
-#include "./IDisplay.hpp"
-#include "./IDispatcher.hpp"
-#include "./IEvent.hpp"
 #include "./Point.hpp"
 #include "./Rect.hpp"
 #include "./Size.hpp"
 #include "./sigslot/Slot.hpp"
+#include "./sigslot/Signal.hpp"
 
 namespace RolUI {
 
     class Application;
     class Widget;
+    class IPainter;
 
-    class Window : public IDisplay, public IDispatcher, public HasSlot {
+    class Window : public HasSlot {
         friend Application;
 
       public:
-        Window() noexcept;
-        ~Window() override;
+        virtual ~Window() {}
 
-        IPainter* painter() override;
-        void begin_draw() override;
-        void end_draw() override;
+        virtual Point pos() const = 0;
+        virtual Size size() const = 0;
 
-        void dispatch_event(double timeout) override;
+        virtual IPainter* painter() = 0;
+        virtual void begin_draw() = 0;
+        virtual void end_draw() = 0;
+
+        virtual void dispatch_event(double timeout) = 0;
+
+      public:
+        Signal<Point> on_pos_change;
+        Signal<Size> on_size_change;
     };
 
 } // namespace RolUI

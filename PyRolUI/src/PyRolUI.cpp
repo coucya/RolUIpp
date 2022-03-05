@@ -2,43 +2,125 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include <RolUI/Vector.hpp>
 #include <RolUI/Point.hpp>
 #include <RolUI/Size.hpp>
 #include <RolUI/Rect.hpp>
 #include <RolUI/Color.hpp>
-
-#include <RolUI/Application.hpp>
+#include <RolUI/Image.hpp>
+#include <RolUI/IPainter.hpp>
 #include <RolUI/Window.hpp>
 #include <RolUI/Widget.hpp>
-#include <RolUI/IPainter.hpp>
+#include <RolUI/Application.hpp>
 
 using namespace pybind11;
 using namespace RolUI;
 
 namespace py = pybind11;
 
-// class PyWidget : public Widget {
-//     Widget* get_child_by_pos(Point pos) const noexcept override {
-//         PYBIND11_OVERRIDE(Widget*, Widget, get_child_by_pos, pos);
-//     }
-//     bool handle_event(IEvent* e) noexcept override {
-//         PYBIND11_OVERRIDE(bool, Widget, handle_event, e);
-//     }
-//     void draw(IPainter* painter) noexcept override {
-//         PYBIND11_OVERRIDE(void, Widget, draw, painter);
-//     }
-//     Size perform_layout(Constraint constraint) noexcept override {
-//         PYBIND11_OVERRIDE(Size, Widget, perform_layout, constraint);
-//     }
-//     void update_pos() noexcept override {
-//         PYBIND11_OVERRIDE(void, Widget, update_pos, );
-//     }
-//     bool hit_test(Point pos) const noexcept override {
-//         PYBIND11_OVERRIDE(bool, Widget, hit_test, pos);
-//     }
-// };
+#define _CONCAT(l, r) l##r
+#define CONCAT(l, r) _CONCAT(l, r)
 
+#define ARG_COUNT(...) _INTERNAL_ARG_COUNT( \
+    0, ##__VA_ARGS__,                       \
+    8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define _INTERNAL_ARG_COUNT( \
+    _0, _1, _2, _3, _4, _5, _6, _7, _8, N, ...) N
+
+#define MYPYBIND11_OVERRIDE_PURE_0(ret_type, ct, fn) \
+    virtual ret_type fn() override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, ); }
+#define MYPYBIND11_OVERRIDE_PURE_2(ret_type, ct, fn, a, b) \
+    virtual ret_type fn(a b) override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, b); }
+#define MYPYBIND11_OVERRIDE_PURE_4(ret_type, ct, fn, a, b, c, d) \
+    virtual ret_type fn(a b, c d) override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, b, d); }
+#define MYPYBIND11_OVERRIDE_PURE_6(ret_type, ct, fn, a, b, c, d, e, f) \
+    virtual ret_type fn(a b, c d, e f) override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, b, d, f); }
+
+#define MYPYBIND11_OVERRIDE_PURE(ret_type, ct, fn, ...)       \
+    CONCAT(MYPYBIND11_OVERRIDE_PURE_, ARG_COUNT(__VA_ARGS__)) \
+    (ret_type, ct, fn, __VA_ARGS__)
+
+class PyWindow : public Window {
+  public:
+    virtual Point pos() const override {
+        PYBIND11_OVERRIDE_PURE(Point, Window, pos, );
+    }
+    virtual Size size() const override {
+        PYBIND11_OVERRIDE_PURE(Size, Window, size, );
+    }
+
+    virtual IPainter* painter() override {
+        PYBIND11_OVERRIDE_PURE(IPainter*, Window, painter, );
+    }
+    virtual void begin_draw() override {
+        PYBIND11_OVERRIDE_PURE(void, Window, begin_draw, );
+    }
+
+    virtual void end_draw() override {
+        PYBIND11_OVERRIDE_PURE(void, Window, end_draw, );
+    }
+
+    virtual void dispatch_event(double timeout) override {
+        PYBIND11_OVERRIDE_PURE(void, Window, dispatch_event, timeout);
+    }
+};
+
+#define PyIPainter_OVERRIDE(ret_type, fn, ...) \
+    MYPYBIND11_OVERRIDE_PURE(ret_type, IPainter, fn, __VA_ARGS__)
+class PyIPainter : public IPainter {
+    PyIPainter_OVERRIDE(bool, load_font, const char*, name, const char*, filename);
+    PyIPainter_OVERRIDE(int, create_image_with_rgba, const uint8_t*, data, int, w, int, h);
+    PyIPainter_OVERRIDE(void, delete_image, int, handle);
+    PyIPainter_OVERRIDE(Size, image_size, int, handle);
+    PyIPainter_OVERRIDE(void, scissor, Rect, rect);
+
+    PyIPainter_OVERRIDE(void, set_font_size, uint32_t, s);
+    PyIPainter_OVERRIDE(void, set_font_color, Color, color);
+    PyIPainter_OVERRIDE(void, set_font, const char*, name);
+
+    PyIPainter_OVERRIDE(void, set_stroke_color, Color, color);
+    PyIPainter_OVERRIDE(void, set_fill_color, Color, color);
+    PyIPainter_OVERRIDE(void, set_stroke_width, uint32_t, w);
+
+    PyIPainter_OVERRIDE(void, draw_text, Point, pos, const char*, text, uint32_t, len);
+
+    PyIPainter_OVERRIDE(void, draw_image, Point, pos, Size, size, int, handle);
+
+    PyIPainter_OVERRIDE(void, draw_line, Point, a, Point, b);
+    PyIPainter_OVERRIDE(void, draw_rect, Rect, rect);
+    PyIPainter_OVERRIDE(void, draw_circle, Point, centre, uint32_t, r);
+    PyIPainter_OVERRIDE(void, draw_ellipse, Rect, rect);
+    PyIPainter_OVERRIDE(void, draw_roundedrect, Rect, rect, uint32_t, round);
+
+    PyIPainter_OVERRIDE(void, fill_rect, Rect, rect);
+    PyIPainter_OVERRIDE(void, fill_circle, Point, centre, uint32_t, r);
+    PyIPainter_OVERRIDE(void, fill_ellipse, Rect, rect);
+    PyIPainter_OVERRIDE(void, fill_roundedrect, Rect, rect, uint32_t, round);
+
+    PyIPainter_OVERRIDE(void, draw_hline, Point, a, uint32_t, len);
+    PyIPainter_OVERRIDE(void, draw_vline, Point, a, uint32_t, len);
+
+    virtual Size text_size(const char* text, uint32_t len) const override {
+        PYBIND11_OVERRIDE_PURE(Size, IPainter, text_size, text, len);
+    }
+    virtual Size text_size(const char* text) const override {
+        PYBIND11_OVERRIDE_PURE(Size, IPainter, text_size, text);
+    }
+    virtual Rect get_scissor() const override {
+        PYBIND11_OVERRIDE_PURE(Rect, IPainter, get_scissor, );
+    }
+};
+
+static Image load_image(const char* filename) {
+    int image_w, image_h, image_c;
+    uint8_t* image_data = stbi_load(filename, &image_w, &image_h, &image_c, 4);
+    RolUI::Image img = RolUI::Image::create_rgba_mem(image_data, image_w, image_h);
+    stbi_image_free(image_data);
+    return img;
+}
 static void bind_geometry(py::module_& m) {
     class_<Vec2i>(m, "Vec2i")
         .def(py::init())
@@ -81,8 +163,7 @@ static void bind_geometry(py::module_& m) {
         .def(py::self / int())
         .def(py::self / float());
 
-    // class_<Point, Vec2i>(m, "Point")
-    //     .def(py::init());
+    m.attr("Point") = m.attr("Vec2i");
 
     class_<Rect>(m, "Rect")
         .def(py::init())
@@ -129,13 +210,14 @@ static void bind_geometry(py::module_& m) {
 }
 
 PYBIND11_MODULE(PyRolUI, m) {
-    m.doc() = "RolUI Python bind."; // optional module docstring
+    m.doc() = "RolUI Python bind.";
 
     bind_geometry(m);
 
-    class_<Window>(m, "Window");
-
-    class_<IPainter>(m, "IPainter");
+    class_<Image>(m, "Image")
+        .def(py::init())
+        .def("handle", &Image::handle)
+        .def_static("load", &load_image);
 
     class_<EventType>(m, "EventType")
         .def("name", &EventType::name);
@@ -144,6 +226,44 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("is", &IEvent::is)
         .def("event_type", &IEvent::event_type, return_value_policy::reference)
         .def("target", &IEvent::target, return_value_policy::reference);
+
+    class_<IPainter, PyIPainter>(m, "IPainter")
+        .def("load_font", &IPainter::load_font)
+        .def("text_size", static_cast<Size (IPainter::*)(const char*, uint32_t) const>(&IPainter::text_size))
+        .def("text_size", static_cast<Size (IPainter::*)(const char*) const>(&IPainter::text_size))
+        .def("create_image_with_rgba", &IPainter::create_image_with_rgba)
+        .def("delete_image", &IPainter::delete_image)
+        .def("image_size", &IPainter::image_size)
+        .def("scissor", &IPainter::scissor)
+        .def("get_scissor", &IPainter::get_scissor)
+        .def("set_font_size", &IPainter::set_font_size)
+        .def("set_font_color", &IPainter::set_font_color)
+        .def("set_font", &IPainter::set_font)
+        .def("set_stroke_color", &IPainter::set_stroke_color)
+        .def("set_fill_color", &IPainter::set_fill_color)
+        .def("set_stroke_width", &IPainter::set_stroke_width)
+        .def("draw_text", &IPainter::draw_text)
+        .def("draw_image", &IPainter::draw_image)
+        .def("draw_line", &IPainter::draw_line)
+        .def("draw_rect", &IPainter::draw_rect)
+        .def("draw_circle", &IPainter::draw_circle)
+        .def("draw_ellipse", &IPainter::draw_ellipse)
+        .def("draw_roundedrect", &IPainter::draw_roundedrect)
+        .def("fill_rect", &IPainter::fill_rect)
+        .def("fill_circle", &IPainter::fill_circle)
+        .def("fill_ellipse", &IPainter::fill_ellipse)
+        .def("fill_roundedrect", &IPainter::fill_roundedrect)
+        .def("draw_hline", &IPainter::draw_hline)
+        .def("draw_vline", &IPainter::draw_vline);
+
+    class_<Window, PyWindow>(m, "Window")
+        .def(py::init())
+        .def("pos", &Window::pos)
+        .def("size", &Window::size)
+        .def("painter", &Window::painter, return_value_policy::reference)
+        .def("begin_draw", &Window::begin_draw)
+        .def("end_draw", &Window::end_draw)
+        .def("dispatch_event", &Window::dispatch_event);
 
     class_<Widget>(m, "Widget")
         .def(py::init())
