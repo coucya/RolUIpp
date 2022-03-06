@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <functional>
 
 #include "glfw_backend/GLFWWindow.h"
 
@@ -20,6 +21,7 @@
 #include "RolUI/timer.hpp"
 #include "RolUI/Application.hpp"
 
+#include "RolUI/widgets/widgets.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Image.hpp"
 #include "RolUI/widgets/layer.hpp"
@@ -28,6 +30,7 @@
 #include "RolUI/widgets/PointerListener.hpp"
 
 using namespace RolUI;
+using namespace RolUI::widgets;
 
 std::string get_resources_dir() {
     std::filesystem::path self_path{__FILE__};
@@ -48,31 +51,6 @@ std::string get_image_huaji_path() {
 
 using namespace RolUI;
 
-template <typename PF, typename HF>
-Widget* make_button(std::string str, PF&& pf, HF&& hf) {
-    Color fg = {55, 55, 255};
-    Color bg = {255, 155, 155};
-
-    widgets::PointerListenerWidget* pl = new widgets::PointerListenerWidget();
-    widgets::TextWidget* text = new widgets::TextWidget{str};
-    widgets::BoxWidget* box = new widgets::BoxWidget{8};
-    widgets::MarginWidget* padding = new widgets::MarginWidget{16};
-    widgets::MarginWidget* margin = new widgets::MarginWidget{8};
-
-    text->font_size = 50;
-    text->font_color = fg;
-    box->background_color = bg;
-    pl->on_down.connect(std::forward<PF>(pf));
-    pl->on_hover.connect(std::forward<HF>(hf));
-
-    padding->set_child(text);
-    // box->set_child(padding);
-    pl->set_child(padding);
-    // margin->add_child(pl);
-
-    return pl;
-}
-
 Widget* make_box(Color c) {
     widgets::BoxWidget* box = new widgets::BoxWidget();
     widgets::SizedBoxWidget* sb = new widgets::SizedBoxWidget();
@@ -91,24 +69,9 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    widgets::AlignWidget center;
-    widgets::SizedBoxWidget sb;
-    widgets::ColumnGridWidget rg;
-
-    rg.add_child(make_box({255, 0, 0}));
-    rg.add_child(make_box({0, 255, 0}), 2);
-    rg.add_child(make_box({0, 0, 255}));
-    rg.add_child(make_box({255, 255, 0}), 4);
-
-    sb.width = widgets::SizeUnit::percentage(0.9f);
-    sb.height = widgets::SizeUnit::percentage(0.9f);
-
-    sb.set_child(&rg);
-    center.set_child(&sb);
-
-    win.show();
-
-    Application::run(&center);
+    // button("bt", std::function<void()>{[]() -> void {}});
+    Widget* w = widgets::sized(200, 200, widgets::button("bt", []() { std::cout << "bt click." << std::endl; }));
+    Application::run(w);
 
     return 0;
 }

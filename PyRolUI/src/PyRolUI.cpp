@@ -122,6 +122,24 @@ static Image load_image(const char* filename) {
     return img;
 }
 
+static std::string Vec2i_to_string(const Vec2i& v) {
+    return std::string("Vec2i(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")");
+}
+static std::string Vec2f_to_string(const Vec2f& v) {
+    return std::string("Vec2f(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")");
+}
+static std::string Size_to_string(const Size& v) {
+    return std::string("Size(" + std::to_string(v.width) + ", " + std::to_string(v.height) + ")");
+}
+static std::string Rect_to_string(const Rect& v) {
+    return std::string("Rect(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ", "
+                       + std::to_string(v.width) + ", " + std::to_string(v.height) + ")");
+}
+static std::string Color_to_string(const Color& v) {
+    return std::string("Color(" + std::to_string(v.r) + ", " + std::to_string(v.g) + ", "
+                       + std::to_string(v.b) + ", " + std::to_string(v.a) + ")");
+}
+
 void bind_widgets(py::module_& m);
 static void bind_geometry(py::module_& m) {
     class_<Vec2i>(m, "Vec2i")
@@ -129,6 +147,7 @@ static void bind_geometry(py::module_& m) {
         .def(py::init<int, int>())
         .def_readwrite("x", &Vec2i::x)
         .def_readwrite("y", &Vec2i::y)
+        .def("__repr__", Vec2i_to_string)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def(py::self + py::self)
@@ -142,6 +161,7 @@ static void bind_geometry(py::module_& m) {
         .def(py::init<float, float>())
         .def_readwrite("x", &Vec2f::x)
         .def_readwrite("y", &Vec2f::y)
+        .def("__repr__", Vec2f_to_string)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def(py::self + py::self)
@@ -156,6 +176,7 @@ static void bind_geometry(py::module_& m) {
         .def(py::init<int, int>())
         .def_readwrite("width", &Size::width)
         .def_readwrite("height", &Size::height)
+        .def("__repr__", Size_to_string)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def(py::self + py::self)
@@ -172,6 +193,7 @@ static void bind_geometry(py::module_& m) {
         .def(py::init<int, int, int, int>())
         .def(py::init<Point, Size>())
         .def(py::init<Point, Size>())
+        .def("__repr__", Rect_to_string)
         .def_static("create_with_two_point", Rect::create_with_two_point)
         .def_readwrite("x", &Rect::x)
         .def_readwrite("y", &Rect::y)
@@ -208,6 +230,7 @@ static void bind_geometry(py::module_& m) {
         .def_readwrite("g", &Color::g)
         .def_readwrite("b", &Color::b)
         .def_readwrite("a", &Color::a)
+        .def("__repr__", Color_to_string)
         .def(py::self == py::self)
         .def(py::self != py::self);
 }

@@ -1,4 +1,7 @@
 
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/examples_bin/)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/examples_bin/)
+
 aux_source_directory(${RolUI_SOURCE_DIR} RolUI_source)
 # aux_source_directory(${RolUI_SOURCE_DIR}/widgets RolUI_widgets_source)
 aux_source_directory(${RolUI_SOURCE_DIR}/events  RolUI_events_source)
@@ -12,6 +15,12 @@ set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/widgets.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Scroll.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Image.cpp)
 
-add_library(RolUI STATIC ${RolUI_source} ${RolUI_widgets_source} ${RolUI_events_source})
-target_include_directories(RolUI PRIVATE ${RolUI_INCLUDE_DIR})
-target_compile_options(RolUI PRIVATE -std=c++17)
+add_library(RolUI-static STATIC ${RolUI_source} ${RolUI_widgets_source} ${RolUI_events_source})
+target_include_directories(RolUI-static PRIVATE ${RolUI_INCLUDE_DIR})
+target_compile_options(RolUI-static PRIVATE -std=c++17)
+set_target_properties(RolUI-static PROPERTIES PREFIX "")
+set_target_properties(RolUI-static PROPERTIES OUTPUT_NAME "RolUI")
+
+add_library(RolUI-shared SHARED $<TARGET_OBJECTS:RolUI-static>)
+set_target_properties(RolUI-shared PROPERTIES PREFIX "")
+set_target_properties(RolUI-shared PROPERTIES OUTPUT_NAME "RolUI")

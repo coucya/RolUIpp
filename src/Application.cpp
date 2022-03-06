@@ -44,10 +44,10 @@ namespace RolUI {
     }
 
     Widget* Application::get_widget_by_pos(Point pos) noexcept {
-        if (_content_widget == nullptr) return nullptr;
+        if (content_widget() == nullptr) return nullptr;
 
         Widget* widget = nullptr;
-        Widget* w_it = _content_widget;
+        Widget* w_it = content_widget();
 
         while (true) {
             Widget* w = w_it->get_child_by_pos(pos);
@@ -99,7 +99,7 @@ namespace RolUI {
     }
     void Application::flush_draw() noexcept {
         if (!_window) return;
-        Widget* root_widget = _content_widget;
+        Widget* root_widget = content_widget();
         IPainter* painter = _window->painter();
 
         if (root_widget == nullptr) return;
