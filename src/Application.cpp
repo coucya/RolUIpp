@@ -1,7 +1,7 @@
-
 #include <cstddef>
+#include <chrono>
+#include <queue>
 
-#include "RolUI/timer.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IPainter.hpp"
@@ -11,8 +11,36 @@
 
 namespace RolUI {
 
-    // Application::Application() {}
-    // Application::~Application() {}
+    struct TimerTask {
+        unsigned long long interval;
+        unsigned long long start_time;
+        unsigned long long trigger_time;
+        TimeoutCallback callback;
+        bool is_repeat;
+        size_t handle;
+
+        bool operator<(const TimerTask& right) const noexcept {
+            return trigger_time > right.trigger_time;
+        }
+        bool operator>(const TimerTask& right) const noexcept {
+            return trigger_time < right.trigger_time;
+        }
+    };
+
+    class TimerQueue : public std::priority_queue<TimerTask> {
+      private:
+        typedef std::priority_queue<TimerTask> priority_queue;
+
+      public:
+        size_t add(TimeoutCallback cb, double interval, bool repeat = false) noexcept;
+        void remove(size_t handle) noexcept;
+        double do_timer() noexcept;
+
+      private:
+        size_t _add(TimerTask&& task) noexcept;
+
+        size_t _timer_handle = 0;
+    };
 
     static bool _should_exit = false;
     static Window* _window = nullptr;
@@ -58,12 +86,14 @@ namespace RolUI {
         return widget->hit_test(pos) ? widget : nullptr;
     }
 
-    size_t Application::set_timeout(TimeoutCallback cb, double duration, void* arg) {
-        return _timer_queue.push(cb, duration, arg);
+    size_t Application::set_timeout(double duration, TimeoutCallback cb) {
+        return _timer_queue.add(cb, duration, false);
     }
-    void Application::remove_timeout(size_t handle) {
-        _timer_queue.remove(handle);
+    size_t Application::set_interval(double duration, TimeoutCallback cb) {
+        return _timer_queue.add(cb, duration, true);
     }
+    void Application::clear_timeout(size_t handle) { _timer_queue.remove(handle); }
+    void Application::clear_interval(size_t handle) { _timer_queue.remove(handle); }
 
     void Application::exit() noexcept { _should_exit = true; }
 
@@ -72,7 +102,6 @@ namespace RolUI {
         run();
     }
     void Application::run() noexcept {
-
         double timeout = 0.0;
 
         flush_frame();
@@ -121,6 +150,75 @@ namespace RolUI {
         do {
             timeout = _timer_queue.do_timer();
         } while (timeout == 0.0);
+        return timeout;
+    }
+
+    static unsigned long long now_microseconds() {
+        using namespace std::chrono;
+        long long current_time = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
+        return (unsigned long long)current_time;
+    }
+
+    size_t TimerQueue::_add(TimerTask&& task) noexcept {
+        size_t handle = task.handle;
+        push(std::move(task));
+        return handle;
+    }
+
+    size_t TimerQueue::add(TimeoutCallback cb, double interval, bool repeat) noexcept {
+        unsigned long long interval_ = std::max(interval, 0.0) * 1000000.0;
+        unsigned long long current_time = now_microseconds();
+
+        TimerTask tt;
+        tt.interval = interval_;
+        tt.start_time = (unsigned long long)current_time;
+        tt.trigger_time = current_time + interval_;
+        tt.callback = std::move(cb);
+        tt.is_repeat = repeat;
+        tt.handle = _timer_handle++;
+
+        return _add(std::move(tt));
+    }
+
+    void TimerQueue::remove(size_t handle) noexcept {
+        auto it = std::find_if(c.begin(), c.end(), [=](const TimerTask& tt) {
+            return tt.handle == handle;
+        });
+        if (it != c.end()) {
+            c.erase(it);
+            std::make_heap(c.begin(), c.end());
+        }
+    }
+
+    double TimerQueue::do_timer() noexcept {
+        using namespace std::chrono;
+
+        double timeout = 10.0;
+
+        while (!empty()) {
+            const TimerTask& tt = top();
+
+            unsigned long long current_time = now_microseconds();
+
+            if (tt.trigger_time > current_time) {
+                timeout = (double)(tt.trigger_time - current_time) / 1000000.0;
+                break;
+            }
+
+            double dur = (current_time - tt.start_time) / 1000000.0;
+            if (tt.callback) tt.callback(dur);
+
+            if (tt.is_repeat) {
+                TimerTask ntt{std::move(top())};
+                pop();
+
+                ntt.start_time = current_time;
+                ntt.trigger_time = current_time + ntt.interval;
+                _add(std::move(ntt));
+            } else {
+                pop();
+            }
+        }
         return timeout;
     }
 } // namespace RolUI

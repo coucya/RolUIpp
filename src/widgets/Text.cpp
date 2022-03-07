@@ -10,6 +10,28 @@
 namespace RolUI {
     namespace widgets {
 
+        static unsigned _prev_byte_index(const char* str, unsigned index) noexcept {
+            utf8_int32_t _tmp_;
+            const char* end = utf8rcodepoint(str + index, &_tmp_);
+            unsigned idx = end <= str ? 0 : end - str;
+            return idx;
+        }
+        static unsigned _next_byte_index(const char* str, unsigned index) noexcept {
+            utf8_int32_t _tmp_;
+            const char* end = utf8codepoint(str + index, &_tmp_);
+            unsigned idx = end <= str ? 0 : end - str;
+            return idx;
+        }
+
+        static unsigned _byte_index_to_char_index(const char* str, unsigned index) noexcept {
+            unsigned idx = utf8nlen(str, index);
+            return idx;
+        }
+        static unsigned _char_index_to_byte_index(const char* str, unsigned index) noexcept {
+            unsigned idx = utf8utf8index(str, index);
+            return idx;
+        }
+
         TextWidget ::TextWidget(const std::string& str) noexcept {
             text = str;
             _update_size();
@@ -54,49 +76,59 @@ namespace RolUI {
             return font_size.get();
         }
         unsigned TextWidget::pos_to_index(Point pos) const noexcept {
+            const char* text_str = text->c_str();
+            int text_size = text->size();
+
             unsigned maybe_idx = float(pos.x) / float(size().width) * text->size();
-            Point maybe_pos = _index_to_pos(maybe_idx);
+            Point maybe_pos = _byte_index_to_pos(maybe_idx);
 
             if (maybe_idx > text->size())
                 maybe_idx = text->size();
 
-            for (unsigned i = maybe_idx; i > 0; i--) {
-                Point pos_t = _index_to_pos(i - 1);
+            while (maybe_idx > 0) {
+                unsigned t = _prev_byte_index(text_str, maybe_idx);
+                Point pos_t = _byte_index_to_pos(t);
                 if (std::abs(pos_t.x - pos.x) <= std::abs(maybe_pos.x - pos.x)) {
                     maybe_pos = pos_t;
-                    maybe_idx = i - 1;
+                    maybe_idx = t;
                 } else
                     break;
             }
 
-            for (unsigned i = maybe_idx + 1; i < text->size(); i++) {
-                Point pos_t = _index_to_pos(i);
+            while (maybe_idx < text_size) {
+                unsigned t = _next_byte_index(text_str, maybe_idx);
+                Point pos_t = _byte_index_to_pos(t);
                 if (std::abs(pos_t.x - pos.x) <= std::abs(maybe_pos.x - pos.x)) {
                     maybe_pos = pos_t;
-                    maybe_idx = i;
+                    maybe_idx = t;
                 } else
                     break;
             }
 
-            return utf8codepointindex(text->c_str(), maybe_idx);
+            return _byte_index_to_char_index(text->c_str(), maybe_idx);
         }
         Point TextWidget::index_to_pos(unsigned index) const noexcept {
-            return _index_to_pos(index);
+            return _char_index_to_pos(index);
         }
 
-        Point TextWidget::_index_to_pos(unsigned index) const noexcept {
+        Point TextWidget::_byte_index_to_pos(unsigned index) const noexcept {
             if (index == 0) return {0, 0};
 
-            unsigned utf8_idx = utf8utf8index(text->c_str(), index);
+            const char* text_str = text->c_str();
+
             IPainter* painter = Application::window()->painter();
-            Size s = painter->text_size(text->c_str(), utf8_idx);
+            Size s = painter->text_size(text_str, index);
             return {s.width, 0};
+        }
+        Point TextWidget::_char_index_to_pos(unsigned index) const noexcept {
+            if (index == 0) return {0, 0};
+
+            unsigned byte_idx = _char_index_to_byte_index(text->c_str(), index);
+            Point pos = _byte_index_to_pos(byte_idx);
+            return pos;
         }
 
         EditableTextWidget::EditableTextWidget() noexcept : TextWidget("") {
-            _blink_timer.on_timeout.connect([this](double timeout) {
-                this->_show_cursor = !this->_show_cursor;
-            });
             cursor_index.on_change.connect([this](unsigned int index) {
                 this->_update_cursor_pos();
             });
@@ -106,14 +138,21 @@ namespace RolUI {
         }
         EditableTextWidget::~EditableTextWidget() {}
 
-        bool EditableTextWidget::cursor_blinks() const noexcept {
-            return _blink_timer.is_action();
+        bool EditableTextWidget::is_blinking() const noexcept {
+            return _is_blinking;
         }
-        void EditableTextWidget::set_cursor_blinks(bool blink) noexcept {
-            if (blink && !cursor_blinks()) {
-                _blink_timer.start(0.5, false);
-            } else if (!blink)
-                _blink_timer.stop();
+        void EditableTextWidget::set_blink(bool blink) noexcept {
+            if (blink && !is_blinking()) {
+                _show_cursor = true;
+                _is_blinking = true;
+                _blink_timer_handle = Application::set_interval(0.5f, [this](double) {
+                    this->_show_cursor = !this->_show_cursor;
+                });
+            } else if (!blink && _is_blinking) {
+                _is_blinking = false;
+                Application::clear_interval(_blink_timer_handle);
+                _show_cursor = false;
+            }
         }
 
         void EditableTextWidget::delete_front() noexcept {
@@ -145,7 +184,7 @@ namespace RolUI {
                 int ts = font_size.get();
                 painter->set_stroke_width(2);
                 painter->set_stroke_color({0, 0, 0});
-                painter->draw_vline(_cursor_pos, ts);
+                painter->draw_vline(abs_pos() + _cursor_pos, ts);
             }
         }
 

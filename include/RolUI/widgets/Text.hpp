@@ -10,7 +10,6 @@
 #include "../events/MouseEvent.hpp"
 #include "../events/CharEvent.hpp"
 #include "../events/Widget_event.hpp"
-#include "../timer.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -36,7 +35,12 @@ namespace RolUI {
 
           private:
             void _update_size() noexcept;
-            Point _index_to_pos(unsigned index) const noexcept;
+
+            // unsigned _byte_index_to_char_index(unsigned index) const noexcept;
+            // unsigned _char_index_to_byte_index(unsigned index) const noexcept;
+
+            Point _byte_index_to_pos(unsigned index) const noexcept;
+            Point _char_index_to_pos(unsigned index) const noexcept;
 
             Size _size;
         };
@@ -47,8 +51,8 @@ namespace RolUI {
 
             EditableTextWidget() noexcept;
             ~EditableTextWidget() override;
-            bool cursor_blinks() const noexcept;
-            void set_cursor_blinks(bool blink) noexcept;
+            bool is_blinking() const noexcept;
+            void set_blink(bool blink) noexcept;
 
             void delete_front() noexcept;
             void delete_back() noexcept;
@@ -66,7 +70,8 @@ namespace RolUI {
 
           private:
             Point _cursor_pos;
-            Timer _blink_timer;
+            size_t _blink_timer_handle;
+            bool _is_blinking = false;
             bool _show_cursor = false;
         };
 

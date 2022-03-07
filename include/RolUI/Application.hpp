@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <functional>
 
 #include "./Point.hpp"
 
@@ -10,7 +11,7 @@ namespace RolUI {
     class Widget;
     class IEvent;
 
-    typedef void (*TimeoutCallback)(double, void*);
+    typedef std::function<void(double)> TimeoutCallback;
 
     class Application {
       public:
@@ -22,8 +23,10 @@ namespace RolUI {
         static void init(Window* w) noexcept;
         static Window* window() noexcept;
 
-        static size_t set_timeout(TimeoutCallback cb, double duration, void* arg = nullptr);
-        static void remove_timeout(size_t handle);
+        static size_t set_timeout(double duration, TimeoutCallback cb);
+        static size_t set_interval(double duration, TimeoutCallback cb);
+        static void clear_timeout(size_t handle);
+        static void clear_interval(size_t handle);
 
         static void set_content_widget(Widget* w) noexcept;
         static Widget* content_widget() noexcept;
