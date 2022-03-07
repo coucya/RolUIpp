@@ -121,6 +121,9 @@ static Image load_image(const char* filename) {
     stbi_image_free(image_data);
     return img;
 }
+static bool load_font(const char* name, const char* filename) {
+    return Application::window()->painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC");
+}
 
 static std::string Vec2i_to_string(const Vec2i& v) {
     return std::string("Vec2i(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")");
@@ -239,6 +242,8 @@ PYBIND11_MODULE(PyRolUI, m) {
     m.doc() = "RolUI Python bind.";
 
     bind_geometry(m);
+
+    m.def("load_font", load_font, py::arg("name"), py::arg("filename"));
 
     class_<Image>(m, "Image")
         .def(py::init())
