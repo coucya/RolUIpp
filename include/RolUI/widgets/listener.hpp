@@ -1,9 +1,7 @@
 #pragma once
 
-#include "../Color.hpp"
-#include "../sigslot/Signal.hpp"
-#include "../sigslot/Slot.hpp"
 #include "../Widget.hpp"
+#include "../sigslot/Signal.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -28,6 +26,28 @@ namespace RolUI {
 
           private:
             bool _is_press = false;
+        };
+
+        class FocusWidget : public SingleChildWidget {
+          public:
+            Signal<bool> on_focus;
+
+          public:
+            FocusWidget() noexcept;
+
+            void focus() noexcept;
+            void unfocus() noexcept;
+
+            bool handle_event(IEvent* e) noexcept override;
+        };
+
+        class CharInputWidget : public SingleChildWidget {
+          public:
+            Signal<uint32_t> on_input;
+
+            CharInputWidget() noexcept;
+
+            bool handle_event(IEvent* e) noexcept override;
         };
 
     } // namespace widgets

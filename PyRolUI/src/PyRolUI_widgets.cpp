@@ -21,8 +21,7 @@
 #include <RolUI/widgets/container.hpp>
 #include <RolUI/widgets/flow.hpp>
 #include <RolUI/widgets/layer.hpp>
-#include <RolUI/widgets/focus.hpp>
-#include <RolUI/widgets/PointerListener.hpp>
+#include <RolUI/widgets/listener.hpp>
 #include <RolUI/widgets/widgets.hpp>
 
 using namespace pybind11;
@@ -69,6 +68,7 @@ static void bind_signals(py::module_& m) {
 
     BIND_SINGAL(signals, Vec2i);
     BIND_SINGAL(signals, bool);
+    BIND_SINGAL(signals, uint32_t);
 }
 
 static void bind_container_widgets(py::module_& widgets) {
@@ -182,6 +182,28 @@ static void bind_flow_widgets(py::module_& widgets) {
         .def("remove_child", static_cast<void (RowGridWidget::*)(int)>(&RowGridWidget::remove_child));
 }
 
+static void bind_listener_widgets(py::module_& widgets) {
+    class_<PointerListenerWidget, SingleChildWidget>(widgets, "PointerListenerWidget")
+        .def(py::init())
+        .def_readonly("on_up", &PointerListenerWidget::on_up, return_value_policy::reference_internal)
+        .def_readonly("on_down", &PointerListenerWidget::on_down, return_value_policy::reference_internal)
+        .def_readonly("on_click", &PointerListenerWidget::on_click, return_value_policy::reference_internal)
+        .def_readonly("on_move", &PointerListenerWidget::on_move, return_value_policy::reference_internal)
+        .def_readonly("on_drag", &PointerListenerWidget::on_drag, return_value_policy::reference_internal)
+        .def_readonly("on_scroll", &PointerListenerWidget::on_scroll, return_value_policy::reference_internal)
+        .def_readonly("on_hover", &PointerListenerWidget::on_hover, return_value_policy::reference_internal);
+
+    class_<FocusWidget, SingleChildWidget>(widgets, "FocusWidget")
+        .def(py::init())
+        .def("focus", &FocusWidget::focus)
+        .def("unfocus", &FocusWidget::unfocus)
+        .def_readonly("on_focus", &FocusWidget::on_focus, return_value_policy::reference_internal);
+
+    class_<CharInputWidget, SingleChildWidget>(widgets, "CharInputWidget")
+        .def(py::init())
+        .def_readonly("on_input", &CharInputWidget::on_input, return_value_policy::reference_internal);
+}
+
 static void bind_ScrollWidget(py::module_& widgets) {
 
     BIND_PROPERTY(ScrollWidget, Point);
@@ -236,16 +258,6 @@ static void bind_misc_widgets(py::module_& widgets) {
              py::arg("index"), py::arg("str"))
         .def("insert_str", static_cast<void (EditableTextWidget::*)(unsigned, const char*, unsigned)>(&EditableTextWidget::insert_str),
              py::arg("index"), py::arg("str"), py::arg("len"));
-
-    class_<PointerListenerWidget, SingleChildWidget>(widgets, "PointerListenerWidget")
-        .def(py::init())
-        .def_readonly("on_up", &PointerListenerWidget::on_up, return_value_policy::reference_internal)
-        .def_readonly("on_down", &PointerListenerWidget::on_down, return_value_policy::reference_internal)
-        .def_readonly("on_click", &PointerListenerWidget::on_click, return_value_policy::reference_internal)
-        .def_readonly("on_move", &PointerListenerWidget::on_move, return_value_policy::reference_internal)
-        .def_readonly("on_drag", &PointerListenerWidget::on_drag, return_value_policy::reference_internal)
-        .def_readonly("on_scroll", &PointerListenerWidget::on_scroll, return_value_policy::reference_internal)
-        .def_readonly("on_hover", &PointerListenerWidget::on_hover, return_value_policy::reference_internal);
 }
 
 static void bind_widgets_widgets(py::module_& widgets) {
@@ -394,6 +406,7 @@ void bind_widgets(py::module_& m) {
     bind_container_widgets(widgets);
     bind_layer_Widgets(widgets);
     bind_flow_widgets(widgets);
+    bind_listener_widgets(widgets);
     bind_ScrollWidget(widgets);
     bind_misc_widgets(widgets);
     bind_widgets_widgets(widgets);

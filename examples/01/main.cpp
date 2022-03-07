@@ -26,7 +26,7 @@
 #include "RolUI/widgets/layer.hpp"
 #include "RolUI/widgets/flow.hpp"
 #include "RolUI/widgets/container.hpp"
-#include "RolUI/widgets/PointerListener.hpp"
+#include "RolUI/widgets/listener.hpp"
 
 using namespace RolUI;
 using namespace RolUI::widgets;

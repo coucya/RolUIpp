@@ -10,8 +10,7 @@ set(RolUI_widgets_source    ${RolUI_SOURCE_DIR}/widgets/widgets.cpp
                             ${RolUI_SOURCE_DIR}/widgets/container.cpp
                             ${RolUI_SOURCE_DIR}/widgets/flow.cpp
                             ${RolUI_SOURCE_DIR}/widgets/layer.cpp
-                            ${RolUI_SOURCE_DIR}/widgets/PointerListener.cpp
-                            ${RolUI_SOURCE_DIR}/widgets/focus.cpp
+                            ${RolUI_SOURCE_DIR}/widgets/listener.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Scroll.cpp
                             ${RolUI_SOURCE_DIR}/widgets/Image.cpp)
 

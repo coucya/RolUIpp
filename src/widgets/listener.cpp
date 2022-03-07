@@ -1,7 +1,11 @@
 
-#include "RolUI/widgets/PointerListener.hpp"
-#include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/IPainter.hpp"
+#include "RolUI/Application.hpp"
+#include "RolUI/widgets/listener.hpp"
+
+#include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/events/CharEvent.hpp"
+#include "RolUI/events/Widget_event.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -50,6 +54,37 @@ namespace RolUI {
             // painter->set_stroke_color({255, 0, 0});
             // painter->set_stroke_width(2);
             // painter->draw_rect(abs_rect());
+        }
+        FocusWidget::FocusWidget() noexcept {}
+
+        void FocusWidget::focus() noexcept {
+            Application::set_focus_widget(this);
+        }
+
+        void FocusWidget::unfocus() noexcept {
+            if (Application::focus_widget() == static_cast<Widget*>(this))
+                Application::set_focus_widget(nullptr);
+        }
+
+        bool FocusWidget::handle_event(IEvent* e) noexcept {
+            if (e->event_type() == FocusChangeEvent::type()) {
+                FocusChangeEvent* event = static_cast<FocusChangeEvent*>(e);
+                on_focus.emit(event->current_value());
+                return true;
+            }
+            return false;
+        }
+
+        CharInputWidget::CharInputWidget() noexcept {}
+
+        bool CharInputWidget::handle_event(IEvent* e) noexcept {
+            if (e->event_type() == CharEvent::type()) {
+                CharEvent* ce = static_cast<CharEvent*>(e);
+                uint32_t cp = ce->codepoint();
+                on_input.emit(cp);
+                return true;
+            }
+            return false;
         }
 
     } // namespace widgets
