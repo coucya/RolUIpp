@@ -22,6 +22,7 @@ namespace RolUI {
             Property<TextWidget, std::string> text{this};
 
           public:
+            TextWidget() noexcept;
             TextWidget(const std::string& text) noexcept;
             ~TextWidget() override;
 
@@ -35,9 +36,6 @@ namespace RolUI {
 
           private:
             void _update_size() noexcept;
-
-            // unsigned _byte_index_to_char_index(unsigned index) const noexcept;
-            // unsigned _char_index_to_byte_index(unsigned index) const noexcept;
 
             Point _byte_index_to_pos(unsigned index) const noexcept;
             Point _char_index_to_pos(unsigned index) const noexcept;

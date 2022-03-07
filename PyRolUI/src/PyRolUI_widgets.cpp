@@ -209,12 +209,33 @@ static void bind_ScrollWidget(py::module_& widgets) {
 
 static void bind_misc_widgets(py::module_& widgets) {
     BIND_PROPERTY(TextWidget, unsigned);
+    BIND_PROPERTY(TextWidget, Color);
+    BIND_PROPERTY(TextWidget, std::string);
     class_<TextWidget, Widget>(widgets, "TextWidget")
+        .def(py::init())
         .def(py::init<std::string>())
         .def_readonly("font_size", &TextWidget::font_size, return_value_policy::reference_internal)
+        .def_readonly("font_color", &TextWidget::font_color, return_value_policy::reference_internal)
+        .def_readonly("font_name", &TextWidget::font_name, return_value_policy::reference_internal)
+        .def_readonly("text", &TextWidget::text, return_value_policy::reference_internal)
         .def("pos_to_index", &TextWidget::pos_to_index)
         .def("index_to_pos", &TextWidget::index_to_pos)
         .def("line_height", &TextWidget::line_height);
+
+    BIND_PROPERTY(EditableTextWidget, unsigned);
+    class_<EditableTextWidget, TextWidget>(widgets, "EditableTextWidget")
+        .def(py::init())
+        .def_readonly("cursor_index", &EditableTextWidget::cursor_index, return_value_policy::reference_internal)
+        .def("is_blinking", &EditableTextWidget::is_blinking)
+        .def("set_blink", &EditableTextWidget::set_blink)
+        .def("delete_front", &EditableTextWidget::delete_front)
+        .def("delete_back", &EditableTextWidget::delete_back)
+        .def("insert_char", &EditableTextWidget::insert_char, py::arg("index"), py::arg("codepoint"))
+        .def("insert_str",
+             static_cast<void (EditableTextWidget::*)(unsigned, const char*)>(&EditableTextWidget::insert_str),
+             py::arg("index"), py::arg("str"))
+        .def("insert_str", static_cast<void (EditableTextWidget::*)(unsigned, const char*, unsigned)>(&EditableTextWidget::insert_str),
+             py::arg("index"), py::arg("str"), py::arg("len"));
 
     class_<PointerListenerWidget, SingleChildWidget>(widgets, "PointerListenerWidget")
         .def(py::init())

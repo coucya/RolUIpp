@@ -32,13 +32,15 @@ namespace RolUI {
             return idx;
         }
 
-        TextWidget ::TextWidget(const std::string& str) noexcept {
-            text = str;
-            _update_size();
+        TextWidget ::TextWidget() noexcept {
             font_size.on_change.connect([this](const unsigned&) { this->_update_size(); });
             font_color.on_change.connect([this](const Color&) { this->_update_size(); });
             font_name.on_change.connect([this](const std::string&) { this->_update_size(); });
             text.on_change.connect([this](const std::string&) { this->_update_size(); });
+        }
+        TextWidget ::TextWidget(const std::string& str) noexcept
+            : TextWidget() {
+            text(str);
         }
 
         TextWidget::~TextWidget() {}
@@ -128,7 +130,7 @@ namespace RolUI {
             return pos;
         }
 
-        EditableTextWidget::EditableTextWidget() noexcept : TextWidget("") {
+        EditableTextWidget::EditableTextWidget() noexcept {
             cursor_index.on_change.connect([this](unsigned int index) {
                 this->_update_cursor_pos();
             });
