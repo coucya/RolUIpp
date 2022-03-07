@@ -5,23 +5,24 @@
 #include "../Image.hpp"
 
 #include "../Widget.hpp"
+#include "./flow.hpp"
+#include "./layer.hpp"
+#include "./container.hpp"
 #include "./Text.hpp"
 #include "./Image.hpp"
 #include "./Scroll.hpp"
-#include "./container.hpp"
-#include "./flow.hpp"
-#include "./layer.hpp"
+#include "./PointerListener.hpp"
 
 namespace RolUI {
     namespace widgets {
 
-        Widget* text(const char* str, unsigned size = 16, Color color = {0, 0, 0});
+        TextWidget* text(const char* str, unsigned size = 16, Color color = {0, 0, 0});
 
         Widget* label(const char* str, unsigned size = 16,
                       Color color = {0, 0, 0}, Color background_color = {255, 255, 255},
                       unsigned round = 0);
 
-        Widget* image(Image image);
+        ImageWidget* image(Image image);
 
         Widget* button(const char* str,
                        std::function<void()> callback,
@@ -35,10 +36,28 @@ namespace RolUI {
         Widget* button(Widget* normal, Widget* hover, Widget* press,
                        std::function<void()> callback);
 
-        Widget* sized(int width, int height, Widget* child);
-        Widget* sized(float width, float height, Widget* child);
-        Widget* sized(int width, float height, Widget* child);
-        Widget* sized(float width, int height, Widget* child);
+        BoxWidget* box(unsigned round, unsigned border_width, Color border_color, Color background_color, Widget* child);
+
+        AlignWidget* align(float x, float y, Widget* child);
+
+        SizedBoxWidget* sized(int width, int height, Widget* child);
+        SizedBoxWidget* sized(float width, float height, Widget* child);
+        SizedBoxWidget* sized(int width, float height, Widget* child);
+        SizedBoxWidget* sized(float width, int height, Widget* child);
+
+        MarginWidget* margin(unsigned margin, Widget* child);
+        MarginWidget* margin(unsigned x, unsigned y, Widget* child);
+        MarginWidget* margin(unsigned top, unsigned right, unsigned bottom, unsigned left, Widget* child);
+
+        StackWidget* stack();
+        DeckWidget* deck();
+
+        RowWidget* row();
+        ColumnWidget* column();
+        RowGridWidget* row_grid();
+        ColumnGridWidget* column_grid();
+
+        PointerListenerWidget* pointer_listener(Widget* child);
 
         template <typename WT, typename... Args>
         WT* mk_widget(Args&&... args) { return new WT(args...); }

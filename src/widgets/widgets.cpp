@@ -12,12 +12,12 @@
 namespace RolUI {
     namespace widgets {
 
-        Widget* text(const char* str, unsigned size, Color color) {
-            return (new TextWidget(str))->font_size(size)->font_color(color);
+        TextWidget* text(const char* str, unsigned size, Color color) {
+            return mk_widget<TextWidget>(str)->font_size(size)->font_color(color);
         }
 
-        Widget* image(Image image) {
-            return (new ImageWidget(image));
+        ImageWidget* image(Image image) {
+            return mk_widget<ImageWidget>(image);
         }
 
         Widget* label(const char* str, unsigned size, Color color,
@@ -63,29 +63,59 @@ namespace RolUI {
             return plw;
         }
 
-        Widget* sized(int width, int height, Widget* child) {
-            return (new SizedBoxWidget())
+        BoxWidget* box(unsigned round, unsigned border_width, Color border_color, Color background_color, Widget* child) {
+            return (BoxWidget*)mk_widget<BoxWidget>()->round(round)->border_width(border_width)->border_color(border_color)->background_color(background_color)->set_child(child);
+        }
+
+        AlignWidget* align(float x, float y, Widget* child) {
+            return (AlignWidget*)mk_widget<AlignWidget>()->align_x(x)->align_y(y)->set_child(child);
+        }
+
+        SizedBoxWidget* sized(int width, int height, Widget* child) {
+            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
                 ->width(SizeUnit::pixel(width))
                 ->height(SizeUnit::pixel(height))
                 ->set_child(child);
         }
-        Widget* sized(float width, float height, Widget* child) {
-            return (new SizedBoxWidget())
+        SizedBoxWidget* sized(float width, float height, Widget* child) {
+            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
                 ->width(SizeUnit::percentage(width))
                 ->height(SizeUnit::percentage(height))
                 ->set_child(child);
         }
-        Widget* sized(int width, float height, Widget* child) {
-            return (new SizedBoxWidget())
+        SizedBoxWidget* sized(int width, float height, Widget* child) {
+            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
                 ->width(SizeUnit::pixel(width))
                 ->height(SizeUnit::percentage(height))
                 ->set_child(child);
         }
-        Widget* sized(float width, int height, Widget* child) {
-            return (new SizedBoxWidget())
+        SizedBoxWidget* sized(float width, int height, Widget* child) {
+            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
                 ->width(SizeUnit::percentage(width))
                 ->height(SizeUnit::pixel(height))
                 ->set_child(child);
+        }
+
+        MarginWidget* margin(unsigned margin, Widget* child) {
+            return (MarginWidget*)mk_widget<MarginWidget>(margin)->set_child(child);
+        }
+        MarginWidget* margin(unsigned x, unsigned y, Widget* child) {
+            return (MarginWidget*)mk_widget<MarginWidget>(x, y)->set_child(child);
+        }
+        MarginWidget* margin(unsigned top, unsigned right, unsigned bottom, unsigned left, Widget* child) {
+            return (MarginWidget*)mk_widget<MarginWidget>(top, bottom, left, right)->set_child(child);
+        }
+
+        StackWidget* stack() { return mk_widget<StackWidget>(); }
+        DeckWidget* deck() { return mk_widget<DeckWidget>(); }
+
+        RowWidget* row() { return mk_widget<RowWidget>(); }
+        ColumnWidget* column() { return mk_widget<ColumnWidget>(); }
+        RowGridWidget* row_grid() { return mk_widget<RowGridWidget>(); }
+        ColumnGridWidget* column_grid() { return mk_widget<ColumnGridWidget>(); }
+
+        PointerListenerWidget* pointer_listener(Widget* child) {
+            return (PointerListenerWidget*)mk_widget<PointerListenerWidget>()->set_child(child);
         }
 
     } // namespace widgets
