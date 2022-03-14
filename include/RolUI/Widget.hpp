@@ -24,9 +24,6 @@ namespace RolUI {
     class SingleChildWidget;
     class MultiChildWidget;
 
-    typedef bool (*EventCallbackFunc)(IEvent*);
-    typedef std::function<bool(IEvent*)> EventCallback;
-
     bool send_event(Widget* w, IEvent* e);
 
     void set_pos(Widget* w, Point pos);
@@ -74,10 +71,10 @@ namespace RolUI {
         friend class MultiChildWidget;
 
         friend void set_pos(Widget*, Point);
+        friend bool send_event(Widget*, IEvent*);
 
       public:
         Widget() noexcept;
-        // Widget(Widget* parent) noexcept;
 
         Widget(const Widget&) = delete;
         Widget(Widget&&) = delete;
@@ -94,11 +91,17 @@ namespace RolUI {
         Point abs_pos() const noexcept;
         Rect abs_rect() const noexcept;
 
+        bool mounted() const noexcept;
+        unsigned depth() const noexcept;
         Widget* parent() const noexcept;
 
         Size layout(Constraint constraint) noexcept;
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept;
+
+        virtual void visit_children(std::function<void(Widget*)> f) noexcept;
+
+        virtual bool hit_test(Point pos) const noexcept;
 
         virtual bool handle_event(IEvent* e) noexcept;
 
@@ -108,9 +111,15 @@ namespace RolUI {
 
         virtual void update_pos() noexcept;
 
-        virtual bool hit_test(Point pos) const noexcept;
+      private:
+        void _mount(Widget* parent) noexcept;
+        void _unmount() noexcept;
+        void _attach() noexcept;
+        void _detach() noexcept;
 
       private:
+        bool _mounted = false;
+        unsigned _depth = 0;
         Widget* _parent = nullptr;
 
         Point _pos;
@@ -127,8 +136,11 @@ namespace RolUI {
 
         Widget* child() const noexcept;
         SingleChildWidget* set_child(Widget* child) noexcept;
+        void remove_child() noexcept;
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept override;
+
+        virtual void visit_children(std::function<void(Widget*)> f) noexcept override;
 
         virtual void draw(IPainter* painter) noexcept override;
         virtual Size perform_layout(Constraint constraint) noexcept override;
@@ -168,8 +180,9 @@ namespace RolUI {
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept override;
 
-        virtual void draw(IPainter* painter) noexcept override;
+        virtual void visit_children(std::function<void(Widget*)> f) noexcept override;
 
+        virtual void draw(IPainter* painter) noexcept override;
         virtual Size perform_layout(Constraint constraint) noexcept override;
         virtual void update_pos() noexcept override;
     };

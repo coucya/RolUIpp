@@ -53,7 +53,11 @@ namespace RolUI {
 
     Window* Application::window() noexcept { return _window; }
 
-    void Application::set_content_widget(Widget* w) noexcept { _content_widget = w; }
+    void Application::set_content_widget(Widget* w) noexcept {
+        _content_widget = w;
+        if (_content_widget)
+            _content_widget->_attach();
+    }
     Widget* Application::content_widget() noexcept { return _content_widget; }
 
     bool Application::has_focus_widget(Widget* w) noexcept { return _focus_widget != nullptr; }

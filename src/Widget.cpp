@@ -20,7 +20,8 @@
 namespace RolUI {
 
     bool send_event(Widget* w, IEvent* e) {
-        if (!w) return false;
+        if (!w || !e) return false;
+        if (!w->mounted()) return false;
         e->_target = w;
         return w->handle_event(e);
     }
@@ -42,6 +43,8 @@ namespace RolUI {
     Point Widget::abs_pos() const noexcept { return _abs_pos; }
     Rect Widget::abs_rect() const noexcept { return {abs_pos(), size()}; }
 
+    bool Widget::mounted() const noexcept { return _mounted; }
+    unsigned Widget::depth() const noexcept { return _depth; }
     Widget* Widget::parent() const noexcept { return _parent; }
 
     Size Widget::layout(Constraint constraint) noexcept {
@@ -51,18 +54,50 @@ namespace RolUI {
 
     Widget* Widget::get_child_by_pos(Point pos) const noexcept { return nullptr; }
 
+    void Widget::visit_children(std::function<void(Widget*)> f) noexcept {}
+
+    bool Widget::hit_test(Point pos) const noexcept {
+        return abs_rect().contain(pos);
+    }
+
     bool Widget::handle_event(IEvent* e) noexcept { return false; }
 
     void Widget::draw(IPainter* painter) noexcept {}
 
     Size Widget::perform_layout(Constraint constraint) noexcept { return {0, 0}; }
 
-    bool Widget::hit_test(Point pos) const noexcept {
-        return abs_rect().contain(pos);
-    }
-
     void Widget::update_pos() noexcept {
         this->_abs_pos = parent() ? parent()->abs_pos() + pos() : pos();
+    }
+
+    void Widget::_mount(Widget* parent) noexcept {
+        if (_parent || !parent) return;
+        _parent = parent;
+        _mounted = parent->_mounted;
+        if (parent->_mounted)
+            _attach();
+    }
+    void Widget::_unmount() noexcept {
+        if (!_parent) return;
+        if (_mounted)
+            _detach();
+        _parent = nullptr;
+        _mounted = false;
+    }
+
+    void Widget::_attach() noexcept {
+        _mounted = true;
+        _depth = _parent ? _parent->_depth + 1 : 0;
+        visit_children([](Widget* child) {
+            child->_attach();
+        });
+    }
+    void Widget::_detach() noexcept {
+        _mounted = false;
+        _depth = 0;
+        visit_children([](Widget* child) {
+            child->_detach();
+        });
     }
 
     SingleChildWidget::SingleChildWidget() noexcept {}
@@ -70,11 +105,16 @@ namespace RolUI {
     Widget* SingleChildWidget::child() const noexcept { return _child; }
     SingleChildWidget* SingleChildWidget::set_child(Widget* child) noexcept {
         if (_child)
-            _child->_parent = nullptr;
+            _child->_unmount();
         _child = child;
         if (_child)
-            _child->_parent = this;
+            _child->_mount(this);
         return this;
+    }
+    void SingleChildWidget::remove_child() noexcept {
+        if (_child)
+            _child->_unmount();
+        _child = nullptr;
     }
 
     Widget* SingleChildWidget::get_child_by_pos(Point pos) const noexcept {
@@ -84,6 +124,9 @@ namespace RolUI {
             return _child;
         else
             return nullptr;
+    }
+    void SingleChildWidget::visit_children(std::function<void(Widget*)> f) noexcept {
+        if (_child) f(_child);
     }
 
     void SingleChildWidget::draw(IPainter* painter) noexcept {
@@ -118,28 +161,32 @@ namespace RolUI {
     }
     MultiChildWidget* MultiChildWidget::add_child(Widget* child) noexcept {
         if (!child) return this;
-        child->_parent = this;
         _children.push_back(child);
+        child->_mount(this);
         return this;
     }
     MultiChildWidget* MultiChildWidget::set_child(int index, Widget* child) noexcept {
-        if (!child) return this;
-        if (index < 0 || index > _children.size()) return this;
-        if (index == _children.size())
-            return add_child(child);
+        if (!child || index < 0 || index > _children.size()) return this;
 
-        _children[index]->_parent = nullptr;
-
-        child->_parent = this;
-        _children[index] = child;
+        if (index == _children.size()) {
+            add_child(child);
+        } else {
+            _children[index]->_unmount();
+            _children[index] = child;
+            _children[index]->_mount(this);
+        }
         return this;
     }
 
     void MultiChildWidget::remove_child(Widget* child) noexcept {
-        _children.erase(std::find(_children.begin(), _children.end(), child));
+        auto it = std::find(_children.begin(), _children.end(), child);
+        if (it != _children.end())
+            (*it)->_unmount();
+        _children.erase(it);
     }
     void MultiChildWidget::remove_child(int index) noexcept {
         if (index < 0 || index >= _children.size()) return;
+        _children[index]->_unmount();
         _children.erase(_children.begin() + index);
     }
 
@@ -148,6 +195,9 @@ namespace RolUI {
             if ((*it)->hit_test(pos))
                 return *it;
         return nullptr;
+    }
+    void MultiChildWidget::visit_children(std::function<void(Widget*)> f) noexcept {
+        for (Widget* w : _children) f(w);
     }
 
     void MultiChildWidget::draw(IPainter* painter) noexcept {

@@ -73,7 +73,6 @@ namespace RolUI {
                 current_scissor
                     .intersected(ar)
                     .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
-            // painter->set_base_pos(ar.pos() + sw->pos());
             sw->draw(painter);
             painter->scissor(current_scissor);
         }
