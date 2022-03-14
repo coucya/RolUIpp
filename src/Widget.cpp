@@ -93,11 +93,11 @@ namespace RolUI {
         });
     }
     void Widget::_detach() noexcept {
-        _mounted = false;
-        _depth = 0;
         visit_children([](Widget* child) {
             child->_detach();
         });
+        _mounted = false;
+        _depth = 0;
     }
 
     SingleChildWidget::SingleChildWidget() noexcept {}
