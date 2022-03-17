@@ -57,11 +57,11 @@ namespace RolUI {
         const MouseDispatcher* _dispatcher;
     };
 
-    class MouseScrollEvent : public IEvent {
+    class MouseWheelEvent : public IEvent {
         friend class MouseDispatcher;
 
       public:
-        MouseScrollEvent(Widget* target, Vec2i offset) noexcept;
+        MouseWheelEvent(Widget* target, Vec2i offset) noexcept;
 
         Vec2i offset() const noexcept;
 
@@ -74,7 +74,7 @@ namespace RolUI {
     RolUI_decl_event_type(MouseReleaseEvent);
     RolUI_decl_event_type(MouseEnterEvent);
     RolUI_decl_event_type(MouseLeaveEvent);
-    RolUI_decl_event_type(MouseScrollEvent);
+    RolUI_decl_event_type(MouseWheelEvent);
 
     class MouseDispatcher {
       public:
@@ -85,7 +85,7 @@ namespace RolUI {
 
         MouseKeyMode button(MouseKey key) const noexcept;
 
-        Vec2i scroll_offset() const noexcept { return _scroll; }
+        Vec2i wheel() const noexcept { return _scroll; }
 
         bool is_pos_change() const noexcept { return _pos_is_change; }
         bool is_move() const noexcept { return _pos_is_change; }
@@ -100,7 +100,7 @@ namespace RolUI {
         void set_last_pos(Point pos) noexcept;
         void set_last_pos(int32_t x, int32_t y) noexcept;
 
-        void set_scroll_offset(Vec2i scroll) noexcept;
+        void set_wheel(Vec2i scroll) noexcept;
 
         void set_key_mode(MouseKey key, MouseKeyMode mode) noexcept;
 

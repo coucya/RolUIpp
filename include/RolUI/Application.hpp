@@ -41,9 +41,6 @@ namespace RolUI {
         static void clear_timeout(size_t handle);
         static void clear_interval(size_t handle);
 
-        // static void set_content_widget(Widget* w) noexcept;
-        // static Widget* content_widget() noexcept;
-
         static bool has_focus_widget(Widget* w) noexcept;
         static void set_focus_widget(Widget* w) noexcept;
         static Widget* focus_widget() noexcept;

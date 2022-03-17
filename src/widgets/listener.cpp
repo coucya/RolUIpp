@@ -101,8 +101,8 @@ namespace RolUI {
                     this->on_drag.emit(MouseKey::key8, me->offset());
 
                 return true;
-            } else if (et == MouseScrollEvent_type()) {
-                MouseScrollEvent* me = (MouseScrollEvent*)e;
+            } else if (et == MouseWheelEvent_type()) {
+                MouseWheelEvent* me = (MouseWheelEvent*)e;
                 this->on_wheel.emit(me->offset());
             }
             return false;

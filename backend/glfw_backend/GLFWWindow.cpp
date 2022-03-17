@@ -70,7 +70,7 @@ namespace RolUIBackend {
             _char_dispatcher.push_char(c);
         };
         on_scroll = [this](double x, double y) {
-            this->_mouse_dispatcher.set_scroll_offset({int(x), int(y)});
+            this->_mouse_dispatcher.set_wheel({int(x), int(y)});
         };
 
         _mouse_dispatcher.clear_change();
