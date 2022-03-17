@@ -2,6 +2,7 @@
 
 #include "../Widget.hpp"
 #include "../sigslot/Signal.hpp"
+#include "../events/MouseEvent.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -13,19 +14,38 @@ namespace RolUI {
             Signal<Point> on_click;
             Signal<Vec2i> on_move;
             Signal<Vec2i> on_drag;
-            Signal<Vec2i> on_scroll;
             Signal<bool> on_hover;
 
           public:
             PointerListenerWidget() noexcept;
             ~PointerListenerWidget() override;
 
-            virtual bool handle_event(IEvent* e) noexcept override;
-
+            bool handle_event(IEvent* e) noexcept override;
             void draw(IPainter* painter) noexcept override;
 
           private:
             bool _is_press = false;
+        };
+
+        class MouseAreaWidget : public SingleChildWidget {
+          public:
+            Signal<MouseKey, Point> on_up;
+            Signal<MouseKey, Point> on_down;
+            Signal<MouseKey, Point> on_click;
+            Signal<MouseKey, Vec2i> on_drag;
+            Signal<Vec2i> on_move;
+            Signal<Vec2i> on_wheel;
+            Signal<bool> on_hover;
+
+          public:
+            MouseAreaWidget() noexcept;
+            ~MouseAreaWidget() override;
+
+            bool handle_event(IEvent* e) noexcept override;
+            void draw(IPainter* painter) noexcept override;
+
+          private:
+            bool _is_press[MOUSE_KEY_COUNT] = {false};
         };
 
         class FocusWidget : public SingleChildWidget {

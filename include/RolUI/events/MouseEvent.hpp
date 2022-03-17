@@ -20,7 +20,7 @@ namespace RolUI {
 
     enum class MouseKey : char {
         unkown = -1,
-        key1 = 1,
+        key1 = 0,
         key2,
         key3,
         key4,
@@ -124,8 +124,8 @@ namespace RolUI {
         Point _last_pos;
         Point _current_pos;
 
-        bool _key_is_change[MOUSE_KEY_COUNT + 1];
-        MouseKeyMode _key_mode[MOUSE_KEY_COUNT + 1];
+        bool _key_is_change[MOUSE_KEY_COUNT];
+        MouseKeyMode _key_mode[MOUSE_KEY_COUNT];
 
         bool _is_scrolling = false;
         Vec2i _scroll;

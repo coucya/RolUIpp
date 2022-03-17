@@ -17,34 +17,30 @@ namespace RolUI {
         bool PointerListenerWidget::handle_event(IEvent* e) noexcept {
             if (!e) return false;
 
-            MouseEvent* mouseEvent = (MouseEvent*)e;
+            MouseEvent* me = (MouseEvent*)e;
             const EventType* et = e->event_type();
 
             if (et == MouseEnterEvent_type()) {
                 this->on_hover.emit(true);
                 return true;
             } else if (et == MouseLeaveEvent_type()) {
-                _is_press = false;
                 this->on_hover.emit(false);
                 return true;
-            } else if (et == MousePressEvent_type()) {
+            } else if (et == MousePressEvent_type() && me->action() == MouseKey::left) {
                 _is_press = true;
-                this->on_down.emit(mouseEvent->pos());
+                this->on_down.emit(me->pos());
                 return true;
-            } else if (et == MouseReleaseEvent_type()) {
-                this->on_up.emit(mouseEvent->pos());
+            } else if (et == MouseReleaseEvent_type() && me->action() == MouseKey::left) {
+                this->on_up.emit(me->pos());
                 if (_is_press)
-                    this->on_click.emit(mouseEvent->pos());
-                _is_press = false;
+                    this->on_click.emit(me->pos());
                 return true;
             } else if (et == MousePosEvent_type()) {
                 _is_press = false;
-                this->on_move.emit(mouseEvent->offset());
-                if (mouseEvent->button(MouseKey::left) == MouseKeyMode::press)
-                    this->on_drag(mouseEvent->offset());
+                this->on_move.emit(me->offset());
+                if (me->button(MouseKey::left) == MouseKeyMode::press)
+                    this->on_drag.emit(me->offset());
                 return true;
-            } else if (et == MouseScrollEvent_type()) {
-                this->on_scroll.emit(((MouseScrollEvent*)e)->offset());
             }
             return false;
         }
@@ -55,6 +51,66 @@ namespace RolUI {
             // painter->set_stroke_width(2);
             // painter->draw_rect(abs_rect());
         }
+
+        MouseAreaWidget::MouseAreaWidget() noexcept {}
+        MouseAreaWidget::~MouseAreaWidget() {}
+
+        bool MouseAreaWidget::handle_event(IEvent* e) noexcept {
+            if (!e) return false;
+
+            MouseEvent* me = (MouseEvent*)e;
+            const EventType* et = e->event_type();
+
+            if (et == MouseEnterEvent_type()) {
+                this->on_hover.emit(true);
+                return true;
+            } else if (et == MouseLeaveEvent_type()) {
+                this->on_hover.emit(false);
+                return true;
+            } else if (et == MousePressEvent_type()) {
+                _is_press[(int)me->action()] = true;
+                this->on_down.emit(me->action(), me->pos());
+                return true;
+            } else if (et == MouseReleaseEvent_type()) {
+                this->on_up.emit(me->action(), me->pos());
+                if (_is_press[(int)me->action()])
+                    this->on_click.emit(me->action(), me->pos());
+                _is_press[(int)me->action()] = false;
+                return true;
+            } else if (et == MousePosEvent_type()) {
+                for (int i = 0; i < sizeof(_is_press) / sizeof(bool); i++)
+                    _is_press[i] = false;
+
+                this->on_move.emit(me->offset());
+
+                if (me->button(MouseKey::left) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::left, me->offset());
+                if (me->button(MouseKey::middle) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::middle, me->offset());
+                if (me->button(MouseKey::right) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::right, me->offset());
+                if (me->button(MouseKey::key4) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::key4, me->offset());
+                if (me->button(MouseKey::key5) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::key5, me->offset());
+                if (me->button(MouseKey::key6) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::key6, me->offset());
+                if (me->button(MouseKey::key7) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::key7, me->offset());
+                if (me->button(MouseKey::key8) == MouseKeyMode::press)
+                    this->on_drag.emit(MouseKey::key8, me->offset());
+
+                return true;
+            } else if (et == MouseScrollEvent_type()) {
+                MouseScrollEvent* me = (MouseScrollEvent*)e;
+                this->on_wheel.emit(me->offset());
+            }
+            return false;
+        }
+        void MouseAreaWidget::draw(IPainter* painter) noexcept {
+            SingleChildWidget::draw(painter);
+        }
+
         FocusWidget::FocusWidget() noexcept {}
 
         void FocusWidget::focus() noexcept {

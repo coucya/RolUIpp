@@ -147,11 +147,12 @@ Widget* build_ui() {
         set_offset({0, 0}, false);
         set_scale(1.0f);
     };
-    PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
-    plw->on_drag.connect([=, set_offset = set_offset](Vec2i offset) {
-        set_offset(offset, true);
+    MouseAreaWidget* plw = mk_widget<MouseAreaWidget>();
+    plw->on_drag.connect([=, set_offset = set_offset](MouseKey mk, Vec2i offset) {
+        if (mk == MouseKey::left)
+            set_offset(offset, true);
     });
-    plw->on_scroll.connect([=, set_scale = set_scale](Vec2i offset) {
+    plw->on_wheel.connect([=, set_scale = set_scale](Vec2i offset) {
         set_scale(image_scale = image_scale + double(offset.y) * 0.1);
     });
     return mk_widget<BoxWidget>()
