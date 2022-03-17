@@ -24,11 +24,8 @@ namespace py = pybind11;
 #define _CONCAT(l, r) l##r
 #define CONCAT(l, r) _CONCAT(l, r)
 
-#define ARG_COUNT(...) _INTERNAL_ARG_COUNT( \
-    0, ##__VA_ARGS__,                       \
-    8, 7, 6, 5, 4, 3, 2, 1, 0)
-#define _INTERNAL_ARG_COUNT( \
-    _0, _1, _2, _3, _4, _5, _6, _7, _8, N, ...) N
+#define ARG_COUNT(...) _INTERNAL_ARG_COUNT(0, ##__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define _INTERNAL_ARG_COUNT(_0, _1, _2, _3, _4, _5, _6, _7, _8, N, ...) N
 
 #define MYPYBIND11_OVERRIDE_PURE_0(ret_type, ct, fn) \
     virtual ret_type fn() override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, ); }
@@ -322,10 +319,14 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("remove_child", [](MultiChildWidget& self, Widget* child) { self.remove_child(child); })
         .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); });
 
+    class_<RootWidget, MultiChildWidget>(m, "RootWidget")
+        .def("content_widget", &RootWidget::content_widget, return_value_policy::reference)
+        .def("set_content_widget", &RootWidget::set_content_widget);
+
     class_<Application>(m, "Application")
         .def_static("init", Application::init)
         .def_static("window", Application::window, return_value_policy::reference)
-        .def_static("root_widget", RootWidget::root_widget, return_value_policy::reference)
+        .def_static("root_widget", Application::root_widget, return_value_policy::reference)
         .def_static("has_focus_widget", Application::has_focus_widget)
         .def_static("set_focus_widget", Application::set_focus_widget)
         .def_static("focus_widget", Application::focus_widget, return_value_policy::reference)

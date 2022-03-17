@@ -76,8 +76,8 @@ namespace RolUI {
 
         class AlignWidget : public SingleChildWidget {
           public:
-            Property<AlignWidget, float> align_x{this, 0.5f};
-            Property<AlignWidget, float> align_y{this, 0.5f};
+            Property<AlignWidget, float> align_x{this, 0.0f};
+            Property<AlignWidget, float> align_y{this, 0.0f};
 
           public:
             AlignWidget() noexcept;

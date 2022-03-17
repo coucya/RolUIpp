@@ -292,7 +292,7 @@ static void bind_widgets_widgets(py::module_& widgets) {
         "align", [](Widget* c, float x, float y) {
             return widgets::align(x, y, c);
         },
-        py::kw_only(), py::arg("child"), py::arg("x") = 0.5f, py::arg("y") = 0.5f, return_value_policy::reference);
+        py::kw_only(), py::arg("child"), py::arg("x") = 0.0f, py::arg("y") = 0.0f, return_value_policy::reference);
 
     auto _sized = [](Widget* c, py::object w, py::object h) {
         SizeUnit sw, sh;

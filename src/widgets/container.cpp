@@ -51,8 +51,8 @@ namespace RolUI {
             Size self_size = constraint.max();
 
             layout_child(constraint, [&](Size s) {
-                int cx = float(self_size.width - s.width) * align_x.get();
-                int cy = float(self_size.height - s.height) * align_y.get();
+                int cx = float(self_size.width - s.width) * (align_x() + 1.0f) / 2.0f;
+                int cy = float(self_size.height - s.height) * (align_y() + 1.0f) / 2.0f;
                 return Point{cx, cy};
             });
 
