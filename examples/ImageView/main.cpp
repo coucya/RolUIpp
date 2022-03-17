@@ -111,8 +111,8 @@ build_image_view() {
     PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
     ScrollWidget* sw = mk_widget<ScrollWidget>();
     SizedBoxWidget* sbw = mk_widget<SizedBoxWidget>()
-                              ->width(SizeUnit::pixel(800))
-                              ->height(SizeUnit::pixel(600));
+                              ->width(SizeUnit(800))
+                              ->height(SizeUnit(600));
     ImageWidget* image_w = mk_widget<ImageWidget>()->fit(ImageWidget::contain);
     plw->set_child(sw->set_child(sbw->set_child(image_w)));
 
@@ -130,8 +130,8 @@ build_image_view() {
     std::function<void(float)> set_scale{[=](float scale) {
         int w = plw->size().width * scale;
         int h = plw->size().height * scale;
-        sbw->width(SizeUnit::pixel(w));
-        sbw->height(SizeUnit::pixel(h));
+        sbw->width(SizeUnit(w));
+        sbw->height(SizeUnit(h));
     }};
 
     return {plw, std::move(set_image), std::move(set_offset), std::move(set_scale)};

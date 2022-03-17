@@ -15,6 +15,10 @@ namespace RolUI {
         class SizeUnit {
           public:
             SizeUnit() noexcept : _tp(SizeUnitType::percentage), _per(1.0f) {}
+            SizeUnit(int px) noexcept : _tp(SizeUnitType::pixel), _px(px) {}
+            SizeUnit(unsigned px) noexcept : _tp(SizeUnitType::pixel), _px(px) {}
+            SizeUnit(float per) noexcept : _tp(SizeUnitType::percentage), _per(per) {}
+            SizeUnit(double per) noexcept : _tp(SizeUnitType::percentage), _per(per) {}
 
             bool operator==(const SizeUnit& su) const noexcept {
                 return _tp == su._tp && _px == su._px;
@@ -28,16 +32,16 @@ namespace RolUI {
             float percentage() const noexcept { return _per; }
 
           public:
-            static SizeUnit pixel(int p) noexcept {
-                SizeUnit su;
-                su._px = p, su._tp = SizeUnitType::pixel;
-                return su;
-            }
-            static SizeUnit percentage(float p) noexcept {
-                SizeUnit su;
-                su._per = p, su._tp = SizeUnitType::percentage;
-                return su;
-            }
+            // static SizeUnit pixel(int p) noexcept {
+            //     SizeUnit su;
+            //     su._px = p, su._tp = SizeUnitType::pixel;
+            //     return su;
+            // }
+            // static SizeUnit percentage(float p) noexcept {
+            //     SizeUnit su;
+            //     su._per = p, su._tp = SizeUnitType::percentage;
+            //     return su;
+            // }
 
           private:
             SizeUnitType _tp;
@@ -64,8 +68,8 @@ namespace RolUI {
 
         class SizedBoxWidget : public SingleChildWidget {
           public:
-            Property<SizedBoxWidget, SizeUnit> width{this, SizeUnit::percentage(1.0f)};
-            Property<SizedBoxWidget, SizeUnit> height{this, SizeUnit::percentage(1.0f)};
+            Property<SizedBoxWidget, SizeUnit> width{this, SizeUnit(1.0f)};
+            Property<SizedBoxWidget, SizeUnit> height{this, SizeUnit(1.0f)};
 
           public:
             SizedBoxWidget() noexcept;

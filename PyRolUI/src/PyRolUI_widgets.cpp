@@ -78,13 +78,13 @@ static void bind_container_widgets(py::module_& widgets) {
         .export_values();
     class_<SizeUnit>(widgets, "SizeUnit")
         .def(py::init())
+        .def(py::init<int>())
+        .def(py::init<float>())
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def("type", &SizeUnit::type)
-        .def("pixel_value", static_cast<int (SizeUnit::*)() const noexcept>(&SizeUnit::pixel))
-        .def("percentage_value", static_cast<float (SizeUnit::*)() const noexcept>(&SizeUnit::percentage))
-        .def_static("pixel", static_cast<SizeUnit (*)(int) noexcept>(SizeUnit::pixel))
-        .def_static("percentage", static_cast<SizeUnit (*)(float) noexcept>(SizeUnit::percentage));
+        .def("pixel", &SizeUnit::pixel)
+        .def("percentage", &SizeUnit::percentage);
 
     BIND_PROPERTY(BoxWidget, unsigned);
     BIND_PROPERTY(BoxWidget, Color);

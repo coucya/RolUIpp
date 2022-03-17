@@ -73,26 +73,26 @@ namespace RolUI {
 
         SizedBoxWidget* sized(int width, int height, Widget* child) {
             return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
-                ->width(SizeUnit::pixel(width))
-                ->height(SizeUnit::pixel(height))
+                ->width(SizeUnit(width))
+                ->height(SizeUnit(height))
                 ->set_child(child);
         }
         SizedBoxWidget* sized(float width, float height, Widget* child) {
             return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
-                ->width(SizeUnit::percentage(width))
-                ->height(SizeUnit::percentage(height))
+                ->width(SizeUnit(width))
+                ->height(SizeUnit(height))
                 ->set_child(child);
         }
         SizedBoxWidget* sized(int width, float height, Widget* child) {
             return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
-                ->width(SizeUnit::pixel(width))
-                ->height(SizeUnit::percentage(height))
+                ->width(SizeUnit(width))
+                ->height(SizeUnit(height))
                 ->set_child(child);
         }
         SizedBoxWidget* sized(float width, int height, Widget* child) {
             return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
-                ->width(SizeUnit::percentage(width))
-                ->height(SizeUnit::pixel(height))
+                ->width(SizeUnit(width))
+                ->height(SizeUnit(height))
                 ->set_child(child);
         }
 
