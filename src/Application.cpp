@@ -44,21 +44,35 @@ namespace RolUI {
 
     static bool _should_exit = false;
     static Window* _window = nullptr;
-    static Widget* _content_widget = nullptr;
+    // static Widget* _content_widget = nullptr;
     static Widget* _focus_widget = nullptr;
+    static RootWidget _root_widget{};
 
     static TimerQueue _timer_queue = {};
 
-    void Application::init(Window* w) noexcept { _window = w; }
+    RootWidget::RootWidget() noexcept {}
+
+    Widget* RootWidget::content_widget() const noexcept { return child(0); }
+    void RootWidget::set_content_widget(Widget* widget) noexcept { set_child(0, widget); }
+
+    Size RootWidget::perform_layout(Constraint constraint) noexcept {
+        for (int i = 0; i < child_count(); i++) {
+            Widget* w = child(i);
+            Size size = w->layout(constraint);
+            RolUI::set_pos(w, Point{0, 0});
+        }
+        return constraint.max();
+    }
+
+    void Application::init(Window* w) noexcept {
+        _window = w;
+        root_widget()->_mounted = true;
+        root_widget()->_depth = 0;
+        root_widget()->_parent = nullptr;
+    }
 
     Window* Application::window() noexcept { return _window; }
-
-    void Application::set_content_widget(Widget* w) noexcept {
-        _content_widget = w;
-        if (_content_widget)
-            _content_widget->_attach();
-    }
-    Widget* Application::content_widget() noexcept { return _content_widget; }
+    RootWidget* Application::root_widget() noexcept { return &_root_widget; }
 
     bool Application::has_focus_widget(Widget* w) noexcept { return _focus_widget != nullptr; }
     Widget* Application::focus_widget() noexcept { return _focus_widget; }
@@ -76,18 +90,13 @@ namespace RolUI {
     }
 
     Widget* Application::get_widget_by_pos(Point pos) noexcept {
-        if (content_widget() == nullptr) return nullptr;
-
         Widget* widget = nullptr;
-        Widget* w_it = content_widget();
+        Widget* w_it = root_widget();
 
-        while (true) {
-            Widget* w = w_it->get_child_by_pos(pos);
-            if (w == nullptr) return w_it;
-            w_it = w;
-        }
+        while ((widget = w_it->get_child_by_pos(pos)) != nullptr)
+            w_it = widget;
 
-        return widget->hit_test(pos) ? widget : nullptr;
+        return w_it == root_widget() ? nullptr : w_it;
     }
 
     size_t Application::set_timeout(double duration, TimeoutCallback cb) {
@@ -102,7 +111,7 @@ namespace RolUI {
     void Application::exit() noexcept { _should_exit = true; }
 
     void Application::run(Widget* w) noexcept {
-        set_content_widget(w);
+        root_widget()->set_content_widget(w);
         run();
     }
     void Application::run() noexcept {
@@ -122,25 +131,24 @@ namespace RolUI {
         flush_draw();
     }
     void Application::flush_layout() noexcept {
-        if (content_widget()) {
-            content_widget()->layout({{0, 0}, _window->size()});
-            RolUI::set_pos(content_widget(), {0, 0});
-        }
-        if (content_widget()) {
-            content_widget()->update_pos();
+        Widget* root = root_widget();
+        if (root) {
+            root->layout({{0, 0}, _window->size()});
+            RolUI::set_pos(root, {0, 0});
+            root->update_pos();
         }
     }
     void Application::flush_draw() noexcept {
         if (!_window) return;
-        Widget* root_widget = content_widget();
+        Widget* root = root_widget();
         IPainter* painter = _window->painter();
 
-        if (root_widget == nullptr) return;
+        if (root == nullptr) return;
         if (painter == nullptr) return;
 
         _window->begin_draw();
         painter->scissor(Rect{Point(), _window->size()});
-        root_widget->draw(painter);
+        root->draw(painter);
         _window->end_draw();
     }
 
