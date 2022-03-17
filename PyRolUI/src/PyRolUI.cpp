@@ -15,6 +15,8 @@
 #include <RolUI/Window.hpp>
 #include <RolUI/Widget.hpp>
 #include <RolUI/Application.hpp>
+#include <RolUI/events/MouseEvent.hpp>
+#include <RolUI/events/CharEvent.hpp>
 
 using namespace pybind11;
 using namespace RolUI;
@@ -234,10 +236,59 @@ static void bind_geometry(py::module_& m) {
         .def(py::self != py::self);
 }
 
+static void bind_mouse_event(py::module_& m) {
+    enum_<MouseKeyMode>(m, "MouseKeyMode")
+        .value("press", MouseKeyMode::press)
+        .value("release", MouseKeyMode::release)
+        .export_values();
+    enum_<MouseKey>(m, "MouseKey")
+        .value("unkown", MouseKey::unkown)
+        .value("key1", MouseKey::key1)
+        .value("key2", MouseKey::key2)
+        .value("key3", MouseKey::key3)
+        .value("key4", MouseKey::key4)
+        .value("key5", MouseKey::key5)
+        .value("key6", MouseKey::key6)
+        .value("key7", MouseKey::key7)
+        .value("key8", MouseKey::key8)
+        .value("left", MouseKey::left)
+        .value("right", MouseKey::right)
+        .value("middle", MouseKey::middle)
+        .export_values();
+
+    class_<MouseEvent, IEvent>(m, "MouseEvent")
+        .def("pos", &MouseEvent::pos)
+        .def("offset", &MouseEvent::offset)
+        .def("action", &MouseEvent::action)
+        .def("button", &MouseEvent::button);
+
+    class_<MouseWheelEvent, IEvent>(m, "MouseWheelEvent")
+        .def("offset", &MouseWheelEvent::offset);
+
+    m.def("MousePosEvent_type", MousePosEvent_type, py::return_value_policy::reference);
+    m.def("MousePressEvent_type", MousePressEvent_type, py::return_value_policy::reference);
+    m.def("MouseReleaseEvent_type", MouseReleaseEvent_type, py::return_value_policy::reference);
+    m.def("MouseEnterEvent_type", MouseEnterEvent_type, py::return_value_policy::reference);
+    m.def("MouseLeaveEvent_type", MouseLeaveEvent_type, py::return_value_policy::reference);
+    m.def("MouseWheelEvent_type", MouseWheelEvent_type, py::return_value_policy::reference);
+}
+
+static void bind_char_event(py::module_& m) {
+    class_<CharEvent, IEvent>(m, "CharEvent")
+        .def_static("type", &CharEvent::type, py::return_value_policy::reference)
+        .def("codepoint", &CharEvent::codepoint)
+        .def("c_char", &CharEvent::c_char);
+
+    m.def("CharEvent_type", CharEvent::type, py::return_value_policy::reference);
+}
+
 PYBIND11_MODULE(PyRolUI, m) {
     m.doc() = "RolUI Python bind.";
 
     bind_geometry(m);
+
+    py::module_ events_module{"events", "RolUI events Python bind."};
+    m.attr("events") = events_module;
 
     m.def("load_font", load_font, py::arg("name"), py::arg("filename"));
 
@@ -339,4 +390,6 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def_static("exit", Application::exit);
 
     bind_widgets(m);
+    bind_mouse_event(events_module);
+    bind_char_event(events_module);
 }

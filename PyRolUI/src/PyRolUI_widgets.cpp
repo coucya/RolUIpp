@@ -69,6 +69,7 @@ static void bind_signals(py::module_& m) {
     BIND_SINGAL(signals, Vec2i);
     BIND_SINGAL(signals, bool);
     BIND_SINGAL(signals, uint32_t);
+    BIND_SINGAL(signals, MouseKey, Vec2i);
 }
 
 static void bind_container_widgets(py::module_& widgets) {
@@ -408,7 +409,11 @@ static void bind_widgets_widgets(py::module_& widgets) {
         py::kw_only(), py::arg("children") = py::list(), py::arg("flexs") = py::tuple(), return_value_policy::reference);
 
     widgets.def("pointer_listener", widgets::pointer_listener,
-                py::arg("child"), return_value_policy::reference);
+                py::kw_only(), py::arg("child"), return_value_policy::reference);
+
+    widgets.def(
+        "mouse_area", [](Widget* child) { return mk_widget<MouseAreaWidget>()->set_child(child); },
+        py::kw_only(), py::arg("child"), return_value_policy::reference);
 }
 
 void bind_widgets(py::module_& m) {
