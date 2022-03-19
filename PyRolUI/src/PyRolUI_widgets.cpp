@@ -141,13 +141,7 @@ static void bind_layer_Widgets(py::module_& widgets) {
 
 static void bind_flow_widgets(py::module_& widgets) {
 
-    enum_<CrossAxisAlignment>(widgets, "CrossAxisAlignment")
-        .value("start", CrossAxisAlignment::start)
-        .value("center", CrossAxisAlignment::center)
-        .value("end", CrossAxisAlignment::end)
-        .export_values();
-
-    BIND_PROPERTY(ColumnWidget, CrossAxisAlignment);
+    BIND_PROPERTY(ColumnWidget, float);
     BIND_PROPERTY(ColumnWidget, int);
     class_<ColumnWidget, MultiChildWidget>(widgets, "ColumnWidget")
         .def(py::init())
@@ -156,7 +150,7 @@ static void bind_flow_widgets(py::module_& widgets) {
         .def_readonly("gap", &ColumnWidget::gap,
                       return_value_policy::reference_internal);
 
-    BIND_PROPERTY(RowWidget, CrossAxisAlignment);
+    BIND_PROPERTY(RowWidget, float);
     BIND_PROPERTY(RowWidget, int);
     class_<RowWidget, MultiChildWidget>(widgets, "RowWidget")
         .def(py::init())
@@ -368,24 +362,24 @@ static void bind_widgets_widgets(py::module_& widgets) {
         py::kw_only(), py::arg("children") = py::list(), py::arg("selected") = 0, return_value_policy::reference);
 
     widgets.def(
-        "row", [](py::list children, int gap, CrossAxisAlignment caa) {
+        "row", [](py::list children, int gap, float caa) {
             RowWidget* widget = widgets::row();
             widget->gap(gap)->cross_axis_alignment(caa);
             for (auto w : children)
                 widget->add_child(w.cast<Widget*>());
             return widget;
         },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("gap") = 0, py::arg("cross_axis_alignment") = CrossAxisAlignment::center, return_value_policy::reference);
+        py::kw_only(), py::arg("children") = py::list(), py::arg("gap") = 0, py::arg("cross_axis_alignment") = 0.0f, return_value_policy::reference);
 
     widgets.def(
-        "column", [](py::list children, int gap, CrossAxisAlignment caa) {
+        "column", [](py::list children, int gap, float caa) {
             ColumnWidget* widget = widgets::column();
             widget->gap(gap)->cross_axis_alignment(caa);
             for (auto w : children)
                 widget->add_child(w.cast<Widget*>());
             return widget;
         },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("gap") = 0, py::arg("cross_axis_alignment") = CrossAxisAlignment::center, return_value_policy::reference);
+        py::kw_only(), py::arg("children") = py::list(), py::arg("gap") = 0, py::arg("cross_axis_alignment") = 0.0f, return_value_policy::reference);
 
     widgets.def(
         "row_grid", [](py::list children, py::tuple flexs) {

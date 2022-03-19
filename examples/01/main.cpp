@@ -75,7 +75,8 @@ int main(int argc, char* argv[]) {
     et->text(u8"啊啊啊啊啊啊");
 
     ColumnWidget* w = mk_widget<ColumnWidget>();
-    w->add_child(text("aaa", 10))
+    w->cross_axis_alignment(1.0)
+        ->add_child(text("aaa", 10))
         ->add_child(text("aaa", 20))
         ->add_child(text("aaa", 30))
         ->add_child(text("aaa", 40));
@@ -91,10 +92,7 @@ int main(int argc, char* argv[]) {
     // AlignWidget* w = widgets::align(0.0, 0.0, et);
 
     Application::set_interval(1.0, [=](double) {
-        if (w->cross_axis_alignment == CrossAxisAlignment::start)
-            w->cross_axis_alignment = CrossAxisAlignment::end;
-        else
-            w->cross_axis_alignment = CrossAxisAlignment::start;
+        w->cross_axis_alignment = -w->cross_axis_alignment;
     });
 
     Application::run(w);

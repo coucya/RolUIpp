@@ -28,14 +28,7 @@ namespace RolUI {
             int cy = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
-                float r = 0;
-                if (cross_axis_alignment.get() == CrossAxisAlignment::start)
-                    r = 0.0f;
-                else if (cross_axis_alignment.get() == CrossAxisAlignment::center)
-                    r = 0.5f;
-                else if (cross_axis_alignment.get() == CrossAxisAlignment::end)
-                    r = 1.0f;
-
+                float r = (cross_axis_alignment() + 1.0f) / 2.0f;
                 int cx = float(max_w - child->size().width) * r;
                 RolUI::set_pos(child, {cx, cy});
 
@@ -70,14 +63,7 @@ namespace RolUI {
             int cx = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
-                float r = 0;
-                if (cross_axis_alignment.get() == CrossAxisAlignment::start)
-                    r = 0.0f;
-                else if (cross_axis_alignment.get() == CrossAxisAlignment::center)
-                    r = 0.5f;
-                else if (cross_axis_alignment.get() == CrossAxisAlignment::end)
-                    r = 1.0f;
-
+                float r = (cross_axis_alignment() + 1.0f) / 2.0f;
                 int cy = float(max_h - child->size().height) * r;
                 RolUI::set_pos(child, {cx, cy});
 

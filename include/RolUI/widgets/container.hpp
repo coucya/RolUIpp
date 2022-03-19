@@ -31,18 +31,6 @@ namespace RolUI {
             int pixel() const noexcept { return _px; }
             float percentage() const noexcept { return _per; }
 
-          public:
-            // static SizeUnit pixel(int p) noexcept {
-            //     SizeUnit su;
-            //     su._px = p, su._tp = SizeUnitType::pixel;
-            //     return su;
-            // }
-            // static SizeUnit percentage(float p) noexcept {
-            //     SizeUnit su;
-            //     su._per = p, su._tp = SizeUnitType::percentage;
-            //     return su;
-            // }
-
           private:
             SizeUnitType _tp;
             union {

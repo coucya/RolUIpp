@@ -8,15 +8,9 @@
 namespace RolUI {
     namespace widgets {
 
-        enum class CrossAxisAlignment {
-            start,
-            center,
-            end
-        };
-
         class ColumnWidget : public MultiChildWidget {
           public:
-            Property<ColumnWidget, CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
+            Property<ColumnWidget, float> cross_axis_alignment{this, 0.0f};
             Property<ColumnWidget, int> gap{this, 0};
 
           public:
@@ -26,7 +20,7 @@ namespace RolUI {
 
         class RowWidget : public MultiChildWidget {
           public:
-            Property<RowWidget, CrossAxisAlignment> cross_axis_alignment{this, CrossAxisAlignment::center};
+            Property<RowWidget, float> cross_axis_alignment{this, 0.0f};
             Property<RowWidget, int> gap{this, 0};
 
           public:
