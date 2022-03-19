@@ -1,6 +1,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/functional.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -381,6 +382,10 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def_static("has_focus_widget", Application::has_focus_widget)
         .def_static("set_focus_widget", Application::set_focus_widget)
         .def_static("focus_widget", Application::focus_widget, return_value_policy::reference)
+        .def_static("set_timeout", Application::set_timeout)
+        .def_static("set_interval", Application::set_interval)
+        .def_static("clear_timeout", Application::clear_timeout)
+        .def_static("clear_interval", Application::clear_interval)
         .def_static("get_widget_by_pos", Application::get_widget_by_pos, return_value_policy::reference)
         .def_static("flush_layout", Application::flush_layout)
         .def_static("flush_draw", Application::flush_draw)

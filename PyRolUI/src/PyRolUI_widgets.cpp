@@ -268,6 +268,9 @@ static void bind_misc_widgets(py::module_& widgets) {
              py::arg("index"), py::arg("str"))
         .def("insert_str", static_cast<void (EditableTextWidget::*)(unsigned, const char*, unsigned)>(&EditableTextWidget::insert_str),
              py::arg("index"), py::arg("str"), py::arg("len"));
+
+    class_<TextBoxWidget, EditableTextWidget>(widgets, "TextBoxWidget")
+        .def(py::init());
 }
 
 static void bind_widgets_widgets(py::module_& widgets) {
@@ -275,6 +278,15 @@ static void bind_widgets_widgets(py::module_& widgets) {
     widgets.def("text", widgets::text, py::arg("text"),
                 py::kw_only(), py::arg("size") = 16, py::arg("color") = Color{0, 0, 0},
                 return_value_policy::reference_internal);
+
+    widgets.def(
+        "textbox", [](const char* text, int size, Color color) {
+            return mk_widget<TextBoxWidget>()
+                ->text(text)
+                ->font_size(size)
+                ->font_color(color);
+        },
+        py::kw_only(), py::arg("text") = "", py::arg("font_size") = 16, py::arg("color") = Color{0, 0, 0}, py::return_value_policy::reference);
 
     widgets.def("label", widgets::label, py::arg("text"),
                 py::kw_only(), py::arg("size") = 16, py::arg("color") = Color{0, 0, 0},

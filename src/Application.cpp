@@ -34,6 +34,8 @@ namespace RolUI {
       public:
         size_t add(TimeoutCallback cb, double interval, bool repeat = false) noexcept;
         void remove(size_t handle) noexcept;
+        void remove_all() noexcept;
+
         double do_timer() noexcept;
 
       private:
@@ -124,6 +126,9 @@ namespace RolUI {
             timeout = _do_timer();
             flush_frame();
         }
+
+        _should_exit = false;
+        _timer_queue.remove_all();
     }
 
     void Application::flush_frame() noexcept {
@@ -200,6 +205,9 @@ namespace RolUI {
             c.erase(it);
             std::make_heap(c.begin(), c.end());
         }
+    }
+    void TimerQueue::remove_all() noexcept {
+        c.clear();
     }
 
     double TimerQueue::do_timer() noexcept {

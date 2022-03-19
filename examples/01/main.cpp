@@ -74,6 +74,12 @@ int main(int argc, char* argv[]) {
     et->font_size(40);
     et->text(u8"啊啊啊啊啊啊");
 
+    ColumnWidget* w = mk_widget<ColumnWidget>();
+    w->add_child(text("aaa", 10))
+        ->add_child(text("aaa", 20))
+        ->add_child(text("aaa", 30))
+        ->add_child(text("aaa", 40));
+
     // PointerListenerWidget* plw = widgets::pointer_listener(et);
     // plw->on_click.connect([=](Point pos) {
     //     std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
@@ -82,8 +88,15 @@ int main(int argc, char* argv[]) {
     //     et->set_blink(true);
     // });
 
-    Widget* w = widgets::align(0.0, 0.0, et);
-    // Widget* w = widgets::sized(200, 200, widgets::button("bt", []() { std::cout << "bt click." << std::endl; }));
+    // AlignWidget* w = widgets::align(0.0, 0.0, et);
+
+    Application::set_interval(1.0, [=](double) {
+        if (w->cross_axis_alignment == CrossAxisAlignment::start)
+            w->cross_axis_alignment = CrossAxisAlignment::end;
+        else
+            w->cross_axis_alignment = CrossAxisAlignment::start;
+    });
+
     Application::run(w);
 
     return 0;
