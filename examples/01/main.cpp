@@ -70,19 +70,19 @@ int main(int argc, char* argv[]) {
 
     // button("bt", std::function<void()>{[]() -> void {}});
     // widgets::EditableTextWidget et;
-    EditableTextWidget* et = mk_widget<EditableTextWidget>();
+    TextBoxWidget* et = mk_widget<TextBoxWidget>();
     et->font_size(40);
     et->text(u8"啊啊啊啊啊啊");
 
-    PointerListenerWidget* plw = widgets::pointer_listener(et);
-    plw->on_click.connect([=](Point pos) {
-        std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
-        int idx = et->pos_to_index(pos - et->abs_pos());
-        et->cursor_index(idx);
-        et->set_blink(true);
-    });
+    // PointerListenerWidget* plw = widgets::pointer_listener(et);
+    // plw->on_click.connect([=](Point pos) {
+    //     std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
+    //     int idx = et->pos_to_index(pos - et->abs_pos());
+    //     et->cursor_index(idx);
+    //     et->set_blink(true);
+    // });
 
-    Widget* w = widgets::align(0.5, 0.5, plw);
+    Widget* w = widgets::align(0.0, 0.0, et);
     // Widget* w = widgets::sized(200, 200, widgets::button("bt", []() { std::cout << "bt click." << std::endl; }));
     Application::run(w);
 

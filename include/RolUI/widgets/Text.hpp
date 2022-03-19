@@ -73,5 +73,13 @@ namespace RolUI {
             bool _show_cursor = false;
         };
 
+        class TextBoxWidget : public EditableTextWidget {
+          public:
+            TextBoxWidget() noexcept;
+            ~TextBoxWidget();
+
+            bool handle_event(IEvent* e) noexcept override;
+        };
+
     } // namespace widgets
 } // namespace RolUI

@@ -6,6 +6,8 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/events/Widget_event.hpp"
+#include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/events/CharEvent.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -175,9 +177,11 @@ namespace RolUI {
             insert_str(idx, str, strlen(str));
         }
         void EditableTextWidget::insert_str(unsigned idx, const char* str, unsigned len) noexcept {
-            std::string ts = text;
-            ts.insert(idx, str, len);
+            int byte_idx = _char_index_to_byte_index(text().c_str(), idx);
+            std::string ts = text();
+            ts.insert(byte_idx, str, len);
             text = std::move(ts);
+            cursor_index = cursor_index() + utf8nlen(str, len);
         }
 
         void EditableTextWidget::draw(IPainter* painter) noexcept {
@@ -200,6 +204,34 @@ namespace RolUI {
         void EditableTextWidget::_update_cursor_pos() noexcept {
             _cursor_pos = index_to_pos(cursor_index.get());
             return;
+        }
+
+        TextBoxWidget::TextBoxWidget() noexcept {}
+        TextBoxWidget::~TextBoxWidget() {}
+
+        bool TextBoxWidget::handle_event(IEvent* e) noexcept {
+            EditableTextWidget::handle_event(e);
+
+            if (e->is(MousePressEvent_type()) && ((MouseEvent*)e)->action() == MouseKey::left) {
+                MouseEvent* me = (MouseEvent*)e;
+                this->cursor_index = this->pos_to_index(me->pos() - this->abs_pos());
+                Application::set_focus_widget(this);
+                return true;
+            } else if (e->is(FocusChangeEvent::type())) {
+                FocusChangeEvent* fce = (FocusChangeEvent*)e;
+                if (fce->current_value())
+                    this->set_blink(true);
+                else
+                    this->set_blink(false);
+                return true;
+            } else if (e->is(CharEvent::type())) {
+                if (Application::focus_widget() == this) {
+                    uint32_t cp = ((CharEvent*)e)->codepoint();
+                    int idx = this->cursor_index();
+                    this->insert_char(idx, cp);
+                }
+            }
+            return false;
         }
 
     } // namespace widgets
