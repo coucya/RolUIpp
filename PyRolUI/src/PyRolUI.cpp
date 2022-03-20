@@ -302,7 +302,7 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("name", &EventType::name);
 
     class_<IEvent>(m, "IEvent")
-        .def("is", &IEvent::is)
+        .def("is_", &IEvent::is)
         .def("event_type", &IEvent::event_type, return_value_policy::reference)
         .def("target", &IEvent::target, return_value_policy::reference);
 
