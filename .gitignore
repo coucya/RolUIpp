@@ -8,3 +8,6 @@
 /3rdparty/stb
 /3rdparty/utf8
 todo.txt
+*.dll
+*.pyd
+*.pyc

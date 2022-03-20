@@ -1,7 +1,4 @@
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/examples_bin/)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/examples_bin/)
-
 set(PyRolUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(PyRolUI_source  ${PyRolUI_SOURCE_DIR}/PyRolUI.cpp 
@@ -10,6 +7,7 @@ set(PyRolUI_glfw_source ${PyRolUI_SOURCE_DIR}/PyRolUI_glfw.cpp)
 
 find_package(Python COMPONENTS Interpreter Development)
 find_package(pybind11 CONFIG)
+
 
 add_library(PyRolUI SHARED ${PyRolUI_source})
 target_include_directories(PyRolUI PRIVATE ${RolUI_INCLUDE_DIR})
@@ -20,6 +18,11 @@ target_link_libraries(PyRolUI RolUI-shared)
 target_link_libraries(PyRolUI ${Python_LIBRARIES})
 target_link_libraries(PyRolUI ${pybind11_LIBRARIES})
 target_compile_options(PyRolUI PRIVATE -std=c++17)
+set_target_properties(PyRolUI PROPERTIES PREFIX "")
+set_target_properties(PyRolUI PROPERTIES SUFFIX ".pyd")
+set_target_properties(PyRolUI PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/PyRolUI/PyRolUI/)
+set_target_properties(PyRolUI PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/PyRolUI/PyRolUI/)
+
 
 add_library(PyRolUI_glfw SHARED ${PyRolUI_glfw_source})
 target_include_directories(PyRolUI_glfw PRIVATE ${RolUI_INCLUDE_DIR})
@@ -33,9 +36,7 @@ target_link_libraries(PyRolUI_glfw RolUI_glfw_backend)
 target_link_libraries(PyRolUI_glfw ${Python_LIBRARIES})
 target_link_libraries(PyRolUI_glfw ${pybind11_LIBRARIES})
 target_compile_options(PyRolUI_glfw PRIVATE -std=c++17)
-
-set_target_properties(PyRolUI PROPERTIES PREFIX "")
-set_target_properties(PyRolUI PROPERTIES SUFFIX ".pyd")
-
 set_target_properties(PyRolUI_glfw PROPERTIES PREFIX "")
 set_target_properties(PyRolUI_glfw PROPERTIES SUFFIX ".pyd")
+set_target_properties(PyRolUI_glfw PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/PyRolUI/PyRolUI_glfw/)
+set_target_properties(PyRolUI_glfw PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/PyRolUI/PyRolUI_glfw/)
