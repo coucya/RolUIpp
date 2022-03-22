@@ -30,49 +30,43 @@ using namespace RolUI::widgets;
 
 namespace py = pybind11;
 
-#define BIND_PROPERTY(WT, VT)                                                                \
-    {                                                                                        \
-        typedef Property<WT, VT> Prop;                                                       \
-        class_<Prop>(widgets, "Property<" #WT ", " #VT ">")                                  \
-            .def("get", [](Prop& self) { return self.get(); })                               \
-            .def(                                                                            \
-                "set", [](Prop& self, VT arg) { return self.set(arg); },                     \
-                return_value_policy::reference)                                              \
-            .def(                                                                            \
-                "set_no_notify", [](Prop& self, VT arg) { return self.set_no_notify(arg); }, \
-                return_value_policy::reference)                                              \
-            .def("__call__", [](Prop& self) { return self(); })                              \
-            .def(                                                                            \
-                "__call__", [](Prop& self, VT arg) { return self(arg); },                    \
-                return_value_policy::reference);                                             \
+#define BIND_SINGAL(mod, ...)                                                                           \
+    {                                                                                                   \
+        typedef Signal<__VA_ARGS__> Sign;                                                               \
+        if (!py::hasattr(mod, "Signal<" #__VA_ARGS__ ">"))                                              \
+            class_<Sign>(mod, "Signal<" #__VA_ARGS__ ">")                                               \
+                .def(py::init())                                                                        \
+                .def("slot_count", &Sign::slot_count)                                                   \
+                .def("connect", [](Sign& self, std::function<void(__VA_ARGS__)> f) {                    \
+                    return self.connect(std::move(f));                                                  \
+                })                                                                                      \
+                .def("disconnect", static_cast<void (Sign::*)(size_t)>(&Sign::disconnect))              \
+                .def("disconnect_all", &Sign::disconnect_all)                                           \
+                .def("emit", static_cast<void (Sign::*)(__VA_ARGS__) const noexcept>(&Sign::emit))      \
+                .def("__call__", static_cast<void (Sign::*)(__VA_ARGS__) const noexcept>(&Sign::emit)); \
     }
 
-#define BIND_SINGAL(mod, ...)                                                                       \
-    {                                                                                               \
-        typedef Signal<__VA_ARGS__> Sign;                                                           \
-        class_<Sign>(mod, "Signal<" #__VA_ARGS__ ">")                                               \
-            .def(py::init())                                                                        \
-            .def("slot_count", &Sign::slot_count)                                                   \
-            .def("connect", [](Sign& self, std::function<void(__VA_ARGS__)> f) {                    \
-                return self.connect(std::move(f));                                                  \
-            })                                                                                      \
-            .def("disconnect", static_cast<void (Sign::*)(size_t)>(&Sign::disconnect))              \
-            .def("disconnect_all", &Sign::disconnect_all)                                           \
-            .def("emit", static_cast<void (Sign::*)(__VA_ARGS__) const noexcept>(&Sign::emit))      \
-            .def("__call__", static_cast<void (Sign::*)(__VA_ARGS__) const noexcept>(&Sign::emit)); \
-    }
+#define BIND_PROPERTY(mod, smod, WT, VT)                                                              \
+    {                                                                                                 \
+        typedef Property<WT, VT> Prop;                                                                \
+        if (!py::hasattr(mod, "Property<" #WT ", " #VT ">"))                                          \
+            class_<Prop>(mod, "Property<" #WT ", " #VT ">")                                           \
+                .def_readonly("on_change", &Prop::on_change, return_value_policy::reference_internal) \
+                .def("get", [](Prop& self) { return self.get(); })                                    \
+                .def(                                                                                 \
+                    "set", [](Prop& self, VT arg) { return self.set(arg); },                          \
+                    return_value_policy::reference)                                                   \
+                .def(                                                                                 \
+                    "set_no_notify", [](Prop& self, VT arg) { return self.set_no_notify(arg); },      \
+                    return_value_policy::reference)                                                   \
+                .def("__call__", [](Prop& self) { return self(); })                                   \
+                .def(                                                                                 \
+                    "__call__", [](Prop& self, VT arg) { return self(arg); },                         \
+                    return_value_policy::reference);                                                  \
+    };                                                                                                \
+    BIND_SINGAL(smod, const VT&)
 
-static void bind_signals(py::module_& m) {
-    py::module_ signals{"signals", "RolUI signals."};
-    m.attr("signals") = signals;
-
-    BIND_SINGAL(signals, Vec2i);
-    BIND_SINGAL(signals, bool);
-    BIND_SINGAL(signals, uint32_t);
-    BIND_SINGAL(signals, MouseKey, Vec2i);
-}
-
-static void bind_container_widgets(py::module_& widgets) {
+static void bind_container_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
     enum_<SizeUnitType>(widgets, "SizeUnitType")
         .value("pixel", SizeUnitType::pixel)
         .value("percentage", SizeUnitType::percentage)
@@ -87,8 +81,8 @@ static void bind_container_widgets(py::module_& widgets) {
         .def("pixel", &SizeUnit::pixel)
         .def("percentage", &SizeUnit::percentage);
 
-    BIND_PROPERTY(BoxWidget, unsigned);
-    BIND_PROPERTY(BoxWidget, Color);
+    BIND_PROPERTY(propertys, signals, BoxWidget, unsigned);
+    BIND_PROPERTY(propertys, signals, BoxWidget, Color);
     class_<BoxWidget, SingleChildWidget>(widgets, "BoxWidget")
         .def(py::init())
         .def_readonly("round", &BoxWidget::round, return_value_policy::reference_internal)
@@ -96,21 +90,21 @@ static void bind_container_widgets(py::module_& widgets) {
         .def_readonly("border_color", &BoxWidget::border_color, return_value_policy::reference_internal)
         .def_readonly("background_color", &BoxWidget::background_color, return_value_policy::reference_internal);
 
-    BIND_PROPERTY(SizedBoxWidget, SizeUnit);
+    BIND_PROPERTY(propertys, signals, SizedBoxWidget, SizeUnit);
     class_<SizedBoxWidget, SingleChildWidget>(widgets, "SizedBoxWidget")
         .def(py::init())
         .def(py::init<SizeUnit, SizeUnit>())
         .def_readonly("width", &SizedBoxWidget::width, return_value_policy::reference_internal)
         .def_readonly("height", &SizedBoxWidget::height, return_value_policy::reference_internal);
 
-    BIND_PROPERTY(AlignWidget, float);
+    BIND_PROPERTY(propertys, signals, AlignWidget, float);
     class_<AlignWidget, SingleChildWidget>(widgets, "AlignWidget")
         .def(py::init())
         .def(py::init<float, float>())
         .def_readonly("align_x", &AlignWidget::align_x, return_value_policy::reference_internal)
         .def_readonly("align_y", &AlignWidget::align_y, return_value_policy::reference_internal);
 
-    BIND_PROPERTY(MarginWidget, unsigned);
+    BIND_PROPERTY(propertys, signals, MarginWidget, unsigned);
     class_<MarginWidget, SingleChildWidget>(widgets, "MarginWidget")
         .def(py::init())
         .def(py::init<unsigned>(), py::arg("margin"))
@@ -123,25 +117,25 @@ static void bind_container_widgets(py::module_& widgets) {
         .def_readonly("right", &MarginWidget::right, return_value_policy::reference_internal);
 }
 
-static void bind_layer_Widgets(py::module_& widgets) {
-    BIND_PROPERTY(StackWidget, float);
+static void bind_layer_Widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+    BIND_PROPERTY(propertys, signals, StackWidget, float);
     class_<StackWidget, MultiChildWidget>(widgets, "StackWidget")
         .def(py::init())
         .def(py::init<float, float>())
         .def_readonly("align_x", &StackWidget::align_x, return_value_policy::reference_internal)
         .def_readonly("align_y", &StackWidget::align_y, return_value_policy::reference_internal);
 
-    BIND_PROPERTY(DeckWidget, unsigned);
+    BIND_PROPERTY(propertys, signals, DeckWidget, unsigned);
     class_<DeckWidget, MultiChildWidget>(widgets, "DeckWidget")
         .def(py::init())
         .def(py::init<unsigned>())
         .def_readonly("selected", &DeckWidget::selected, return_value_policy::reference_internal);
 }
 
-static void bind_flow_widgets(py::module_& widgets) {
+static void bind_flow_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
 
-    BIND_PROPERTY(ColumnWidget, float);
-    BIND_PROPERTY(ColumnWidget, int);
+    BIND_PROPERTY(propertys, signals, ColumnWidget, float);
+    BIND_PROPERTY(propertys, signals, ColumnWidget, int);
     class_<ColumnWidget, MultiChildWidget>(widgets, "ColumnWidget")
         .def(py::init())
         .def_readonly("cross_axis_alignment", &ColumnWidget::cross_axis_alignment,
@@ -149,8 +143,8 @@ static void bind_flow_widgets(py::module_& widgets) {
         .def_readonly("gap", &ColumnWidget::gap,
                       return_value_policy::reference_internal);
 
-    BIND_PROPERTY(RowWidget, float);
-    BIND_PROPERTY(RowWidget, int);
+    BIND_PROPERTY(propertys, signals, RowWidget, float);
+    BIND_PROPERTY(propertys, signals, RowWidget, int);
     class_<RowWidget, MultiChildWidget>(widgets, "RowWidget")
         .def(py::init())
         .def_readonly("cross_axis_alignment", &RowWidget::cross_axis_alignment,
@@ -176,7 +170,10 @@ static void bind_flow_widgets(py::module_& widgets) {
         .def("remove_child", static_cast<void (RowGridWidget::*)(int)>(&RowGridWidget::remove_child));
 }
 
-static void bind_listener_widgets(py::module_& widgets) {
+static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+    BIND_SINGAL(signals, Point);
+    BIND_SINGAL(signals, bool);
+    BIND_SINGAL(signals, unsigned);
     class_<PointerListenerWidget, SingleChildWidget>(widgets, "PointerListenerWidget")
         .def(py::init())
         .def_readonly("on_up", &PointerListenerWidget::on_up, return_value_policy::reference_internal)
@@ -186,6 +183,7 @@ static void bind_listener_widgets(py::module_& widgets) {
         .def_readonly("on_drag", &PointerListenerWidget::on_drag, return_value_policy::reference_internal)
         .def_readonly("on_hover", &PointerListenerWidget::on_hover, return_value_policy::reference_internal);
 
+    BIND_SINGAL(signals, MouseKey, Vec2i);
     class_<MouseAreaWidget, SingleChildWidget>(widgets, "MouseAreaWidget")
         .def(py::init())
         .def_readonly("on_up", &MouseAreaWidget::on_up, return_value_policy::reference_internal)
@@ -207,9 +205,9 @@ static void bind_listener_widgets(py::module_& widgets) {
         .def_readonly("on_input", &CharInputWidget::on_input, return_value_policy::reference_internal);
 }
 
-static void bind_ScrollWidget(py::module_& widgets) {
+static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::module_& propertys) {
 
-    BIND_PROPERTY(ScrollWidget, Point);
+    BIND_PROPERTY(propertys, signals, ScrollWidget, Point);
     class_<ScrollWidget, SingleChildWidget>(widgets, "ScrollWidget")
         .def(py::init())
         .def_readonly("offset", &ScrollWidget::offset, return_value_policy::reference_internal)
@@ -232,10 +230,10 @@ static void bind_ScrollWidget(py::module_& widgets) {
         .def("scroll_y_to_ratio", &ScrollWidget::scroll_y_to_ratio);
 }
 
-static void bind_misc_widgets(py::module_& widgets) {
-    BIND_PROPERTY(TextWidget, unsigned);
-    BIND_PROPERTY(TextWidget, Color);
-    BIND_PROPERTY(TextWidget, std::string);
+static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+    BIND_PROPERTY(propertys, signals, TextWidget, unsigned);
+    BIND_PROPERTY(propertys, signals, TextWidget, Color);
+    BIND_PROPERTY(propertys, signals, TextWidget, std::string);
     class_<TextWidget, Widget>(widgets, "TextWidget")
         .def(py::init())
         .def(py::init<std::string>())
@@ -247,7 +245,7 @@ static void bind_misc_widgets(py::module_& widgets) {
         .def("index_to_pos", &TextWidget::index_to_pos)
         .def("line_height", &TextWidget::line_height);
 
-    BIND_PROPERTY(EditableTextWidget, unsigned);
+    BIND_PROPERTY(propertys, signals, EditableTextWidget, unsigned);
     class_<EditableTextWidget, TextWidget>(widgets, "EditableTextWidget")
         .def(py::init())
         .def_readonly("cursor_index", &EditableTextWidget::cursor_index, return_value_policy::reference_internal)
@@ -266,11 +264,11 @@ static void bind_misc_widgets(py::module_& widgets) {
         .def(py::init());
 }
 
-static void bind_widgets_widgets(py::module_& widgets) {
+static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
 
     widgets.def("text", widgets::text, py::arg("text"),
                 py::kw_only(), py::arg("size") = 16, py::arg("color") = Color{0, 0, 0},
-                return_value_policy::reference_internal);
+                return_value_policy::reference);
 
     widgets.def(
         "textbox", [](const char* text, int size, Color color) {
@@ -423,14 +421,17 @@ static void bind_widgets_widgets(py::module_& widgets) {
 
 void bind_widgets(py::module_& m) {
     py::module_ widgets{"widgets", "RolUI widgets."};
+    py::module_ signals{"signals", "RolUI signals."};
+    py::module_ propertys{"propertys", "RolUI propertys."};
     m.attr("widgets") = widgets;
+    m.attr("signals") = signals;
+    m.attr("propertys") = propertys;
 
-    bind_signals(m);
-    bind_container_widgets(widgets);
-    bind_layer_Widgets(widgets);
-    bind_flow_widgets(widgets);
-    bind_listener_widgets(widgets);
-    bind_ScrollWidget(widgets);
-    bind_misc_widgets(widgets);
-    bind_widgets_widgets(widgets);
+    bind_container_widgets(widgets, signals, propertys);
+    bind_layer_Widgets(widgets, signals, propertys);
+    bind_flow_widgets(widgets, signals, propertys);
+    bind_listener_widgets(widgets, signals, propertys);
+    bind_ScrollWidget(widgets, signals, propertys);
+    bind_misc_widgets(widgets, signals, propertys);
+    bind_widgets_widgets(widgets, signals, propertys);
 }

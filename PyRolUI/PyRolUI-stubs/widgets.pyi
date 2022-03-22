@@ -1,7 +1,10 @@
 
-from .signals import Signal
-from PyRolUI import *
 from typing import List, Tuple, overload, Callable
+
+from .signals import Signal
+from .propertys import Property
+
+from PyRolUI import Point, Vec2i, Size, Color, Image, Widget, SingleChildWidget, MultiChildWidget
 
 
 class SizeUnit:
@@ -17,16 +20,16 @@ class SizeUnit:
 
 
 class BoxWidget(SingleChildWidget):
-    round: object
-    border_width: object
-    border_color: object
-    background_color: object
+    round: Property
+    border_width: Property
+    border_color: Property
+    background_color: Property
     def __init__(self): ...
 
 
 class SizedBoxWidget(SingleChildWidget):
-    width: object
-    height: object
+    width: Property
+    height: Property
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -34,8 +37,8 @@ class SizedBoxWidget(SingleChildWidget):
 
 
 class AlignWidget(SingleChildWidget):
-    align_x: object
-    aling_y: object
+    align_x: Property
+    aling_y: Property
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -43,10 +46,10 @@ class AlignWidget(SingleChildWidget):
 
 
 class MarginWidget(SingleChildWidget):
-    top: object
-    bottom: object
-    left: object
-    right: object
+    top: Property
+    bottom: Property
+    left: Property
+    right: Property
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -58,8 +61,8 @@ class MarginWidget(SingleChildWidget):
 
 
 class StackWidget(MultiChildWidget):
-    align_x: object
-    aling_y: object
+    align_x: Property
+    aling_y: Property
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -67,7 +70,7 @@ class StackWidget(MultiChildWidget):
 
 
 class DeckWidget(MultiChildWidget):
-    selected: object
+    selected: Property
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -75,14 +78,14 @@ class DeckWidget(MultiChildWidget):
 
 
 class ColumnWidget(MultiChildWidget):
-    gap: object
-    cross_axis_alignment: object
+    gap: Property
+    cross_axis_alignment: Property
     def __init__(self) -> None: ...
 
 
 class RowWidget(MultiChildWidget):
-    gap: object
-    cross_axis_alignment: object
+    gap: Property
+    cross_axis_alignment: Property
     def __init__(self) -> None: ...
 
 
@@ -144,7 +147,7 @@ class CharImputWidget(SingleChildWidget):
 
 
 class ScrollWidget(SingleChildWidget):
-    offset: object
+    offset: Property
     def __init__(self) -> None: ...
     def widget_pos(self) -> Point: ...
     def widget_x(self) -> int: ...
@@ -166,10 +169,10 @@ class ScrollWidget(SingleChildWidget):
 
 
 class TextWidget(Widget):
-    font_size: object
-    font_color: object
-    font_name: object
-    text: object
+    font_size: Property
+    font_color: Property
+    font_name: Property
+    text: Property
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -180,7 +183,7 @@ class TextWidget(Widget):
 
 
 class EditableTextWidget(TextWidget):
-    cursor_index: object
+    cursor_index: Property
     def __init__(sel) -> None: ...
     def is_blinkint(self) -> bool: ...
     def set_blink(self, b: bool): ...

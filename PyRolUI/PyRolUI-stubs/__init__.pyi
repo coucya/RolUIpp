@@ -1,7 +1,7 @@
 
 from typing import overload
 
-from . import widgets, signals
+from . import widgets, signals, propertys
 
 
 class Vec2i:
