@@ -91,9 +91,8 @@ static void bind_container_widgets(py::module_& widgets) {
     BIND_PROPERTY(BoxWidget, Color);
     class_<BoxWidget, SingleChildWidget>(widgets, "BoxWidget")
         .def(py::init())
-        .def(py::init<unsigned>())
         .def_readonly("round", &BoxWidget::round, return_value_policy::reference_internal)
-        .def_readonly("border_widget", &BoxWidget::border_width, return_value_policy::reference_internal)
+        .def_readonly("border_width", &BoxWidget::border_width, return_value_policy::reference_internal)
         .def_readonly("border_color", &BoxWidget::border_color, return_value_policy::reference_internal)
         .def_readonly("background_color", &BoxWidget::background_color, return_value_policy::reference_internal);
 
@@ -192,10 +191,10 @@ static void bind_listener_widgets(py::module_& widgets) {
         .def_readonly("on_up", &MouseAreaWidget::on_up, return_value_policy::reference_internal)
         .def_readonly("on_down", &MouseAreaWidget::on_down, return_value_policy::reference_internal)
         .def_readonly("on_click", &MouseAreaWidget::on_click, return_value_policy::reference_internal)
-        .def_readonly("on_drag", &MouseAreaWidget::on_drag, return_value_policy::reference_internal)
         .def_readonly("on_move", &MouseAreaWidget::on_move, return_value_policy::reference_internal)
-        .def_readonly("on_wheel", &MouseAreaWidget::on_wheel, return_value_policy::reference_internal)
-        .def_readonly("on_hover", &MouseAreaWidget::on_hover, return_value_policy::reference_internal);
+        .def_readonly("on_drag", &MouseAreaWidget::on_drag, return_value_policy::reference_internal)
+        .def_readonly("on_hover", &MouseAreaWidget::on_hover, return_value_policy::reference_internal)
+        .def_readonly("on_wheel", &MouseAreaWidget::on_wheel, return_value_policy::reference_internal);
 
     class_<FocusWidget, SingleChildWidget>(widgets, "FocusWidget")
         .def(py::init())

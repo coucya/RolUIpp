@@ -47,7 +47,7 @@ namespace RolUI {
             Property<BoxWidget, Color> background_color{this, {255, 255, 255, 255}};
 
           public:
-            BoxWidget(unsigned round = 0) noexcept;
+            BoxWidget() noexcept;
             ~BoxWidget() override;
 
           protected:

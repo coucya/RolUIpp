@@ -8,7 +8,7 @@
 namespace RolUI {
     namespace widgets {
 
-        BoxWidget::BoxWidget(unsigned round) noexcept { this->round = round; }
+        BoxWidget::BoxWidget() noexcept {}
         BoxWidget::~BoxWidget() {}
 
         void BoxWidget::draw(IPainter* painter) noexcept {

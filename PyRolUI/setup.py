@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 PyRolUI_pk_data = ["PyRolUI.pyd", "RolUI.dll"]
 PyRolUI_glfw_pk_data = ["PyRolUI_glfw.pyd"]
-PyRolUI_pk_data_stubs = ["__init__.pyi"]
+PyRolUI_pk_data_stubs = ["__init__.pyi", "widgets.pyi", "signals.pyi"]
 PyRolUI_glfw_pk_data_stubs = ["__init__.pyi"]
 
 setup(
