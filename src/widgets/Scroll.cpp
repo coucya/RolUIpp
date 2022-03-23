@@ -4,23 +4,22 @@
 
 #include "RolUI/Point.hpp"
 #include "RolUI/widgets/Scroll.hpp"
+#include "RolUI/events/MouseEvent.hpp"
 
 namespace RolUI {
     namespace widgets {
 
         ScrollWidget::ScrollWidget() noexcept {}
 
-        Point ScrollWidget::widget_pos() const noexcept { return child() ? child()->pos() : Point{0, 0}; }
-        int ScrollWidget::widget_x() const noexcept { return child() ? child()->pos().x : 0; }
-        int ScrollWidget::widget_y() const noexcept { return child() ? child()->pos().y : 0; }
-
         float ScrollWidget::widget_x_ratio() const noexcept {
+            if (!child()) return 0.0;
+
             Size self_size = size();
             Size widget_size = child()->size();
 
-            int w_dis = std::max(widget_size.width - self_size.width, self_size.width - widget_size.width);
+            int w_dis = self_size.width - widget_size.width;
 
-            int wx = widget_x();
+            int wx = offset().x;
             if (w_dis == 0 && wx == 0)
                 return 0.0f;
             else if (w_dis == 0 && wx < 0)
@@ -30,12 +29,14 @@ namespace RolUI {
             return float(wx) / float(w_dis);
         }
         float ScrollWidget::widget_y_ratio() const noexcept {
+            if (!child()) return 0.0;
+
             Size self_size = size();
             Size widget_size = child()->size();
 
-            int h_dis = std::max(widget_size.height - self_size.height, self_size.height - widget_size.height);
+            int h_dis = self_size.height - widget_size.height;
 
-            int wy = widget_y();
+            int wy = offset().y;
             if (h_dis == 0 && wy == 0)
                 return 0.0f;
             else if (h_dis == 0 && wy < 0)
@@ -54,8 +55,8 @@ namespace RolUI {
             Size self_size = size();
             Size widget_size = child()->size();
 
-            int w_dis = std::max(widget_size.width - self_size.width, self_size.width - widget_size.width);
-            int h_dis = std::max(widget_size.height - self_size.height, self_size.height - widget_size.height);
+            int w_dis = self_size.width - widget_size.width;
+            int h_dis = self_size.height - widget_size.height;
 
             scroll_by_px(x * w_dis, y * h_dis);
         }
@@ -83,34 +84,83 @@ namespace RolUI {
             Size self_size = size();
             Size widget_size = child()->size();
 
-            int w_dis = std::max(widget_size.width - self_size.width, self_size.width - widget_size.width);
-            int h_dis = std::max(widget_size.height - self_size.height, self_size.height - widget_size.height);
+            int w_dis = self_size.width - widget_size.width;
+            int h_dis = self_size.height - widget_size.height;
 
             scroll_to_px(w_dis * x, h_dis * y);
         }
-        void ScrollWidget::scroll_x_to_px(int x) noexcept { scroll_to_px(x, child()->pos().y); }
-        void ScrollWidget::scroll_y_to_px(int y) noexcept { scroll_to_px(child()->pos().x, y); }
+        void ScrollWidget::scroll_x_to_px(int x) noexcept { scroll_to_px(x, offset().y); }
+        void ScrollWidget::scroll_y_to_px(int y) noexcept { scroll_to_px(offset().x, y); }
         void ScrollWidget::scroll_x_to_ratio(float x) noexcept {
             if (!child()) return;
             Size self_size = size();
             Size widget_size = child()->size();
-            int w_dis = std::max(widget_size.width - self_size.width, self_size.width - widget_size.width);
-            scroll_to_px(w_dis * x, child()->pos().y);
+            int w_dis = self_size.width - widget_size.width;
+            scroll_to_px(w_dis * x, offset().y);
         }
         void ScrollWidget::scroll_y_to_ratio(float y) noexcept {
             if (!child()) return;
             Size self_size = size();
             Size widget_size = child()->size();
-            int h_dis = std::max(widget_size.height - self_size.height, self_size.height - widget_size.height);
-            scroll_to_ratio(child()->pos().x, h_dis * y);
+            int h_dis = self_size.height - widget_size.height;
+            scroll_to_px(offset().x, h_dis * y);
         }
 
         Size ScrollWidget::perform_layout(Constraint constraint) noexcept {
             int n = std::numeric_limits<int>::max();
-            layout_child(Constraint::zero_to({n, n}), [&](Size) {
+            layout_child(Constraint::zero_to({n, n}), [this](Size) {
                 return offset();
             });
             return constraint.max();
         }
+
+        VScrollView::VScrollView() noexcept {}
+
+        Size VScrollView::perform_layout(Constraint constraint) noexcept {
+            int n = std::numeric_limits<int>::max();
+            layout_child(Constraint::zero_to({constraint.max_width(), n}), [this](Size) {
+                return offset();
+            });
+            return constraint.max();
+        }
+        bool VScrollView::handle_event(IEvent* e) noexcept {
+            if (e->is(MouseWheelEvent_type())) {
+                MouseWheelEvent* mwe = static_cast<MouseWheelEvent*>(e);
+                int dy = float(mwe->offset().y) * scroll_step();
+                scroll_y_by_px(dy);
+                float yr = widget_y_ratio();
+                if (yr <= 0.0)
+                    scroll_y_to_ratio(0.0);
+                if (yr >= 1.0)
+                    scroll_y_to_ratio(1.0);
+                return true;
+            }
+            return false;
+        }
+
+        HScrollView::HScrollView() noexcept {}
+
+        Size HScrollView::perform_layout(Constraint constraint) noexcept {
+            int n = std::numeric_limits<int>::max();
+            layout_child(Constraint::zero_to({n, constraint.max_height()}), [this](Size) {
+                return offset();
+            });
+            return constraint.max();
+        }
+        bool HScrollView::handle_event(IEvent* e) noexcept {
+            if (e->is(MouseWheelEvent_type())) {
+                MouseWheelEvent* mwe = static_cast<MouseWheelEvent*>(e);
+                int dy = float(mwe->offset().y) * scroll_step();
+                scroll_x_by_px(dy);
+                float xr = widget_x_ratio();
+                if (xr <= 0.0)
+                    scroll_x_to_ratio(0.0);
+                if (xr >= 1.0)
+                    scroll_x_to_ratio(1.0);
+                return true;
+            }
+            return false;
+        }
+
     } // namespace widgets
 } // namespace RolUI

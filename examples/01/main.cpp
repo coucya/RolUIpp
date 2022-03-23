@@ -23,6 +23,7 @@
 #include "RolUI/widgets/widgets.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/widgets/Image.hpp"
+#include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/widgets/layer.hpp"
 #include "RolUI/widgets/flow.hpp"
 #include "RolUI/widgets/container.hpp"
@@ -31,31 +32,23 @@
 using namespace RolUI;
 using namespace RolUI::widgets;
 
-std::string get_resources_dir() {
-    std::filesystem::path self_path{__FILE__};
-    std::filesystem::path path = self_path.parent_path() / ".." / "resources";
-    return path.string();
+Widget* build_property_widget(const char* str) {
+    Widget* pnw = widgets::align(1.0, 0.0, widgets::text(str));
+    Widget* pew = widgets::align(-1.0, 0.0, widgets::text(str));
+    Widget* w = widgets::row_grid()
+                    ->add_child(pnw)
+                    ->add_child(pew);
+    return w;
 }
 
-std::string get_font_path() {
-    using namespace std;
-    filesystem::path font_path = filesystem::path(get_resources_dir()) / "Roboto-Regular.ttf";
-    return font_path.string();
-}
-std::string get_image_huaji_path() {
-    using namespace std;
-    filesystem::path font_path = filesystem::path(get_resources_dir()) / "huaji.png";
-    return font_path.string();
-}
-
-using namespace RolUI;
-
-Widget* make_box(Color c) {
-    widgets::BoxWidget* box = new widgets::BoxWidget();
-    widgets::SizedBoxWidget* sb = new widgets::SizedBoxWidget();
-    box->set_child(sb);
-    box->background_color = c;
-    return box;
+Widget* build_property_table_widget() {
+    std::initializer_list<const char*> ps{"aaa", "bbb", "ccc", "ddd"};
+    ColumnWidget* cw = widgets::column();
+    for (const char* p : ps) {
+        auto w = build_property_widget(p);
+        cw->add_child(w);
+    }
+    return cw;
 }
 
 int main(int argc, char* argv[]) {
@@ -68,33 +61,17 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    // button("bt", std::function<void()>{[]() -> void {}});
-    // widgets::EditableTextWidget et;
-    TextBoxWidget* et = mk_widget<TextBoxWidget>();
-    et->font_size(40);
-    et->text(u8"啊啊啊啊啊啊");
+    RowWidget* cw = mk_widget<RowWidget>();
+    cw->gap(10);
+    for (int i = 0; i < 40; i++) {
+        auto s = std::to_string(i);
+        cw->add_child(text(s.c_str(), 30));
+    }
+    HScrollView vsv;
+    vsv.scroll_step(30.0);
+    vsv.set_child(cw);
 
-    ColumnWidget* w = mk_widget<ColumnWidget>();
-    w->cross_axis_alignment(1.0)
-        ->add_child(text("aaa", 10))
-        ->add_child(text("aaa", 20))
-        ->add_child(text("aaa", 30))
-        ->add_child(text("aaa", 40));
-
-    // PointerListenerWidget* plw = widgets::pointer_listener(et);
-    // plw->on_click.connect([=](Point pos) {
-    //     std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
-    //     int idx = et->pos_to_index(pos - et->abs_pos());
-    //     et->cursor_index(idx);
-    //     et->set_blink(true);
-    // });
-
-    // AlignWidget* w = widgets::align(0.0, 0.0, et);
-
-    Application::set_interval(1.0, [=](double) {
-        w->cross_axis_alignment = -w->cross_axis_alignment;
-    });
-
+    Widget* w = &vsv;
     Application::run(w);
 
     return 0;

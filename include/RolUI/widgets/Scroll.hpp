@@ -15,9 +15,6 @@ namespace RolUI {
           public:
             ScrollWidget() noexcept;
 
-            Point widget_pos() const noexcept;
-            int widget_x() const noexcept;
-            int widget_y() const noexcept;
             float widget_x_ratio() const noexcept;
             float widget_y_ratio() const noexcept;
 
@@ -37,6 +34,30 @@ namespace RolUI {
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
+        };
+
+        class VScrollView : public ScrollWidget {
+          public:
+            Property<VScrollView, float> scroll_step{this, 10.0};
+
+          public:
+            VScrollView() noexcept;
+
+          protected:
+            Size perform_layout(Constraint constraint) noexcept override;
+            bool handle_event(IEvent* e) noexcept override;
+        };
+
+        class HScrollView : public ScrollWidget {
+          public:
+            Property<HScrollView, float> scroll_step{this, 10.0};
+
+          public:
+            HScrollView() noexcept;
+
+          protected:
+            Size perform_layout(Constraint constraint) noexcept override;
+            bool handle_event(IEvent* e) noexcept override;
         };
 
     } // namespace widgets
