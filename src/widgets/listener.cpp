@@ -10,11 +10,11 @@
 namespace RolUI {
     namespace widgets {
 
-        PointerListenerWidget::PointerListenerWidget() noexcept {}
+        PointerListener::PointerListener() noexcept {}
 
-        PointerListenerWidget::~PointerListenerWidget() {}
+        PointerListener::~PointerListener() {}
 
-        bool PointerListenerWidget::handle_event(IEvent* e) noexcept {
+        bool PointerListener::handle_event(IEvent* e) noexcept {
             if (!e) return false;
 
             MouseEvent* me = (MouseEvent*)e;
@@ -45,17 +45,17 @@ namespace RolUI {
             return false;
         }
 
-        void PointerListenerWidget::draw(IPainter* painter) noexcept {
+        void PointerListener::draw(IPainter* painter) noexcept {
             SingleChildWidget::draw(painter);
             // painter->set_stroke_color({255, 0, 0});
             // painter->set_stroke_width(2);
             // painter->draw_rect(abs_rect());
         }
 
-        MouseAreaWidget::MouseAreaWidget() noexcept {}
-        MouseAreaWidget::~MouseAreaWidget() {}
+        MouseListener::MouseListener() noexcept {}
+        MouseListener::~MouseListener() {}
 
-        bool MouseAreaWidget::handle_event(IEvent* e) noexcept {
+        bool MouseListener::handle_event(IEvent* e) noexcept {
             if (!e) return false;
 
             MouseEvent* me = (MouseEvent*)e;
@@ -107,22 +107,22 @@ namespace RolUI {
             }
             return false;
         }
-        void MouseAreaWidget::draw(IPainter* painter) noexcept {
+        void MouseListener::draw(IPainter* painter) noexcept {
             SingleChildWidget::draw(painter);
         }
 
-        FocusWidget::FocusWidget() noexcept {}
+        FocusListener::FocusListener() noexcept {}
 
-        void FocusWidget::focus() noexcept {
+        void FocusListener::focus() noexcept {
             Application::set_focus_widget(this);
         }
 
-        void FocusWidget::unfocus() noexcept {
+        void FocusListener::unfocus() noexcept {
             if (Application::focus_widget() == static_cast<Widget*>(this))
                 Application::set_focus_widget(nullptr);
         }
 
-        bool FocusWidget::handle_event(IEvent* e) noexcept {
+        bool FocusListener::handle_event(IEvent* e) noexcept {
             if (e->event_type() == FocusChangeEvent::type()) {
                 FocusChangeEvent* event = static_cast<FocusChangeEvent*>(e);
                 on_focus.emit(event->current_value());
@@ -131,9 +131,9 @@ namespace RolUI {
             return false;
         }
 
-        CharInputWidget::CharInputWidget() noexcept {}
+        CharInputListener::CharInputListener() noexcept {}
 
-        bool CharInputWidget::handle_event(IEvent* e) noexcept {
+        bool CharInputListener::handle_event(IEvent* e) noexcept {
             if (e->event_type() == CharEvent::type()) {
                 CharEvent* ce = static_cast<CharEvent*>(e);
                 uint32_t cp = ce->codepoint();

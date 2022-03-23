@@ -57,7 +57,7 @@ namespace RolUI {
         RowGridWidget* row_grid();
         ColumnGridWidget* column_grid();
 
-        PointerListenerWidget* pointer_listener(Widget* child);
+        PointerListener* pointer_listener(Widget* child);
 
         template <typename WT, typename... Args>
         WT* mk_widget(Args&&... args) { return new WT(args...); }

@@ -174,35 +174,35 @@ static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py
     BIND_SINGAL(signals, Point);
     BIND_SINGAL(signals, bool);
     BIND_SINGAL(signals, unsigned);
-    class_<PointerListenerWidget, SingleChildWidget>(widgets, "PointerListenerWidget")
+    class_<PointerListener, SingleChildWidget>(widgets, "PointerListener")
         .def(py::init())
-        .def_readonly("on_up", &PointerListenerWidget::on_up, return_value_policy::reference_internal)
-        .def_readonly("on_down", &PointerListenerWidget::on_down, return_value_policy::reference_internal)
-        .def_readonly("on_click", &PointerListenerWidget::on_click, return_value_policy::reference_internal)
-        .def_readonly("on_move", &PointerListenerWidget::on_move, return_value_policy::reference_internal)
-        .def_readonly("on_drag", &PointerListenerWidget::on_drag, return_value_policy::reference_internal)
-        .def_readonly("on_hover", &PointerListenerWidget::on_hover, return_value_policy::reference_internal);
+        .def_readonly("on_up", &PointerListener::on_up, return_value_policy::reference_internal)
+        .def_readonly("on_down", &PointerListener::on_down, return_value_policy::reference_internal)
+        .def_readonly("on_click", &PointerListener::on_click, return_value_policy::reference_internal)
+        .def_readonly("on_move", &PointerListener::on_move, return_value_policy::reference_internal)
+        .def_readonly("on_drag", &PointerListener::on_drag, return_value_policy::reference_internal)
+        .def_readonly("on_hover", &PointerListener::on_hover, return_value_policy::reference_internal);
 
     BIND_SINGAL(signals, MouseKey, Vec2i);
-    class_<MouseAreaWidget, SingleChildWidget>(widgets, "MouseAreaWidget")
+    class_<MouseListener, SingleChildWidget>(widgets, "MouseListener")
         .def(py::init())
-        .def_readonly("on_up", &MouseAreaWidget::on_up, return_value_policy::reference_internal)
-        .def_readonly("on_down", &MouseAreaWidget::on_down, return_value_policy::reference_internal)
-        .def_readonly("on_click", &MouseAreaWidget::on_click, return_value_policy::reference_internal)
-        .def_readonly("on_move", &MouseAreaWidget::on_move, return_value_policy::reference_internal)
-        .def_readonly("on_drag", &MouseAreaWidget::on_drag, return_value_policy::reference_internal)
-        .def_readonly("on_hover", &MouseAreaWidget::on_hover, return_value_policy::reference_internal)
-        .def_readonly("on_wheel", &MouseAreaWidget::on_wheel, return_value_policy::reference_internal);
+        .def_readonly("on_up", &MouseListener::on_up, return_value_policy::reference_internal)
+        .def_readonly("on_down", &MouseListener::on_down, return_value_policy::reference_internal)
+        .def_readonly("on_click", &MouseListener::on_click, return_value_policy::reference_internal)
+        .def_readonly("on_move", &MouseListener::on_move, return_value_policy::reference_internal)
+        .def_readonly("on_drag", &MouseListener::on_drag, return_value_policy::reference_internal)
+        .def_readonly("on_hover", &MouseListener::on_hover, return_value_policy::reference_internal)
+        .def_readonly("on_wheel", &MouseListener::on_wheel, return_value_policy::reference_internal);
 
-    class_<FocusWidget, SingleChildWidget>(widgets, "FocusWidget")
+    class_<FocusListener, SingleChildWidget>(widgets, "FocusListener")
         .def(py::init())
-        .def("focus", &FocusWidget::focus)
-        .def("unfocus", &FocusWidget::unfocus)
-        .def_readonly("on_focus", &FocusWidget::on_focus, return_value_policy::reference_internal);
+        .def("focus", &FocusListener::focus)
+        .def("unfocus", &FocusListener::unfocus)
+        .def_readonly("on_focus", &FocusListener::on_focus, return_value_policy::reference_internal);
 
-    class_<CharInputWidget, SingleChildWidget>(widgets, "CharInputWidget")
+    class_<CharInputListener, SingleChildWidget>(widgets, "CharInputListener")
         .def(py::init())
-        .def_readonly("on_input", &CharInputWidget::on_input, return_value_policy::reference_internal);
+        .def_readonly("on_input", &CharInputListener::on_input, return_value_policy::reference_internal);
 }
 
 static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::module_& propertys) {
@@ -211,9 +211,6 @@ static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::mo
     class_<ScrollWidget, SingleChildWidget>(widgets, "ScrollWidget")
         .def(py::init())
         .def_readonly("offset", &ScrollWidget::offset, return_value_policy::reference_internal)
-        .def("widget_pos", &ScrollWidget::widget_pos)
-        .def("widget_x", &ScrollWidget::widget_x)
-        .def("widget_y", &ScrollWidget::widget_y)
         .def("widget_x_ratio", &ScrollWidget::widget_x_ratio)
         .def("widget_y_ratio", &ScrollWidget::widget_y_ratio)
         .def("scroll_by_px", &ScrollWidget::scroll_by_px)
@@ -415,7 +412,7 @@ static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py:
                 py::kw_only(), py::arg("child"), return_value_policy::reference);
 
     widgets.def(
-        "mouse_area", [](Widget* child) { return mk_widget<MouseAreaWidget>()->set_child(child); },
+        "mouse_area", [](Widget* child) { return mk_widget<MouseListener>()->set_child(child); },
         py::kw_only(), py::arg("child"), return_value_policy::reference);
 }
 

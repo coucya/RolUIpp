@@ -7,7 +7,7 @@
 namespace RolUI {
     namespace widgets {
 
-        class PointerListenerWidget : public SingleChildWidget {
+        class PointerListener : public SingleChildWidget {
           public:
             Signal<Point> on_up;
             Signal<Point> on_down;
@@ -17,8 +17,8 @@ namespace RolUI {
             Signal<bool> on_hover;
 
           public:
-            PointerListenerWidget() noexcept;
-            ~PointerListenerWidget() override;
+            PointerListener() noexcept;
+            ~PointerListener() override;
 
             bool handle_event(IEvent* e) noexcept override;
             void draw(IPainter* painter) noexcept override;
@@ -27,7 +27,7 @@ namespace RolUI {
             bool _is_press = false;
         };
 
-        class MouseAreaWidget : public SingleChildWidget {
+        class MouseListener : public SingleChildWidget {
           public:
             Signal<MouseKey, Point> on_up;
             Signal<MouseKey, Point> on_down;
@@ -38,8 +38,8 @@ namespace RolUI {
             Signal<bool> on_hover;
 
           public:
-            MouseAreaWidget() noexcept;
-            ~MouseAreaWidget() override;
+            MouseListener() noexcept;
+            ~MouseListener() override;
 
             bool handle_event(IEvent* e) noexcept override;
             void draw(IPainter* painter) noexcept override;
@@ -48,12 +48,12 @@ namespace RolUI {
             bool _is_press[MOUSE_KEY_COUNT] = {false};
         };
 
-        class FocusWidget : public SingleChildWidget {
+        class FocusListener : public SingleChildWidget {
           public:
             Signal<bool> on_focus;
 
           public:
-            FocusWidget() noexcept;
+            FocusListener() noexcept;
 
             void focus() noexcept;
             void unfocus() noexcept;
@@ -61,11 +61,11 @@ namespace RolUI {
             bool handle_event(IEvent* e) noexcept override;
         };
 
-        class CharInputWidget : public SingleChildWidget {
+        class CharInputListener : public SingleChildWidget {
           public:
             Signal<uint32_t> on_input;
 
-            CharInputWidget() noexcept;
+            CharInputListener() noexcept;
 
             bool handle_event(IEvent* e) noexcept override;
         };

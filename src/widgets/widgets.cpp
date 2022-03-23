@@ -35,7 +35,7 @@ namespace RolUI {
             DeckWidget* dw = mk_widget<DeckWidget>();
             dw->add_child(normal)->add_child(hover)->add_child(press);
 
-            PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
+            PointerListener* plw = mk_widget<PointerListener>();
             plw->set_child(dw);
 
             plw->on_hover.connect([=](bool b) { dw->selected(b ? 1 : 0); });
@@ -54,7 +54,7 @@ namespace RolUI {
                 ->background_color(normal)
                 ->set_child(mk_widget<AlignWidget>()
                                 ->set_child(text(str, text_size, text_color)));
-            PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
+            PointerListener* plw = mk_widget<PointerListener>();
             plw->set_child(box);
             plw->on_hover.connect([=](bool b) { box->background_color(b ? hover : normal); });
             plw->on_down.connect([=](Point) { box->background_color(press); });
@@ -114,8 +114,8 @@ namespace RolUI {
         RowGridWidget* row_grid() { return mk_widget<RowGridWidget>(); }
         ColumnGridWidget* column_grid() { return mk_widget<ColumnGridWidget>(); }
 
-        PointerListenerWidget* pointer_listener(Widget* child) {
-            return (PointerListenerWidget*)mk_widget<PointerListenerWidget>()->set_child(child);
+        PointerListener* pointer_listener(Widget* child) {
+            return (PointerListener*)mk_widget<PointerListener>()->set_child(child);
         }
 
     } // namespace widgets

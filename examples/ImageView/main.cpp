@@ -108,7 +108,7 @@ std::tuple<RolUI::Widget*,
            std::function<void(Point, bool)>,
            std::function<void(float)>>
 build_image_view() {
-    PointerListenerWidget* plw = mk_widget<PointerListenerWidget>();
+    PointerListener* plw = mk_widget<PointerListener>();
     ScrollWidget* sw = mk_widget<ScrollWidget>();
     SizedBoxWidget* sbw = mk_widget<SizedBoxWidget>()
                               ->width(SizeUnit(800))
@@ -147,7 +147,7 @@ Widget* build_ui() {
         set_offset({0, 0}, false);
         set_scale(1.0f);
     };
-    MouseAreaWidget* plw = mk_widget<MouseAreaWidget>();
+    MouseListener* plw = mk_widget<MouseListener>();
     plw->on_drag.connect([=, set_offset = set_offset](MouseKey mk, Vec2i offset) {
         if (mk == MouseKey::left)
             set_offset(offset, true);
