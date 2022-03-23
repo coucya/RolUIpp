@@ -79,6 +79,7 @@ namespace RolUI {
             ~TextBoxWidget();
 
             bool handle_event(IEvent* e) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets

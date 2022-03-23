@@ -234,5 +234,9 @@ namespace RolUI {
             return false;
         }
 
+        Size TextBoxWidget::perform_layout(Constraint constraint) noexcept {
+            return constraint.max();
+        }
+
     } // namespace widgets
 } // namespace RolUI
