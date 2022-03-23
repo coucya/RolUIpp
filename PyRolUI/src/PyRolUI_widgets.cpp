@@ -206,7 +206,6 @@ static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py
 }
 
 static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::module_& propertys) {
-
     BIND_PROPERTY(propertys, signals, ScrollWidget, Point);
     class_<ScrollWidget, SingleChildWidget>(widgets, "ScrollWidget")
         .def(py::init())
@@ -225,6 +224,13 @@ static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::mo
         .def("scroll_y_to_px", &ScrollWidget::scroll_y_to_px)
         .def("scroll_x_to_ratio", &ScrollWidget::scroll_x_to_ratio)
         .def("scroll_y_to_ratio", &ScrollWidget::scroll_y_to_ratio);
+
+    class_<VScrollView, ScrollWidget>(widgets, "VScrollView")
+        .def(py::init())
+        .def_readonly("scroll_step", &VScrollView::scroll_step, py::return_value_policy::reference_internal);
+    class_<HScrollView, ScrollWidget>(widgets, "HScrollView")
+        .def(py::init())
+        .def_readonly("scroll_step", &HScrollView::scroll_step, py::return_value_policy::reference_internal);
 }
 
 static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
@@ -326,14 +332,29 @@ static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py:
                 return_value_policy::reference);
 
     widgets.def("margin", static_cast<MarginWidget* (*)(unsigned, Widget*)>(widgets::margin),
-                py::kw_only(), py::arg("margin"), py::arg("child"),
+                py::kw_only(), py::arg("margin") = 0, py::arg("child"),
                 return_value_policy::reference);
     widgets.def("margin", static_cast<MarginWidget* (*)(unsigned, unsigned, Widget*)>(widgets::margin),
-                py::kw_only(), py::arg("x"), py::arg("y"), py::arg("child"),
+                py::kw_only(), py::arg("x") = 0, py::arg("y") = 0, py::arg("child"),
                 return_value_policy::reference);
     widgets.def("margin", static_cast<MarginWidget* (*)(unsigned, unsigned, unsigned, unsigned, Widget*)>(widgets::margin),
-                py::kw_only(), py::arg("top"), py::arg("right"), py::arg("bottom"), py::arg("left"), py::arg("child"),
+                py::kw_only(), py::arg("top") = 0, py::arg("right") = 0, py::arg("bottom") = 0, py::arg("left") = 0, py::arg("child"),
                 return_value_policy::reference);
+
+    widgets.def(
+        "vscroll_view", [](Widget* child, float step) {
+            return mk_widget<VScrollView>()
+                ->scroll_step(step)
+                ->set_child(child);
+        },
+        py::kw_only(), py::arg("child"), py::arg("step") = 10.0, return_value_policy::reference);
+    widgets.def(
+        "hscroll_view", [](Widget* child, float step) {
+            return mk_widget<HScrollView>()
+                ->scroll_step(step)
+                ->set_child(child);
+        },
+        py::kw_only(), py::arg("child"), py::arg("step") = 10.0, return_value_policy::reference);
 
     widgets.def(
         "stack", [](py::list children, float align_x, float align_y) {
@@ -412,7 +433,15 @@ static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py:
                 py::kw_only(), py::arg("child"), return_value_policy::reference);
 
     widgets.def(
-        "mouse_area", [](Widget* child) { return mk_widget<MouseListener>()->set_child(child); },
+        "mouse_listener", [](Widget* child) { return mk_widget<MouseListener>()->set_child(child); },
+        py::kw_only(), py::arg("child"), return_value_policy::reference);
+
+    widgets.def(
+        "focus_listener", [](Widget* child) { return mk_widget<FocusListener>()->set_child(child); },
+        py::kw_only(), py::arg("child"), return_value_policy::reference);
+
+    widgets.def(
+        "char_input_listener", [](Widget* child) { return mk_widget<CharInputListener>()->set_child(child); },
         py::kw_only(), py::arg("child"), return_value_policy::reference);
 }
 
