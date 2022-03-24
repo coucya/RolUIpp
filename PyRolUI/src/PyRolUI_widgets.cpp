@@ -446,12 +446,9 @@ static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py:
 }
 
 void bind_widgets(py::module_& m) {
-    py::module_ widgets{"widgets", "RolUI widgets."};
-    py::module_ signals{"signals", "RolUI signals."};
-    py::module_ propertys{"propertys", "RolUI propertys."};
-    m.attr("widgets") = widgets;
-    m.attr("signals") = signals;
-    m.attr("propertys") = propertys;
+    py::module_ widgets = m.def_submodule("widgets", "RolUI widgets.");
+    py::module_ signals = m.def_submodule("signals", "RolUI signals.");
+    py::module_ propertys = m.def_submodule("propertys", "RolUI propertys.");
 
     bind_container_widgets(widgets, signals, propertys);
     bind_layer_Widgets(widgets, signals, propertys);
