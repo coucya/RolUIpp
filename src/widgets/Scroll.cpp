@@ -10,9 +10,9 @@
 namespace RolUI {
     namespace widgets {
 
-        ScrollWidget::ScrollWidget() noexcept {}
+        ScrollView::ScrollView() noexcept {}
 
-        float ScrollWidget::widget_x_ratio() const noexcept {
+        float ScrollView::widget_x_ratio() const noexcept {
             if (!child()) return 0.0;
 
             Size self_size = size();
@@ -29,7 +29,7 @@ namespace RolUI {
                 return +std::numeric_limits<float>::infinity();
             return float(wx) / float(w_dis);
         }
-        float ScrollWidget::widget_y_ratio() const noexcept {
+        float ScrollView::widget_y_ratio() const noexcept {
             if (!child()) return 0.0;
 
             Size self_size = size();
@@ -47,11 +47,11 @@ namespace RolUI {
             return float(wy) / float(h_dis);
         }
 
-        void ScrollWidget::scroll_by_px(int dx, int dy) noexcept {
+        void ScrollView::scroll_by_px(int dx, int dy) noexcept {
             if (!child()) return;
             offset = offset.get() + Point{dx, dy};
         }
-        void ScrollWidget::scroll_by_ratio(float x, float y) noexcept {
+        void ScrollView::scroll_by_ratio(float x, float y) noexcept {
             if (!child()) return;
             Size self_size = size();
             Size widget_size = child()->size();
@@ -62,25 +62,25 @@ namespace RolUI {
             scroll_by_px(x * w_dis, y * h_dis);
         }
 
-        void ScrollWidget::scroll_x_by_px(int dx) noexcept {
+        void ScrollView::scroll_x_by_px(int dx) noexcept {
             scroll_by_px(dx, 0);
         }
 
-        void ScrollWidget::scroll_y_by_px(int dy) noexcept {
+        void ScrollView::scroll_y_by_px(int dy) noexcept {
             scroll_by_px(0, dy);
         }
-        void ScrollWidget::scroll_x_by_ratio(float x) noexcept {
+        void ScrollView::scroll_x_by_ratio(float x) noexcept {
             scroll_by_ratio(x, 0);
         }
-        void ScrollWidget::scroll_y_by_ratio(float y) noexcept {
+        void ScrollView::scroll_y_by_ratio(float y) noexcept {
             scroll_by_ratio(0, y);
         }
 
-        void ScrollWidget::scroll_to_px(int x, int y) noexcept {
+        void ScrollView::scroll_to_px(int x, int y) noexcept {
             if (!child()) return;
             offset = {x, y};
         }
-        void ScrollWidget::scroll_to_ratio(float x, float y) noexcept {
+        void ScrollView::scroll_to_ratio(float x, float y) noexcept {
             if (!child()) return;
             Size self_size = size();
             Size widget_size = child()->size();
@@ -90,16 +90,16 @@ namespace RolUI {
 
             scroll_to_px(w_dis * x, h_dis * y);
         }
-        void ScrollWidget::scroll_x_to_px(int x) noexcept { scroll_to_px(x, offset().y); }
-        void ScrollWidget::scroll_y_to_px(int y) noexcept { scroll_to_px(offset().x, y); }
-        void ScrollWidget::scroll_x_to_ratio(float x) noexcept {
+        void ScrollView::scroll_x_to_px(int x) noexcept { scroll_to_px(x, offset().y); }
+        void ScrollView::scroll_y_to_px(int y) noexcept { scroll_to_px(offset().x, y); }
+        void ScrollView::scroll_x_to_ratio(float x) noexcept {
             if (!child()) return;
             Size self_size = size();
             Size widget_size = child()->size();
             int w_dis = self_size.width - widget_size.width;
             scroll_to_px(w_dis * x, offset().y);
         }
-        void ScrollWidget::scroll_y_to_ratio(float y) noexcept {
+        void ScrollView::scroll_y_to_ratio(float y) noexcept {
             if (!child()) return;
             Size self_size = size();
             Size widget_size = child()->size();
@@ -107,14 +107,14 @@ namespace RolUI {
             scroll_to_px(offset().x, h_dis * y);
         }
 
-        Size ScrollWidget::perform_layout(Constraint constraint) noexcept {
+        Size ScrollView::perform_layout(Constraint constraint) noexcept {
             int n = std::numeric_limits<int>::max();
             layout_child(Constraint::zero_to({n, n}), [this](Size) {
                 return offset();
             });
             return constraint.max();
         }
-        void ScrollWidget::draw(IPainter* painter) noexcept {
+        void ScrollView::draw(IPainter* painter) noexcept {
             if (!child()) return;
 
             RolUI::Rect ar = abs_rect();

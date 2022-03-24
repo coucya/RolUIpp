@@ -206,29 +206,29 @@ static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py
 }
 
 static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::module_& propertys) {
-    BIND_PROPERTY(propertys, signals, ScrollWidget, Point);
-    class_<ScrollWidget, SingleChildWidget>(widgets, "ScrollWidget")
+    BIND_PROPERTY(propertys, signals, ScrollView, Point);
+    class_<ScrollView, SingleChildWidget>(widgets, "ScrollView")
         .def(py::init())
-        .def_readonly("offset", &ScrollWidget::offset, return_value_policy::reference_internal)
-        .def("widget_x_ratio", &ScrollWidget::widget_x_ratio)
-        .def("widget_y_ratio", &ScrollWidget::widget_y_ratio)
-        .def("scroll_by_px", &ScrollWidget::scroll_by_px)
-        .def("scroll_by_ratio", &ScrollWidget::scroll_by_ratio)
-        .def("scroll_x_by_px", &ScrollWidget::scroll_x_by_px)
-        .def("scroll_y_by_px", &ScrollWidget::scroll_y_by_px)
-        .def("scroll_x_by_ratio", &ScrollWidget::scroll_x_by_ratio)
-        .def("scroll_y_by_ratio", &ScrollWidget::scroll_y_by_ratio)
-        .def("scroll_to_px", &ScrollWidget::scroll_to_px)
-        .def("scroll_to_ratio", &ScrollWidget::scroll_to_ratio)
-        .def("scroll_x_to_px", &ScrollWidget::scroll_x_to_px)
-        .def("scroll_y_to_px", &ScrollWidget::scroll_y_to_px)
-        .def("scroll_x_to_ratio", &ScrollWidget::scroll_x_to_ratio)
-        .def("scroll_y_to_ratio", &ScrollWidget::scroll_y_to_ratio);
+        .def_readonly("offset", &ScrollView::offset, return_value_policy::reference_internal)
+        .def("widget_x_ratio", &ScrollView::widget_x_ratio)
+        .def("widget_y_ratio", &ScrollView::widget_y_ratio)
+        .def("scroll_by_px", &ScrollView::scroll_by_px)
+        .def("scroll_by_ratio", &ScrollView::scroll_by_ratio)
+        .def("scroll_x_by_px", &ScrollView::scroll_x_by_px)
+        .def("scroll_y_by_px", &ScrollView::scroll_y_by_px)
+        .def("scroll_x_by_ratio", &ScrollView::scroll_x_by_ratio)
+        .def("scroll_y_by_ratio", &ScrollView::scroll_y_by_ratio)
+        .def("scroll_to_px", &ScrollView::scroll_to_px)
+        .def("scroll_to_ratio", &ScrollView::scroll_to_ratio)
+        .def("scroll_x_to_px", &ScrollView::scroll_x_to_px)
+        .def("scroll_y_to_px", &ScrollView::scroll_y_to_px)
+        .def("scroll_x_to_ratio", &ScrollView::scroll_x_to_ratio)
+        .def("scroll_y_to_ratio", &ScrollView::scroll_y_to_ratio);
 
-    class_<VScrollView, ScrollWidget>(widgets, "VScrollView")
+    class_<VScrollView, ScrollView>(widgets, "VScrollView")
         .def(py::init())
         .def_readonly("scroll_step", &VScrollView::scroll_step, py::return_value_policy::reference_internal);
-    class_<HScrollView, ScrollWidget>(widgets, "HScrollView")
+    class_<HScrollView, ScrollView>(widgets, "HScrollView")
         .def(py::init())
         .def_readonly("scroll_step", &HScrollView::scroll_step, py::return_value_policy::reference_internal);
 }

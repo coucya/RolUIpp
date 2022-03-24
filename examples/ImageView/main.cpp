@@ -109,7 +109,7 @@ std::tuple<RolUI::Widget*,
            std::function<void(float)>>
 build_image_view() {
     PointerListener* plw = mk_widget<PointerListener>();
-    ScrollWidget* sw = mk_widget<ScrollWidget>();
+    ScrollView* sw = mk_widget<ScrollView>();
     SizedBoxWidget* sbw = mk_widget<SizedBoxWidget>()
                               ->width(SizeUnit(800))
                               ->height(SizeUnit(600));

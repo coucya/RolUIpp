@@ -8,12 +8,12 @@
 namespace RolUI {
     namespace widgets {
 
-        class ScrollWidget : public SingleChildWidget {
+        class ScrollView : public SingleChildWidget {
           public:
-            Property<ScrollWidget, Point> offset{this};
+            Property<ScrollView, Point> offset{this};
 
           public:
-            ScrollWidget() noexcept;
+            ScrollView() noexcept;
 
             float widget_x_ratio() const noexcept;
             float widget_y_ratio() const noexcept;
@@ -37,7 +37,7 @@ namespace RolUI {
             void draw(IPainter* painter) noexcept override;
         };
 
-        class VScrollView : public ScrollWidget {
+        class VScrollView : public ScrollView {
           public:
             Property<VScrollView, float> scroll_step{this, 10.0};
 
@@ -49,7 +49,7 @@ namespace RolUI {
             bool handle_event(IEvent* e) noexcept override;
         };
 
-        class HScrollView : public ScrollWidget {
+        class HScrollView : public ScrollView {
           public:
             Property<HScrollView, float> scroll_step{this, 10.0};
 

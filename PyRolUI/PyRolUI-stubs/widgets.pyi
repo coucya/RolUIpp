@@ -146,7 +146,7 @@ class CharImputListener(SingleChildWidget):
     on_input: Signal
 
 
-class ScrollWidget(SingleChildWidget):
+class ScrollView(SingleChildWidget):
     offset: Property
     def __init__(self) -> None: ...
     def widget_pos(self) -> Point: ...
@@ -168,12 +168,12 @@ class ScrollWidget(SingleChildWidget):
     def scroll_y_to_ratio(self, y: float): ...
 
 
-class VScrollView(ScrollWidget):
+class VScrollView(ScrollView):
     scroll_step: Property
     def __init__(self) -> None: ...
 
 
-class HScrollView(ScrollWidget):
+class HScrollView(ScrollView):
     scroll_step: Property
     def __init__(self) -> None: ...
 
