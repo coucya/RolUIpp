@@ -130,16 +130,8 @@ namespace RolUI {
     }
 
     void SingleChildWidget::draw(IPainter* painter) noexcept {
-        if (_child == nullptr) return;
-
-        RolUI::Rect ar = abs_rect();
-        RolUI::Rect current_scissor = painter->get_scissor();
-        painter->scissor(
-            current_scissor
-                .intersected(ar)
-                .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
-        _child->draw(painter);
-        painter->scissor(current_scissor);
+        if (_child)
+            _child->draw(painter);
     }
 
     Size SingleChildWidget::perform_layout(Constraint constraint) noexcept {
@@ -201,18 +193,8 @@ namespace RolUI {
     }
 
     void MultiChildWidget::draw(IPainter* painter) noexcept {
-        if (_children.size() == 0) return;
-
-        RolUI::Rect ar = abs_rect();
-        RolUI::Rect current_scissor = painter->get_scissor();
-        painter->scissor(
-            current_scissor
-                .intersected(ar)
-                .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
-        for (Widget* w : _children) {
+        for (Widget* w : _children)
             w->draw(painter);
-        }
-        painter->scissor(current_scissor);
     }
 
     Size MultiChildWidget::perform_layout(Constraint constraint) noexcept {

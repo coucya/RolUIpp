@@ -3,6 +3,7 @@
 #include <limits>
 
 #include "RolUI/Point.hpp"
+#include "RolUI/IPainter.hpp"
 #include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 
@@ -112,6 +113,18 @@ namespace RolUI {
                 return offset();
             });
             return constraint.max();
+        }
+        void ScrollWidget::draw(IPainter* painter) noexcept {
+            if (!child()) return;
+
+            RolUI::Rect ar = abs_rect();
+            RolUI::Rect current_scissor = painter->get_scissor();
+            painter->scissor(
+                current_scissor
+                    .intersected(ar)
+                    .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
+            child()->draw(painter);
+            painter->scissor(current_scissor);
         }
 
         VScrollView::VScrollView() noexcept {}
