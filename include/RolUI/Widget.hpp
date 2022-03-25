@@ -174,6 +174,7 @@ namespace RolUI {
 
         MultiChildWidget* add_child(Widget* child) noexcept;
         MultiChildWidget* set_child(int index, Widget* child) noexcept;
+        MultiChildWidget* insert_child(int index, Widget* child) noexcept;
 
         void remove_child(Widget* child) noexcept;
         void remove_child(int index) noexcept;

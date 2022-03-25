@@ -370,6 +370,7 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("child", &MultiChildWidget::child, return_value_policy::reference)
         .def("add_child", &MultiChildWidget::add_child, return_value_policy::reference)
         .def("set_child", &MultiChildWidget::set_child, return_value_policy::reference)
+        .def("insert_child", &MultiChildWidget::insert_child, return_value_policy::reference)
         .def("remove_child", [](MultiChildWidget& self, Widget* child) { self.remove_child(child); })
         .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); });
 

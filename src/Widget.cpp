@@ -169,6 +169,16 @@ namespace RolUI {
         }
         return this;
     }
+    MultiChildWidget* MultiChildWidget::insert_child(int index, Widget* child) noexcept {
+        if (!child || index < 0 || index > _children.size()) return this;
+        if (index == _children.size()) {
+            add_child(child);
+        } else {
+            _children.insert(_children.begin() + index, child);
+            _children[index]->_mount(this);
+        }
+        return this;
+    }
 
     void MultiChildWidget::remove_child(Widget* child) noexcept {
         auto it = std::find(_children.begin(), _children.end(), child);

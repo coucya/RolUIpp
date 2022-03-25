@@ -225,9 +225,11 @@ static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::mo
         .def("scroll_x_to_ratio", &ScrollView::scroll_x_to_ratio)
         .def("scroll_y_to_ratio", &ScrollView::scroll_y_to_ratio);
 
+    BIND_PROPERTY(propertys, signals, VScrollView, float);
     class_<VScrollView, ScrollView>(widgets, "VScrollView")
         .def(py::init())
         .def_readonly("scroll_step", &VScrollView::scroll_step, py::return_value_policy::reference_internal);
+    BIND_PROPERTY(propertys, signals, HScrollView, float);
     class_<HScrollView, ScrollView>(widgets, "HScrollView")
         .def(py::init())
         .def_readonly("scroll_step", &HScrollView::scroll_step, py::return_value_policy::reference_internal);
