@@ -351,6 +351,8 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("rect", &Widget::rect)
         .def("abs_pos", &Widget::abs_pos)
         .def("abs_rect", &Widget::abs_rect)
+        .def("mounted", &Widget::mounted)
+        .def("depth", &Widget::depth)
         .def("parent", &Widget::parent, return_value_policy::reference)
         .def("layout", &Widget::layout)
         .def("get_child_by_pos", &Widget::get_child_by_pos, return_value_policy::reference)
