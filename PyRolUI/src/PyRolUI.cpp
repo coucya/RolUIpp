@@ -2,6 +2,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/functional.h>
+#include <pybind11/stl.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
