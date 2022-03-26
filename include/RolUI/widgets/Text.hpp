@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 #include "../Widget.hpp"
 #include "../IPainter.hpp"
@@ -28,6 +29,11 @@ namespace RolUI {
 
             unsigned pos_to_index(Point pos) const noexcept;
             Point index_to_pos(unsigned index) const noexcept;
+
+            unsigned char_count() const noexcept;
+            unsigned char_index_to_byte_beg_index(unsigned idx) const noexcept;
+            unsigned char_index_to_byte_end_index(unsigned idx) const noexcept;
+
             unsigned line_height() const noexcept;
 
           protected:
@@ -36,11 +42,19 @@ namespace RolUI {
 
           private:
             void _update_size() noexcept;
+            void _did_text_change() noexcept;
 
             Point _byte_index_to_pos(unsigned index) const noexcept;
             Point _char_index_to_pos(unsigned index) const noexcept;
 
-            Size _size;
+            struct Char {
+                int32_t codepoint = 0;
+                uint32_t utf8_str_beg_idx = 0;
+                uint32_t utf8_str_end_idx = 0;
+            };
+
+            Size _text_size;
+            std::vector<Char> _chars;
         };
 
         class EditableTextWidget : public TextWidget {

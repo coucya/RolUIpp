@@ -8,37 +8,16 @@
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/CharEvent.hpp"
+#include "RolUI/events/KeyboardEvent.hpp"
 
 namespace RolUI {
     namespace widgets {
 
-        static unsigned _prev_byte_index(const char* str, unsigned index) noexcept {
-            utf8_int32_t _tmp_;
-            const char* end = utf8rcodepoint(str + index, &_tmp_);
-            unsigned idx = end <= str ? 0 : end - str;
-            return idx;
-        }
-        static unsigned _next_byte_index(const char* str, unsigned index) noexcept {
-            utf8_int32_t _tmp_;
-            const char* end = utf8codepoint(str + index, &_tmp_);
-            unsigned idx = end <= str ? 0 : end - str;
-            return idx;
-        }
-
-        static unsigned _byte_index_to_char_index(const char* str, unsigned index) noexcept {
-            unsigned idx = utf8nlen(str, index);
-            return idx;
-        }
-        static unsigned _char_index_to_byte_index(const char* str, unsigned index) noexcept {
-            unsigned idx = utf8utf8index(str, index);
-            return idx;
-        }
-
         TextWidget ::TextWidget() noexcept {
-            font_size.on_change.connect([this](const unsigned&) { this->_update_size(); });
-            font_color.on_change.connect([this](const Color&) { this->_update_size(); });
-            font_name.on_change.connect([this](const std::string&) { this->_update_size(); });
-            text.on_change.connect([this](const std::string&) { this->_update_size(); });
+            font_size.on_change.connect([this](const unsigned&) { this->_did_text_change(); });
+            font_color.on_change.connect([this](const Color&) { this->_did_text_change(); });
+            font_name.on_change.connect([this](const std::string&) { this->_did_text_change(); });
+            text.on_change.connect([this](const std::string&) { this->_did_text_change(); });
         }
         TextWidget ::TextWidget(const std::string& str) noexcept
             : TextWidget() {
@@ -53,9 +32,24 @@ namespace RolUI {
                 win->painter()->set_font_size(font_size);
                 if (!font_name->empty())
                     win->painter()->set_font(font_name->c_str());
-                _size = win->painter()->text_size(text->c_str(), text->size());
+                _text_size = win->painter()->text_size(text->c_str(), text->size());
             } else {
-                _size = Size(0, 0);
+                _text_size = Size(0, 0);
+            }
+        }
+
+        void TextWidget::_did_text_change() noexcept {
+            _update_size();
+            const char* beg = text().c_str();
+            const char* end = beg + text().size();
+            const char* it = beg;
+            utf8_int32_t cp;
+            _chars.clear();
+            while (it < end) {
+                const char* next_it = utf8codepoint(it, &cp);
+                _chars.push_back(Char{cp, uint32_t(it - beg), uint32_t(next_it - beg)});
+                it = next_it;
+                if (it >= end) break;
             }
         }
 
@@ -73,46 +67,60 @@ namespace RolUI {
         }
 
         Size TextWidget::perform_layout(Constraint constraint) noexcept {
-            return _size;
+            return _text_size;
         }
 
         unsigned TextWidget::line_height() const noexcept {
             return font_size.get();
         }
         unsigned TextWidget::pos_to_index(Point pos) const noexcept {
-            const char* text_str = text->c_str();
-            int text_size = text->size();
+            const char* text_str = text().c_str();
+            unsigned byte_count = text().size();
+            unsigned char_count = _chars.size();
 
-            unsigned maybe_idx = float(pos.x) / float(size().width) * text->size();
-            Point maybe_pos = _byte_index_to_pos(maybe_idx);
+            auto hdis = [](Point a, Point b) { return std::abs(a.x - b.x); };
 
-            if (maybe_idx > text->size())
-                maybe_idx = text->size();
+            unsigned maybe_idx = float(pos.x) / float(_text_size.width) * char_count;
+            maybe_idx = std::clamp<unsigned>(maybe_idx, 0, char_count + 1);
+            Point maybe_pos = _char_index_to_pos(maybe_idx);
 
-            while (maybe_idx > 0) {
-                unsigned t = _prev_byte_index(text_str, maybe_idx);
-                Point pos_t = _byte_index_to_pos(t);
-                if (std::abs(pos_t.x - pos.x) <= std::abs(maybe_pos.x - pos.x)) {
-                    maybe_pos = pos_t;
-                    maybe_idx = t;
-                } else
-                    break;
+            if (maybe_idx > 0) {
+                Point i_pos = _char_index_to_pos(maybe_idx - 1);
+                while (hdis(i_pos, pos) < hdis(maybe_pos, pos)) {
+                    maybe_pos = i_pos;
+                    maybe_idx--;
+                    if (maybe_idx == 0) break;
+                    i_pos = _char_index_to_pos(maybe_idx - 1);
+                }
+            }
+            if (maybe_idx < char_count) {
+                Point i_pos = _char_index_to_pos(maybe_idx + 1);
+                while (hdis(i_pos, pos) < hdis(maybe_pos, pos)) {
+                    maybe_pos = i_pos;
+                    maybe_idx++;
+                    if (maybe_idx >= char_count) break;
+                    i_pos = _char_index_to_pos(maybe_idx + 1);
+                }
             }
 
-            while (maybe_idx < text_size) {
-                unsigned t = _next_byte_index(text_str, maybe_idx);
-                Point pos_t = _byte_index_to_pos(t);
-                if (std::abs(pos_t.x - pos.x) <= std::abs(maybe_pos.x - pos.x)) {
-                    maybe_pos = pos_t;
-                    maybe_idx = t;
-                } else
-                    break;
-            }
-
-            return _byte_index_to_char_index(text->c_str(), maybe_idx);
+            return maybe_idx;
         }
         Point TextWidget::index_to_pos(unsigned index) const noexcept {
             return _char_index_to_pos(index);
+        }
+
+        unsigned TextWidget::char_count() const noexcept { return _chars.size(); }
+        unsigned TextWidget::char_index_to_byte_beg_index(unsigned idx) const noexcept {
+            if (_chars.size() == 0) return 0;
+            if (idx >= _chars.size())
+                return _chars[_chars.size() - 1].utf8_str_end_idx;
+            return _chars[idx].utf8_str_beg_idx;
+        }
+        unsigned TextWidget::char_index_to_byte_end_index(unsigned idx) const noexcept {
+            if (_chars.size() == 0) return 0;
+            if (idx >= _chars.size())
+                return _chars[_chars.size() - 1].utf8_str_end_idx;
+            return _chars[idx].utf8_str_end_idx;
         }
 
         Point TextWidget::_byte_index_to_pos(unsigned index) const noexcept {
@@ -126,8 +134,7 @@ namespace RolUI {
         }
         Point TextWidget::_char_index_to_pos(unsigned index) const noexcept {
             if (index == 0) return {0, 0};
-
-            unsigned byte_idx = _char_index_to_byte_index(text->c_str(), index);
+            unsigned byte_idx = char_index_to_byte_beg_index(index);
             Point pos = _byte_index_to_pos(byte_idx);
             return pos;
         }
@@ -160,12 +167,12 @@ namespace RolUI {
         }
 
         void EditableTextWidget::delete_front() noexcept {
-            _delete_at_index(std::max(0, int(cursor_index.get()) - 1), 1);
-            if (cursor_index > 0)
-                cursor_index = cursor_index - 1;
+            if (cursor_index() == 0) return;
+            _delete_at_index(cursor_index() - 1, 1);
+            cursor_index(cursor_index() - 1);
         }
         void EditableTextWidget::delete_back() noexcept {
-            _delete_at_index(cursor_index.get() + 1, 1);
+            _delete_at_index(cursor_index(), 1);
         }
 
         void EditableTextWidget::insert_char(unsigned idx, uint32_t char_) noexcept {
@@ -177,7 +184,7 @@ namespace RolUI {
             insert_str(idx, str, strlen(str));
         }
         void EditableTextWidget::insert_str(unsigned idx, const char* str, unsigned len) noexcept {
-            int byte_idx = _char_index_to_byte_index(text().c_str(), idx);
+            int byte_idx = char_index_to_byte_beg_index(idx);
             std::string ts = text();
             ts.insert(byte_idx, str, len);
             text = std::move(ts);
@@ -195,10 +202,10 @@ namespace RolUI {
         }
 
         void EditableTextWidget::_delete_at_index(unsigned idx, unsigned len) noexcept {
-            int utf8_idx = utf8utf8index(text->c_str(), idx);
-            int utf8_len = utf8_idx + utf8utf8index(text->c_str() + utf8_idx, len);
+            int byte_beg_idx = char_index_to_byte_beg_index(idx);
+            int byte_end_idx = char_index_to_byte_beg_index(idx + len);
             std::string ts = text;
-            ts.erase(utf8_idx, utf8_len);
+            ts.erase(byte_beg_idx, byte_end_idx - byte_beg_idx);
             text = std::move(ts);
         }
         void EditableTextWidget::_update_cursor_pos() noexcept {
@@ -224,12 +231,26 @@ namespace RolUI {
                 else
                     this->set_blink(false);
                 return true;
-            } else if (e->is(CharEvent::type())) {
-                if (Application::focus_widget() == this) {
-                    uint32_t cp = ((CharEvent*)e)->codepoint();
-                    int idx = this->cursor_index();
-                    this->insert_char(idx, cp);
-                }
+            } else if (e->is(CharEvent::type()) && Application::focus_widget() == this) {
+                uint32_t cp = ((CharEvent*)e)->codepoint();
+                int idx = this->cursor_index();
+                this->insert_char(idx, cp);
+                return true;
+            } else if (e->is(KeyboardEvent::type()) && Application::focus_widget() == this) {
+                KeyboardEvent* ke = (KeyboardEvent*)e;
+                if (ke->action() == KeyboardKey::backspace && ke->key_mode() == KeyboardKeyMode::press)
+                    this->delete_front();
+                else if (ke->action() == KeyboardKey::delete_ && ke->key_mode() == KeyboardKeyMode::press)
+                    this->delete_back();
+                else if (ke->action() == KeyboardKey::left && ke->key_mode() == KeyboardKeyMode::press) {
+                    if (cursor_index() > 0)
+                        cursor_index(cursor_index() - 1);
+                } else if (ke->action() == KeyboardKey::right && ke->key_mode() == KeyboardKeyMode::press) {
+                    if (cursor_index() < char_count())
+                        cursor_index(cursor_index() + 1);
+                } else
+                    return false;
+                return true;
             }
             return false;
         }
