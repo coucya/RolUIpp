@@ -129,17 +129,17 @@ def render(obj: dict):
     return widget
 
 
-def text(text, *, font_size=0, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
+def text(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
     args = locals()
     return mk_widget(widgets.TextWidget, **args)
 
 
-def textbox(text, *, font_size=0, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
+def textbox(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
     args = locals()
     return mk_widget(widgets.TextBoxWidget, **args)
 
 
-def box(*, child: Widget, round=0, border_width=0, border_color=Color(), background_color=Color()) -> Widget:
+def box(*, child: Widget, round=0, border_width=0, border_color=Color(), background_color=Color(0, 0, 0, 0)) -> Widget:
     args = locals()
     return mk_widget(widgets.BoxWidget, **args)
 
@@ -150,8 +150,9 @@ def align(*, child: Widget, x=0, y=0) -> Widget:
 
 
 def sized(*, child: Widget, width=1.0, height=1.0) -> Widget:
-    args = locals()
-    return mk_widget(widgets.SizedBoxWidget, **args)
+    w = widgets.SizeUnit(width)if isinstance(width, (int, float)) else width
+    h = widgets.SizeUnit(height)if isinstance(height, (int, float)) else height
+    return mk_widget(widgets.SizedBoxWidget, child=child, width=w, height=h)
 
 
 def margin(*, child: Widget, top=0, rbottom=0, rleft=0, right=0) -> Widget:
@@ -159,12 +160,12 @@ def margin(*, child: Widget, top=0, rbottom=0, rleft=0, right=0) -> Widget:
     return mk_widget(widgets.MarginWidget, **args)
 
 
-def vscroll_view(*, child: Widget, step=10.0) -> Widget:
+def vscroll_view(*, child: Widget, scroll_step=10.0) -> Widget:
     args = locals()
     return mk_widget(widgets.VScrollView, **args)
 
 
-def hscroll_view(*, child: Widget, step=10.0) -> Widget:
+def hscroll_view(*, child: Widget, scroll_step=10.0) -> Widget:
     args = locals()
     return mk_widget(widgets.HScrollView, **args)
 
