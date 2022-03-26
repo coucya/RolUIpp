@@ -22,6 +22,7 @@ namespace RolUIBackend {
             typedef std::function<void(double, double)> CursorPosFunc;
             typedef std::function<void(int, int, int)> MouseButtonFunc;
             typedef std::function<void(double, double)> ScrollFunc;
+            typedef std::function<void(int, int, int, int)> KeyFunc;
 
             ExitFunc on_exit;
             SizeFunc on_size;
@@ -31,6 +32,7 @@ namespace RolUIBackend {
             CursorPosFunc on_cursor_pos;
             MouseButtonFunc on_mouse_button;
             ScrollFunc on_scroll;
+            KeyFunc on_key;
 
           protected:
             static void _exit_callback(GLFWwindow* w);
@@ -40,6 +42,7 @@ namespace RolUIBackend {
             static void _cursor_pos_callback(GLFWwindow* w, double x, double y);
             static void _mouse_button_callback(GLFWwindow* w, int button, int action, int mods);
             static void _scroll_callback(GLFWwindow* w, double x_offset, double y_offset);
+            static void _key_callback(GLFWwindow* w, int key, int scancode, int action, int mods);
         };
 
     } // namespace _details

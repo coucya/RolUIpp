@@ -78,13 +78,19 @@ namespace RolUIBackend {
         if (wd == nullptr || !wd->on_scroll) return;
         wd->on_scroll(x_offset, y_offset);
     }
+    void GLFWppWindowBase::_key_callback(GLFWwindow* w, int key, int scancode, int action, int mods) {
+        GLFWppWindow* wd = (GLFWppWindow*)glfwGetWindowUserPointer(w);
+        if (wd == nullptr || !wd->on_scroll) return;
+        wd->on_key(key, scancode, action, mods);
+    }
 
     /* ================================================================ */
 
     GLFWppWindow::GLFWppWindow(size_t w, size_t h, const char* title) : _glfw_window(nullptr) {
         auto win_opt = _create_window(w, h, title);
 
-        if (!win_opt.has_value()) return;
+        if (!win_opt.has_value())
+            throw std::runtime_error("can't create glfw window.");
         GLFWwindow* win = win_opt.value();
 
         glfwSetWindowCloseCallback(win, &_exit_callback);
@@ -94,6 +100,7 @@ namespace RolUIBackend {
         glfwSetCursorPosCallback(win, &_cursor_pos_callback);
         glfwSetMouseButtonCallback(win, &_mouse_button_callback);
         glfwSetScrollCallback(win, &_scroll_callback);
+        glfwSetKeyCallback(win, &_key_callback);
 
         _glfw_window = win;
         glfwSetWindowUserPointer(_glfw_window, this);

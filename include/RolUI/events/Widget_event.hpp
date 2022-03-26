@@ -36,8 +36,6 @@ namespace RolUI {
             : PropertyChangeEvent<property_type>(type(), target, current, old) {} \
     }
 
-    RulUI_define_property_change_event(WindowChangeEvent, Window*);
-
     RulUI_define_property_change_event(ParentChangeEvent, Widget*);
 
     RulUI_define_property_change_event(PosChangeEvent, Point);

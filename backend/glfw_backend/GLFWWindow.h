@@ -8,7 +8,7 @@
 #include "RolUI/IPainter.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/CharEvent.hpp"
-#include "RolUI/Window.hpp"
+#include "RolUI/events/KeyboardEvent.hpp"
 
 #include "GLFWPainter.h"
 #include "GLFWppWindow.h"
@@ -50,6 +50,7 @@ namespace RolUIBackend {
 
         RolUI::MouseDispatcher _mouse_dispatcher;
         RolUI::CharEventDispatcher _char_dispatcher;
+        RolUI::KeyboardDispatcher _key_dispatcher;
     };
 
 } // namespace RolUIBackend

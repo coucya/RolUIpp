@@ -163,6 +163,8 @@ namespace RolUI {
                 send_event(w, &mse);
             }
         }
+
+        clear_change();
     }
 
     MouseEvent::MouseEvent(const EventType* et, Widget* target, const MouseDispatcher* dispatcher) noexcept

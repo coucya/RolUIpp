@@ -3,6 +3,7 @@
 #include "../Widget.hpp"
 #include "../sigslot/Signal.hpp"
 #include "../events/MouseEvent.hpp"
+#include "../events/KeyboardEvent.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -46,6 +47,17 @@ namespace RolUI {
 
           private:
             bool _is_press[MOUSE_KEY_COUNT] = {false};
+        };
+
+        class KeyboardListener : public SingleChildWidget {
+          public:
+            Signal<KeyboardKey, KeyboardKeyMode> on_key;
+
+          public:
+            KeyboardListener() noexcept;
+            ~KeyboardListener() override;
+
+            bool handle_event(IEvent* e) noexcept override;
         };
 
         class FocusListener : public SingleChildWidget {

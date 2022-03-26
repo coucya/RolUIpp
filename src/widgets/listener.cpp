@@ -4,6 +4,7 @@
 #include "RolUI/widgets/listener.hpp"
 
 #include "RolUI/events/MouseEvent.hpp"
+#include "RolUI/events/KeyboardEvent.hpp"
 #include "RolUI/events/CharEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 
@@ -109,6 +110,18 @@ namespace RolUI {
         }
         void MouseListener::draw(IPainter* painter) noexcept {
             SingleChildWidget::draw(painter);
+        }
+
+        KeyboardListener::KeyboardListener() noexcept {}
+        KeyboardListener::~KeyboardListener() {}
+
+        bool KeyboardListener::handle_event(IEvent* e) noexcept {
+            if (e->is(KeyboardEvent::type())) {
+                KeyboardEvent* ke = static_cast<KeyboardEvent*>(e);
+                on_key.emit(ke->action(), ke->key_mode());
+                return true;
+            }
+            return false;
         }
 
         FocusListener::FocusListener() noexcept {}
