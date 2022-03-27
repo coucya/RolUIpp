@@ -146,6 +146,11 @@ class CharImputListener(SingleChildWidget):
     on_input: Signal
 
 
+class KeyboardListener(SingleChildWidget):
+    def __init__(self) -> None: ...
+    on_key: Signal
+
+
 class ScrollView(SingleChildWidget):
     offset: Property
     def __init__(self) -> None: ...

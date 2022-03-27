@@ -55,9 +55,15 @@ def mk_widget(widget_type: type, **kw_args) -> Widget:
     widget = widget_type()
     _gc_widgets.add(widget)
 
-    props = {**kw_args}
-    props.pop("child", None)
-    props.pop("children", None)
+    def _event_filter(pair):
+        return pair[0].startswith("on_") and callable(pair[1])
+
+    def _props_filter(pair):
+        return pair[0] != "child" and pair[0] != "chilren" and not _event_filter(pair)
+    events = {k: v for k, v in filter(_event_filter, kw_args.items())}
+    props = {k: v for k, v in filter(_props_filter, kw_args.items())}
+    child = kw_args.get("child", None)
+    children = kw_args.get("childrern", None)
 
     def _build_cb(w: Widget, prop_name):
         return lambda val: getattr(w, prop_name).set(val) if w.mounted() else None
@@ -70,24 +76,17 @@ def mk_widget(widget_type: type, **kw_args) -> Widget:
             else:
                 getattr(widget, prop_name).set(prop_value)
 
-    if "children" in kw_args and isinstance(kw_args["children"], list):
-        if isinstance(widget, MultiChildWidget):
-            children = kw_args["children"]
-            for c in children:
-                if isinstance(c, Widget):
-                    widget.add_child(c)
-                else:
-                    raise ValueError("child must be Widget")
-        else:
-            raise ValueError("Invalid children: " + str(kw_args["children"]))
-    elif "child" in kw_args:
-        if isinstance(widget, SingleChildWidget):
-            if isinstance(kw_args["child"], Widget):
-                widget.set_child(kw_args["child"])
-            else:
-                raise ValueError("child must be Widget")
-        else:
-            raise ValueError("Invalid child: " + str(kw_args["child"]))
+    for event_name, event_value in events.items():
+        if hasattr(widget, event_name):
+            getattr(widget, event_name).connect(event_value)
+
+    if isinstance(children, list) and all(map(lambda w: isinstance(w, Widget), children)) and isinstance(widget, MultiChildWidget):
+        for c in children:
+            widget.add_child(c)
+    elif isinstance(child, Widget) and isinstance(widget, SingleChildWidget):
+        widget.set_child(child)
+    elif child is not None or children is not None:
+        raise ValueError("Invalid child: (%s) or children: (%s)." % (str(child), str(children)))
 
     return widget
 
@@ -188,3 +187,7 @@ def row(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> Widget:
 def column(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> Widget:
     args = locals()
     return mk_widget(widgets.ColumnWidget, **args)
+
+
+def keyboard_linstener(*, child: Widget, on_key: Callable) -> Widget:
+    return mk_widget(widgets.KeyboardListener, on_key=on_key)

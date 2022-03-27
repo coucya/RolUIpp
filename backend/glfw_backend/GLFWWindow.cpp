@@ -216,8 +216,6 @@ namespace RolUIBackend {
             };
             _key_dispatcher.set_key_mode(rkey, md);
         };
-
-        // _mouse_dispatcher.clear_change();
     }
 
     RolUI::Point GLFWWindow::pos() const {

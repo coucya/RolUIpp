@@ -19,6 +19,7 @@
 #include <RolUI/Application.hpp>
 #include <RolUI/events/MouseEvent.hpp>
 #include <RolUI/events/CharEvent.hpp>
+#include <RolUI/events/KeyboardEvent.hpp>
 
 using namespace pybind11;
 using namespace RolUI;
@@ -145,6 +146,7 @@ static std::string Color_to_string(const Color& v) {
 }
 
 void bind_widgets(py::module_& m);
+
 static void bind_geometry(py::module_& m) {
     class_<Vec2i>(m, "Vec2i")
         .def(py::init())
@@ -239,24 +241,24 @@ static void bind_geometry(py::module_& m) {
 }
 
 static void bind_mouse_event(py::module_& m) {
-    enum_<MouseKeyMode>(m, "MouseKeyMode")
-        .value("press", MouseKeyMode::press)
-        .value("release", MouseKeyMode::release)
-        .export_values();
-    enum_<MouseKey>(m, "MouseKey")
-        .value("unkown", MouseKey::unkown)
-        .value("key1", MouseKey::key1)
-        .value("key2", MouseKey::key2)
-        .value("key3", MouseKey::key3)
-        .value("key4", MouseKey::key4)
-        .value("key5", MouseKey::key5)
-        .value("key6", MouseKey::key6)
-        .value("key7", MouseKey::key7)
-        .value("key8", MouseKey::key8)
-        .value("left", MouseKey::left)
-        .value("right", MouseKey::right)
-        .value("middle", MouseKey::middle)
-        .export_values();
+    {
+        enum_<MouseKeyMode>(m, "MouseKeyMode")
+            .value("press", MouseKeyMode::press)
+            .value("release", MouseKeyMode::release);
+        enum_<MouseKey>(m, "MouseKey")
+            .value("unkown", MouseKey::unkown)
+            .value("key1", MouseKey::key1)
+            .value("key2", MouseKey::key2)
+            .value("key3", MouseKey::key3)
+            .value("key4", MouseKey::key4)
+            .value("key5", MouseKey::key5)
+            .value("key6", MouseKey::key6)
+            .value("key7", MouseKey::key7)
+            .value("key8", MouseKey::key8)
+            .value("left", MouseKey::left)
+            .value("right", MouseKey::right)
+            .value("middle", MouseKey::middle);
+    }
 
     class_<MouseEvent, IEvent>(m, "MouseEvent")
         .def("pos", &MouseEvent::pos)
@@ -284,13 +286,152 @@ static void bind_char_event(py::module_& m) {
     m.def("CharEvent_type", CharEvent::type, py::return_value_policy::reference);
 }
 
+static void bind_keyboard_event(py::module_& m) {
+    {
+        enum_<KeyboardKeyMode>(m, "KeyboardKeyMode")
+            .value("press", KeyboardKeyMode::press)
+            .value("release", KeyboardKeyMode::release);
+        enum_<KeyboardKey>(m, "KeyboardKey")
+            .value("unknown", KeyboardKey::unknown)
+            .value("space", KeyboardKey::space)
+            .value("apostrophe", KeyboardKey::apostrophe, "'") /* ' */
+            .value("comma", KeyboardKey::comma, ",")           /* , */
+            .value("minus", KeyboardKey::minus, "-")           /* - */
+            .value("period", KeyboardKey::period, ".")         /* . */
+            .value("slash", KeyboardKey::slash, "/")           /* / */
+            .value("_0", KeyboardKey::_0)
+            .value("_1", KeyboardKey::_1)
+            .value("_2", KeyboardKey::_2)
+            .value("_3", KeyboardKey::_3)
+            .value("_4", KeyboardKey::_4)
+            .value("_5", KeyboardKey::_5)
+            .value("_6", KeyboardKey::_6)
+            .value("_7", KeyboardKey::_7)
+            .value("_8", KeyboardKey::_8)
+            .value("_9", KeyboardKey::_9)
+            .value("semicolon", KeyboardKey::semicolon, ";") /* ; */
+            .value("equal", KeyboardKey::equal, "=")         /* = */
+            .value("a", KeyboardKey::a)
+            .value("b", KeyboardKey::b)
+            .value("c", KeyboardKey::c)
+            .value("d", KeyboardKey::d)
+            .value("e", KeyboardKey::e)
+            .value("f", KeyboardKey::f)
+            .value("g", KeyboardKey::g)
+            .value("h", KeyboardKey::h)
+            .value("i", KeyboardKey::i)
+            .value("j", KeyboardKey::j)
+            .value("k", KeyboardKey::k)
+            .value("l", KeyboardKey::l)
+            .value("m", KeyboardKey::m)
+            .value("n", KeyboardKey::n)
+            .value("o", KeyboardKey::o)
+            .value("p", KeyboardKey::p)
+            .value("q", KeyboardKey::q)
+            .value("r", KeyboardKey::r)
+            .value("s", KeyboardKey::s)
+            .value("t", KeyboardKey::t)
+            .value("u", KeyboardKey::u)
+            .value("v", KeyboardKey::v)
+            .value("w", KeyboardKey::w)
+            .value("x", KeyboardKey::x)
+            .value("y", KeyboardKey::y)
+            .value("z", KeyboardKey::z)
+            .value("left_bracket", KeyboardKey::left_bracket, "[")   /* [ */
+            .value("backslash", KeyboardKey::backslash, "\\")        /* \ */
+            .value("right_bracket", KeyboardKey::right_bracket, "]") /* ] */
+            .value("grave_accent", KeyboardKey::grave_accent, "`")   /* ` */
+            .value("escape", KeyboardKey::escape)
+            .value("enter", KeyboardKey::enter)
+            .value("tab", KeyboardKey::tab)
+            .value("backspace", KeyboardKey::backspace)
+            .value("insert", KeyboardKey::insert)
+            .value("delete_", KeyboardKey::delete_)
+            .value("right", KeyboardKey::right)
+            .value("left", KeyboardKey::left)
+            .value("down", KeyboardKey::down)
+            .value("up", KeyboardKey::up)
+            .value("page_up", KeyboardKey::page_up)
+            .value("page_down", KeyboardKey::page_down)
+            .value("home", KeyboardKey::home)
+            .value("end", KeyboardKey::end)
+            .value("caps_lock", KeyboardKey::caps_lock)
+            .value("scroll_lock", KeyboardKey::scroll_lock)
+            .value("num_lock", KeyboardKey::num_lock)
+            .value("print_screen", KeyboardKey::print_screen)
+            .value("pause", KeyboardKey::pause)
+            .value("f1", KeyboardKey::f1)
+            .value("f2", KeyboardKey::f2)
+            .value("f3", KeyboardKey::f3)
+            .value("f4", KeyboardKey::f4)
+            .value("f5", KeyboardKey::f5)
+            .value("f6", KeyboardKey::f6)
+            .value("f7", KeyboardKey::f7)
+            .value("f8", KeyboardKey::f8)
+            .value("f9", KeyboardKey::f9)
+            .value("f10", KeyboardKey::f10)
+            .value("f11", KeyboardKey::f11)
+            .value("f12", KeyboardKey::f12)
+            .value("f13", KeyboardKey::f13)
+            .value("f14", KeyboardKey::f14)
+            .value("f15", KeyboardKey::f15)
+            .value("f16", KeyboardKey::f16)
+            .value("f17", KeyboardKey::f17)
+            .value("f18", KeyboardKey::f18)
+            .value("f19", KeyboardKey::f19)
+            .value("f20", KeyboardKey::f20)
+            .value("f21", KeyboardKey::f21)
+            .value("f22", KeyboardKey::f22)
+            .value("f23", KeyboardKey::f23)
+            .value("f24", KeyboardKey::f24)
+            .value("f25", KeyboardKey::f25)
+            .value("kp_0", KeyboardKey::kp_0)
+            .value("kp_1", KeyboardKey::kp_1)
+            .value("kp_2", KeyboardKey::kp_2)
+            .value("kp_3", KeyboardKey::kp_3)
+            .value("kp_4", KeyboardKey::kp_4)
+            .value("kp_5", KeyboardKey::kp_5)
+            .value("kp_6", KeyboardKey::kp_6)
+            .value("kp_7", KeyboardKey::kp_7)
+            .value("kp_8", KeyboardKey::kp_8)
+            .value("kp_9", KeyboardKey::kp_9)
+            .value("kp_decimal", KeyboardKey::kp_decimal)
+            .value("kp_divide", KeyboardKey::kp_divide)
+            .value("kp_multiply", KeyboardKey::kp_multiply)
+            .value("kp_subtract", KeyboardKey::kp_subtract)
+            .value("kp_add", KeyboardKey::kp_add)
+            .value("kp_enter", KeyboardKey::kp_enter)
+            .value("kp_equal", KeyboardKey::kp_equal)
+            .value("left_shift", KeyboardKey::left_shift)
+            .value("left_control", KeyboardKey::left_control)
+            .value("left_alt", KeyboardKey::left_alt)
+            .value("left_super", KeyboardKey::left_super)
+            .value("right_shift", KeyboardKey::right_shift)
+            .value("right_control", KeyboardKey::right_control)
+            .value("right_alt", KeyboardKey::right_alt)
+            .value("right_super", KeyboardKey::right_super)
+            .value("menu", KeyboardKey::menu);
+    }
+
+    class_<KeyboardEvent, IEvent>(m, "KeyboardEvent")
+        .def_static("type", &KeyboardEvent::type, py::return_value_policy::reference)
+        .def("action", &KeyboardEvent::action)
+        .def("key_mode", [](const KeyboardEvent& self) { return self.key_mode(); })
+        .def(
+            "key_mode", [](const KeyboardEvent& self, KeyboardKey k) {
+                return self.key_mode(k);
+            },
+            py::arg("key"));
+
+    m.def("KeyboardEvent_type", KeyboardEvent::type, py::return_value_policy::reference);
+}
+
 PYBIND11_MODULE(PyRolUI, m) {
     m.doc() = "RolUI Python bind.";
 
     bind_geometry(m);
 
-    py::module_ events_module{"events", "RolUI events Python bind."};
-    m.attr("events") = events_module;
+    py::module_ events_module = m.def_submodule("events", "RolUI events Python bind.");
 
     m.def("load_font", load_font, py::arg("name"), py::arg("filename"));
 
@@ -402,4 +543,5 @@ PYBIND11_MODULE(PyRolUI, m) {
     bind_widgets(m);
     bind_mouse_event(events_module);
     bind_char_event(events_module);
+    bind_keyboard_event(events_module);
 }

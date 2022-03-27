@@ -195,15 +195,22 @@ static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py
         .def_readonly("on_hover", &MouseListener::on_hover, return_value_policy::reference_internal)
         .def_readonly("on_wheel", &MouseListener::on_wheel, return_value_policy::reference_internal);
 
+    BIND_SINGAL(signals, bool);
     class_<FocusListener, SingleChildWidget>(widgets, "FocusListener")
         .def(py::init())
         .def("focus", &FocusListener::focus)
         .def("unfocus", &FocusListener::unfocus)
         .def_readonly("on_focus", &FocusListener::on_focus, return_value_policy::reference_internal);
 
+    BIND_SINGAL(signals, unsigned);
     class_<CharInputListener, SingleChildWidget>(widgets, "CharInputListener")
         .def(py::init())
         .def_readonly("on_input", &CharInputListener::on_input, return_value_policy::reference_internal);
+
+    BIND_SINGAL(signals, KeyboardKey, KeyboardKeyMode);
+    class_<KeyboardListener, SingleChildWidget>(widgets, "KeyboardListener")
+        .def(py::init())
+        .def_readonly("on_key", &KeyboardListener::on_key, return_value_policy::reference_internal);
 }
 
 static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::module_& propertys) {
