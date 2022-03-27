@@ -25,6 +25,8 @@ namespace RolUI {
 
     KeyboardDispatcher::KeyboardDispatcher() noexcept {
         clear_change();
+        for (int i = 0; i < KEYBORD_KEY_COUNT; i++)
+            _key_modes[i] = KeyboardKeyMode::release;
     }
 
     KeyboardKeyMode KeyboardDispatcher::key_mode(KeyboardKey key) const noexcept {
