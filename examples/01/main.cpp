@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <filesystem>
 #include <type_traits>
 #include <chrono>
@@ -43,17 +44,21 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     TextBoxWidget tbw;
+    MarginWidget mw{8};
     SizedBoxWidget sbw;
-    KeyboardListener kl;
+    BoxWidget bw;
+    AlignWidget aw;
 
-    tbw.font_size(40);
-    kl.set_child(&tbw);
+    tbw.font_size(30);
+    mw.set_child(&tbw);
+    sbw.width(200)
+        ->height(50)
+        ->set_child(&mw);
+    bw.border_width(1)->border_color({0, 0, 0});
+    bw.set_child(&sbw);
+    aw.set_child(&bw);
 
-    kl.on_key.connect([](KeyboardKey k, KeyboardKeyMode m) {
-        std::cout << "key " << (m == KeyboardKeyMode::press ? "press" : "release") << std::endl;
-    });
-
-    Widget* w = &kl;
+    Widget* w = &aw;
     Application::run(w);
 
     return 0;

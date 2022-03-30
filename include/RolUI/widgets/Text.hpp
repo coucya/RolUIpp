@@ -31,8 +31,11 @@ namespace RolUI {
             Point index_to_pos(unsigned index) const noexcept;
 
             unsigned char_count() const noexcept;
-            unsigned char_index_to_byte_beg_index(unsigned idx) const noexcept;
-            unsigned char_index_to_byte_end_index(unsigned idx) const noexcept;
+            // unsigned char_index_to_byte_beg_index(unsigned idx) const noexcept;
+            // unsigned char_index_to_byte_end_index(unsigned idx) const noexcept;
+            unsigned char_index_to_byte_index(unsigned idx) const noexcept;
+            unsigned char_byte_size(unsigned idx) const noexcept;
+            unsigned byte_index_to_char_index(unsigned idx) const noexcept;
 
             unsigned line_height() const noexcept;
 
@@ -44,17 +47,17 @@ namespace RolUI {
             void _update_size() noexcept;
             void _did_text_change() noexcept;
 
-            Point _byte_index_to_pos(unsigned index) const noexcept;
             Point _char_index_to_pos(unsigned index) const noexcept;
 
-            struct Char {
+            struct CharInfo {
                 int32_t codepoint = 0;
                 uint32_t utf8_str_beg_idx = 0;
                 uint32_t utf8_str_end_idx = 0;
+                uint32_t pos_x = 0;
             };
 
             Size _text_size;
-            std::vector<Char> _chars;
+            std::vector<CharInfo> _chars;
         };
 
         class EditableTextWidget : public TextWidget {

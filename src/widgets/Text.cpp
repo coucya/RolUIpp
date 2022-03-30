@@ -47,10 +47,24 @@ namespace RolUI {
             _chars.clear();
             while (it < end) {
                 const char* next_it = utf8codepoint(it, &cp);
-                _chars.push_back(Char{cp, uint32_t(it - beg), uint32_t(next_it - beg)});
+                _chars.push_back(CharInfo{cp, uint32_t(it - beg), uint32_t(next_it - beg)});
                 it = next_it;
-                if (it >= end) break;
             }
+
+            constexpr uint32_t T_MAX = 1024;
+            uint32_t T_POS[T_MAX];
+            uint32_t* poss = &T_POS[0];
+
+            if (_chars.size() > T_MAX)
+                poss = new uint32_t[_chars.size()];
+
+            IPainter* painter = Application::window()->painter();
+            int n = painter->text_glyph_pos(beg, end - beg, poss, _chars.size());
+            for (int i = 0; i < n; i++)
+                _chars[i].pos_x = poss[i];
+
+            if (_chars.size() > T_MAX)
+                delete poss;
         }
 
         void TextWidget::draw(IPainter* painter) noexcept {
@@ -110,33 +124,40 @@ namespace RolUI {
         }
 
         unsigned TextWidget::char_count() const noexcept { return _chars.size(); }
-        unsigned TextWidget::char_index_to_byte_beg_index(unsigned idx) const noexcept {
+        unsigned TextWidget::char_index_to_byte_index(unsigned idx) const noexcept {
             if (_chars.size() == 0) return 0;
             if (idx >= _chars.size())
                 return _chars[_chars.size() - 1].utf8_str_end_idx;
             return _chars[idx].utf8_str_beg_idx;
         }
-        unsigned TextWidget::char_index_to_byte_end_index(unsigned idx) const noexcept {
+        unsigned TextWidget::char_byte_size(unsigned idx) const noexcept {
             if (_chars.size() == 0) return 0;
-            if (idx >= _chars.size())
-                return _chars[_chars.size() - 1].utf8_str_end_idx;
-            return _chars[idx].utf8_str_end_idx;
+            if (idx >= _chars.size()) return 0;
+            return _chars[idx].utf8_str_end_idx - _chars[idx].utf8_str_beg_idx;
+        }
+        unsigned TextWidget::byte_index_to_char_index(unsigned idx) const noexcept {
+            if (_chars.size() == 0) return 0;
+            if (idx >= _chars[_chars.size() - 1].utf8_str_end_idx)
+                return _chars.size();
+
+            unsigned beg_it = 0, end_it = _chars.size();
+            do {
+                unsigned mid = beg_it + (end_it - beg_it) / 2;
+                if (idx >= _chars[mid].utf8_str_beg_idx && idx < _chars[mid].utf8_str_end_idx) {
+                    return mid;
+                } else if (idx < _chars[mid].utf8_str_beg_idx) {
+                    end_it = mid;
+                } else if (idx >= _chars[mid].utf8_str_end_idx) {
+                    beg_it = mid;
+                }
+            } while (beg_it != end_it);
+            return beg_it;
         }
 
-        Point TextWidget::_byte_index_to_pos(unsigned index) const noexcept {
-            if (index == 0) return {0, 0};
-
-            const char* text_str = text->c_str();
-
-            IPainter* painter = Application::window()->painter();
-            Size s = painter->text_size(text_str, index);
-            return {s.width, 0};
-        }
         Point TextWidget::_char_index_to_pos(unsigned index) const noexcept {
             if (index == 0) return {0, 0};
-            unsigned byte_idx = char_index_to_byte_beg_index(index);
-            Point pos = _byte_index_to_pos(byte_idx);
-            return pos;
+            if (index >= _chars.size()) return {_text_size.width, 0};
+            return {int(_chars[index].pos_x), 0};
         }
 
         EditableTextWidget::EditableTextWidget() noexcept {
@@ -184,7 +205,7 @@ namespace RolUI {
             insert_str(idx, str, strlen(str));
         }
         void EditableTextWidget::insert_str(unsigned idx, const char* str, unsigned len) noexcept {
-            int byte_idx = char_index_to_byte_beg_index(idx);
+            int byte_idx = char_index_to_byte_index(idx);
             std::string ts = text();
             ts.insert(byte_idx, str, len);
             text = std::move(ts);
@@ -202,8 +223,8 @@ namespace RolUI {
         }
 
         void EditableTextWidget::_delete_at_index(unsigned idx, unsigned len) noexcept {
-            int byte_beg_idx = char_index_to_byte_beg_index(idx);
-            int byte_end_idx = char_index_to_byte_beg_index(idx + len);
+            int byte_beg_idx = char_index_to_byte_index(idx);
+            int byte_end_idx = char_index_to_byte_index(idx + len);
             std::string ts = text;
             ts.erase(byte_beg_idx, byte_end_idx - byte_beg_idx);
             text = std::move(ts);

@@ -20,9 +20,9 @@ namespace RolUIBackend {
         virtual bool load_font(const char* name, const char* filename) override;
 
         virtual RolUI::Size text_size(const char* text, uint32_t len) const override;
+        virtual uint32_t text_glyph_pos(const char* text, uint32_t text_len, uint32_t* out_pos, uint32_t pos_len) const override;
 
-        // virtual void set_base_pos(RolUI::Point pos) override;
-        virtual void scissor(RolUI::Rect rect) override;
+        virtual void set_scissor(RolUI::Rect rect) override;
         virtual RolUI::Rect get_scissor() const override;
 
         virtual void set_font_size(uint32_t s) override;
@@ -49,23 +49,23 @@ namespace RolUIBackend {
         virtual void draw_roundedrect(RolUI::Rect rect, uint32_t round) override;
 
         virtual void fill_rect(RolUI::Rect rect) override;
-        virtual void fill_roundedrect(RolUI::Rect rect, uint32_t round) override;
-        virtual void fill_ellipse(RolUI::Rect rect) override;
         virtual void fill_circle(RolUI::Point centre, uint32_t r) override;
+        virtual void fill_ellipse(RolUI::Rect rect) override;
+        virtual void fill_roundedrect(RolUI::Rect rect, uint32_t round) override;
 
       private:
         GLFWPainter(void* nvg_context);
 
         void* _nvg_context = nullptr;
 
-        uint32_t _stroke_width = 1;
         uint32_t _font_size = 15;
-
-        RolUI::Color _fill_color;
-        RolUI::Color _stroke_color;
+        uint32_t _font_id = 0;
         RolUI::Color _font_color;
 
-        // RolUI::Point _pos;
+        uint32_t _stroke_width = 1;
+        RolUI::Color _stroke_color;
+        RolUI::Color _fill_color;
+
         RolUI::Rect _scissor;
     };
 

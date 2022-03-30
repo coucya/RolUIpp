@@ -69,12 +69,12 @@ namespace RolUI {
 
             RolUI::Rect ar = abs_rect();
             RolUI::Rect current_scissor = painter->get_scissor();
-            painter->scissor(
+            painter->set_scissor(
                 current_scissor
                     .intersected(ar)
                     .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
             sw->draw(painter);
-            painter->scissor(current_scissor);
+            painter->set_scissor(current_scissor);
         }
 
     } // namespace widgets

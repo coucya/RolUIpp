@@ -25,10 +25,28 @@ namespace RolUIBackend {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         float bound[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
+        nvgFontFaceId(vg, _font_id);
         nvgFontSize(vg, _font_size);
         nvgTextBounds(vg, 0, 0, text, text + len, bound);
         return {(int32_t)(bound[2] - bound[0]),
                 (int32_t)(bound[3] - bound[1])};
+    }
+    uint32_t GLFWPainter::text_glyph_pos(const char* text, uint32_t text_len, uint32_t* out_pos, uint32_t pos_len) const {
+        constexpr int T_MAX_LEN = 1024;
+        NVGglyphPosition T_GLYPH_POSITION[T_MAX_LEN];
+
+        NVGcontext* vg = (NVGcontext*)_nvg_context;
+        NVGglyphPosition* glyphs = &T_GLYPH_POSITION[0];
+        if (pos_len > T_MAX_LEN)
+            new NVGglyphPosition[pos_len];
+
+        int n = nvgTextGlyphPositions(vg, 0, 0, text, text + text_len, glyphs, pos_len);
+        for (int i = 0; i < n; i++)
+            out_pos[i] = glyphs[i].x;
+
+        if (pos_len > T_MAX_LEN) delete[] glyphs;
+
+        return n;
     }
 
     int GLFWPainter::create_image_with_rgba(const uint8_t* data, int w, int h) {
@@ -47,7 +65,7 @@ namespace RolUIBackend {
     }
 
     // void GLFWPainter::set_base_pos(RolUI::Point pos) { _pos = pos; }
-    void GLFWPainter::scissor(RolUI::Rect rect) {
+    void GLFWPainter::set_scissor(RolUI::Rect rect) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         nvgScissor(vg, rect.x, rect.y, rect.width, rect.height);
         _scissor = rect;
@@ -60,7 +78,9 @@ namespace RolUIBackend {
     void GLFWPainter::set_font_color(RolUI::Color color) { _font_color = color; }
     void GLFWPainter::set_font(const char* name) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
-        nvgFontFace(vg, name);
+        int id = nvgFindFont(vg, name);
+        if (id == -1) return;
+        _font_id = id;
     }
 
     void GLFWPainter::set_stroke_color(RolUI::Color color) { _stroke_color = color; }
@@ -72,6 +92,7 @@ namespace RolUIBackend {
         if (!text || len == 0) return;
 
         NVGcontext* vg = (NVGcontext*)_nvg_context;
+        nvgFontFaceId(vg, _font_id);
         nvgFontSize(vg, _font_size);
         nvgFillColor(vg, rc_to_nc(_font_color));
         nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);

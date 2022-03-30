@@ -77,7 +77,7 @@ class PyIPainter : public IPainter {
     PyIPainter_OVERRIDE(int, create_image_with_rgba, const uint8_t*, data, int, w, int, h);
     PyIPainter_OVERRIDE(void, delete_image, int, handle);
     PyIPainter_OVERRIDE(Size, image_size, int, handle);
-    PyIPainter_OVERRIDE(void, scissor, Rect, rect);
+    PyIPainter_OVERRIDE(void, set_scissor, Rect, rect);
 
     PyIPainter_OVERRIDE(void, set_font_size, uint32_t, s);
     PyIPainter_OVERRIDE(void, set_font_color, Color, color);
@@ -455,7 +455,7 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("create_image_with_rgba", &IPainter::create_image_with_rgba)
         .def("delete_image", &IPainter::delete_image)
         .def("image_size", &IPainter::image_size)
-        .def("scissor", &IPainter::scissor)
+        .def("set_scissor", &IPainter::set_scissor)
         .def("get_scissor", &IPainter::get_scissor)
         .def("set_font_size", &IPainter::set_font_size)
         .def("set_font_color", &IPainter::set_font_color)

@@ -152,7 +152,7 @@ namespace RolUI {
         if (painter == nullptr) return;
 
         _window->begin_draw();
-        painter->scissor(Rect{Point(), _window->size()});
+        painter->set_scissor(Rect{Point(), _window->size()});
         root->draw(painter);
         _window->end_draw();
     }
