@@ -31,8 +31,6 @@ namespace RolUI {
             Point index_to_pos(unsigned index) const noexcept;
 
             unsigned char_count() const noexcept;
-            // unsigned char_index_to_byte_beg_index(unsigned idx) const noexcept;
-            // unsigned char_index_to_byte_end_index(unsigned idx) const noexcept;
             unsigned char_index_to_byte_index(unsigned idx) const noexcept;
             unsigned char_byte_size(unsigned idx) const noexcept;
             unsigned byte_index_to_char_index(unsigned idx) const noexcept;

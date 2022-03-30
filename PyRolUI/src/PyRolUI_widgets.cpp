@@ -256,6 +256,10 @@ static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::mo
         .def_readonly("text", &TextWidget::text, return_value_policy::reference_internal)
         .def("pos_to_index", &TextWidget::pos_to_index)
         .def("index_to_pos", &TextWidget::index_to_pos)
+        .def("char_count", &TextWidget::char_count)
+        .def("char_index_to_byte_index", &TextWidget::char_index_to_byte_index)
+        .def("char_byte_size", &TextWidget::char_byte_size)
+        .def("byte_index_to_char_index", &TextWidget::byte_index_to_char_index)
         .def("line_height", &TextWidget::line_height);
 
     BIND_PROPERTY(propertys, signals, EditableTextWidget, unsigned);

@@ -108,9 +108,6 @@ class PyIPainter : public IPainter {
     virtual Size text_size(const char* text, uint32_t len) const override {
         PYBIND11_OVERRIDE_PURE(Size, IPainter, text_size, text, len);
     }
-    virtual Size text_size(const char* text) const override {
-        PYBIND11_OVERRIDE_PURE(Size, IPainter, text_size, text);
-    }
     virtual Rect get_scissor() const override {
         PYBIND11_OVERRIDE_PURE(Rect, IPainter, get_scissor, );
     }
@@ -450,8 +447,8 @@ PYBIND11_MODULE(PyRolUI, m) {
 
     class_<IPainter, PyIPainter>(m, "IPainter")
         .def("load_font", &IPainter::load_font)
-        .def("text_size", static_cast<Size (IPainter::*)(const char*, uint32_t) const>(&IPainter::text_size))
-        .def("text_size", static_cast<Size (IPainter::*)(const char*) const>(&IPainter::text_size))
+        .def("text_size", &IPainter::text_size)
+        .def("text_glyph_pos", &IPainter::text_glyph_pos)
         .def("create_image_with_rgba", &IPainter::create_image_with_rgba)
         .def("delete_image", &IPainter::delete_image)
         .def("image_size", &IPainter::image_size)
