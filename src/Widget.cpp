@@ -71,7 +71,8 @@ namespace RolUI {
     }
 
     void Widget::_mount(Widget* parent) noexcept {
-        if (_parent || !parent) return;
+        if (!parent) return;
+        if (_parent) _unmount();
         _parent = parent;
         _mounted = parent->_mounted;
         if (parent->_mounted)
