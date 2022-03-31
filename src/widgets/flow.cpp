@@ -159,51 +159,70 @@ namespace RolUI {
         }
 
         FlexWidget::FlexWidget() noexcept {}
+
+        void FlexWidget::_layout_children(Constraint constraint) noexcept {
+            int cons_width = constraint.max_width();
+            int cons_height = constraint.max_height();
+            bool is_row = direction() == Direction::row || direction() == Direction::row_reverse;
+            bool is_reverse = direction() == Direction::row_reverse || direction() == Direction::column_reverse;
+            int cons_main_size = is_row ? cons_width : cons_height;
+
+            int main_size_it = cons_main_size;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = is_reverse ? this->child(child_count() - 1 - i) : this->child(i);
+                Point new_cons_size = is_row ? Point{main_size_it, cons_height} : Point{cons_width, main_size_it};
+                Constraint new_cons = Constraint::zero_to(new_cons_size);
+                Size child_size = child->layout(new_cons);
+                main_size_it -= is_row ? child_size.width : child_size.height;
+                if (main_size_it <= 0)
+                    main_size_it = cons_main_size;
+            }
+        }
         Size FlexWidget::perform_layout(Constraint constraint) noexcept {
             int cons_width = constraint.max_width();
             int cons_height = constraint.max_height();
+            bool is_row = direction() == Direction::row || direction() == Direction::row_reverse;
+            bool is_reverse = direction() == Direction::row_reverse || direction() == Direction::column_reverse;
+            int cons_main_size = is_row ? cons_width : cons_height;
+            int cons_cross_size = !is_row ? cons_width : cons_height;
 
-            int main_size_it = cons_width;
+            int main_size_it = cons_main_size;
 
-            for (int i = 0; i < child_count(); i++) {
-                Widget* child = this->child(i);
-                Constraint new_cons = Constraint::zero_to({main_size_it, cons_height});
-                Size child_size = child->layout(new_cons);
-                main_size_it -= child_size.width;
-                if (main_size_it <= 0)
-                    main_size_it = cons_width;
-            }
+            _layout_children(constraint);
 
             int last_main_pos = 0;
             int last_cross_pos = 0;
             int start = 0;
             int end = 0;
-            int cross_max = 0;
+            int current_cross_size_max = 0;
 
             while (start < this->child_count()) {
-                cross_max = 0;
+                current_cross_size_max = 0;
                 main_size_it = 0;
                 last_main_pos = 0;
-                while (main_size_it < cons_width && end < this->child_count()) {
-                    Widget* child = this->child(end);
-
-                    main_size_it += child->size().width;
-                    if (main_size_it > cons_width && start < end)
+                while (main_size_it < cons_main_size && end < this->child_count()) {
+                    Widget* child = is_reverse ? this->child(child_count() - 1 - end) : this->child(end);
+                    Size child_size = child->size();
+                    main_size_it += is_row ? child_size.width : child_size.height;
+                    if (main_size_it > cons_main_size && start < end)
                         break;
 
-                    int t = child->size().height;
-                    if (t > cross_max)
-                        cross_max = t;
+                    int t = !is_row ? child_size.width : child_size.height;
+                    if (t > current_cross_size_max)
+                        current_cross_size_max = t;
                     end++;
                 }
                 for (int i = start; i < end; i++) {
-                    Widget* child = this->child(i);
-                    int x = last_main_pos;
-                    int y = last_cross_pos + (cross_axis_alignment() + 1.0f) / 2.0f * (cross_max - child->size().height);
-                    RolUI::set_pos(child, Point(x, y));
-                    last_main_pos += child->size().width;
+                    Widget* child = is_reverse ? this->child(child_count() - 1 - i) : this->child(i);
+                    int child_main_size = is_row ? child->size().width : child->size().height;
+                    int child_cross_size = is_row ? child->size().height : child->size().width;
+                    int main_pos = last_main_pos;
+                    int cross_pos = last_cross_pos + (cross_axis_alignment() + 1.0f) / 2.0f * (current_cross_size_max - child_cross_size);
+                    Point pos = is_row ? Point{main_pos, cross_pos} : Point{cross_pos, main_pos};
+                    RolUI::set_pos(child, pos);
+                    last_main_pos += child_main_size;
                 }
-                last_cross_pos += cross_max;
+                last_cross_pos += current_cross_size_max;
                 start = end;
             }
 

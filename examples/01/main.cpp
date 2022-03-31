@@ -65,9 +65,9 @@ int main(int argc, char* argv[]) {
 
     FlexWidget flex;
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 10; i++) {
         Color c = random_color();
-        Size s = random_size(30, 60);
+        Size s = random_size(30, 100);
         std::cout << "size: (" << s.width << ", " << s.height << "), ";
         std::cout << "color: (" << (int)c.r << ", " << (int)c.g << ", " << (int)c.b << ")";
         std::cout << std::endl;
@@ -81,6 +81,15 @@ int main(int argc, char* argv[]) {
         if (caa >= 1.0 || caa <= -1.0)
             dir = -dir;
         flex.cross_axis_alignment(caa + dir);
+    });
+    Application::set_interval(3.0, [&](double) {
+        Direction flex_dir = flex.direction();
+        switch (flex.direction()) {
+            case Direction::row: flex.direction(Direction::row_reverse); break;
+            case Direction::row_reverse: flex.direction(Direction::column); break;
+            case Direction::column: flex.direction(Direction::column_reverse); break;
+            case Direction::column_reverse: flex.direction(Direction::row); break;
+        }
     });
 
     Widget* w = &flex;

@@ -68,15 +68,26 @@ namespace RolUI {
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
+        enum class Direction {
+            row,
+            column,
+            row_reverse,
+            column_reverse
+        };
+
         class FlexWidget : public MultiChildWidget {
           public:
             Property<FlexWidget, float> cross_axis_alignment{this, 0.0f};
+            Property<FlexWidget, Direction> direction{this, Direction::row};
 
           public:
             FlexWidget() noexcept;
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
+
+          private:
+            void _layout_children(Constraint constraint) noexcept;
         };
 
     } // namespace widgets
