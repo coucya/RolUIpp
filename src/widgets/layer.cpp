@@ -30,8 +30,8 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
                 Size cs = child->size();
-                int cx = float(max_w - cs.width) * this->align_x;
-                int cy = float(max_h - cs.height) * this->align_y;
+                int cx = (this->align_x() + 1.0f) / 2.0f * float(max_w - cs.width);
+                int cy = (this->align_y() + 1.0f) / 2.0f * float(max_h - cs.height);
 
                 RolUI::set_pos(child, {cx, cy});
             }
@@ -53,28 +53,15 @@ namespace RolUI {
 
         Size DeckWidget::perform_layout(Constraint constraint) noexcept {
             if (selected.get() >= this->child_count()) return {0, 0};
-
             Widget* sw = this->child(selected.get());
-            if (sw == nullptr) return {0, 0};
-
-            Size s = sw->layout(constraint);
-            return s;
+            if (sw) return sw->layout(constraint);
+            return {0, 0};
         }
 
         void DeckWidget::draw(IPainter* painter) noexcept {
             if (selected.get() >= this->child_count()) return;
-
             Widget* sw = this->child(selected.get());
-            if (sw == nullptr) return;
-
-            RolUI::Rect ar = abs_rect();
-            RolUI::Rect current_scissor = painter->get_scissor();
-            painter->set_scissor(
-                current_scissor
-                    .intersected(ar)
-                    .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
-            sw->draw(painter);
-            painter->set_scissor(current_scissor);
+            if (sw) sw->draw(painter);
         }
 
     } // namespace widgets

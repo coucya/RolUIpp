@@ -8,8 +8,8 @@ namespace RolUI {
 
         class StackWidget : public MultiChildWidget {
           public:
-            Property<StackWidget, float> align_x{this, 0.5f};
-            Property<StackWidget, float> align_y{this, 0.5f};
+            Property<StackWidget, float> align_x{this, 0.0f};
+            Property<StackWidget, float> align_y{this, 0.0f};
 
           public:
             StackWidget() noexcept;
