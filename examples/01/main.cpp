@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <numeric>
 #include <functional>
+#include <random>
 
 #include "glfw_backend/GLFWWindow.h"
 
@@ -33,32 +34,56 @@
 using namespace RolUI;
 using namespace RolUI::widgets;
 
+std::default_random_engine e;
+
+Color random_color() {
+    std::uniform_int_distribution<uint8_t> rc{0, 255};
+    return Color{rc(e), rc(e), rc(e)};
+}
+Size random_size(int beg = 0, int end = 100) {
+    std::uniform_int_distribution<int> rs{beg, end};
+    return Size(rs(e), rs(e));
+}
+
+Widget* build_size_box(Size s, Color color) {
+    return mk_widget<BoxWidget>()
+        ->background_color(color)
+        ->set_child(
+            mk_widget<SizedBoxWidget>()->width(s.width)->height(s.height));
+}
+
 int main(int argc, char* argv[]) {
 
     RolUIBackend::GLFWWindow win(800, 600, "text box");
     win.on_exit = [&] { RolUI::Application::exit(); };
+    win.on_size_change.connect([](Size) { RolUI::Application::flush_frame(); });
 
     RolUI::Application::init(&win);
 
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    TextBoxWidget tbw;
-    MarginWidget mw{8};
-    SizedBoxWidget sbw;
-    BoxWidget bw;
-    AlignWidget aw;
+    FlexWidget flex;
 
-    tbw.font_size(30);
-    mw.set_child(&tbw);
-    sbw.width(200)
-        ->height(50)
-        ->set_child(&mw);
-    bw.border_width(1)->border_color({0, 0, 0});
-    bw.set_child(&sbw);
-    aw.set_child(&bw);
+    for (int i = 0; i < 30; i++) {
+        Color c = random_color();
+        Size s = random_size(30, 60);
+        std::cout << "size: (" << s.width << ", " << s.height << "), ";
+        std::cout << "color: (" << (int)c.r << ", " << (int)c.g << ", " << (int)c.b << ")";
+        std::cout << std::endl;
+        Widget* w = build_size_box(s, c);
+        flex.add_child(w);
+    }
 
-    Widget* w = &aw;
+    float dir = 0.05;
+    Application::set_interval(0.03, [&](double) {
+        float caa = flex.cross_axis_alignment();
+        if (caa >= 1.0 || caa <= -1.0)
+            dir = -dir;
+        flex.cross_axis_alignment(caa + dir);
+    });
+
+    Widget* w = &flex;
     Application::run(w);
 
     return 0;

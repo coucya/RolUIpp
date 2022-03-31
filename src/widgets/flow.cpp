@@ -158,5 +158,57 @@ namespace RolUI {
             return constraint.max();
         }
 
+        FlexWidget::FlexWidget() noexcept {}
+        Size FlexWidget::perform_layout(Constraint constraint) noexcept {
+            int cons_width = constraint.max_width();
+            int cons_height = constraint.max_height();
+
+            int main_size_it = cons_width;
+
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                Constraint new_cons = Constraint::zero_to({main_size_it, cons_height});
+                Size child_size = child->layout(new_cons);
+                main_size_it -= child_size.width;
+                if (main_size_it <= 0)
+                    main_size_it = cons_width;
+            }
+
+            int last_main_pos = 0;
+            int last_cross_pos = 0;
+            int start = 0;
+            int end = 0;
+            int cross_max = 0;
+
+            while (start < this->child_count()) {
+                cross_max = 0;
+                main_size_it = 0;
+                last_main_pos = 0;
+                while (main_size_it < cons_width && end < this->child_count()) {
+                    Widget* child = this->child(end);
+
+                    main_size_it += child->size().width;
+                    if (main_size_it > cons_width && start < end)
+                        break;
+
+                    int t = child->size().height;
+                    if (t > cross_max)
+                        cross_max = t;
+                    end++;
+                }
+                for (int i = start; i < end; i++) {
+                    Widget* child = this->child(i);
+                    int x = last_main_pos;
+                    int y = last_cross_pos + (cross_axis_alignment() + 1.0f) / 2.0f * (cross_max - child->size().height);
+                    RolUI::set_pos(child, Point(x, y));
+                    last_main_pos += child->size().width;
+                }
+                last_cross_pos += cross_max;
+                start = end;
+            }
+
+            return {constraint.max_width(), last_cross_pos};
+        }
+
     } // namespace widgets
 } // namespace RolUI

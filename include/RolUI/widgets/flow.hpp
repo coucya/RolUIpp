@@ -15,6 +15,8 @@ namespace RolUI {
 
           public:
             ColumnWidget() noexcept;
+
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -25,6 +27,8 @@ namespace RolUI {
 
           public:
             RowWidget() noexcept;
+
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -51,12 +55,27 @@ namespace RolUI {
         class ColumnGridWidget : public _details::FlowGridWidgetBase {
           public:
             ColumnGridWidget() noexcept;
+
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
         class RowGridWidget : public _details::FlowGridWidgetBase {
           public:
             RowGridWidget() noexcept;
+
+          protected:
+            Size perform_layout(Constraint constraint) noexcept override;
+        };
+
+        class FlexWidget : public MultiChildWidget {
+          public:
+            Property<FlexWidget, float> cross_axis_alignment{this, 0.0f};
+
+          public:
+            FlexWidget() noexcept;
+
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
