@@ -13,6 +13,7 @@ namespace RolUI {
         RolUI_decl_event_type_in_class(CharEvent);
 
       public:
+        CharEvent(Widget* target) noexcept;
         CharEvent(Widget* target, unsigned int cp) noexcept;
         ~CharEvent();
 

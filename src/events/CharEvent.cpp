@@ -151,6 +151,7 @@ namespace RolUI {
 
     RolUI_impl_event_type_in_class(CharEvent);
 
+    CharEvent::CharEvent(Widget* target) noexcept : IEvent(type(), target), _codepoint(0) {}
     CharEvent::CharEvent(Widget* target, unsigned int cp) noexcept
         : IEvent(type(), target), _codepoint(cp) {
         for (int i = 0; i < sizeof(_c_str) / sizeof(char); i++)
@@ -180,13 +181,21 @@ namespace RolUI {
     bool CharEventDispatcher::empty() const noexcept { return _char_queue.empty(); }
 
     void CharEventDispatcher::dispatch(Window* w) noexcept {
-        if (!w || !Application::focus_widget()) return;
+        if (w == nullptr) return;
+        RootWidget* rw = Application::root_widget();
 
-        Widget* focus_widget = Application::focus_widget();
+        CharEvent ce{nullptr};
+
+        std::function<void(Widget*)> f;
+        auto _f = [&](Widget* w) {
+            send_event(w, &ce);
+            w->visit_children(f);
+        };
+        f = _f;
 
         while (!empty()) {
-            CharEvent e{focus_widget, pop_char()};
-            send_event(focus_widget, &e);
+            ce = CharEvent{nullptr, pop_char()};
+            rw->visit_children(f);
         }
     }
 
