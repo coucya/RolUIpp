@@ -183,7 +183,7 @@ namespace RolUI {
                 unsigned span_char_count = span->char_count();
                 if (char_count_ + span_char_count > index) {
                     unsigned span_char_index = index - char_count_;
-                    return span->index_to_pos(span_char_index);
+                    return span->index_to_pos(span_char_index) + child->pos();
                 }
             }
             return {0, 0};
@@ -191,8 +191,7 @@ namespace RolUI {
         unsigned RichTextLineWidget::char_count() const noexcept {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = this->child(i);
-                ITextSpan* span = (ITextSpan*)child;
+                ITextSpan* span = (ITextSpan*)this->child(i);
                 char_count_ += span->char_count();
             }
             return char_count_;
@@ -205,6 +204,43 @@ namespace RolUI {
                 max_line_height = span->line_height() > max_line_height ? span->line_height() : max_line_height;
             }
             return max_line_height;
+        }
+
+        RichTextWidget::RichTextWidget() noexcept {}
+        RichTextWidget::~RichTextWidget() {}
+
+        unsigned RichTextWidget::pos_to_index(Point pos) const noexcept {
+            int char_count_ = 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                ITextSpan* span = (ITextSpan*)child;
+                if (child->rect().contain(pos)) {
+                    return span->pos_to_index(pos - child->pos());
+                }
+                char_count_ += span->char_count();
+            }
+            return 0;
+        }
+        Point RichTextWidget::index_to_pos(unsigned index) const noexcept {
+            int char_count_ = 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                ITextSpan* span = (ITextSpan*)child;
+                unsigned span_char_count = span->char_count();
+                if (char_count_ + span_char_count > index) {
+                    unsigned span_char_index = index - char_count_;
+                    return span->index_to_pos(span_char_index) + child->pos();
+                }
+            }
+            return {0, 0};
+        }
+        unsigned RichTextWidget::char_count() const noexcept {
+            int char_count_ = 0;
+            for (int i = 0; i < child_count(); i++) {
+                ITextSpan* span = (ITextSpan*)this->child(i);
+                char_count_ += span->char_count();
+            }
+            return char_count_;
         }
 
         EditableTextWidget::EditableTextWidget() noexcept {

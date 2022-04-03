@@ -69,15 +69,25 @@ namespace RolUI {
             std::vector<CharInfo> _chars;
         };
 
-        class RichTextLineWidget : public FlexWidget {
+        class RichTextLineWidget : public ITextSpan, public FlexWidget {
           public:
             RichTextLineWidget() noexcept;
             ~RichTextLineWidget() override;
 
+            unsigned pos_to_index(Point pos) const noexcept override;
+            Point index_to_pos(unsigned index) const noexcept override;
+            unsigned char_count() const noexcept override;
+            unsigned line_height() const noexcept override;
+        };
+
+        class RichTextWidget : public ColumnWidget {
+          public:
+            RichTextWidget() noexcept;
+            ~RichTextWidget() override;
+
             unsigned pos_to_index(Point pos) const noexcept;
             Point index_to_pos(unsigned index) const noexcept;
             unsigned char_count() const noexcept;
-            unsigned line_height() const noexcept;
         };
 
         class EditableTextWidget : public TextSpanWidget {
