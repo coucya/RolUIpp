@@ -12,8 +12,8 @@
 namespace RolUI {
     namespace widgets {
 
-        TextWidget* text(const char* str, unsigned size, Color color) {
-            return mk_widget<TextWidget>(str)->font_size(size)->font_color(color);
+        TextSpanWidget* text(const char* str, unsigned size, Color color) {
+            return mk_widget<TextSpanWidget>(str)->font_size(size)->font_color(color);
         }
 
         ImageWidget* image(Image image) {

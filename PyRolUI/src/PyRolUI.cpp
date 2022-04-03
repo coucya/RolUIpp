@@ -415,9 +415,7 @@ static void bind_keyboard_event(py::module_& m) {
         .def("action", &KeyboardEvent::action)
         .def("key_mode", [](const KeyboardEvent& self) { return self.key_mode(); })
         .def(
-            "key_mode", [](const KeyboardEvent& self, KeyboardKey k) {
-                return self.key_mode(k);
-            },
+            "key_mode", [](const KeyboardEvent& self, KeyboardKey k) { return self.key_mode(k); },
             py::arg("key"));
 
     m.def("KeyboardEvent_type", KeyboardEvent::type, py::return_value_policy::reference);
@@ -438,7 +436,8 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def_static("load", &load_image);
 
     class_<EventType>(m, "EventType")
-        .def("name", &EventType::name);
+        .def("name", &EventType::name)
+        .def("__eq__", [](const EventType& self, const EventType& other) { return (&self) == (&other); });
 
     class_<IEvent>(m, "IEvent")
         .def("is_", &IEvent::is)

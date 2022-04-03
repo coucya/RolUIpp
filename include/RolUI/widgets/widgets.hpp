@@ -16,7 +16,7 @@
 namespace RolUI {
     namespace widgets {
 
-        TextWidget* text(const char* str, unsigned size = 16, Color color = {0, 0, 0});
+        TextSpanWidget* text(const char* str, unsigned size = 16, Color color = {0, 0, 0});
 
         Widget* label(const char* str, unsigned size = 16,
                       Color color = {0, 0, 0}, Color background_color = {255, 255, 255},

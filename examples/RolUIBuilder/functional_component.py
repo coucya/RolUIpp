@@ -59,11 +59,11 @@ def mk_widget(widget_type: type, **kw_args) -> Widget:
         return pair[0].startswith("on_") and callable(pair[1])
 
     def _props_filter(pair):
-        return pair[0] != "child" and pair[0] != "chilren" and not _event_filter(pair)
+        return pair[0] != "child" and pair[0] != "children" and not _event_filter(pair)
     events = {k: v for k, v in filter(_event_filter, kw_args.items())}
     props = {k: v for k, v in filter(_props_filter, kw_args.items())}
     child = kw_args.get("child", None)
-    children = kw_args.get("childrern", None)
+    children = kw_args.get("children", None)
 
     def _build_cb(w: Widget, prop_name):
         return lambda val: getattr(w, prop_name).set(val) if w.mounted() else None
@@ -130,41 +130,41 @@ def render(obj: dict):
 
 def text(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
     args = locals()
-    return mk_widget(widgets.TextWidget, **args)
+    return mk_widget(widgets.TextSpanWidget, **args)
 
 
-def textbox(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
+def textbox(text="", *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
     args = locals()
     return mk_widget(widgets.TextBoxWidget, **args)
 
 
-def box(*, child: Widget, round=0, border_width=0, border_color=Color(), background_color=Color(0, 0, 0, 0)) -> Widget:
+def box(*, child: Widget = None, round=0, border_width=0, border_color=Color(), background_color=Color(0, 0, 0, 0)) -> Widget:
     args = locals()
     return mk_widget(widgets.BoxWidget, **args)
 
 
-def align(*, child: Widget, x=0, y=0) -> Widget:
+def align(*, child: Widget = None, x=0, y=0) -> Widget:
     args = locals()
     return mk_widget(widgets.AlignWidget, **args)
 
 
-def sized(*, child: Widget, width=1.0, height=1.0) -> Widget:
-    w = widgets.SizeUnit(width)if isinstance(width, (int, float)) else width
-    h = widgets.SizeUnit(height)if isinstance(height, (int, float)) else height
+def sized(*, child: Widget = None, width=1.0, height=1.0) -> Widget:
+    w = widgets.SizeUnit(width) if isinstance(width, (int, float)) else width
+    h = widgets.SizeUnit(height) if isinstance(height, (int, float)) else height
     return mk_widget(widgets.SizedBoxWidget, child=child, width=w, height=h)
 
 
-def margin(*, child: Widget, top=0, rbottom=0, rleft=0, right=0) -> Widget:
+def margin(*, child: Widget = None, top=0, rbottom=0, rleft=0, right=0) -> Widget:
     args = locals()
     return mk_widget(widgets.MarginWidget, **args)
 
 
-def vscroll_view(*, child: Widget, scroll_step=10.0) -> Widget:
+def vscroll_view(*, child: Widget = None, scroll_step=10.0) -> Widget:
     args = locals()
     return mk_widget(widgets.VScrollView, **args)
 
 
-def hscroll_view(*, child: Widget, scroll_step=10.0) -> Widget:
+def hscroll_view(*, child: Widget = None, scroll_step=10.0) -> Widget:
     args = locals()
     return mk_widget(widgets.HScrollView, **args)
 
@@ -189,5 +189,13 @@ def column(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> Widget
     return mk_widget(widgets.ColumnWidget, **args)
 
 
-def keyboard_linstener(*, child: Widget, on_key: Callable) -> Widget:
-    return mk_widget(widgets.KeyboardListener, on_key=on_key)
+def mouse_listener(*, child: Widget = None, **kw_args) -> Widget:
+    return mk_widget(widgets.MouseListener, child=child, **kw_args)
+
+
+def keyboard_linstener(*, child: Widget = None, on_key: Callable) -> Widget:
+    return mk_widget(widgets.KeyboardListener, child=child, on_key=on_key)
+
+
+def char_listener(*, child: Widget = None, on_input: Callable) -> Widget:
+    return mk_widget(widgets.CharInputListener, child=child, on_input=on_input)

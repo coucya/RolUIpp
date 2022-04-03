@@ -244,26 +244,33 @@ static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::mo
 }
 
 static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
-    BIND_PROPERTY(propertys, signals, TextWidget, unsigned);
-    BIND_PROPERTY(propertys, signals, TextWidget, Color);
-    BIND_PROPERTY(propertys, signals, TextWidget, std::string);
-    class_<TextWidget, Widget>(widgets, "TextWidget")
+
+    class_<ITextSpan>(widgets, "ITextSpan")
+        .def("pos_to_index", &ITextSpan::pos_to_index)
+        .def("index_to_pos", &ITextSpan::index_to_pos)
+        .def("char_count", &ITextSpan::char_count)
+        .def("line_height", &ITextSpan::line_height);
+
+    BIND_PROPERTY(propertys, signals, TextSpanWidget, unsigned);
+    BIND_PROPERTY(propertys, signals, TextSpanWidget, Color);
+    BIND_PROPERTY(propertys, signals, TextSpanWidget, std::string);
+    class_<TextSpanWidget, ITextSpan, Widget>(widgets, "TextSpanWidget")
         .def(py::init())
         .def(py::init<std::string>())
-        .def_readonly("font_size", &TextWidget::font_size, return_value_policy::reference_internal)
-        .def_readonly("font_color", &TextWidget::font_color, return_value_policy::reference_internal)
-        .def_readonly("font_name", &TextWidget::font_name, return_value_policy::reference_internal)
-        .def_readonly("text", &TextWidget::text, return_value_policy::reference_internal)
-        .def("pos_to_index", &TextWidget::pos_to_index)
-        .def("index_to_pos", &TextWidget::index_to_pos)
-        .def("char_count", &TextWidget::char_count)
-        .def("char_index_to_byte_index", &TextWidget::char_index_to_byte_index)
-        .def("char_byte_size", &TextWidget::char_byte_size)
-        .def("byte_index_to_char_index", &TextWidget::byte_index_to_char_index)
-        .def("line_height", &TextWidget::line_height);
+        .def_readonly("font_size", &TextSpanWidget::font_size, return_value_policy::reference_internal)
+        .def_readonly("font_color", &TextSpanWidget::font_color, return_value_policy::reference_internal)
+        .def_readonly("font_name", &TextSpanWidget::font_name, return_value_policy::reference_internal)
+        .def_readonly("text", &TextSpanWidget::text, return_value_policy::reference_internal)
+        .def("pos_to_index", &TextSpanWidget::pos_to_index)
+        .def("index_to_pos", &TextSpanWidget::index_to_pos)
+        .def("char_count", &TextSpanWidget::char_count)
+        .def("char_index_to_byte_index", &TextSpanWidget::char_index_to_byte_index)
+        .def("char_byte_size", &TextSpanWidget::char_byte_size)
+        .def("byte_index_to_char_index", &TextSpanWidget::byte_index_to_char_index)
+        .def("line_height", &TextSpanWidget::line_height);
 
     BIND_PROPERTY(propertys, signals, EditableTextWidget, unsigned);
-    class_<EditableTextWidget, TextWidget>(widgets, "EditableTextWidget")
+    class_<EditableTextWidget, TextSpanWidget>(widgets, "EditableTextWidget")
         .def(py::init())
         .def_readonly("cursor_index", &EditableTextWidget::cursor_index, return_value_policy::reference_internal)
         .def("is_blinking", &EditableTextWidget::is_blinking)

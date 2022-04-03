@@ -12,30 +12,41 @@
 #include "../events/CharEvent.hpp"
 #include "../events/Widget_event.hpp"
 
+#include "./flow.hpp"
+
 namespace RolUI {
     namespace widgets {
 
-        class TextWidget : public Widget {
+        class ITextSpan {
           public:
-            Property<TextWidget, unsigned> font_size{this, 15};
-            Property<TextWidget, Color> font_color{this, {0, 0, 0, 255}};
-            Property<TextWidget, std::string> font_name{this, "default"};
-            Property<TextWidget, std::string> text{this};
+            virtual ~ITextSpan() {}
+            virtual unsigned pos_to_index(Point pos) const noexcept = 0;
+            virtual Point index_to_pos(unsigned index) const noexcept = 0;
+            virtual unsigned char_count() const noexcept = 0;
+            virtual unsigned line_height() const noexcept = 0;
+        };
+
+        class TextSpanWidget : public ITextSpan, public Widget {
+          public:
+            Property<TextSpanWidget, unsigned> font_size{this, 15};
+            Property<TextSpanWidget, Color> font_color{this, {0, 0, 0, 255}};
+            Property<TextSpanWidget, std::string> font_name{this, "default"};
+            Property<TextSpanWidget, std::string> text{this};
 
           public:
-            TextWidget() noexcept;
-            TextWidget(const std::string& text) noexcept;
-            ~TextWidget() override;
+            TextSpanWidget() noexcept;
+            TextSpanWidget(const std::string& text) noexcept;
+            ~TextSpanWidget() override;
 
-            unsigned pos_to_index(Point pos) const noexcept;
-            Point index_to_pos(unsigned index) const noexcept;
+            unsigned pos_to_index(Point pos) const noexcept override;
+            Point index_to_pos(unsigned index) const noexcept override;
 
-            unsigned char_count() const noexcept;
+            unsigned char_count() const noexcept override;
             unsigned char_index_to_byte_index(unsigned idx) const noexcept;
             unsigned char_byte_size(unsigned idx) const noexcept;
             unsigned byte_index_to_char_index(unsigned idx) const noexcept;
 
-            unsigned line_height() const noexcept;
+            unsigned line_height() const noexcept override;
 
           protected:
             virtual void draw(IPainter* painter) noexcept override;
@@ -58,7 +69,18 @@ namespace RolUI {
             std::vector<CharInfo> _chars;
         };
 
-        class EditableTextWidget : public TextWidget {
+        class RichTextLineWidget : public FlexWidget {
+          public:
+            RichTextLineWidget() noexcept;
+            ~RichTextLineWidget() override;
+
+            unsigned pos_to_index(Point pos) const noexcept;
+            Point index_to_pos(unsigned index) const noexcept;
+            unsigned char_count() const noexcept;
+            unsigned line_height() const noexcept;
+        };
+
+        class EditableTextWidget : public TextSpanWidget {
           public:
             Property<EditableTextWidget, unsigned int> cursor_index{this, 0};
 

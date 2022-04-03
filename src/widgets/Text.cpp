@@ -13,20 +13,20 @@
 namespace RolUI {
     namespace widgets {
 
-        TextWidget ::TextWidget() noexcept {
+        TextSpanWidget ::TextSpanWidget() noexcept {
             font_size.on_change.connect([this](const unsigned&) { this->_did_text_change(); });
             font_color.on_change.connect([this](const Color&) { this->_did_text_change(); });
             font_name.on_change.connect([this](const std::string&) { this->_did_text_change(); });
             text.on_change.connect([this](const std::string&) { this->_did_text_change(); });
         }
-        TextWidget ::TextWidget(const std::string& str) noexcept
-            : TextWidget() {
+        TextSpanWidget ::TextSpanWidget(const std::string& str) noexcept
+            : TextSpanWidget() {
             text(str);
         }
 
-        TextWidget::~TextWidget() {}
+        TextSpanWidget::~TextSpanWidget() {}
 
-        void TextWidget::_update_size() noexcept {
+        void TextSpanWidget::_update_size() noexcept {
             Window* win = Application::window();
             if (!text->empty()) {
                 win->painter()->set_font_size(font_size);
@@ -38,7 +38,7 @@ namespace RolUI {
             }
         }
 
-        void TextWidget::_did_text_change() noexcept {
+        void TextSpanWidget::_did_text_change() noexcept {
             _update_size();
             const char* beg = text().c_str();
             const char* end = beg + text().size();
@@ -67,7 +67,7 @@ namespace RolUI {
                 delete poss;
         }
 
-        void TextWidget::draw(IPainter* painter) noexcept {
+        void TextSpanWidget::draw(IPainter* painter) noexcept {
             painter->set_font_size(font_size);
             painter->set_font_color(font_color);
 
@@ -80,14 +80,14 @@ namespace RolUI {
                 painter->draw_text(abs_pos(), text->c_str(), text->size());
         }
 
-        Size TextWidget::perform_layout(Constraint constraint) noexcept {
+        Size TextSpanWidget::perform_layout(Constraint constraint) noexcept {
             return _text_size;
         }
 
-        unsigned TextWidget::line_height() const noexcept {
+        unsigned TextSpanWidget::line_height() const noexcept {
             return font_size.get();
         }
-        unsigned TextWidget::pos_to_index(Point pos) const noexcept {
+        unsigned TextSpanWidget::pos_to_index(Point pos) const noexcept {
             const char* text_str = text().c_str();
             unsigned byte_count = text().size();
             unsigned char_count = _chars.size();
@@ -119,23 +119,23 @@ namespace RolUI {
 
             return maybe_idx;
         }
-        Point TextWidget::index_to_pos(unsigned index) const noexcept {
+        Point TextSpanWidget::index_to_pos(unsigned index) const noexcept {
             return _char_index_to_pos(index);
         }
 
-        unsigned TextWidget::char_count() const noexcept { return _chars.size(); }
-        unsigned TextWidget::char_index_to_byte_index(unsigned idx) const noexcept {
+        unsigned TextSpanWidget::char_count() const noexcept { return _chars.size(); }
+        unsigned TextSpanWidget::char_index_to_byte_index(unsigned idx) const noexcept {
             if (_chars.size() == 0) return 0;
             if (idx >= _chars.size())
                 return _chars[_chars.size() - 1].utf8_str_end_idx;
             return _chars[idx].utf8_str_beg_idx;
         }
-        unsigned TextWidget::char_byte_size(unsigned idx) const noexcept {
+        unsigned TextSpanWidget::char_byte_size(unsigned idx) const noexcept {
             if (_chars.size() == 0) return 0;
             if (idx >= _chars.size()) return 0;
             return _chars[idx].utf8_str_end_idx - _chars[idx].utf8_str_beg_idx;
         }
-        unsigned TextWidget::byte_index_to_char_index(unsigned idx) const noexcept {
+        unsigned TextSpanWidget::byte_index_to_char_index(unsigned idx) const noexcept {
             if (_chars.size() == 0) return 0;
             if (idx >= _chars[_chars.size() - 1].utf8_str_end_idx)
                 return _chars.size();
@@ -154,10 +154,57 @@ namespace RolUI {
             return beg_it;
         }
 
-        Point TextWidget::_char_index_to_pos(unsigned index) const noexcept {
+        Point TextSpanWidget::_char_index_to_pos(unsigned index) const noexcept {
             if (index == 0) return {0, 0};
             if (index >= _chars.size()) return {_text_size.width, 0};
             return {int(_chars[index].pos_x), 0};
+        }
+
+        RichTextLineWidget::RichTextLineWidget() noexcept {}
+        RichTextLineWidget::~RichTextLineWidget() {}
+
+        unsigned RichTextLineWidget::pos_to_index(Point pos) const noexcept {
+            int char_count_ = 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                ITextSpan* span = (ITextSpan*)child;
+                if (child->rect().contain(pos)) {
+                    return span->pos_to_index(pos - child->pos());
+                }
+                char_count_ += span->char_count();
+            }
+            return 0;
+        }
+        Point RichTextLineWidget::index_to_pos(unsigned index) const noexcept {
+            int char_count_ = 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                ITextSpan* span = (ITextSpan*)child;
+                unsigned span_char_count = span->char_count();
+                if (char_count_ + span_char_count > index) {
+                    unsigned span_char_index = index - char_count_;
+                    return span->index_to_pos(span_char_index);
+                }
+            }
+            return {0, 0};
+        }
+        unsigned RichTextLineWidget::char_count() const noexcept {
+            int char_count_ = 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                ITextSpan* span = (ITextSpan*)child;
+                char_count_ += span->char_count();
+            }
+            return char_count_;
+        }
+        unsigned RichTextLineWidget::line_height() const noexcept {
+            unsigned max_line_height = 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                ITextSpan* span = (ITextSpan*)child;
+                max_line_height = span->line_height() > max_line_height ? span->line_height() : max_line_height;
+            }
+            return max_line_height;
         }
 
         EditableTextWidget::EditableTextWidget() noexcept {
@@ -168,7 +215,13 @@ namespace RolUI {
                 this->_update_cursor_pos();
             });
         }
-        EditableTextWidget::~EditableTextWidget() {}
+        EditableTextWidget::~EditableTextWidget() {
+            if (_is_blinking) {
+                _is_blinking = false;
+                _show_cursor = false;
+                Application::clear_interval(_blink_timer_handle);
+            }
+        }
 
         bool EditableTextWidget::is_blinking() const noexcept {
             return _is_blinking;
@@ -213,9 +266,9 @@ namespace RolUI {
         }
 
         void EditableTextWidget::draw(IPainter* painter) noexcept {
-            TextWidget::draw(painter);
+            TextSpanWidget::draw(painter);
             if (_show_cursor) {
-                int ts = font_size.get();
+                int ts = line_height();
                 painter->set_stroke_width(2);
                 painter->set_stroke_color({0, 0, 0});
                 painter->draw_vline(abs_pos() + _cursor_pos, ts);
