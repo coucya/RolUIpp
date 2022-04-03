@@ -91,8 +91,13 @@ int main(int argc, char* argv[]) {
             case Direction::column_reverse: flex.direction(Direction::row); break;
         }
     });
+    CharInputListener* char_l = mk_widget<CharInputListener>();
+    char_l->on_input.connect([](unsigned cp) {
+        std::cout << "codepoint: " << cp << std::endl;
+    });
+    char_l->set_child(&flex);
 
-    Widget* w = &flex;
+    Widget* w = char_l;
     Application::run(w);
 
     return 0;

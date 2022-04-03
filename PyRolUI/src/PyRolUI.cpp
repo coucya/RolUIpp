@@ -507,6 +507,7 @@ PYBIND11_MODULE(PyRolUI, m) {
     class_<MultiChildWidget, Widget>(m, "MultiChildWidget")
         .def(py::init())
         .def("child", &MultiChildWidget::child, return_value_policy::reference)
+        .def("child_count", &MultiChildWidget::child_count)
         .def("add_child", &MultiChildWidget::add_child, return_value_policy::reference)
         .def("set_child", &MultiChildWidget::set_child, return_value_policy::reference)
         .def("insert_child", &MultiChildWidget::insert_child, return_value_policy::reference)

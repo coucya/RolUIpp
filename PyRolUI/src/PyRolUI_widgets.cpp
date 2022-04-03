@@ -169,6 +169,18 @@ static void bind_flow_widgets(py::module_& widgets, py::module_& signals, py::mo
         .def("set_child", &RowGridWidget::set_child, return_value_policy::reference)
         .def("remove_child", static_cast<void (RowGridWidget::*)(Widget*)>(&RowGridWidget::remove_child))
         .def("remove_child", static_cast<void (RowGridWidget::*)(int)>(&RowGridWidget::remove_child));
+
+    enum_<Direction>(widgets, "Direction")
+        .value("row", Direction::row)
+        .value("column", Direction::column)
+        .value("row_reverse", Direction::row_reverse)
+        .value("column_reverse", Direction::column_reverse);
+
+    BIND_PROPERTY(propertys, signals, FlexWidget, float);
+    BIND_PROPERTY(propertys, signals, FlexWidget, Direction);
+    class_<FlexWidget, MultiChildWidget>(widgets, "FlexWidget")
+        .def_readonly("cross_axis_alignment", &FlexWidget::cross_axis_alignment, return_value_policy::reference_internal)
+        .def_readonly("direction", &FlexWidget::direction, return_value_policy::reference_internal);
 }
 
 static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
@@ -268,6 +280,19 @@ static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::mo
         .def("char_byte_size", &TextSpanWidget::char_byte_size)
         .def("byte_index_to_char_index", &TextSpanWidget::byte_index_to_char_index)
         .def("line_height", &TextSpanWidget::line_height);
+
+    class_<RichTextLineWidget, ITextSpan, FlexWidget>(widgets, "RichTextLineWidget")
+        .def(py::init())
+        .def("pos_to_index", &RichTextLineWidget::pos_to_index)
+        .def("index_to_pos", &RichTextLineWidget::index_to_pos)
+        .def("char_count", &RichTextLineWidget::char_count)
+        .def("line_height", &RichTextLineWidget::line_height);
+
+    class_<RichTextWidget, ColumnWidget>(widgets, "RichTextWidget")
+        .def(py::init())
+        .def("pos_to_index", &RichTextWidget::pos_to_index)
+        .def("index_to_pos", &RichTextWidget::index_to_pos)
+        .def("char_count", &RichTextWidget::char_count);
 
     BIND_PROPERTY(propertys, signals, EditableTextWidget, unsigned);
     class_<EditableTextWidget, TextSpanWidget>(widgets, "EditableTextWidget")
