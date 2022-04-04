@@ -128,7 +128,7 @@ def render(obj: dict):
     return widget
 
 
-def text(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
+def textspan(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
     args = locals()
     return mk_widget(widgets.TextSpanWidget, **args)
 

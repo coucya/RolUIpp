@@ -31,7 +31,8 @@ namespace RolUIBackend {
         return {(int32_t)(bound[2] - bound[0]),
                 (int32_t)(bound[3] - bound[1])};
     }
-    uint32_t GLFWPainter::text_glyph_pos(const char* text, uint32_t text_len, uint32_t* out_pos, uint32_t pos_len) const {
+    uint32_t GLFWPainter::text_glyph_pos(const char* text, uint32_t text_len,
+                                         uint32_t* out_min_x, uint32_t* out_max_x, uint32_t pos_len) const {
         constexpr int T_MAX_LEN = 1024;
         NVGglyphPosition T_GLYPH_POSITION[T_MAX_LEN];
 
@@ -41,8 +42,10 @@ namespace RolUIBackend {
             new NVGglyphPosition[pos_len];
 
         int n = nvgTextGlyphPositions(vg, 0, 0, text, text + text_len, glyphs, pos_len);
-        for (int i = 0; i < n; i++)
-            out_pos[i] = glyphs[i].x;
+        for (int i = 0; i < n; i++) {
+            out_min_x[i] = glyphs[i].minx;
+            out_max_x[i] = glyphs[i].maxx;
+        }
 
         if (pos_len > T_MAX_LEN) delete[] glyphs;
 

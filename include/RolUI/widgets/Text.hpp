@@ -62,7 +62,8 @@ namespace RolUI {
                 int32_t codepoint = 0;
                 uint32_t utf8_str_beg_idx = 0;
                 uint32_t utf8_str_end_idx = 0;
-                uint32_t pos_x = 0;
+                uint32_t min_x = 0;
+                uint32_t max_x = 0;
             };
 
             Size _text_size;

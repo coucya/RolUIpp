@@ -40,6 +40,7 @@ namespace RolUI {
 
         void TextSpanWidget::_did_text_change() noexcept {
             _update_size();
+
             const char* beg = text().c_str();
             const char* end = beg + text().size();
             const char* it = beg;
@@ -52,19 +53,29 @@ namespace RolUI {
             }
 
             constexpr uint32_t T_MAX = 1024;
-            uint32_t T_POS[T_MAX];
-            uint32_t* poss = &T_POS[0];
+            uint32_t T_POS[T_MAX * 2];
+            uint32_t* buff = nullptr;
+            uint32_t* mins = &T_POS[0];
+            uint32_t* maxs = &T_POS[0] + T_MAX;
 
-            if (_chars.size() > T_MAX)
-                poss = new uint32_t[_chars.size()];
+            if (_chars.size() > T_MAX) {
+                buff = new uint32_t[_chars.size()];
+                mins = buff;
+                maxs = buff + T_MAX;
+            }
 
             IPainter* painter = Application::window()->painter();
-            int n = painter->text_glyph_pos(beg, end - beg, poss, _chars.size());
-            for (int i = 0; i < n; i++)
-                _chars[i].pos_x = poss[i];
+            int n = painter->text_glyph_pos(beg, end - beg, mins, maxs, _chars.size());
+            int i = 0;
+            for (int i = 0; i < n; i++) {
+                _chars[i].min_x = mins[i];
+                _chars[i].max_x = maxs[i];
+            }
 
-            if (_chars.size() > T_MAX)
-                delete poss;
+            uint32_t max_x = n == 0 ? 0 : maxs[n - 1];
+            _text_size.width = int(max_x);
+
+            if (_chars.size() > T_MAX && buff != nullptr) delete[] buff;
         }
 
         void TextSpanWidget::draw(IPainter* painter) noexcept {
@@ -85,7 +96,7 @@ namespace RolUI {
         }
 
         unsigned TextSpanWidget::line_height() const noexcept {
-            return font_size.get();
+            return _text_size.height;
         }
         unsigned TextSpanWidget::pos_to_index(Point pos) const noexcept {
             const char* text_str = text().c_str();
@@ -156,8 +167,8 @@ namespace RolUI {
 
         Point TextSpanWidget::_char_index_to_pos(unsigned index) const noexcept {
             if (index == 0) return {0, 0};
-            if (index >= _chars.size()) return {_text_size.width, 0};
-            return {int(_chars[index].pos_x), 0};
+            if (index >= _chars.size()) return {int(_chars[_chars.size() - 1].max_x), 0};
+            return {int(_chars[index].min_x), 0};
         }
 
         RichTextLineWidget::RichTextLineWidget() noexcept {}

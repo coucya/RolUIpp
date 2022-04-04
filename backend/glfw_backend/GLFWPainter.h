@@ -20,7 +20,8 @@ namespace RolUIBackend {
         virtual bool load_font(const char* name, const char* filename) override;
 
         virtual RolUI::Size text_size(const char* text, uint32_t len) const override;
-        virtual uint32_t text_glyph_pos(const char* text, uint32_t text_len, uint32_t* out_pos, uint32_t pos_len) const override;
+        virtual uint32_t text_glyph_pos(const char* text, uint32_t text_len,
+                                        uint32_t* out_min_x, uint32_t* out_max_x, uint32_t pos_len) const override;
 
         virtual void set_scissor(RolUI::Rect rect) override;
         virtual RolUI::Rect get_scissor() const override;
