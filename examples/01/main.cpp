@@ -44,12 +44,16 @@ Size random_size(int beg = 0, int end = 100) {
     std::uniform_int_distribution<int> rs{beg, end};
     return Size(rs(e), rs(e));
 }
+int random_int(int beg = 0, int end = 100) {
+    std::uniform_int_distribution<int> rs{beg, end};
+    return rs(e);
+}
 
 Widget* build_size_box(Size s, Color color) {
     return mk_widget<BoxWidget>()
         ->background_color(color)
         ->set_child(
-            mk_widget<SizedBoxWidget>()->width(s.width)->height(s.height));
+            mk_widget<SizedWidget>()->width(s.width)->height(s.height));
 }
 
 int main(int argc, char* argv[]) {
@@ -63,41 +67,36 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    FlexWidget flex;
+    FlexWidget flex_w;
+    RichTextWidget rich_w;
+    MouseListener mouse_l;
+    StackWidget stack_w;
 
     for (int i = 0; i < 10; i++) {
-        Color c = random_color();
-        Size s = random_size(30, 100);
-        std::cout << "size: (" << s.width << ", " << s.height << "), ";
-        std::cout << "color: (" << (int)c.r << ", " << (int)c.g << ", " << (int)c.b << ")";
-        std::cout << std::endl;
-        Widget* w = build_size_box(s, c);
-        flex.add_child(w);
+        RichTextLineWidget* rtl_w = mk_widget<RichTextLineWidget>();
+        for (int j = 0; j < 10; j++) {
+            TextSpanWidget* ts_w = mk_widget<TextSpanWidget>();
+            ts_w->text("Text");
+            ts_w->font_color(random_color());
+            ts_w->font_size((unsigned)random_int(20, 40));
+            rtl_w->add_child(ts_w);
+        }
+        rich_w.add_child(rtl_w);
     }
 
-    float dir = 0.05;
-    Application::set_interval(0.03, [&](double) {
-        float caa = flex.cross_axis_alignment();
-        if (caa >= 1.0 || caa <= -1.0)
-            dir = -dir;
-        flex.cross_axis_alignment(caa + dir);
-    });
-    Application::set_interval(3.0, [&](double) {
-        Direction flex_dir = flex.direction();
-        switch (flex.direction()) {
-            case Direction::row: flex.direction(Direction::row_reverse); break;
-            case Direction::row_reverse: flex.direction(Direction::column); break;
-            case Direction::column: flex.direction(Direction::column_reverse); break;
-            case Direction::column_reverse: flex.direction(Direction::row); break;
-        }
-    });
-    CharInputListener* char_l = mk_widget<CharInputListener>();
-    char_l->on_input.connect([](unsigned cp) {
-        std::cout << "codepoint: " << cp << std::endl;
-    });
-    char_l->set_child(&flex);
+    // stack_w.align_x(-1)->align_y(-1);
+    // stack_w.add_child(&rich_w)->add_child(&mouse_l);
+    mouse_l.set_child(&rich_w);
 
-    Widget* w = char_l;
+    mouse_l.on_down.connect([&](MouseKey k, Point mouse_pos) {
+        Point pos = mouse_pos - rich_w.abs_pos();
+        unsigned idx = rich_w.pos_to_index(pos);
+        std::cout << "mouse pos: (" << mouse_pos.x << ", " << mouse_pos.y << "),";
+        std::cout << " pos: (" << pos.x << ", " << pos.y << "),";
+        std::cout << " idx: " << idx << std::endl;
+    });
+
+    Widget* w = &mouse_l;
     Application::run(w);
 
     return 0;

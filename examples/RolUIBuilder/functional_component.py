@@ -128,74 +128,86 @@ def render(obj: dict):
     return widget
 
 
-def textspan(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
+def textspan(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextSpanWidget:
     args = locals()
     return mk_widget(widgets.TextSpanWidget, **args)
 
 
-def textbox(text="", *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> Widget:
+def textbox(text="", *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextBoxWidget:
     args = locals()
     return mk_widget(widgets.TextBoxWidget, **args)
 
 
-def box(*, child: Widget = None, round=0, border_width=0, border_color=Color(), background_color=Color(0, 0, 0, 0)) -> Widget:
+def box(*, child: Widget = None, round=0, border_width=0, border_color=Color(), background_color=Color(0, 0, 0, 0)) -> widgets.BoxWidget:
     args = locals()
     return mk_widget(widgets.BoxWidget, **args)
 
 
-def align(*, child: Widget = None, x=0, y=0) -> Widget:
+def align(*, child: Widget = None, x=0, y=0) -> widgets.AlignWidget:
     args = locals()
     return mk_widget(widgets.AlignWidget, **args)
 
 
-def sized(*, child: Widget = None, width=1.0, height=1.0) -> Widget:
+def sized(*, child: Widget = None, width=1.0, height=1.0) -> widgets.SizedWidget:
     w = widgets.SizeUnit(width) if isinstance(width, (int, float)) else width
     h = widgets.SizeUnit(height) if isinstance(height, (int, float)) else height
-    return mk_widget(widgets.SizedBoxWidget, child=child, width=w, height=h)
+    return mk_widget(widgets.SizedWidget, child=child, width=w, height=h)
 
 
-def margin(*, child: Widget = None, top=0, rbottom=0, rleft=0, right=0) -> Widget:
+def margin(*, child: Widget = None, top=0, bottom=0, left=0, right=0) -> widgets.MarginWidget:
     args = locals()
     return mk_widget(widgets.MarginWidget, **args)
 
 
-def vscroll_view(*, child: Widget = None, scroll_step=10.0) -> Widget:
+def vscroll_view(*, child: Widget = None, scroll_step=10.0) -> widgets.VScrollView:
     args = locals()
     return mk_widget(widgets.VScrollView, **args)
 
 
-def hscroll_view(*, child: Widget = None, scroll_step=10.0) -> Widget:
+def hscroll_view(*, child: Widget = None, scroll_step=10.0) -> widgets.HScrollView:
     args = locals()
     return mk_widget(widgets.HScrollView, **args)
 
 
-def stack(*, children: List[Widget], align_x=0, align_y=0) -> Widget:
+def stack(*, children: List[Widget], align_x=0, align_y=0) -> widgets.StackWidget:
     args = locals()
     return mk_widget(widgets.StackWidget, **args)
 
 
-def deck(*, children: List[Widget], selected=0) -> Widget:
+def deck(*, children: List[Widget], selected=0) -> widgets.DeckWidget:
     args = locals()
     return mk_widget(widgets.DeckWidget, **args)
 
 
-def row(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> Widget:
+def row(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> widgets.RowWidget:
     args = locals()
     return mk_widget(widgets.RowWidget, **args)
 
 
-def column(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> Widget:
+def column(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> widgets.ColumnWidget:
     args = locals()
     return mk_widget(widgets.ColumnWidget, **args)
 
 
-def mouse_listener(*, child: Widget = None, **kw_args) -> Widget:
+def vseparator(*, color=Color(0, 0, 0, 255), width=1) -> widgets.VSeparatorWidget:
+    return mk_widget(widgets.VSeparatorWidget, color=color, width=width)
+
+
+def Hseparator(*, color=Color(0, 0, 0, 255), width=1) -> widgets.HSeparatorWidget:
+    return mk_widget(widgets.HSeparatorWidget, color=color, width=width)
+
+
+def mouse_listener(*, child: Widget = None, **kw_args) -> widgets.MouseListener:
     return mk_widget(widgets.MouseListener, child=child, **kw_args)
 
 
-def keyboard_linstener(*, child: Widget = None, on_key: Callable) -> Widget:
+def keyboard_linstener(*, child: Widget = None, on_key: Callable) -> widgets.KeyboardListener:
     return mk_widget(widgets.KeyboardListener, child=child, on_key=on_key)
 
 
-def char_listener(*, child: Widget = None, on_input: Callable) -> Widget:
+def char_listener(*, child: Widget = None, on_input: Callable) -> widgets.CharInputListener:
     return mk_widget(widgets.CharInputListener, child=child, on_input=on_input)
+
+
+def focus_listener(*, child: Widget = None, on_focus: Callable) -> widgets.FocusListener:
+    return mk_widget(widgets.FocusListener, child=child, on_focus=on_focus)

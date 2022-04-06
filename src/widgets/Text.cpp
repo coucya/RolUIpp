@@ -178,19 +178,20 @@ namespace RolUI {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
-                ITextSpan* span = (ITextSpan*)child;
+                TextSpanWidget* span = static_cast<TextSpanWidget*>(child);
                 if (child->rect().contain(pos)) {
-                    return span->pos_to_index(pos - child->pos());
+                    Point tp = pos - child->pos();
+                    return char_count_ + span->pos_to_index(tp);
                 }
                 char_count_ += span->char_count();
             }
-            return 0;
+            return pos.x < 0 ? 0 : char_count();
         }
         Point RichTextLineWidget::index_to_pos(unsigned index) const noexcept {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
-                ITextSpan* span = (ITextSpan*)child;
+                ITextSpan* span = static_cast<TextSpanWidget*>(child);
                 unsigned span_char_count = span->char_count();
                 if (char_count_ + span_char_count > index) {
                     unsigned span_char_index = index - char_count_;
@@ -202,7 +203,8 @@ namespace RolUI {
         unsigned RichTextLineWidget::char_count() const noexcept {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
-                ITextSpan* span = (ITextSpan*)this->child(i);
+                Widget* child = this->child(i);
+                ITextSpan* span = static_cast<TextSpanWidget*>(child);
                 char_count_ += span->char_count();
             }
             return char_count_;
@@ -211,7 +213,7 @@ namespace RolUI {
             unsigned max_line_height = 0;
             for (int i = 0; i < child_count(); i++) {
                 Widget* child = this->child(i);
-                ITextSpan* span = (ITextSpan*)child;
+                ITextSpan* span = static_cast<TextSpanWidget*>(child);
                 max_line_height = span->line_height() > max_line_height ? span->line_height() : max_line_height;
             }
             return max_line_height;
@@ -223,20 +225,22 @@ namespace RolUI {
         unsigned RichTextWidget::pos_to_index(Point pos) const noexcept {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = this->child(i);
-                ITextSpan* span = (ITextSpan*)child;
-                if (child->rect().contain(pos)) {
-                    return span->pos_to_index(pos - child->pos());
+                RichTextLineWidget* child = static_cast<RichTextLineWidget*>(this->child(i));
+                ITextSpan* span = static_cast<ITextSpan*>(child);
+                Rect child_rect = child->rect();
+                if (child_rect.contain(pos)) {
+                    Point tp = pos - child->pos();
+                    return char_count_ + span->pos_to_index(tp);
                 }
                 char_count_ += span->char_count();
             }
-            return 0;
+            return pos.x < 0 ? 0 : char_count();
         }
         Point RichTextWidget::index_to_pos(unsigned index) const noexcept {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
-                Widget* child = this->child(i);
-                ITextSpan* span = (ITextSpan*)child;
+                RichTextLineWidget* child = static_cast<RichTextLineWidget*>(this->child(i));
+                ITextSpan* span = static_cast<ITextSpan*>(child);
                 unsigned span_char_count = span->char_count();
                 if (char_count_ + span_char_count > index) {
                     unsigned span_char_index = index - char_count_;
@@ -248,7 +252,8 @@ namespace RolUI {
         unsigned RichTextWidget::char_count() const noexcept {
             int char_count_ = 0;
             for (int i = 0; i < child_count(); i++) {
-                ITextSpan* span = (ITextSpan*)this->child(i);
+                RichTextLineWidget* child = static_cast<RichTextLineWidget*>(this->child(i));
+                ITextSpan* span = static_cast<ITextSpan*>(child);
                 char_count_ += span->char_count();
             }
             return char_count_;

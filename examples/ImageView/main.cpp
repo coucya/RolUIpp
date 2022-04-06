@@ -110,9 +110,9 @@ std::tuple<RolUI::Widget*,
 build_image_view() {
     PointerListener* plw = mk_widget<PointerListener>();
     ScrollView* sw = mk_widget<ScrollView>();
-    SizedBoxWidget* sbw = mk_widget<SizedBoxWidget>()
-                              ->width(SizeUnit(800))
-                              ->height(SizeUnit(600));
+    SizedWidget* sbw = mk_widget<SizedWidget>()
+                           ->width(SizeUnit(800))
+                           ->height(SizeUnit(600));
     ImageWidget* image_w = mk_widget<ImageWidget>()->fit(ImageWidget::contain);
     plw->set_child(sw->set_child(sbw->set_child(image_w)));
 
@@ -162,7 +162,7 @@ Widget* build_ui() {
                         ->add_child(
                             mk_widget<RowGridWidget>()
                                 ->add_child(build_button("<", [=] { image_idx_dec(); update_image(); }), 1.0)
-                                ->add_child(plw->set_child(mk_widget<SizedBoxWidget>()), 9.0)
+                                ->add_child(plw->set_child(mk_widget<SizedWidget>()), 9.0)
                                 ->add_child(build_button(">", [=] { image_idx_inc(); update_image(); }), 1.0)));
 }
 
