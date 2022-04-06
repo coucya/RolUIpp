@@ -23,6 +23,7 @@
 #include <RolUI/widgets/flow.hpp>
 #include <RolUI/widgets/layer.hpp>
 #include <RolUI/widgets/listener.hpp>
+#include <RolUI/widgets/decoration.hpp>
 #include <RolUI/widgets/widgets.hpp>
 
 using namespace pybind11;
@@ -91,12 +92,12 @@ static void bind_container_widgets(py::module_& widgets, py::module_& signals, p
         .def_readonly("border_color", &BoxWidget::border_color, return_value_policy::reference_internal)
         .def_readonly("background_color", &BoxWidget::background_color, return_value_policy::reference_internal);
 
-    BIND_PROPERTY(propertys, signals, SizedBoxWidget, SizeUnit);
-    class_<SizedBoxWidget, SingleChildWidget>(widgets, "SizedBoxWidget")
+    BIND_PROPERTY(propertys, signals, SizedWidget, SizeUnit);
+    class_<SizedWidget, SingleChildWidget>(widgets, "SizedWidget")
         .def(py::init())
         .def(py::init<SizeUnit, SizeUnit>())
-        .def_readonly("width", &SizedBoxWidget::width, return_value_policy::reference_internal)
-        .def_readonly("height", &SizedBoxWidget::height, return_value_policy::reference_internal);
+        .def_readonly("width", &SizedWidget::width, return_value_policy::reference_internal)
+        .def_readonly("height", &SizedWidget::height, return_value_policy::reference_internal);
 
     BIND_PROPERTY(propertys, signals, AlignWidget, float);
     class_<AlignWidget, SingleChildWidget>(widgets, "AlignWidget")
@@ -225,7 +226,7 @@ static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py
         .def_readonly("on_key", &KeyboardListener::on_key, return_value_policy::reference_internal);
 }
 
-static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+static void bind_scroll_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
     BIND_PROPERTY(propertys, signals, ScrollView, Point);
     class_<ScrollView, SingleChildWidget>(widgets, "ScrollView")
         .def(py::init())
@@ -255,7 +256,7 @@ static void bind_ScrollWidget(py::module_& widgets, py::module_& signals, py::mo
         .def_readonly("scroll_step", &HScrollView::scroll_step, py::return_value_policy::reference_internal);
 }
 
-static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+static void bind_text_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
 
     class_<ITextSpan>(widgets, "ITextSpan")
         .def("pos_to_index", &ITextSpan::pos_to_index)
@@ -313,6 +314,22 @@ static void bind_misc_widgets(py::module_& widgets, py::module_& signals, py::mo
         .def(py::init());
 }
 
+static void bind_decoration_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+    BIND_PROPERTY(propertys, signals, HSeparatorWidget, Color);
+    BIND_PROPERTY(propertys, signals, HSeparatorWidget, int);
+    class_<HSeparatorWidget, Widget>(widgets, "HSeparatorWidget")
+        .def_readonly("color", &HSeparatorWidget::color, return_value_policy::reference_internal)
+        .def_readonly("width", &HSeparatorWidget::width, return_value_policy::reference_internal)
+        .def(py::init());
+
+    BIND_PROPERTY(propertys, signals, VSeparatorWidget, Color);
+    BIND_PROPERTY(propertys, signals, VSeparatorWidget, int);
+    class_<VSeparatorWidget, Widget>(widgets, "VSeparatorWidget")
+        .def_readonly("color", &VSeparatorWidget::color, return_value_policy::reference_internal)
+        .def_readonly("width", &VSeparatorWidget::width, return_value_policy::reference_internal)
+        .def(py::init());
+}
+
 static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
 
     widgets.def("text", widgets::text, py::arg("text"),
@@ -358,7 +375,7 @@ static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py:
 
     auto _sized = [](Widget* c, py::object w, py::object h) {
         SizeUnit sw, sh;
-        SizedBoxWidget* widget = nullptr;
+        SizedWidget* widget = nullptr;
         if (py::isinstance<py::int_>(w) && py::isinstance<py::int_>(h))
             widget = widgets::sized(w.cast<int>(), h.cast<int>(), c);
         else if (py::isinstance<py::int_>(w) && py::isinstance<py::float_>(h))
@@ -500,7 +517,8 @@ void bind_widgets(py::module_& m) {
     bind_layer_Widgets(widgets, signals, propertys);
     bind_flow_widgets(widgets, signals, propertys);
     bind_listener_widgets(widgets, signals, propertys);
-    bind_ScrollWidget(widgets, signals, propertys);
-    bind_misc_widgets(widgets, signals, propertys);
+    bind_scroll_widgets(widgets, signals, propertys);
+    bind_text_widgets(widgets, signals, propertys);
+    bind_decoration_widgets(widgets, signals, propertys);
     bind_widgets_widgets(widgets, signals, propertys);
 }

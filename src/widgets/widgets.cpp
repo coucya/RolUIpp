@@ -71,26 +71,26 @@ namespace RolUI {
             return (AlignWidget*)mk_widget<AlignWidget>()->align_x(x)->align_y(y)->set_child(child);
         }
 
-        SizedBoxWidget* sized(int width, int height, Widget* child) {
-            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
+        SizedWidget* sized(int width, int height, Widget* child) {
+            return (SizedWidget*)mk_widget<SizedWidget>()
                 ->width(SizeUnit(width))
                 ->height(SizeUnit(height))
                 ->set_child(child);
         }
-        SizedBoxWidget* sized(float width, float height, Widget* child) {
-            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
+        SizedWidget* sized(float width, float height, Widget* child) {
+            return (SizedWidget*)mk_widget<SizedWidget>()
                 ->width(SizeUnit(width))
                 ->height(SizeUnit(height))
                 ->set_child(child);
         }
-        SizedBoxWidget* sized(int width, float height, Widget* child) {
-            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
+        SizedWidget* sized(int width, float height, Widget* child) {
+            return (SizedWidget*)mk_widget<SizedWidget>()
                 ->width(SizeUnit(width))
                 ->height(SizeUnit(height))
                 ->set_child(child);
         }
-        SizedBoxWidget* sized(float width, int height, Widget* child) {
-            return (SizedBoxWidget*)mk_widget<SizedBoxWidget>()
+        SizedWidget* sized(float width, int height, Widget* child) {
+            return (SizedWidget*)mk_widget<SizedWidget>()
                 ->width(SizeUnit(width))
                 ->height(SizeUnit(height))
                 ->set_child(child);

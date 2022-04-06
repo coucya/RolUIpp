@@ -40,10 +40,10 @@ namespace RolUI {
 
         AlignWidget* align(float x, float y, Widget* child);
 
-        SizedBoxWidget* sized(int width, int height, Widget* child);
-        SizedBoxWidget* sized(float width, float height, Widget* child);
-        SizedBoxWidget* sized(int width, float height, Widget* child);
-        SizedBoxWidget* sized(float width, int height, Widget* child);
+        SizedWidget* sized(int width, int height, Widget* child);
+        SizedWidget* sized(float width, float height, Widget* child);
+        SizedWidget* sized(int width, float height, Widget* child);
+        SizedWidget* sized(float width, int height, Widget* child);
 
         MarginWidget* margin(unsigned margin, Widget* child);
         MarginWidget* margin(unsigned x, unsigned y, Widget* child);

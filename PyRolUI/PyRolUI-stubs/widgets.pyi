@@ -27,7 +27,7 @@ class BoxWidget(SingleChildWidget):
     def __init__(self): ...
 
 
-class SizedBoxWidget(SingleChildWidget):
+class SizedWidget(SingleChildWidget):
     width: Property
     height: Property
     @overload
@@ -146,7 +146,7 @@ class FocusListener(SingleChildWidget):
     on_focus: Signal
 
 
-class CharImputListener(SingleChildWidget):
+class CharInputListener(SingleChildWidget):
     def __init__(self) -> None: ...
     on_input: Signal
 
@@ -228,7 +228,7 @@ class RichTextWidget(ColumnWidget):
     def char_count(self) -> int: ...
 
 
-class EditableTextWidget(TextWidget):
+class EditableTextWidget(TextSpanWidget):
     cursor_index: Property
     def __init__(sel) -> None: ...
     def is_blinkint(self) -> bool: ...
@@ -243,7 +243,19 @@ class TextBoxWidget(EditableTextWidget):
     def __init__(sel) -> None: ...
 
 
-def text(text: str, *, size: int, color: Color) -> TextWidget: ...
+class HSeparatorWidget(Widget):
+    color: Property
+    width: Property
+    def __init__(self) -> None: ...
+
+
+class VSeparatorWidget(Widget):
+    color: Property
+    width: Property
+    def __init__(self) -> None: ...
+
+
+def text(text: str, *, size: int, color: Color) -> TextSpanWidget: ...
 def textbox(*, text: str, font_size: int, color: Color) -> TextBoxWidget: ...
 def label(text: str, *, size: int, color: Color, background_color: Color) -> Widget: ...
 def image(image: Image) -> Widget: ...

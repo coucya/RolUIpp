@@ -51,18 +51,19 @@ namespace RolUI {
             ~BoxWidget() override;
 
           protected:
-            virtual void draw(IPainter* painter) noexcept override;
+            void draw(IPainter* painter) noexcept override;
         };
 
-        class SizedBoxWidget : public SingleChildWidget {
+        class SizedWidget : public SingleChildWidget {
           public:
-            Property<SizedBoxWidget, SizeUnit> width{this, SizeUnit(1.0f)};
-            Property<SizedBoxWidget, SizeUnit> height{this, SizeUnit(1.0f)};
+            Property<SizedWidget, SizeUnit> width{this, SizeUnit(1.0f)};
+            Property<SizedWidget, SizeUnit> height{this, SizeUnit(1.0f)};
 
           public:
-            SizedBoxWidget() noexcept;
-            SizedBoxWidget(SizeUnit w, SizeUnit h) noexcept;
+            SizedWidget() noexcept;
+            SizedWidget(SizeUnit w, SizeUnit h) noexcept;
 
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -75,6 +76,7 @@ namespace RolUI {
             AlignWidget() noexcept;
             AlignWidget(float x, float y) noexcept;
 
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -91,6 +93,7 @@ namespace RolUI {
             MarginWidget(unsigned x, unsigned y) noexcept;
             MarginWidget(unsigned top, unsigned bottom, unsigned left, unsigned right) noexcept;
 
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
