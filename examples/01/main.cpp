@@ -16,6 +16,7 @@
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
 #include "RolUI/IEvent.hpp"
+#include "RolUI/Object.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
