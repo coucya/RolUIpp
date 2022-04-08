@@ -24,8 +24,6 @@ namespace RolUI {
     class SingleChildWidget;
     class MultiChildWidget;
 
-    bool send_event(Widget* w, IEvent* e);
-
     void set_pos(Widget* w, Point pos);
 
     class Constraint {
@@ -97,6 +95,11 @@ namespace RolUI {
 
         Size layout(Constraint constraint) noexcept;
 
+        virtual int child_count() const noexcept;
+        virtual Widget* child(int index = 0) const noexcept;
+        virtual Widget* set_child(Widget* child, int index = 0) noexcept;
+        virtual void remove_child(int index = 0) noexcept;
+
         virtual Widget* get_child_by_pos(Point pos) const noexcept;
 
         virtual void visit_children(std::function<void(Widget*)> f) noexcept;
@@ -134,9 +137,10 @@ namespace RolUI {
       public:
         SingleChildWidget() noexcept;
 
-        Widget* child() const noexcept;
-        SingleChildWidget* set_child(Widget* child) noexcept;
-        void remove_child() noexcept;
+        int child_count() const noexcept override;
+        Widget* child(int index = 0) const noexcept override;
+        SingleChildWidget* set_child(Widget* child, int index = 0) noexcept override;
+        void remove_child(int index = 0) noexcept override;
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept override;
 
@@ -168,16 +172,15 @@ namespace RolUI {
       public:
         MultiChildWidget() noexcept;
 
-        int child_count() const noexcept;
-
-        Widget* child(int index) const noexcept;
-
+        int child_count() const noexcept override;
+        Widget* child(int index) const noexcept override;
+        MultiChildWidget* set_child(Widget* child, int index) noexcept override;
         MultiChildWidget* add_child(Widget* child) noexcept;
-        MultiChildWidget* set_child(int index, Widget* child) noexcept;
         MultiChildWidget* insert_child(int index, Widget* child) noexcept;
 
+        void remove_child(int index) noexcept override;
         void remove_child(Widget* child) noexcept;
-        void remove_child(int index) noexcept;
+        void remove_child_all() noexcept;
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept override;
 

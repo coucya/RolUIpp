@@ -506,6 +506,10 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("depth", &Widget::depth)
         .def("parent", &Widget::parent, return_value_policy::reference)
         .def("layout", &Widget::layout)
+        .def("child_count", &Widget::child_count)
+        .def("child", &Widget::child, py::arg("index") = 0, return_value_policy::reference)
+        .def("set_child", &Widget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
+        .def("remove_child", &Widget::remove_child, py::arg("index") = 0)
         .def("get_child_by_pos", &Widget::get_child_by_pos, return_value_policy::reference)
         .def("handle_event", &Widget::handle_event)
         .def("draw", &Widget::draw)
@@ -514,18 +518,20 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("hit_test", &Widget::hit_test);
     class_<SingleChildWidget, Widget>(m, "SingleChildWidget")
         .def(py::init())
-        .def("child", &SingleChildWidget::child, return_value_policy::reference)
-        .def("set_child", &SingleChildWidget::set_child, return_value_policy::reference)
-        .def("remove_child", &SingleChildWidget::remove_child);
+        .def("child_count", &SingleChildWidget::child_count)
+        .def("child", &SingleChildWidget::child, py::arg("index") = 0, return_value_policy::reference)
+        .def("set_child", &SingleChildWidget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
+        .def("remove_child", &SingleChildWidget::remove_child, py::arg("index") = 0);
     class_<MultiChildWidget, Widget>(m, "MultiChildWidget")
         .def(py::init())
         .def("child", &MultiChildWidget::child, return_value_policy::reference)
         .def("child_count", &MultiChildWidget::child_count)
-        .def("add_child", &MultiChildWidget::add_child, return_value_policy::reference)
-        .def("set_child", &MultiChildWidget::set_child, return_value_policy::reference)
-        .def("insert_child", &MultiChildWidget::insert_child, return_value_policy::reference)
+        .def("add_child", &MultiChildWidget::add_child, py::arg("child"), return_value_policy::reference_internal)
+        .def("set_child", &MultiChildWidget::set_child, py::arg("child"), py::arg("index"), return_value_policy::reference_internal)
+        .def("insert_child", &MultiChildWidget::insert_child, py::arg("index"), py::arg("child"), return_value_policy::reference_internal)
         .def("remove_child", [](MultiChildWidget& self, Widget* child) { self.remove_child(child); })
-        .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); });
+        .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); })
+        .def("remove_child_all", &MultiChildWidget::remove_child_all);
 
     class_<RootWidget, MultiChildWidget>(m, "RootWidget")
         .def("content_widget", &RootWidget::content_widget, return_value_policy::reference)

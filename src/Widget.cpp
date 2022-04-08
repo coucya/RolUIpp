@@ -45,6 +45,11 @@ namespace RolUI {
         return _size;
     }
 
+    int Widget::child_count() const noexcept { return 0; }
+    Widget* Widget::child(int index) const noexcept { return nullptr; }
+    Widget* Widget::set_child(Widget* child, int index) noexcept { return this; }
+    void Widget::remove_child(int index) noexcept {}
+
     Widget* Widget::get_child_by_pos(Point pos) const noexcept { return nullptr; }
 
     void Widget::visit_children(std::function<void(Widget*)> f) noexcept {}
@@ -96,8 +101,10 @@ namespace RolUI {
 
     SingleChildWidget::SingleChildWidget() noexcept {}
 
-    Widget* SingleChildWidget::child() const noexcept { return _child; }
-    SingleChildWidget* SingleChildWidget::set_child(Widget* child) noexcept {
+    int SingleChildWidget::child_count() const noexcept { return _child ? 0 : 1; }
+    Widget* SingleChildWidget::child(int index) const noexcept { return index == 0 && _child ? _child : nullptr; }
+    SingleChildWidget* SingleChildWidget::set_child(Widget* child, int index) noexcept {
+        if (index != 0) return this;
         if (_child)
             _child->_unmount();
         _child = child;
@@ -105,7 +112,8 @@ namespace RolUI {
             _child->_mount(this);
         return this;
     }
-    void SingleChildWidget::remove_child() noexcept {
+    void SingleChildWidget::remove_child(int index) noexcept {
+        if (index != 0) return;
         if (_child)
             _child->_unmount();
         _child = nullptr;
@@ -151,7 +159,7 @@ namespace RolUI {
         child->_mount(this);
         return this;
     }
-    MultiChildWidget* MultiChildWidget::set_child(int index, Widget* child) noexcept {
+    MultiChildWidget* MultiChildWidget::set_child(Widget* child, int index) noexcept {
         if (!child || index < 0 || index > _children.size()) return this;
 
         if (index == _children.size()) {
@@ -176,14 +184,17 @@ namespace RolUI {
 
     void MultiChildWidget::remove_child(Widget* child) noexcept {
         auto it = std::find(_children.begin(), _children.end(), child);
-        if (it != _children.end())
-            (*it)->_unmount();
-        _children.erase(it);
+        remove_child(it - _children.begin());
     }
     void MultiChildWidget::remove_child(int index) noexcept {
         if (index < 0 || index >= _children.size()) return;
         _children[index]->_unmount();
         _children.erase(_children.begin() + index);
+    }
+    void MultiChildWidget::remove_child_all() noexcept {
+        for (int i = 0; i < _children.size(); i++)
+            _children[i]->_unmount();
+        _children.clear();
     }
 
     Widget* MultiChildWidget::get_child_by_pos(Point pos) const noexcept {

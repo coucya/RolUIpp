@@ -98,7 +98,7 @@ namespace RolUI {
             FlowGridWidgetBase* FlowGridWidgetBase::set_child(int index, Widget* child, float flex) noexcept {
                 if (!child) return this;
                 if (index < 0 || index >= child_count()) return this;
-                MultiChildWidget::set_child(index, child);
+                MultiChildWidget::set_child(child, index);
                 _flexs[index] = flex;
                 return this;
             }
