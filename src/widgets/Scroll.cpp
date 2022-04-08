@@ -137,7 +137,7 @@ namespace RolUI {
             return constraint.max();
         }
         bool VScrollView::handle_event(IEvent* e) noexcept {
-            if (e->is(MouseWheelEvent_type())) {
+            if (e->object_type_is<MouseWheelEvent>()) {
                 MouseWheelEvent* mwe = static_cast<MouseWheelEvent*>(e);
                 int dy = float(mwe->offset().y) * scroll_step();
                 scroll_y_by_px(dy);
@@ -161,7 +161,7 @@ namespace RolUI {
             return constraint.max();
         }
         bool HScrollView::handle_event(IEvent* e) noexcept {
-            if (e->is(MouseWheelEvent_type())) {
+            if (e->object_type_is<MouseWheelEvent>()) {
                 MouseWheelEvent* mwe = static_cast<MouseWheelEvent*>(e);
                 int dy = float(mwe->offset().y) * scroll_step();
                 scroll_x_by_px(dy);

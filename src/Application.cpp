@@ -2,6 +2,7 @@
 #include <chrono>
 #include <queue>
 
+#include "RolUI/IEvent.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/IPainter.hpp"
@@ -46,7 +47,6 @@ namespace RolUI {
 
     static bool _should_exit = false;
     static Window* _window = nullptr;
-    // static Widget* _content_widget = nullptr;
     static Widget* _focus_widget = nullptr;
     static RootWidget _root_widget{};
 

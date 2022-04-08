@@ -39,10 +39,12 @@ namespace RolUI {
     class MouseEvent : public IEvent {
         friend class MouseDispatcher;
 
-      private:
-        MouseEvent(const EventType* et, Widget* target, const MouseDispatcher* dispatcher) noexcept;
+      protected:
+        MouseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
 
       public:
+        const ObjectType* object_type() const noexcept override;
+
         Point pos() const noexcept;
         Vec2i offset() const noexcept;
 
@@ -63,18 +65,47 @@ namespace RolUI {
       public:
         MouseWheelEvent(Widget* target, Vec2i offset) noexcept;
 
+        const ObjectType* object_type() const noexcept override;
+
         Vec2i offset() const noexcept;
 
       private:
         Vec2i _offset;
     };
 
-    RolUI_decl_event_type(MousePosEvent);
-    RolUI_decl_event_type(MousePressEvent);
-    RolUI_decl_event_type(MouseReleaseEvent);
-    RolUI_decl_event_type(MouseEnterEvent);
-    RolUI_decl_event_type(MouseLeaveEvent);
-    RolUI_decl_event_type(MouseWheelEvent);
+    class MouseMoveEvent : public MouseEvent {
+      public:
+        MouseMoveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        const ObjectType* object_type() const noexcept override;
+    };
+    class MousePressEvent : public MouseEvent {
+      public:
+        MousePressEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        const ObjectType* object_type() const noexcept override;
+    };
+    class MouseReleaseEvent : public MouseEvent {
+      public:
+        MouseReleaseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        const ObjectType* object_type() const noexcept override;
+    };
+    class MouseEnterEvent : public MouseEvent {
+      public:
+        MouseEnterEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        const ObjectType* object_type() const noexcept override;
+    };
+    class MouseLeaveEvent : public MouseEvent {
+      public:
+        MouseLeaveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        const ObjectType* object_type() const noexcept override;
+    };
+
+    RolUI_decl_object_type_of(MouseEvent);
+    RolUI_decl_object_type_of(MouseMoveEvent);
+    RolUI_decl_object_type_of(MousePressEvent);
+    RolUI_decl_object_type_of(MouseReleaseEvent);
+    RolUI_decl_object_type_of(MouseEnterEvent);
+    RolUI_decl_object_type_of(MouseLeaveEvent);
+    RolUI_decl_object_type_of(MouseWheelEvent);
 
     class MouseDispatcher {
       public:

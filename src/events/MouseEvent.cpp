@@ -11,12 +11,13 @@
 
 namespace RolUI {
 
-    RolUI_impl_event_type(MousePosEvent);
-    RolUI_impl_event_type(MousePressEvent);
-    RolUI_impl_event_type(MouseReleaseEvent);
-    RolUI_impl_event_type(MouseEnterEvent);
-    RolUI_impl_event_type(MouseLeaveEvent);
-    RolUI_impl_event_type(MouseWheelEvent);
+    RolUI_impl_object_type_of(MouseEvent, IEvent);
+    RolUI_impl_object_type_of(MouseMoveEvent, MouseEvent);
+    RolUI_impl_object_type_of(MousePressEvent, MouseEvent);
+    RolUI_impl_object_type_of(MouseReleaseEvent, MouseEvent);
+    RolUI_impl_object_type_of(MouseEnterEvent, MouseEvent);
+    RolUI_impl_object_type_of(MouseLeaveEvent, MouseEvent);
+    RolUI_impl_object_type_of(MouseWheelEvent, IEvent);
 
     MouseDispatcher::MouseDispatcher() noexcept {
         _init();
@@ -91,7 +92,7 @@ namespace RolUI {
             for (auto it = _hover_widgets.begin(); it != _hover_widgets.end();) {
                 Widget* w = *it;
                 if (w && w->hit_test(mouse_pos) == false) {
-                    MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
+                    MouseLeaveEvent me{w, this};
                     send_event(w, &me);
                     it = _hover_widgets.erase(it);
                 } else
@@ -102,7 +103,7 @@ namespace RolUI {
             while (tw && tw->hit_test(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
                 _hover_widgets.insert(tw);
 
-                MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
+                MouseEnterEvent me{tw, this};
                 send_event(tw, &me);
 
                 tw = tw->parent();
@@ -112,17 +113,15 @@ namespace RolUI {
             while (tw) {
                 _hover_widgets.insert(tw);
 
-                MouseEvent me = MouseEvent(MouseEnterEvent_type(), tw, this);
+                MouseEnterEvent me{tw, this};
                 send_event(tw, &me);
 
                 tw = tw->parent();
             }
         } else if (_is_leave) {
             for (Widget* w : _hover_widgets) {
-                // if (w && w->abs_rect().contain(mouse_pos) == false) {
-                MouseEvent me = MouseEvent(MouseLeaveEvent_type(), w, this);
+                MouseLeaveEvent me{w, this};
                 send_event(w, &me);
-                // }
             }
             _hover_widgets.clear();
         }
@@ -130,7 +129,7 @@ namespace RolUI {
         if (is_move()) {
             Widget* tw = widget;
             while (tw) {
-                MouseEvent me = MouseEvent(MousePosEvent_type(), tw, this);
+                MouseMoveEvent me{tw, this};
                 me._set_action_key(MouseKey::unkown);
 
                 if (send_event(tw, &me)) break;
@@ -144,13 +143,14 @@ namespace RolUI {
                 Widget* tw = widget;
                 Widget* wi = Application::get_widget_by_pos(mouse_pos);
                 while (tw) {
-                    const EventType* et = button((MouseKey)i) == MouseKeyMode::press
-                                            ? MousePressEvent_type()
-                                            : MouseReleaseEvent_type();
-                    MouseEvent me = MouseEvent(et, tw, this);
-                    me._set_action_key((MouseKey)i);
+                    MousePressEvent mpe{tw, this};
+                    MouseReleaseEvent mre{tw, this};
+                    MouseEvent* me = button((MouseKey)i) == MouseKeyMode::press
+                                       ? (MouseEvent*)&mpe
+                                       : (MouseEvent*)&mre;
+                    me->_set_action_key((MouseKey)i);
 
-                    if (send_event(tw, &me)) break;
+                    if (send_event(tw, me)) break;
 
                     tw = tw->parent();
                 }
@@ -167,8 +167,8 @@ namespace RolUI {
         clear_change();
     }
 
-    MouseEvent::MouseEvent(const EventType* et, Widget* target, const MouseDispatcher* dispatcher) noexcept
-        : IEvent(et, target), _dispatcher(dispatcher) {
+    MouseEvent::MouseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept
+        : IEvent(target), _dispatcher(dispatcher) {
         _action_key = MouseKey::unkown;
     }
 
@@ -189,8 +189,22 @@ namespace RolUI {
     void MouseEvent::_set_action_key(MouseKey key) { _action_key = key; }
 
     MouseWheelEvent::MouseWheelEvent(Widget* target, Vec2i offset) noexcept
-        : IEvent(MouseWheelEvent_type(), target), _offset(offset) {}
+        : IEvent(target), _offset(offset) {}
 
     Vec2i MouseWheelEvent::offset() const noexcept { return _offset; }
+
+    MouseMoveEvent::MouseMoveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
+    MousePressEvent::MousePressEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
+    MouseReleaseEvent::MouseReleaseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
+    MouseEnterEvent::MouseEnterEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
+    MouseLeaveEvent::MouseLeaveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
+
+    const ObjectType* MouseEvent::object_type() const noexcept { return object_type_of<MouseEvent>(); }
+    const ObjectType* MouseMoveEvent::object_type() const noexcept { return object_type_of<MouseMoveEvent>(); }
+    const ObjectType* MousePressEvent::object_type() const noexcept { return object_type_of<MousePressEvent>(); }
+    const ObjectType* MouseReleaseEvent::object_type() const noexcept { return object_type_of<MouseReleaseEvent>(); }
+    const ObjectType* MouseEnterEvent::object_type() const noexcept { return object_type_of<MouseEnterEvent>(); }
+    const ObjectType* MouseLeaveEvent::object_type() const noexcept { return object_type_of<MouseLeaveEvent>(); }
+    const ObjectType* MouseWheelEvent::object_type() const noexcept { return object_type_of<MouseWheelEvent>(); }
 
 } // namespace RolUI

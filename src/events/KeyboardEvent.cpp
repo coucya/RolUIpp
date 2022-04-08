@@ -10,10 +10,11 @@
 
 namespace RolUI {
 
-    RolUI_impl_event_type_in_class(KeyboardEvent);
+    RolUI_impl_object_type_of(KeyboardEvent, IEvent);
 
-    KeyboardEvent::KeyboardEvent(Widget* target) noexcept
-        : IEvent(type(), target) {}
+    KeyboardEvent::KeyboardEvent(Widget* target) noexcept : IEvent(target) {}
+
+    const ObjectType* KeyboardEvent::object_type() const noexcept { return object_type_of<KeyboardEvent>(); }
 
     KeyboardKey KeyboardEvent::action() const noexcept { return _action; }
     KeyboardKeyMode KeyboardEvent::key_mode() const noexcept {

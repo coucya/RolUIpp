@@ -39,6 +39,10 @@ namespace RolUI {
     Object::Object() noexcept {}
     Object::~Object() {}
 
+    bool Object::object_type_is(const ObjectType* ot) const noexcept {
+        return object_type()->is_superclass(ot);
+    }
+
     Object* Object::object_ref() noexcept {
         _ref_count++;
         return this;

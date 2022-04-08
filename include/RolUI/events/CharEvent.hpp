@@ -10,20 +10,21 @@ namespace RolUI {
 
     class CharEvent : public IEvent {
       public:
-        RolUI_decl_event_type_in_class(CharEvent);
-
-      public:
         CharEvent(Widget* target) noexcept;
         CharEvent(Widget* target, unsigned int cp) noexcept;
         ~CharEvent();
+
+        const ObjectType* object_type() const noexcept override;
 
         unsigned int codepoint() const noexcept;
         const char* c_char() const noexcept;
 
       private:
         unsigned int _codepoint = 0;
-        char _c_str[8] = {0};
+        char _c_str[8]{0, 0, 0, 0, 0, 0, 0, 0};
     };
+
+    RolUI_decl_object_type_of(CharEvent);
 
     class CharEventDispatcher {
       public:

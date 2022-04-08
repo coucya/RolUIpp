@@ -141,13 +141,12 @@ namespace RolUI {
     class KeyboardEvent : public IEvent {
         friend class KeyboardDispatcher;
 
-      public:
-        RolUI_decl_event_type_in_class(KeyboardEvent);
-
       private:
         KeyboardEvent(Widget* target) noexcept;
 
       public:
+        const ObjectType* object_type() const noexcept override;
+
         KeyboardKey action() const noexcept;
         KeyboardKeyMode key_mode() const noexcept;
         KeyboardKeyMode key_mode(KeyboardKey key) const noexcept;
@@ -156,6 +155,8 @@ namespace RolUI {
         KeyboardKey _action = KeyboardKey::unknown;
         KeyboardKeyMode _key_modes[KEYBORD_KEY_COUNT];
     };
+
+    RolUI_decl_object_type_of(KeyboardEvent);
 
     class KeyboardDispatcher {
       public:

@@ -345,24 +345,24 @@ namespace RolUI {
         bool TextBoxWidget::handle_event(IEvent* e) noexcept {
             EditableTextWidget::handle_event(e);
 
-            if (e->is(MousePressEvent_type()) && ((MouseEvent*)e)->action() == MouseKey::left) {
+            if (e->object_type_is<MousePressEvent>() && ((MouseEvent*)e)->action() == MouseKey::left) {
                 MouseEvent* me = (MouseEvent*)e;
                 this->cursor_index = this->pos_to_index(me->pos() - this->abs_pos());
                 Application::set_focus_widget(this);
                 return true;
-            } else if (e->is(FocusChangeEvent::type())) {
+            } else if (e->object_type_is<FocusChangeEvent>()) {
                 FocusChangeEvent* fce = (FocusChangeEvent*)e;
                 if (fce->current_value())
                     this->set_blink(true);
                 else
                     this->set_blink(false);
                 return true;
-            } else if (e->is(CharEvent::type()) && Application::focus_widget() == this) {
+            } else if (e->object_type_is<CharEvent>() && Application::focus_widget() == this) {
                 uint32_t cp = ((CharEvent*)e)->codepoint();
                 int idx = this->cursor_index();
                 this->insert_char(idx, cp);
                 return true;
-            } else if (e->is(KeyboardEvent::type()) && Application::focus_widget() == this) {
+            } else if (e->object_type_is<KeyboardEvent>() && Application::focus_widget() == this) {
                 KeyboardEvent* ke = (KeyboardEvent*)e;
                 if (ke->action() == KeyboardKey::backspace && ke->key_mode() == KeyboardKeyMode::press)
                     this->delete_front();

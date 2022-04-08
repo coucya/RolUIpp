@@ -45,6 +45,13 @@ namespace py = pybind11;
     CONCAT(MYPYBIND11_OVERRIDE_PURE_, ARG_COUNT(__VA_ARGS__)) \
     (ret_type, ct, fn, __VA_ARGS__)
 
+class RolUIPyObject : public RolUI::Object {
+  public:
+    virtual const ObjectType* object_type() const noexcept override {
+        PYBIND11_OVERRIDE_PURE(const ObjectType*, Object, );
+    }
+};
+
 class PyWindow : public Window {
   public:
     virtual Point pos() const override {
@@ -266,21 +273,20 @@ static void bind_mouse_event(py::module_& m) {
     class_<MouseWheelEvent, IEvent>(m, "MouseWheelEvent")
         .def("offset", &MouseWheelEvent::offset);
 
-    m.def("MousePosEvent_type", MousePosEvent_type, py::return_value_policy::reference);
-    m.def("MousePressEvent_type", MousePressEvent_type, py::return_value_policy::reference);
-    m.def("MouseReleaseEvent_type", MouseReleaseEvent_type, py::return_value_policy::reference);
-    m.def("MouseEnterEvent_type", MouseEnterEvent_type, py::return_value_policy::reference);
-    m.def("MouseLeaveEvent_type", MouseLeaveEvent_type, py::return_value_policy::reference);
-    m.def("MouseWheelEvent_type", MouseWheelEvent_type, py::return_value_policy::reference);
+    m.def("MouseMoveEvent_type", &RolUI::object_type_of<MouseMoveEvent>, py::return_value_policy::reference);
+    m.def("MousePressEvent_type", &RolUI::object_type_of<MousePressEvent>, py::return_value_policy::reference);
+    m.def("MouseReleaseEvent_type", &RolUI::object_type_of<MouseReleaseEvent>, py::return_value_policy::reference);
+    m.def("MouseEnterEvent_type", &RolUI::object_type_of<MouseEnterEvent>, py::return_value_policy::reference);
+    m.def("MouseLeaveEvent_type", &RolUI::object_type_of<MouseLeaveEvent>, py::return_value_policy::reference);
+    m.def("MouseWheelEvent_type", &RolUI::object_type_of<MouseWheelEvent>, py::return_value_policy::reference);
 }
 
 static void bind_char_event(py::module_& m) {
     class_<CharEvent, IEvent>(m, "CharEvent")
-        .def_static("type", &CharEvent::type, py::return_value_policy::reference)
         .def("codepoint", &CharEvent::codepoint)
         .def("c_char", &CharEvent::c_char);
 
-    m.def("CharEvent_type", CharEvent::type, py::return_value_policy::reference);
+    m.def("CharEvent_type", &RolUI::object_type_of<CharEvent>, py::return_value_policy::reference);
 }
 
 static void bind_keyboard_event(py::module_& m) {
@@ -411,14 +417,13 @@ static void bind_keyboard_event(py::module_& m) {
     }
 
     class_<KeyboardEvent, IEvent>(m, "KeyboardEvent")
-        .def_static("type", &KeyboardEvent::type, py::return_value_policy::reference)
         .def("action", &KeyboardEvent::action)
         .def("key_mode", [](const KeyboardEvent& self) { return self.key_mode(); })
         .def(
             "key_mode", [](const KeyboardEvent& self, KeyboardKey k) { return self.key_mode(k); },
             py::arg("key"));
 
-    m.def("KeyboardEvent_type", KeyboardEvent::type, py::return_value_policy::reference);
+    m.def("KeyboardEvent_type", &RolUI::object_type_of<KeyboardEvent>, py::return_value_policy::reference);
 }
 
 PYBIND11_MODULE(PyRolUI, m) {
@@ -430,18 +435,26 @@ PYBIND11_MODULE(PyRolUI, m) {
 
     m.def("load_font", load_font, py::arg("name"), py::arg("filename"));
 
+    class_<ObjectType>(m, "ObjectType")
+        .def("type_name", &ObjectType::type_name)
+        .def("is_superclass", [](const ObjectType& self, const ObjectType* other) {
+            return self.is_superclass(other);
+        });
+
+    class_<Object, RolUIPyObject>(m, "Object")
+        .def("object_type", &Object::object_type, return_value_policy::reference)
+        .def("object_type_is", [](const Object& self, const ObjectType* other) {
+            return self.object_type_is(other);
+        })
+        .def("object_ref", &Object::object_ref, return_value_policy::reference_internal)
+        .def("object_unref", &Object::object_unref, return_value_policy::reference_internal);
+
     class_<Image>(m, "Image")
         .def(py::init())
         .def("handle", &Image::handle)
         .def_static("load", &load_image);
 
-    class_<EventType>(m, "EventType")
-        .def("name", &EventType::name)
-        .def("__eq__", [](const EventType& self, const EventType& other) { return (&self) == (&other); });
-
-    class_<IEvent>(m, "IEvent")
-        .def("is_", &IEvent::is)
-        .def("event_type", &IEvent::event_type, return_value_policy::reference)
+    class_<IEvent, Object>(m, "IEvent")
         .def("target", &IEvent::target, return_value_policy::reference);
 
     class_<IPainter, PyIPainter>(m, "IPainter")

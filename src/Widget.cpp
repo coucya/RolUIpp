@@ -19,13 +19,6 @@
 
 namespace RolUI {
 
-    bool send_event(Widget* w, IEvent* e) {
-        if (!w || !e) return false;
-        if (!w->mounted()) return false;
-        e->_target = w;
-        return w->handle_event(e);
-    }
-
     void set_pos(Widget* w, Point pos) {
         if (!w) return;
         w->_pos = pos;

@@ -14,8 +14,8 @@ namespace RolUI {
         template <typename T>
         class PropertyChangeEvent : public IEvent {
           public:
-            PropertyChangeEvent(const EventType* et, Widget* target, T current, T old) noexcept
-                : IEvent(et, target), _current(current), _old(old) {}
+            PropertyChangeEvent(Widget* target, T current, T old) noexcept
+                : IEvent(target), _current(current), _old(old) {}
 
             T current_value() const noexcept { return _current; }
             T old_value() const noexcept { return _old; }
@@ -27,14 +27,14 @@ namespace RolUI {
 
     } // namespace _details
 
-#define RulUI_define_property_change_event(name, property_type)                   \
-    class name : public _details::PropertyChangeEvent<property_type> {            \
-      public:                                                                     \
-        RolUI_decl_event_type_in_class(name);                                     \
-                                                                                  \
-        name(Widget* target, property_type current, property_type old) noexcept   \
-            : PropertyChangeEvent<property_type>(type(), target, current, old) {} \
-    }
+#define RulUI_define_property_change_event(name, property_type)                 \
+    class name : public _details::PropertyChangeEvent<property_type> {          \
+      public:                                                                   \
+        name(Widget* target, property_type current, property_type old) noexcept \
+            : PropertyChangeEvent<property_type>(target, current, old) {}       \
+        const ObjectType* object_type() const noexcept override;                \
+    };                                                                          \
+    RolUI_decl_object_type_of(name)
 
     RulUI_define_property_change_event(ParentChangeEvent, Widget*);
 

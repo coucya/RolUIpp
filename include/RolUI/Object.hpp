@@ -90,6 +90,10 @@ namespace RolUI {
 
         virtual const ObjectType* object_type() const noexcept = 0;
 
+        template <typename T>
+        bool object_type_is() const noexcept { return object_type()->is_superclass<T>(); };
+        bool object_type_is(const ObjectType* ot) const noexcept;
+
         Object* object_ref() noexcept;
         Object* object_unref() noexcept;
 
@@ -125,7 +129,7 @@ namespace RolUI {
 }
 #define RolUI_decl_object_type_of(T) \
     template <>                      \
-    const ObjectType* object_type_of<T>() noexcept;
+    const ObjectType* object_type_of<T>() noexcept
 
 #define RolUI_impl_object_type_of(T, ...)                                                         \
     template <>                                                                                   \

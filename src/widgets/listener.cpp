@@ -19,24 +19,24 @@ namespace RolUI {
             if (!e) return false;
 
             MouseEvent* me = (MouseEvent*)e;
-            const EventType* et = e->event_type();
+            const ObjectType* et = e->object_type();
 
-            if (et == MouseEnterEvent_type()) {
+            if (et == object_type_of<MouseEnterEvent>()) {
                 this->on_hover.emit(true);
                 return true;
-            } else if (et == MouseLeaveEvent_type()) {
+            } else if (et == object_type_of<MouseLeaveEvent>()) {
                 this->on_hover.emit(false);
                 return true;
-            } else if (et == MousePressEvent_type() && me->action() == MouseKey::left) {
+            } else if (et == object_type_of<MousePressEvent>() && me->action() == MouseKey::left) {
                 _is_press = true;
                 this->on_down.emit(me->pos());
                 return true;
-            } else if (et == MouseReleaseEvent_type() && me->action() == MouseKey::left) {
+            } else if (et == object_type_of<MouseReleaseEvent>() && me->action() == MouseKey::left) {
                 this->on_up.emit(me->pos());
                 if (_is_press)
                     this->on_click.emit(me->pos());
                 return true;
-            } else if (et == MousePosEvent_type()) {
+            } else if (et == object_type_of<MouseMoveEvent>()) {
                 _is_press = false;
                 this->on_move.emit(me->offset());
                 if (me->button(MouseKey::left) == MouseKeyMode::press)
@@ -60,25 +60,25 @@ namespace RolUI {
             if (!e) return false;
 
             MouseEvent* me = (MouseEvent*)e;
-            const EventType* et = e->event_type();
+            const ObjectType* et = e->object_type();
 
-            if (et == MouseEnterEvent_type()) {
+            if (et == object_type_of<MouseEnterEvent>()) {
                 this->on_hover.emit(true);
                 return true;
-            } else if (et == MouseLeaveEvent_type()) {
+            } else if (et == object_type_of<MouseLeaveEvent>()) {
                 this->on_hover.emit(false);
                 return true;
-            } else if (et == MousePressEvent_type()) {
+            } else if (et == object_type_of<MousePressEvent>()) {
                 _is_press[(int)me->action()] = true;
                 this->on_down.emit(me->action(), me->pos());
                 return true;
-            } else if (et == MouseReleaseEvent_type()) {
+            } else if (et == object_type_of<MouseReleaseEvent>()) {
                 this->on_up.emit(me->action(), me->pos());
                 if (_is_press[(int)me->action()])
                     this->on_click.emit(me->action(), me->pos());
                 _is_press[(int)me->action()] = false;
                 return true;
-            } else if (et == MousePosEvent_type()) {
+            } else if (et == object_type_of<MouseMoveEvent>()) {
                 for (int i = 0; i < sizeof(_is_press) / sizeof(bool); i++)
                     _is_press[i] = false;
 
@@ -102,7 +102,7 @@ namespace RolUI {
                     this->on_drag.emit(MouseKey::key8, me->offset());
 
                 return true;
-            } else if (et == MouseWheelEvent_type()) {
+            } else if (et == object_type_of<MouseWheelEvent>()) {
                 MouseWheelEvent* me = (MouseWheelEvent*)e;
                 this->on_wheel.emit(me->offset());
             }
@@ -116,7 +116,7 @@ namespace RolUI {
         KeyboardListener::~KeyboardListener() {}
 
         bool KeyboardListener::handle_event(IEvent* e) noexcept {
-            if (e->is(KeyboardEvent::type())) {
+            if (e->object_type_is<KeyboardEvent>()) {
                 KeyboardEvent* ke = static_cast<KeyboardEvent*>(e);
                 on_key.emit(ke->action(), ke->key_mode());
                 return true;
@@ -136,7 +136,7 @@ namespace RolUI {
         }
 
         bool FocusListener::handle_event(IEvent* e) noexcept {
-            if (e->event_type() == FocusChangeEvent::type()) {
+            if (e->object_type_is<FocusChangeEvent>()) {
                 FocusChangeEvent* event = static_cast<FocusChangeEvent*>(e);
                 on_focus.emit(event->current_value());
                 return true;
@@ -147,7 +147,7 @@ namespace RolUI {
         CharInputListener::CharInputListener() noexcept {}
 
         bool CharInputListener::handle_event(IEvent* e) noexcept {
-            if (e->event_type() == CharEvent::type()) {
+            if (e->object_type_is<CharEvent>()) {
                 CharEvent* ce = static_cast<CharEvent*>(e);
                 uint32_t cp = ce->codepoint();
                 on_input.emit(cp);
