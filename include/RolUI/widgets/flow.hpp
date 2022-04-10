@@ -2,8 +2,9 @@
 
 #include <vector>
 
-#include "../Property.hpp"
+#include "../Object.hpp"
 #include "../Widget.hpp"
+#include "../Property.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -16,6 +17,8 @@ namespace RolUI {
           public:
             ColumnWidget() noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
@@ -27,6 +30,8 @@ namespace RolUI {
 
           public:
             RowWidget() noexcept;
+
+            const ObjectType* object_type() const noexcept override;
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
@@ -56,6 +61,8 @@ namespace RolUI {
           public:
             ColumnGridWidget() noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
@@ -63,6 +70,8 @@ namespace RolUI {
         class RowGridWidget : public _details::FlowGridWidgetBase {
           public:
             RowGridWidget() noexcept;
+
+            const ObjectType* object_type() const noexcept override;
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
@@ -83,6 +92,8 @@ namespace RolUI {
           public:
             FlexWidget() noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
 
@@ -91,4 +102,11 @@ namespace RolUI {
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::ColumnWidget);
+    RolUI_decl_object_type_of(widgets::RowWidget);
+    RolUI_decl_object_type_of(widgets::ColumnGridWidget);
+    RolUI_decl_object_type_of(widgets::RowGridWidget);
+    RolUI_decl_object_type_of(widgets::FlexWidget);
+
 } // namespace RolUI

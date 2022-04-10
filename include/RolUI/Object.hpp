@@ -131,6 +131,15 @@ namespace RolUI {
     template <>                      \
     const ObjectType* object_type_of<T>() noexcept
 
+#define RolUI_impl_object_type_of_with_namespace(NAMESPACE, T, ...)                                   \
+    template <>                                                                                       \
+    const ObjectType* object_type_of<NAMESPACE::T>() noexcept {                                       \
+        static ParentClassInfo parent_infos[]{RolUI_ParentClassInfo_list(NAMESPACE::T, __VA_ARGS__)}; \
+        static const ObjectType ot{#T, typeid(NAMESPACE::T), RolUI_cast_lambda(Object, NAMESPACE::T), \
+                                   sizeof(parent_infos) / sizeof(ParentClassInfo), parent_infos};     \
+        return &ot;                                                                                   \
+    }
+
 #define RolUI_impl_object_type_of(T, ...)                                                         \
     template <>                                                                                   \
     const ObjectType* object_type_of<T>() noexcept {                                              \

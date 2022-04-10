@@ -15,6 +15,9 @@ namespace RolUI {
             StackWidget() noexcept;
             StackWidget(float x, float y) noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
+          protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -26,11 +29,18 @@ namespace RolUI {
             DeckWidget() noexcept;
             DeckWidget(unsigned selected) noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
             Widget* get_child_by_pos(Point pos) const noexcept override;
 
+          protected:
             void draw(IPainter* painter) noexcept override;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::StackWidget);
+    RolUI_decl_object_type_of(widgets::DeckWidget);
+
 } // namespace RolUI

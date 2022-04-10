@@ -1,9 +1,10 @@
 
 #include "RolUI/utility/utf8ext.h"
 
-#include "RolUI/Application.hpp"
-#include "RolUI/Window.hpp"
+#include "RolUI/Object.hpp"
 #include "RolUI/Widget.hpp"
+#include "RolUI/Window.hpp"
+#include "RolUI/Application.hpp"
 #include "RolUI/widgets/Text.hpp"
 #include "RolUI/events/Widget_event.hpp"
 #include "RolUI/events/MouseEvent.hpp"
@@ -219,6 +220,22 @@ namespace RolUI {
             return max_line_height;
         }
 
+        RichTextLineWidget* RichTextLineWidget::set_child(Widget* child, int index) noexcept {
+            if (child && child->object_type()->is_superclass<ITextSpan>())
+                FlexWidget::set_child(child, index);
+            return this;
+        }
+        RichTextLineWidget* RichTextLineWidget::add_child(Widget* child) noexcept {
+            if (child && child->object_type()->is_superclass<ITextSpan>())
+                FlexWidget::add_child(child);
+            return this;
+        }
+        RichTextLineWidget* RichTextLineWidget::insert_child(int index, Widget* child) noexcept {
+            if (child && child->object_type()->is_superclass<ITextSpan>())
+                FlexWidget::insert_child(index, child);
+            return this;
+        }
+
         RichTextWidget::RichTextWidget() noexcept {}
         RichTextWidget::~RichTextWidget() {}
 
@@ -257,6 +274,22 @@ namespace RolUI {
                 char_count_ += span->char_count();
             }
             return char_count_;
+        }
+
+        RichTextWidget* RichTextWidget::set_child(Widget* child, int index) noexcept {
+            if (child && child->object_type()->is_superclass<ITextSpan>())
+                ColumnWidget::set_child(child, index);
+            return this;
+        }
+        RichTextWidget* RichTextWidget::add_child(Widget* child) noexcept {
+            if (child && child->object_type()->is_superclass<ITextSpan>())
+                ColumnWidget::add_child(child);
+            return this;
+        }
+        RichTextWidget* RichTextWidget::insert_child(int index, Widget* child) noexcept {
+            if (child && child->object_type()->is_superclass<ITextSpan>())
+                ColumnWidget::insert_child(index, child);
+            return this;
         }
 
         EditableTextWidget::EditableTextWidget() noexcept {
@@ -385,5 +418,18 @@ namespace RolUI {
             return constraint.max();
         }
 
+        const ObjectType* TextSpanWidget::object_type() const noexcept { return object_type_of<TextSpanWidget>(); }
+        const ObjectType* RichTextLineWidget::object_type() const noexcept { return object_type_of<RichTextLineWidget>(); }
+        const ObjectType* RichTextWidget::object_type() const noexcept { return object_type_of<RichTextWidget>(); }
+        const ObjectType* EditableTextWidget::object_type() const noexcept { return object_type_of<EditableTextWidget>(); }
+        const ObjectType* TextBoxWidget::object_type() const noexcept { return object_type_of<TextBoxWidget>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, TextSpanWidget, widgets::ITextSpan, Widget);
+    RolUI_impl_object_type_of_with_namespace(widgets, RichTextLineWidget, widgets::ITextSpan, widgets::FlexWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, RichTextWidget, widgets::ColumnWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, EditableTextWidget, widgets::TextSpanWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, TextBoxWidget, widgets::EditableTextWidget);
+
 } // namespace RolUI

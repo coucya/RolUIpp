@@ -175,5 +175,14 @@ namespace RolUI {
             return false;
         }
 
+        const ObjectType* ScrollView::object_type() const noexcept { return object_type_of<ScrollView>(); }
+        const ObjectType* VScrollView::object_type() const noexcept { return object_type_of<VScrollView>(); }
+        const ObjectType* HScrollView::object_type() const noexcept { return object_type_of<HScrollView>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, ScrollView, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, VScrollView, widgets::ScrollView);
+    RolUI_impl_object_type_of_with_namespace(widgets, HScrollView, widgets::ScrollView);
+
 } // namespace RolUI

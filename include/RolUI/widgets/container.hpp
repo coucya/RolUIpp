@@ -50,6 +50,8 @@ namespace RolUI {
             BoxWidget() noexcept;
             ~BoxWidget() override;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             void draw(IPainter* painter) noexcept override;
         };
@@ -63,6 +65,8 @@ namespace RolUI {
             SizedWidget() noexcept;
             SizedWidget(SizeUnit w, SizeUnit h) noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
@@ -75,6 +79,8 @@ namespace RolUI {
           public:
             AlignWidget() noexcept;
             AlignWidget(float x, float y) noexcept;
+
+            const ObjectType* object_type() const noexcept override;
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
@@ -93,9 +99,17 @@ namespace RolUI {
             MarginWidget(unsigned x, unsigned y) noexcept;
             MarginWidget(unsigned top, unsigned bottom, unsigned left, unsigned right) noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::BoxWidget);
+    RolUI_decl_object_type_of(widgets::SizedWidget);
+    RolUI_decl_object_type_of(widgets::AlignWidget);
+    RolUI_decl_object_type_of(widgets::MarginWidget);
+
 } // namespace RolUI

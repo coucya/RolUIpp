@@ -64,5 +64,12 @@ namespace RolUI {
             if (sw) sw->draw(painter);
         }
 
+        const ObjectType* StackWidget::object_type() const noexcept { return object_type_of<StackWidget>(); }
+        const ObjectType* DeckWidget::object_type() const noexcept { return object_type_of<DeckWidget>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, StackWidget, MultiChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, DeckWidget, MultiChildWidget);
+
 } // namespace RolUI

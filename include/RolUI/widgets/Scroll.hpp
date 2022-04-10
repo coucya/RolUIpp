@@ -32,6 +32,8 @@ namespace RolUI {
             void scroll_x_to_ratio(float x) noexcept;
             void scroll_y_to_ratio(float y) noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
             void draw(IPainter* painter) noexcept override;
@@ -43,6 +45,8 @@ namespace RolUI {
 
           public:
             VScrollView() noexcept;
+
+            const ObjectType* object_type() const noexcept override;
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
@@ -56,10 +60,17 @@ namespace RolUI {
           public:
             HScrollView() noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
             bool handle_event(IEvent* e) noexcept override;
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::ScrollView);
+    RolUI_decl_object_type_of(widgets::VScrollView);
+    RolUI_decl_object_type_of(widgets::HScrollView);
+
 } // namespace RolUI

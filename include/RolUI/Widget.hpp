@@ -10,6 +10,7 @@
 #include "./Point.hpp"
 #include "./Rect.hpp"
 #include "./Size.hpp"
+#include "./Object.hpp"
 #include "./IEvent.hpp"
 #include "./sigslot/Signal.hpp"
 #include "./sigslot/Slot.hpp"
@@ -61,7 +62,7 @@ namespace RolUI {
         Size _max;
     };
 
-    class Widget : public HasSlot {
+    class Widget : public Object, public HasSlot {
         friend class Window;
         friend class Application;
 
@@ -94,6 +95,8 @@ namespace RolUI {
         Widget* parent() const noexcept;
 
         Size layout(Constraint constraint) noexcept;
+
+        const ObjectType* object_type() const noexcept override;
 
         virtual int child_count() const noexcept;
         virtual Widget* child(int index = 0) const noexcept;
@@ -142,13 +145,15 @@ namespace RolUI {
         SingleChildWidget* set_child(Widget* child, int index = 0) noexcept override;
         void remove_child(int index = 0) noexcept override;
 
-        virtual Widget* get_child_by_pos(Point pos) const noexcept override;
+        const ObjectType* object_type() const noexcept override;
 
-        virtual void visit_children(std::function<void(Widget*)> f) noexcept override;
+        Widget* get_child_by_pos(Point pos) const noexcept override;
 
-        virtual void draw(IPainter* painter) noexcept override;
-        virtual Size perform_layout(Constraint constraint) noexcept override;
-        virtual void update_pos() noexcept override;
+        void visit_children(std::function<void(Widget*)> f) noexcept override;
+
+        void draw(IPainter* painter) noexcept override;
+        Size perform_layout(Constraint constraint) noexcept override;
+        void update_pos() noexcept override;
 
       protected:
         template <typename F,
@@ -175,20 +180,27 @@ namespace RolUI {
         int child_count() const noexcept override;
         Widget* child(int index) const noexcept override;
         MultiChildWidget* set_child(Widget* child, int index) noexcept override;
-        MultiChildWidget* add_child(Widget* child) noexcept;
-        MultiChildWidget* insert_child(int index, Widget* child) noexcept;
+
+        virtual MultiChildWidget* add_child(Widget* child) noexcept;
+        virtual MultiChildWidget* insert_child(int index, Widget* child) noexcept;
 
         void remove_child(int index) noexcept override;
         void remove_child(Widget* child) noexcept;
         void remove_child_all() noexcept;
 
-        virtual Widget* get_child_by_pos(Point pos) const noexcept override;
+        const ObjectType* object_type() const noexcept override;
 
-        virtual void visit_children(std::function<void(Widget*)> f) noexcept override;
+        Widget* get_child_by_pos(Point pos) const noexcept override;
 
-        virtual void draw(IPainter* painter) noexcept override;
-        virtual Size perform_layout(Constraint constraint) noexcept override;
-        virtual void update_pos() noexcept override;
+        void visit_children(std::function<void(Widget*)> f) noexcept override;
+
+        void draw(IPainter* painter) noexcept override;
+        Size perform_layout(Constraint constraint) noexcept override;
+        void update_pos() noexcept override;
     };
+
+    RolUI_decl_object_type_of(Widget);
+    RolUI_decl_object_type_of(SingleChildWidget);
+    RolUI_decl_object_type_of(MultiChildWidget);
 
 } // namespace RolUI

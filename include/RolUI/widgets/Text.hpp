@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "../Object.hpp"
 #include "../Widget.hpp"
 #include "../IPainter.hpp"
 #include "../Property.hpp"
@@ -37,6 +38,8 @@ namespace RolUI {
             TextSpanWidget() noexcept;
             TextSpanWidget(const std::string& text) noexcept;
             ~TextSpanWidget() override;
+
+            const ObjectType* object_type() const noexcept override;
 
             unsigned pos_to_index(Point pos) const noexcept override;
             Point index_to_pos(unsigned index) const noexcept override;
@@ -75,10 +78,16 @@ namespace RolUI {
             RichTextLineWidget() noexcept;
             ~RichTextLineWidget() override;
 
+            const ObjectType* object_type() const noexcept override;
+
             unsigned pos_to_index(Point pos) const noexcept override;
             Point index_to_pos(unsigned index) const noexcept override;
             unsigned char_count() const noexcept override;
             unsigned line_height() const noexcept override;
+
+            RichTextLineWidget* set_child(Widget* child, int index) noexcept override;
+            RichTextLineWidget* add_child(Widget* child) noexcept override;
+            RichTextLineWidget* insert_child(int index, Widget* child) noexcept override;
         };
 
         class RichTextWidget : public ColumnWidget {
@@ -86,9 +95,15 @@ namespace RolUI {
             RichTextWidget() noexcept;
             ~RichTextWidget() override;
 
+            const ObjectType* object_type() const noexcept override;
+
             unsigned pos_to_index(Point pos) const noexcept;
             Point index_to_pos(unsigned index) const noexcept;
             unsigned char_count() const noexcept;
+
+            RichTextWidget* set_child(Widget* child, int index) noexcept override;
+            RichTextWidget* add_child(Widget* child) noexcept override;
+            RichTextWidget* insert_child(int index, Widget* child) noexcept override;
         };
 
         class EditableTextWidget : public TextSpanWidget {
@@ -97,6 +112,7 @@ namespace RolUI {
 
             EditableTextWidget() noexcept;
             ~EditableTextWidget() override;
+
             bool is_blinking() const noexcept;
             void set_blink(bool blink) noexcept;
 
@@ -105,6 +121,8 @@ namespace RolUI {
 
             void insert_char(unsigned idx, uint32_t char_) noexcept;
             void insert_str(unsigned idx, const char* str) noexcept;
+
+            const ObjectType* object_type() const noexcept override;
 
             void insert_str(unsigned idx, const char* str, unsigned len) noexcept;
 
@@ -126,9 +144,18 @@ namespace RolUI {
             TextBoxWidget() noexcept;
             ~TextBoxWidget();
 
+            const ObjectType* object_type() const noexcept override;
+
             bool handle_event(IEvent* e) noexcept override;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::TextSpanWidget);
+    RolUI_decl_object_type_of(widgets::RichTextLineWidget);
+    RolUI_decl_object_type_of(widgets::RichTextWidget);
+    RolUI_decl_object_type_of(widgets::EditableTextWidget);
+    RolUI_decl_object_type_of(widgets::TextBoxWidget);
+
 } // namespace RolUI

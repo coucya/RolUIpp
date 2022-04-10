@@ -229,5 +229,18 @@ namespace RolUI {
             return {constraint.max_width(), last_cross_pos};
         }
 
+        const ObjectType* ColumnWidget::object_type() const noexcept { return object_type_of<ColumnWidget>(); }
+        const ObjectType* RowWidget::object_type() const noexcept { return object_type_of<RowWidget>(); }
+        const ObjectType* ColumnGridWidget::object_type() const noexcept { return object_type_of<ColumnGridWidget>(); }
+        const ObjectType* RowGridWidget::object_type() const noexcept { return object_type_of<RowGridWidget>(); }
+        const ObjectType* FlexWidget::object_type() const noexcept { return object_type_of<FlexWidget>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, ColumnWidget, MultiChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, RowWidget, MultiChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, ColumnGridWidget, MultiChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, RowGridWidget, MultiChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, FlexWidget, MultiChildWidget);
+
 } // namespace RolUI

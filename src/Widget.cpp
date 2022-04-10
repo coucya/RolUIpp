@@ -6,14 +6,15 @@
 #include <tuple>
 #include <utility>
 
-#include "RolUI/Application.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/IPainter.hpp"
 #include "RolUI/Point.hpp"
 #include "RolUI/Rect.hpp"
 #include "RolUI/Size.hpp"
+#include "RolUI/Object.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
+#include "RolUI/Application.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 #include "RolUI/events/Widget_event.hpp"
 
@@ -229,5 +230,13 @@ namespace RolUI {
         for (Widget* w : _children)
             w->update_pos();
     }
+
+    const ObjectType* Widget::object_type() const noexcept { return object_type_of<Widget>(); }
+    const ObjectType* SingleChildWidget::object_type() const noexcept { return object_type_of<SingleChildWidget>(); }
+    const ObjectType* MultiChildWidget::object_type() const noexcept { return object_type_of<MultiChildWidget>(); }
+
+    RolUI_impl_object_type_of(Widget, Object, HasSlot);
+    RolUI_impl_object_type_of(SingleChildWidget, Widget);
+    RolUI_impl_object_type_of(MultiChildWidget, Widget);
 
 } // namespace RolUI

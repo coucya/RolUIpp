@@ -32,5 +32,12 @@ namespace RolUI {
             return {width(), constraint.max_height()};
         }
 
+        const ObjectType* HSeparatorWidget::object_type() const noexcept { return object_type_of<HSeparatorWidget>(); }
+        const ObjectType* VSeparatorWidget::object_type() const noexcept { return object_type_of<VSeparatorWidget>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, HSeparatorWidget, Widget);
+    RolUI_impl_object_type_of_with_namespace(widgets, VSeparatorWidget, Widget);
+
 } // namespace RolUI

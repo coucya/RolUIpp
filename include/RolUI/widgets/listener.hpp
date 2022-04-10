@@ -21,6 +21,9 @@ namespace RolUI {
             PointerListener() noexcept;
             ~PointerListener() override;
 
+            const ObjectType* object_type() const noexcept override;
+
+          protected:
             bool handle_event(IEvent* e) noexcept override;
             void draw(IPainter* painter) noexcept override;
 
@@ -42,6 +45,9 @@ namespace RolUI {
             MouseListener() noexcept;
             ~MouseListener() override;
 
+            const ObjectType* object_type() const noexcept override;
+
+          protected:
             bool handle_event(IEvent* e) noexcept override;
             void draw(IPainter* painter) noexcept override;
 
@@ -57,6 +63,9 @@ namespace RolUI {
             KeyboardListener() noexcept;
             ~KeyboardListener() override;
 
+            const ObjectType* object_type() const noexcept override;
+
+          protected:
             bool handle_event(IEvent* e) noexcept override;
         };
 
@@ -70,6 +79,9 @@ namespace RolUI {
             void focus() noexcept;
             void unfocus() noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
+          protected:
             bool handle_event(IEvent* e) noexcept override;
         };
 
@@ -79,8 +91,18 @@ namespace RolUI {
 
             CharInputListener() noexcept;
 
+            const ObjectType* object_type() const noexcept override;
+
+          protected:
             bool handle_event(IEvent* e) noexcept override;
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::PointerListener);
+    RolUI_decl_object_type_of(widgets::MouseListener);
+    RolUI_decl_object_type_of(widgets::KeyboardListener);
+    RolUI_decl_object_type_of(widgets::FocusListener);
+    RolUI_decl_object_type_of(widgets::CharInputListener);
+
 } // namespace RolUI

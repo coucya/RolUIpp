@@ -25,10 +25,15 @@ namespace RolUI {
             ImageWidget(RolUI::Image image, Fit fit = Fit::contain) noexcept;
             ~ImageWidget() override;
 
+            const ObjectType* object_type() const noexcept override;
+
           protected:
             void draw(IPainter* painter) noexcept override;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
     } // namespace widgets
+
+    RolUI_decl_object_type_of(widgets::ImageWidget);
+
 } // namespace RolUI

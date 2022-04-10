@@ -59,5 +59,11 @@ namespace RolUI {
         Size ImageWidget::perform_layout(Constraint constraint) noexcept {
             return constraint.max();
         }
+
+        const ObjectType* ImageWidget::object_type() const noexcept { return object_type_of<ImageWidget>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, ImageWidget, Widget);
+
 } // namespace RolUI

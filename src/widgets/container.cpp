@@ -86,5 +86,16 @@ namespace RolUI {
             return self_size;
         }
 
+        const ObjectType* BoxWidget::object_type() const noexcept { return object_type_of<BoxWidget>(); }
+        const ObjectType* SizedWidget::object_type() const noexcept { return object_type_of<SizedWidget>(); }
+        const ObjectType* AlignWidget::object_type() const noexcept { return object_type_of<AlignWidget>(); }
+        const ObjectType* MarginWidget::object_type() const noexcept { return object_type_of<MarginWidget>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, BoxWidget, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, SizedWidget, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, AlignWidget, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, MarginWidget, SingleChildWidget);
+
 } // namespace RolUI

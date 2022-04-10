@@ -156,5 +156,18 @@ namespace RolUI {
             return false;
         }
 
+        const ObjectType* PointerListener::object_type() const noexcept { return object_type_of<PointerListener>(); }
+        const ObjectType* MouseListener::object_type() const noexcept { return object_type_of<MouseListener>(); }
+        const ObjectType* KeyboardListener::object_type() const noexcept { return object_type_of<KeyboardListener>(); }
+        const ObjectType* FocusListener::object_type() const noexcept { return object_type_of<FocusListener>(); }
+        const ObjectType* CharInputListener::object_type() const noexcept { return object_type_of<CharInputListener>(); }
+
     } // namespace widgets
+
+    RolUI_impl_object_type_of_with_namespace(widgets, PointerListener, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, MouseListener, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, KeyboardListener, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, FocusListener, SingleChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, CharInputListener, SingleChildWidget);
+
 } // namespace RolUI
