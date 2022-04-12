@@ -30,6 +30,7 @@
 #include "RolUI/widgets/layer.hpp"
 #include "RolUI/widgets/flow.hpp"
 #include "RolUI/widgets/container.hpp"
+#include "RolUI/widgets/decoration.hpp"
 #include "RolUI/widgets/listener.hpp"
 
 using namespace RolUI;
@@ -71,6 +72,9 @@ int main(int argc, char* argv[]) {
     FlexWidget flex_w;
     RichTextWidget rich_w;
     MouseListener mouse_l;
+    VSeparatorWidget vsep_w;
+    SizedWidget size_w;
+    MarginWidget margin_w;
     StackWidget stack_w;
 
     for (int i = 0; i < 10; i++) {
@@ -85,15 +89,25 @@ int main(int argc, char* argv[]) {
         rich_w.add_child(rtl_w);
     }
 
-    // stack_w.align_x(-1)->align_y(-1);
-    // stack_w.add_child(&rich_w)->add_child(&mouse_l);
-    mouse_l.set_child(&rich_w);
+    vsep_w.color(Color{255, 0, 0});
+    vsep_w.width(2);
+    size_w.height(30);
+    size_w.set_child(&vsep_w);
+    margin_w.top(0)->left(0);
+    margin_w.set_child(&size_w);
+
+    stack_w.align_x(-1)->align_y(-1);
+    stack_w.add_child(&rich_w)->add_child(&margin_w);
+
+    mouse_l.set_child(&stack_w);
 
     mouse_l.on_down.connect([&](MouseKey k, Point mouse_pos) {
         Point pos = mouse_pos - rich_w.abs_pos();
         unsigned idx = rich_w.pos_to_index(pos);
+        Point cursor_pos = rich_w.index_to_pos(idx) + rich_w.pos();
+        margin_w.top(cursor_pos.y)->left(cursor_pos.x);
         std::cout << "mouse pos: (" << mouse_pos.x << ", " << mouse_pos.y << "),";
-        std::cout << " pos: (" << pos.x << ", " << pos.y << "),";
+        std::cout << "cursor pos: (" << cursor_pos.x << ", " << cursor_pos.y << "),";
         std::cout << " idx: " << idx << std::endl;
     });
 
