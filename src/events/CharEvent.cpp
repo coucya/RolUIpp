@@ -5,7 +5,7 @@
 #include "RolUI/Application.hpp"
 #include "RolUI/events/CharEvent.hpp"
 
-#include "RolUI/utility/utf8.h"
+#include "utf8.h"
 
 namespace RolUI {
 
