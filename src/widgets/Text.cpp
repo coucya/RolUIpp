@@ -29,13 +29,13 @@ namespace RolUI {
 
         void TextSpanWidget::_update_size() noexcept {
             Window* win = Application::window();
+            win->painter()->set_font_size(font_size);
+            win->painter()->set_font(!font_name->empty() ? font_name->c_str() : "default");
             if (!text->empty()) {
-                win->painter()->set_font_size(font_size);
-                if (!font_name->empty())
-                    win->painter()->set_font(font_name->c_str());
                 _text_size = win->painter()->text_size(text->c_str(), text->size());
             } else {
-                _text_size = Size(0, 0);
+                _text_size = win->painter()->text_size(" ", text->size());
+                _text_size.width = 0;
             }
         }
 
@@ -204,7 +204,13 @@ namespace RolUI {
                 }
                 char_count_ += span_char_count;
             }
-            return {0, 0};
+            if (child_count() != 0) {
+                Widget* last_child = child(child_count() - 1);
+                int x = last_child->pos().x + last_child->size().width;
+                return {x, 0};
+            } else {
+                return {0, 0};
+            }
         }
         unsigned RichTextLineWidget::char_count() const noexcept {
             int char_count_ = 0;
@@ -255,23 +261,26 @@ namespace RolUI {
                     Point tp = pos - child->pos();
                     return char_count_ + child->pos_to_index(tp);
                 }
-                char_count_ += child->char_count();
+                char_count_ += child->char_count() + 1;
             }
             return pos.x < 0 ? 0 : char_count();
         }
         Point RichTextWidget::index_to_pos(unsigned index) const noexcept {
             int char_count_ = 0;
+            int self_char_count = char_count();
             for (int i = 0; i < child_count(); i++) {
                 RichTextLineWidget* child = object_try_cast<RichTextLineWidget>(this->child(i));
                 if (!child) continue;
 
-                unsigned span_char_count = child->char_count();
+                unsigned span_char_count = child->char_count() + 1;
                 if (char_count_ + span_char_count > index) {
                     unsigned span_char_index = index - char_count_;
                     return child->index_to_pos(span_char_index) + child->pos();
                 }
                 char_count_ += span_char_count;
             }
+            if (index >= self_char_count)
+                return {0, size().height + gap()};
             return {0, 0};
         }
         unsigned RichTextWidget::char_count() const noexcept {
@@ -279,9 +288,9 @@ namespace RolUI {
             for (int i = 0; i < child_count(); i++) {
                 RichTextLineWidget* child = object_try_cast<RichTextLineWidget>(this->child(i));
                 if (!child) continue;
-                char_count_ += child->char_count();
+                char_count_ += child->char_count() + 1;
             }
-            return char_count_;
+            return char_count_ ? char_count_ - 1 : char_count_;
         }
 
         RichTextWidget* RichTextWidget::set_child(Widget* child, int index) noexcept {
