@@ -33,7 +33,7 @@ integer_pattern_str = "(\+|\-)?([1-9](_?\d)*)|((0x|0X)(_?[0-9a-fA-F])+))|((0b|0B
 t = map(wrap_bracket, [octinteger_pattern_str, "(0b|0B)" + bininteger_pattern_str, "(0x|0X)" + hexinteger_pattern_str])
 integer_pattern_str = "(\+|\-)?" + "|".join(t)
 
-float_pattern_str = "(\d\." + octinteger_pattern_str + ")|(\d\.\d\d[eE][\-\+]\d+)"
+float_pattern_str = "(\+|\-)(\d\." + octinteger_pattern_str + ")|(\d\.\d\d[eE][\-\+]\d+)"
 
 id_pattern = re.compile("[a-zA-Z][0-9a-zA-Z_]*")
 short_string_pattern = re.compile("(\"((\\\\.)|[^\"])*\")|('((\\.)|[^'])*')")
@@ -161,7 +161,7 @@ def split_lines(tokens: list[(str, Color)]) -> list[list[(str, Color)]]:
 
 
 def build_code_text_widget(code_str: str, code_widget: MultiChildWidget, *, font_size=16) -> Widget:
-    lines = split_lines(split_token_with_tokenize(code_str))
+    lines = split_lines(split_token_with_re(code_str))
     code_widget.remove_child_all()
 
     for line in lines:
@@ -228,6 +228,9 @@ def text_editor(*, text: str = "", font_size=16) -> Widget:
                 editor_text = editor_text[:ti] + editor_text[cursor_idx:]
                 text_editor_state["text"] = editor_text
                 text_editor_state["cursor_index"] = ti
+            elif key == KeyboardKey.delete_:
+                editor_text = editor_text[:cursor_idx] + editor_text[cursor_idx + 1:]
+                text_editor_state["text"] = editor_text
             elif key == KeyboardKey.left:
                 ti = cursor_idx if cursor_idx == 0 else cursor_idx - 1
                 text_editor_state["cursor_index"] = ti
