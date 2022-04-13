@@ -1,8 +1,5 @@
-from typing import List, Callable, Iterable, Iterator
-from functools import singledispatch
+from typing import List, Callable, Iterable, Iterator, Union
 
-import sys
-import os
 
 import PyRolUI
 from PyRolUI import *
@@ -211,3 +208,47 @@ def char_listener(*, child: Widget = None, on_input: Callable) -> widgets.CharIn
 
 def focus_listener(*, child: Widget = None, on_focus: Callable) -> widgets.FocusListener:
     return mk_widget(widgets.FocusListener, child=child, on_focus=on_focus)
+
+
+def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
+                 margin: Union[tuple, int] = 8, round: int = 0,
+                 bk_normal_color: Color = Color(205, 205, 205),
+                 bk_hover_color: Color = Color(218, 218, 218),
+                 bk_press_color: Color = Color(247, 247, 247),
+                 border_color: Color = Color(64, 64, 64, 255), border_width=0,
+                 on_click=None):
+    margin_ = margin
+    margin = globals()["margin"]
+
+    text_w = textspan(text=text, font_size=text_size, font_color=text_color)
+    margin_w = None
+    if isinstance(margin_, int):
+        margin_w = margin(child=text_w, top=margin_, bottom=margin_, left=margin_, right=margin_)
+    elif isinstance(margin_, tuple) and len(margin_) == 1:
+        margin_w = margin(child=text_w, top=margin_[0], bottom=margin_[0], left=margin_[0], right=margin_[0])
+    elif isinstance(margin_, tuple) and len(margin_) == 2:
+        mx, my = margin_
+        margin_w = margin(child=text_w, top=my, bottom=my, left=mx, right=mx)
+    elif isinstance(margin_, tuple) and len(margin_) == 4:
+        mt, mr, mb, ml = margin_
+        margin_w = margin(child=text_w, top=mt, bottom=mb, left=ml, right=mr)
+    else:
+        raise TypeError("invalid margin value: %s" % str(margin_))
+
+    box_w = box(child=margin_w, round=round, border_color=border_color, border_width=border_width)
+    box_w.background_color(bk_normal_color)
+
+    def _on_hover(b):
+        box_w.background_color(bk_hover_color if b else bk_normal_color)
+
+    def _on_down(a, b):
+        box_w.background_color(bk_press_color)
+
+    def _on_up(a, b):
+        box_w.background_color(bk_hover_color)
+
+    def _on_click(a, b):
+        on_click()
+
+    mouse_l = mouse_listener(child=box_w, on_click=_on_click, on_hover=_on_hover, on_down=_on_down, on_up=_on_up)
+    return mouse_l

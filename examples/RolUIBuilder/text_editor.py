@@ -161,7 +161,7 @@ def split_lines(tokens: list[(str, Color)]) -> list[list[(str, Color)]]:
 
 
 def build_code_text_widget(code_str: str, code_widget: MultiChildWidget, *, font_size=16) -> Widget:
-    lines = split_lines(split_token_with_re(code_str))
+    lines = split_lines(split_token_with_tokenize(code_str))
     code_widget.remove_child_all()
 
     for line in lines:
@@ -252,6 +252,7 @@ def text_editor(*, text: str = "", font_size=16) -> Widget:
             Application.clear_interval(text_editor_state["blink_handle"])
 
     rich_text_w: widgets.RichTextLineWidget = mk_widget(widgets.RichTextWidget)
+    rich_text_w.gap(int(font_size * 0.3))
 
     cursor_color = State(Color(0, 0, 0, 255))
     cursor_pos = text_editor_state["cursor_pos"]
