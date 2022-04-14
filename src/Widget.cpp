@@ -104,7 +104,7 @@ namespace RolUI {
 
     int SingleChildWidget::child_count() const noexcept { return _child ? 1 : 0; }
     Widget* SingleChildWidget::child(int index) const noexcept { return index == 0 && _child ? _child : nullptr; }
-    SingleChildWidget* SingleChildWidget::set_child(Widget* child, int index) noexcept {
+    Widget* SingleChildWidget::set_child(Widget* child, int index) noexcept {
         if (index != 0) return this;
         if (_child)
             _child->_unmount();
@@ -160,7 +160,7 @@ namespace RolUI {
         child->_mount(this);
         return this;
     }
-    MultiChildWidget* MultiChildWidget::set_child(Widget* child, int index) noexcept {
+    Widget* MultiChildWidget::set_child(Widget* child, int index) noexcept {
         if (!child || index < 0 || index > _children.size()) return this;
 
         if (index == _children.size()) {

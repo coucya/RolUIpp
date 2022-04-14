@@ -10,7 +10,7 @@ from popup import *
 
 
 def _menu_action(title: str, on_click: Callable, text_size=16):
-    botton_w = widgets.button(title, text_size=text_size, callback=on_click)
+    botton_w = label_button(text=title, text_size=text_size, on_click=on_click)
     return sized(child=botton_w, height=int(text_size * 1.5))
 
 

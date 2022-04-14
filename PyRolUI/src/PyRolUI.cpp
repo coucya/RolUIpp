@@ -54,36 +54,25 @@ class RolUIPyObject : public RolUI::Object {
 
 class PyWindow : public Window {
   public:
-    virtual Point pos() const override {
-        PYBIND11_OVERRIDE_PURE(Point, Window, pos, );
-    }
-    virtual Size size() const override {
-        PYBIND11_OVERRIDE_PURE(Size, Window, size, );
-    }
+    virtual Point pos() const override { PYBIND11_OVERRIDE_PURE(Point, Window, pos, ); }
+    virtual Size size() const override { PYBIND11_OVERRIDE_PURE(Size, Window, size, ); }
 
-    virtual IPainter* painter() override {
-        PYBIND11_OVERRIDE_PURE(IPainter*, Window, painter, );
-    }
-    virtual void begin_draw() override {
-        PYBIND11_OVERRIDE_PURE(void, Window, begin_draw, );
-    }
+    virtual IPainter* painter() override { PYBIND11_OVERRIDE_PURE(IPainter*, Window, painter, ); }
+    virtual void begin_draw() override { PYBIND11_OVERRIDE_PURE(void, Window, begin_draw, ); }
+    virtual void end_draw() override { PYBIND11_OVERRIDE_PURE(void, Window, end_draw, ); }
 
-    virtual void end_draw() override {
-        PYBIND11_OVERRIDE_PURE(void, Window, end_draw, );
-    }
-
-    virtual void dispatch_event(double timeout) override {
-        PYBIND11_OVERRIDE_PURE(void, Window, dispatch_event, timeout);
-    }
+    virtual void dispatch_event(double timeout) override { PYBIND11_OVERRIDE_PURE(void, Window, dispatch_event, timeout); }
 };
 
 #define PyIPainter_OVERRIDE(ret_type, fn, ...) \
     MYPYBIND11_OVERRIDE_PURE(ret_type, IPainter, fn, __VA_ARGS__)
 class PyIPainter : public IPainter {
+
     PyIPainter_OVERRIDE(bool, load_font, const char*, name, const char*, filename);
     PyIPainter_OVERRIDE(int, create_image_with_rgba, const uint8_t*, data, int, w, int, h);
     PyIPainter_OVERRIDE(void, delete_image, int, handle);
     PyIPainter_OVERRIDE(Size, image_size, int, handle);
+
     PyIPainter_OVERRIDE(void, set_scissor, Rect, rect);
 
     PyIPainter_OVERRIDE(void, set_font_size, uint32_t, s);
@@ -117,6 +106,47 @@ class PyIPainter : public IPainter {
     }
     virtual Rect get_scissor() const override {
         PYBIND11_OVERRIDE_PURE(Rect, IPainter, get_scissor, );
+    }
+};
+
+template <typename WidgetBase>
+class PyWidget : public WidgetBase {
+  public:
+    int child_count() const noexcept override {
+        PYBIND11_OVERRIDE(int, WidgetBase, child_count, );
+    }
+    Widget* child(int index) const noexcept override {
+        PYBIND11_OVERRIDE(Widget*, WidgetBase, child, index);
+    }
+    Widget* set_child(Widget* child, int index) noexcept override {
+        PYBIND11_OVERRIDE(Widget*, WidgetBase, set_child, child, index);
+    }
+    void remove_child(int index = 0) noexcept override {
+        PYBIND11_OVERRIDE(void, WidgetBase, remove_child, index);
+    }
+
+    Widget* get_child_by_pos(Point pos) const noexcept override {
+        PYBIND11_OVERRIDE(Widget*, WidgetBase, get_child_by_pos, pos);
+    }
+
+    bool hit_test(Point pos) const noexcept override {
+        PYBIND11_OVERRIDE(bool, WidgetBase, hit_test, pos);
+    }
+
+    bool handle_event(IEvent* e) noexcept override {
+        PYBIND11_OVERRIDE(bool, WidgetBase, handle_event, e);
+    }
+
+    void draw(IPainter* painter) noexcept override {
+        PYBIND11_OVERRIDE(void, WidgetBase, draw, painter);
+    }
+
+    Size perform_layout(Constraint constraint) noexcept override {
+        PYBIND11_OVERRIDE(Size, WidgetBase, perform_layout, constraint);
+    }
+
+    void update_pos() noexcept override {
+        PYBIND11_OVERRIDE(void, WidgetBase, update_pos, );
     }
 };
 
@@ -495,7 +525,26 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("end_draw", &Window::end_draw)
         .def("dispatch_event", &Window::dispatch_event);
 
-    class_<Widget>(m, "Widget")
+    class_<Constraint>(m, "Constraint")
+        .def(py::init())
+        .def(py::init<Size, Size>())
+        .def(py::init<int, int, int, int>())
+        .def("min", &Constraint::min)
+        .def("max", &Constraint::max)
+        .def("min_width", &Constraint::min_width)
+        .def("min_height", &Constraint::min_height)
+        .def("max_width", &Constraint::max_width)
+        .def("max_height", &Constraint::max_height)
+        .def_static("zero", Constraint::zero)
+        .def_static("zero_to", static_cast<Constraint (*)(Size)>(Constraint::zero_to))
+        .def_static("zero_to", static_cast<Constraint (*)(int, int)>(Constraint::zero_to))
+        .def_static("limit", static_cast<Constraint (*)(Size)>(Constraint::limit))
+        .def_static("limit", static_cast<Constraint (*)(int, int)>(Constraint::limit))
+        .def_static("limit", static_cast<Constraint (*)(Size, Size)>(Constraint::limit))
+        .def_static("limit", static_cast<Constraint (*)(int, int, int, int)>(Constraint::limit))
+        .def_static("unlimit", Constraint::unlimit);
+
+    class_<Widget, PyWidget<Widget>, Object>(m, "Widget")
         .def(py::init())
         .def("pos", &Widget::pos)
         .def("size", &Widget::size)
@@ -516,13 +565,13 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("perform_layout", &Widget::perform_layout)
         .def("update_pos", &Widget::update_pos)
         .def("hit_test", &Widget::hit_test);
-    class_<SingleChildWidget, Widget>(m, "SingleChildWidget")
+    class_<SingleChildWidget, PyWidget<SingleChildWidget>, Widget>(m, "SingleChildWidget")
         .def(py::init())
         .def("child_count", &SingleChildWidget::child_count)
         .def("child", &SingleChildWidget::child, py::arg("index") = 0, return_value_policy::reference)
         .def("set_child", &SingleChildWidget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
         .def("remove_child", &SingleChildWidget::remove_child, py::arg("index") = 0);
-    class_<MultiChildWidget, Widget>(m, "MultiChildWidget")
+    class_<MultiChildWidget, PyWidget<MultiChildWidget>, Widget>(m, "MultiChildWidget")
         .def(py::init())
         .def("child", &MultiChildWidget::child, return_value_policy::reference)
         .def("child_count", &MultiChildWidget::child_count)
@@ -533,7 +582,7 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); })
         .def("remove_child_all", &MultiChildWidget::remove_child_all);
 
-    class_<RootWidget, MultiChildWidget>(m, "RootWidget")
+    class_<RootWidget, PyWidget<RootWidget>, MultiChildWidget>(m, "RootWidget")
         .def("content_widget", &RootWidget::content_widget, return_value_policy::reference)
         .def("set_content_widget", &RootWidget::set_content_widget);
 

@@ -156,6 +156,10 @@ def margin(*, child: Widget = None, top=0, bottom=0, left=0, right=0) -> widgets
     return mk_widget(widgets.MarginWidget, **args)
 
 
+def scroll_view(*, child: Widget = None):
+    return mk_widget(widgets.ScrollView, child=child)
+
+
 def vscroll_view(*, child: Widget = None, scroll_step=10.0) -> widgets.VScrollView:
     args = locals()
     return mk_widget(widgets.VScrollView, **args)
@@ -186,6 +190,30 @@ def column(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> widget
     return mk_widget(widgets.ColumnWidget, **args)
 
 
+def flexable(*, child: Widget, fixed=None, percentage=None, flex=None, expand=None) -> widgets.FlexableWidget:
+    if((fixed, percentage, flex, expand).count(None) < 3):
+        raise ValueError("fixed. percentage. flex and expand are mutually exclusive")
+
+    if fixed is not None:
+        return mk_widget(widgets.FlexableWidget, child=child, fit=widgets.FlexFit.fixed, fixed=fixed)
+    elif percentage is not None:
+        return mk_widget(widgets.FlexableWidget, child=child, fit=widgets.FlexFit.percentage, percentage=percentage)
+    elif flex is not None:
+        return mk_widget(widgets.FlexableWidget, child=child, fit=widgets.FlexFit.flex, flex=flex)
+    elif expand is not None:
+        return mk_widget(widgets.FlexableWidget, child=child, fit=widgets.FlexFit.expand)
+    else:
+        return mk_widget(widgets.FlexableWidget, child=child, fit=widgets.FlexFit.flex, flex=1.0)
+
+
+def row_grid(*, children: List[Widget]) -> widgets.RowGridWidget:
+    return mk_widget(widgets.RowGridWidget, children=children)
+
+
+def column_grid(*, children: List[Widget]) -> widgets.ColumnGridWidget:
+    return mk_widget(widgets.ColumnGridWidget, children=children)
+
+
 def vseparator(*, color=Color(0, 0, 0, 255), width=1) -> widgets.VSeparatorWidget:
     return mk_widget(widgets.VSeparatorWidget, color=color, width=width)
 
@@ -212,9 +240,9 @@ def focus_listener(*, child: Widget = None, on_focus: Callable) -> widgets.Focus
 
 def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
                  margin: Union[tuple, int] = 8, round: int = 0,
-                 bk_normal_color: Color = Color(205, 205, 205),
-                 bk_hover_color: Color = Color(218, 218, 218),
-                 bk_press_color: Color = Color(247, 247, 247),
+                 bk_normal_color: Color = Color(247, 247, 247),
+                 bk_hover_color: Color = Color(229, 243, 255),
+                 bk_press_color: Color = Color(204, 232, 255),
                  border_color: Color = Color(64, 64, 64, 255), border_width=0,
                  on_click=None):
     margin_ = margin
