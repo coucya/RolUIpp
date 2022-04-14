@@ -48,12 +48,12 @@ namespace RolUI {
 
           public:
             BoxWidget() noexcept;
-            ~BoxWidget() override;
 
             const ObjectType* object_type() const noexcept override;
 
           protected:
             void draw(IPainter* painter) noexcept override;
+            Size perform_layout(Constraint constraint) noexcept override;
         };
 
         class SizedWidget : public SingleChildWidget {

@@ -74,87 +74,149 @@ namespace RolUI {
             return self_size;
         }
 
-        namespace _details {
+        FlexableWidget::FlexableWidget() noexcept {}
 
-            FlowGridWidgetBase::FlowGridWidgetBase() noexcept {}
-
-            float FlowGridWidgetBase::flex_of(int index) const noexcept {
-                if (index < 0 || index >= _flexs.size()) return 0.0f;
-                return _flexs[index];
-            }
-
-            float FlowGridWidgetBase::flex_sum() const noexcept {
-                float sum = 0.0f;
-                for (float flex : _flexs) sum += flex;
-                return sum;
-            }
-
-            FlowGridWidgetBase* FlowGridWidgetBase::add_child(Widget* child, float flex) noexcept {
-                if (!child) return this;
-                MultiChildWidget::add_child(child);
-                _flexs.push_back(flex);
-                return this;
-            }
-            FlowGridWidgetBase* FlowGridWidgetBase::set_child(int index, Widget* child, float flex) noexcept {
-                if (!child) return this;
-                if (index < 0 || index >= child_count()) return this;
-                MultiChildWidget::set_child(child, index);
-                _flexs[index] = flex;
-                return this;
-            }
-
-            void FlowGridWidgetBase::remove_child(Widget* child) noexcept {
-                if (!child) return;
-                int child_index = -1;
-                for (int i = 0; i < child_count(); i++) {
-                    if (this->child(i) == child) {
-                        child_index = i;
-                        break;
-                    }
-                }
-                if (child_index != -1)
-                    remove_child(child_index);
-            }
-            void FlowGridWidgetBase::remove_child(int index) noexcept {
-                if (index < 0 || index >= child_count()) return;
-                MultiChildWidget::remove_child(index);
-                _flexs.erase(_flexs.begin() + index);
-            }
-
-        } // namespace _details
+        Size FlexableWidget::perform_layout(Constraint constraint) noexcept {
+            return layout_child(constraint, [](Size) { return Point{0, 0}; });
+        }
 
         ColumnGridWidget::ColumnGridWidget() noexcept {}
 
         Size ColumnGridWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
-            float fsum = flex_sum();
-            float current_hpos = 0.0f;
+            int current_pos = 0;
+            int used_size = 0;
+
+            int fixed_need_size = 0;
+            int flex_need_size = 0;
+            int expand_need_size = 0;
+            int expand_child_count = 0;
+            float flex_sum = 0.0f;
 
             for (int i = 0; i < child_count(); i++) {
-                int nh = ch * (flex_of(i) / fsum);
-                Constraint nc = Constraint::zero_to(cw, nh);
-                child(i)->layout(nc);
-                RolUI::set_pos(child(i), Point{0, int(current_hpos / fsum * ch)});
-                current_hpos += flex_of(i);
+                Widget* child = this->child(i);
+                FlexableWidget* flexable = object_try_cast<FlexableWidget>(child);
+                if (flexable) {
+                    switch (flexable->fit()) {
+                        case FlexFit::fixed: fixed_need_size += flexable->fixed(); break;
+                        case FlexFit::percentage: fixed_need_size += flexable->percentage() * ch; break;
+                        case FlexFit::expand: expand_child_count++; break;
+                        case FlexFit::flex: flex_sum += flexable->flex(); break;
+                    }
+                } else {
+                    flex_sum += 1.0f;
+                }
             }
+
+            flex_need_size = ch > fixed_need_size ? ch - fixed_need_size : 0;
+
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                FlexableWidget* flexable = object_try_cast<FlexableWidget>(child);
+                Constraint nc;
+                if (flexable && flexable->fit() == FlexFit::fixed) {
+                    nc = Constraint::zero_to(cw, flexable->fixed());
+                } else if (flexable && flexable->fit() == FlexFit::percentage) {
+                    nc = Constraint::zero_to(cw, int(ch * flexable->percentage()));
+                } else if (flexable && flexable->fit() == FlexFit::flex) {
+                    nc = Constraint::zero_to(cw, int(flex_need_size * (flexable->flex() / flex_sum)));
+                } else if (flexable && flexable->fit() == FlexFit::expand) {
+                    continue;
+                } else {
+                    nc = Constraint::zero_to(cw, int(flex_need_size * (1.0f / flex_sum)));
+                }
+                child->layout(nc);
+                used_size += child->size().height;
+            }
+
+            expand_need_size = ch > used_size ? ch - used_size : 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                FlexableWidget* flexable = object_try_cast<FlexableWidget>(child);
+                if (flexable && flexable->fit() == FlexFit::expand) {
+                    int nh = (float(expand_need_size) / float(expand_child_count));
+                    Constraint nc = Constraint::zero_to(Size{cw, nh});
+                    child->layout(nc);
+                }
+            }
+
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                RolUI::set_pos(child, Point{0, current_pos});
+                current_pos += child->size().height;
+            }
+
             return constraint.max();
         }
 
         RowGridWidget::RowGridWidget() noexcept {}
+
         Size RowGridWidget::perform_layout(Constraint constraint) noexcept {
             int cw = constraint.max_width();
             int ch = constraint.max_height();
-            float fsum = flex_sum();
-            float current_wpos = 0.0f;
+            int current_pos = 0;
+            int used_size = 0;
+
+            int fixed_need_size = 0;
+            int flex_need_size = 0;
+            int expand_need_size = 0;
+            int expand_child_count = 0;
+            float flex_sum = 0.0f;
 
             for (int i = 0; i < child_count(); i++) {
-                int nw = cw * (flex_of(i) / fsum);
-                Constraint nc = Constraint::zero_to(nw, ch);
-                child(i)->layout(nc);
-                RolUI::set_pos(child(i), Point{int(current_wpos / fsum * cw), 0});
-                current_wpos += flex_of(i);
+                Widget* child = this->child(i);
+                FlexableWidget* flexable = object_try_cast<FlexableWidget>(child);
+                if (flexable) {
+                    switch (flexable->fit()) {
+                        case FlexFit::fixed: fixed_need_size += flexable->fixed(); break;
+                        case FlexFit::percentage: fixed_need_size += flexable->percentage() * ch; break;
+                        case FlexFit::expand: expand_child_count++; break;
+                        case FlexFit::flex: flex_sum += flexable->flex(); break;
+                    }
+                } else {
+                    flex_sum += 1.0f;
+                }
             }
+
+            flex_need_size = cw > fixed_need_size ? cw - fixed_need_size : 0;
+
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                FlexableWidget* flexable = object_try_cast<FlexableWidget>(child);
+                Constraint nc;
+                if (flexable && flexable->fit() == FlexFit::fixed) {
+                    nc = Constraint::zero_to(flexable->fixed(), ch);
+                } else if (flexable && flexable->fit() == FlexFit::percentage) {
+                    nc = Constraint::zero_to(int(cw * flexable->percentage()), ch);
+                } else if (flexable && flexable->fit() == FlexFit::flex) {
+                    nc = Constraint::zero_to(int(flex_need_size * (flexable->flex() / flex_sum)), ch);
+                } else if (flexable && flexable->fit() == FlexFit::expand) {
+                    continue;
+                } else {
+                    nc = Constraint::zero_to(int(flex_need_size * (1.0f / flex_sum)), ch);
+                }
+                child->layout(nc);
+                used_size += child->size().width;
+            }
+
+            expand_need_size = cw > used_size ? cw - used_size : 0;
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                FlexableWidget* flexable = object_try_cast<FlexableWidget>(child);
+                if (flexable && flexable->fit() == FlexFit::expand) {
+                    int nw = (float(expand_need_size) / float(expand_child_count));
+                    Constraint nc = Constraint::zero_to(Size{nw, ch});
+                    child->layout(nc);
+                }
+            }
+
+            for (int i = 0; i < child_count(); i++) {
+                Widget* child = this->child(i);
+                RolUI::set_pos(child, Point{current_pos, 0});
+                current_pos += child->size().width;
+            }
+
             return constraint.max();
         }
 
@@ -231,6 +293,7 @@ namespace RolUI {
 
         const ObjectType* ColumnWidget::object_type() const noexcept { return object_type_of<ColumnWidget>(); }
         const ObjectType* RowWidget::object_type() const noexcept { return object_type_of<RowWidget>(); }
+        const ObjectType* FlexableWidget::object_type() const noexcept { return object_type_of<FlexableWidget>(); }
         const ObjectType* ColumnGridWidget::object_type() const noexcept { return object_type_of<ColumnGridWidget>(); }
         const ObjectType* RowGridWidget::object_type() const noexcept { return object_type_of<RowGridWidget>(); }
         const ObjectType* FlexWidget::object_type() const noexcept { return object_type_of<FlexWidget>(); }
@@ -239,6 +302,7 @@ namespace RolUI {
 
     RolUI_impl_object_type_of_with_namespace(widgets, ColumnWidget, MultiChildWidget);
     RolUI_impl_object_type_of_with_namespace(widgets, RowWidget, MultiChildWidget);
+    RolUI_impl_object_type_of_with_namespace(widgets, FlexableWidget, SingleChildWidget);
     RolUI_impl_object_type_of_with_namespace(widgets, ColumnGridWidget, MultiChildWidget);
     RolUI_impl_object_type_of_with_namespace(widgets, RowGridWidget, MultiChildWidget);
     RolUI_impl_object_type_of_with_namespace(widgets, FlexWidget, MultiChildWidget);

@@ -102,7 +102,7 @@ namespace RolUI {
 
     SingleChildWidget::SingleChildWidget() noexcept {}
 
-    int SingleChildWidget::child_count() const noexcept { return _child ? 0 : 1; }
+    int SingleChildWidget::child_count() const noexcept { return _child ? 1 : 0; }
     Widget* SingleChildWidget::child(int index) const noexcept { return index == 0 && _child ? _child : nullptr; }
     SingleChildWidget* SingleChildWidget::set_child(Widget* child, int index) noexcept {
         if (index != 0) return this;

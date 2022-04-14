@@ -58,6 +58,20 @@ Widget* build_size_box(Size s, Color color) {
             mk_widget<SizedWidget>()->width(s.width)->height(s.height));
 }
 
+FlexableWidget* build_flexable(FlexFit fit, Color color, float val = 0.0) {
+    FlexableWidget* fw = mk_widget<FlexableWidget>()->fit(fit);
+    BoxWidget* bw = mk_widget<BoxWidget>()->background_color(color);
+    fw->set_child(bw);
+
+    if (fit == FlexFit::fixed)
+        fw->fixed(int(val));
+    else if (fit == FlexFit::flex)
+        fw->flex(val);
+    else if (fit == FlexFit::percentage)
+        fw->percentage(val);
+    return fw;
+}
+
 int main(int argc, char* argv[]) {
 
     RolUIBackend::GLFWWindow win(800, 600, "text box");
@@ -76,42 +90,17 @@ int main(int argc, char* argv[]) {
     SizedWidget size_w;
     MarginWidget margin_w;
     StackWidget stack_w;
+    RowGridWidget column_grid_w;
 
-    for (int i = 0; i < 10; i++) {
-        RichTextLineWidget* rtl_w = mk_widget<RichTextLineWidget>();
-        for (int j = 0; j < 10; j++) {
-            TextSpanWidget* ts_w = mk_widget<TextSpanWidget>();
-            ts_w->text("Text");
-            ts_w->font_color(random_color());
-            ts_w->font_size((unsigned)random_int(20, 40));
-            rtl_w->add_child(ts_w);
-        }
-        rich_w.add_child(rtl_w);
-    }
+    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 100));
+    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 100));
+    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 200));
+    column_grid_w.add_child(build_flexable(FlexFit::expand, random_color()));
+    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 100));
+    column_grid_w.add_child(build_flexable(FlexFit::flex, random_color(), 2));
+    column_grid_w.add_child(build_flexable(FlexFit::flex, random_color(), 1));
 
-    vsep_w.color(Color{255, 0, 0});
-    vsep_w.width(2);
-    size_w.height(30);
-    size_w.set_child(&vsep_w);
-    margin_w.top(0)->left(0);
-    margin_w.set_child(&size_w);
-
-    stack_w.align_x(-1)->align_y(-1);
-    stack_w.add_child(&rich_w)->add_child(&margin_w);
-
-    mouse_l.set_child(&stack_w);
-
-    mouse_l.on_down.connect([&](MouseKey k, Point mouse_pos) {
-        Point pos = mouse_pos - rich_w.abs_pos();
-        unsigned idx = rich_w.pos_to_index(pos);
-        Point cursor_pos = rich_w.index_to_pos(idx) + rich_w.pos();
-        margin_w.top(cursor_pos.y)->left(cursor_pos.x);
-        std::cout << "mouse pos: (" << mouse_pos.x << ", " << mouse_pos.y << "),";
-        std::cout << "cursor pos: (" << cursor_pos.x << ", " << cursor_pos.y << "),";
-        std::cout << " idx: " << idx << std::endl;
-    });
-
-    Widget* w = &mouse_l;
+    Widget* w = &column_grid_w;
     Application::run(w);
 
     return 0;

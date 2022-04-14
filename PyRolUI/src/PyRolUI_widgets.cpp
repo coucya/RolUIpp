@@ -154,22 +154,26 @@ static void bind_flow_widgets(py::module_& widgets, py::module_& signals, py::mo
         .def_readonly("gap", &RowWidget::gap,
                       return_value_policy::reference_internal);
 
+    enum_<FlexFit>(widgets, "FlexFit")
+        .value("fixed", FlexFit::fixed)
+        .value("percentage", FlexFit::percentage)
+        .value("flex", FlexFit::flex)
+        .value("expand", FlexFit::expand);
+
+    BIND_PROPERTY(propertys, signals, FlexableWidget, FlexFit);
+    BIND_PROPERTY(propertys, signals, FlexableWidget, float);
+    BIND_PROPERTY(propertys, signals, FlexableWidget, int);
+    class_<FlexableWidget, SingleChildWidget>(widgets, "FlexableWidget")
+        .def(py::init())
+        .def_readonly("fit", &FlexableWidget::fit, return_value_policy::reference_internal)
+        .def_readonly("flex", &FlexableWidget::flex, return_value_policy::reference_internal)
+        .def_readonly("percentage", &FlexableWidget::percentage, return_value_policy::reference_internal)
+        .def_readonly("fixed", &FlexableWidget::fixed, return_value_policy::reference_internal);
+
     class_<ColumnGridWidget, MultiChildWidget>(widgets, "ColumnGridWidget")
-        .def(py::init())
-        .def("flex_of", &ColumnGridWidget::flex_of)
-        .def("flex_sum", &ColumnGridWidget::flex_sum)
-        .def("add_child", &ColumnGridWidget::add_child, return_value_policy::reference)
-        .def("set_child", &ColumnGridWidget::set_child, return_value_policy::reference)
-        .def("remove_child", static_cast<void (ColumnGridWidget::*)(Widget*)>(&ColumnGridWidget::remove_child))
-        .def("remove_child", static_cast<void (ColumnGridWidget::*)(int)>(&ColumnGridWidget::remove_child));
+        .def(py::init());
     class_<RowGridWidget, MultiChildWidget>(widgets, "RowGridWidget")
-        .def(py::init())
-        .def("flex_of", &RowGridWidget::flex_of)
-        .def("flex_sum", &RowGridWidget::flex_sum)
-        .def("add_child", &RowGridWidget::add_child, return_value_policy::reference)
-        .def("set_child", &RowGridWidget::set_child, return_value_policy::reference)
-        .def("remove_child", static_cast<void (RowGridWidget::*)(Widget*)>(&RowGridWidget::remove_child))
-        .def("remove_child", static_cast<void (RowGridWidget::*)(int)>(&RowGridWidget::remove_child));
+        .def(py::init());
 
     enum_<Direction>(widgets, "Direction")
         .value("row", Direction::row)
@@ -331,181 +335,6 @@ static void bind_decoration_widgets(py::module_& widgets, py::module_& signals, 
 }
 
 static void bind_widgets_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
-
-    widgets.def("text", widgets::text, py::arg("text"),
-                py::kw_only(), py::arg("size") = 16, py::arg("color") = Color{0, 0, 0},
-                return_value_policy::reference);
-
-    widgets.def(
-        "textbox", [](const char* text, int size, Color color) {
-            return mk_widget<TextBoxWidget>()
-                ->text(text)
-                ->font_size(size)
-                ->font_color(color);
-        },
-        py::kw_only(), py::arg("text") = "", py::arg("font_size") = 16, py::arg("color") = Color{0, 0, 0}, py::return_value_policy::reference);
-
-    widgets.def("label", widgets::label, py::arg("text"),
-                py::kw_only(), py::arg("size") = 16, py::arg("color") = Color{0, 0, 0},
-                py::arg("background_color") = Color{255, 255, 255}, py::arg("round") = 0,
-                return_value_policy::reference);
-
-    widgets.def("image", widgets::image, py::arg("image"), return_value_policy::reference);
-
-    typedef Widget* (*ButtonFuncType1)(const char*, std::function<void()>, unsigned, Color, Color, Color, Color, unsigned);
-    typedef Widget* (*ButtonFuncType2)(Widget*, Widget*, Widget*, std::function<void()>);
-    widgets.def("button", static_cast<ButtonFuncType1>(widgets::button), py::arg("text"),
-                py::kw_only(), py::arg("callback"), py::arg("text_size") = 16, py::arg("text_color") = Color{0, 0, 0},
-                py::arg("normal") = Color{240, 240, 240}, py::arg("hover") = Color{230, 230, 230}, py::arg("press") = Color{250, 250, 250},
-                py::arg("round") = 0, return_value_policy::reference);
-    widgets.def("button", static_cast<ButtonFuncType2>(widgets::button),
-                py::kw_only(), py::arg("normal"), py::arg("hover"), py::arg("press"), py::arg("callback"), return_value_policy::reference);
-
-    widgets.def(
-        "box", [](Widget* c, unsigned r, unsigned border_w, Color border_c, Color bc) {
-            return widgets::box(r, border_w, border_c, bc, c);
-        },
-        py::kw_only(), py::arg("child"), py::arg("round") = 0, py::arg("border_width") = 0, py::arg("border_color") = Color{0, 0, 0}, py::arg("background_color") = Color{0, 0, 0, 0}, return_value_policy::reference);
-
-    widgets.def(
-        "align", [](Widget* c, float x, float y) {
-            return widgets::align(x, y, c);
-        },
-        py::kw_only(), py::arg("child"), py::arg("x") = 0.0f, py::arg("y") = 0.0f, return_value_policy::reference);
-
-    auto _sized = [](Widget* c, py::object w, py::object h) {
-        SizeUnit sw, sh;
-        SizedWidget* widget = nullptr;
-        if (py::isinstance<py::int_>(w) && py::isinstance<py::int_>(h))
-            widget = widgets::sized(w.cast<int>(), h.cast<int>(), c);
-        else if (py::isinstance<py::int_>(w) && py::isinstance<py::float_>(h))
-            widget = widgets::sized(w.cast<int>(), h.cast<float>(), c);
-        else if (py::isinstance<py::float_>(w) && py::isinstance<py::int_>(h))
-            widget = widgets::sized(w.cast<float>(), h.cast<int>(), c);
-        else if (py::isinstance<py::float_>(w) && py::isinstance<py::float_>(h))
-            widget = widgets::sized(w.cast<float>(), h.cast<float>(), c);
-        else
-            throw py::value_error("w and h must be of type int or float.");
-        return widget;
-    };
-
-    widgets.def("sized", _sized,
-                py::kw_only(), py::arg("child"),
-                py::arg("width") = 1.0f, py::arg("height") = 1.0f,
-                return_value_policy::reference);
-
-    widgets.def("margin", static_cast<MarginWidget* (*)(unsigned, Widget*)>(widgets::margin),
-                py::kw_only(), py::arg("margin") = 0, py::arg("child"),
-                return_value_policy::reference);
-    widgets.def("margin", static_cast<MarginWidget* (*)(unsigned, unsigned, Widget*)>(widgets::margin),
-                py::kw_only(), py::arg("x") = 0, py::arg("y") = 0, py::arg("child"),
-                return_value_policy::reference);
-    widgets.def("margin", static_cast<MarginWidget* (*)(unsigned, unsigned, unsigned, unsigned, Widget*)>(widgets::margin),
-                py::kw_only(), py::arg("top") = 0, py::arg("right") = 0, py::arg("bottom") = 0, py::arg("left") = 0, py::arg("child"),
-                return_value_policy::reference);
-
-    widgets.def(
-        "vscroll_view", [](Widget* child, float step) {
-            return mk_widget<VScrollView>()
-                ->scroll_step(step)
-                ->set_child(child);
-        },
-        py::kw_only(), py::arg("child"), py::arg("step") = 10.0, return_value_policy::reference);
-    widgets.def(
-        "hscroll_view", [](Widget* child, float step) {
-            return mk_widget<HScrollView>()
-                ->scroll_step(step)
-                ->set_child(child);
-        },
-        py::kw_only(), py::arg("child"), py::arg("step") = 10.0, return_value_policy::reference);
-
-    widgets.def(
-        "stack", [](py::list children, float align_x, float align_y) {
-            StackWidget* widget = widgets::stack();
-            for (auto w : children)
-                widget->add_child(w.cast<Widget*>());
-            widget->align_x(align_x);
-            widget->align_y(align_y);
-            return widget;
-        },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("align_x") = 0.5f, py::arg("align_y") = 0.5f, return_value_policy::reference);
-    widgets.def(
-        "deck", [](py::list children, int selected) {
-            DeckWidget* widget = widgets::deck();
-            for (auto w : children)
-                widget->add_child(w.cast<Widget*>());
-            widget->selected(selected);
-            return widget;
-        },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("selected") = 0, return_value_policy::reference);
-
-    widgets.def(
-        "row", [](py::list children, int gap, float caa) {
-            RowWidget* widget = widgets::row();
-            widget->gap(gap)->cross_axis_alignment(caa);
-            for (auto w : children)
-                widget->add_child(w.cast<Widget*>());
-            return widget;
-        },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("gap") = 0, py::arg("cross_axis_alignment") = 0.0f, return_value_policy::reference);
-
-    widgets.def(
-        "column", [](py::list children, int gap, float caa) {
-            ColumnWidget* widget = widgets::column();
-            widget->gap(gap)->cross_axis_alignment(caa);
-            for (auto w : children)
-                widget->add_child(w.cast<Widget*>());
-            return widget;
-        },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("gap") = 0, py::arg("cross_axis_alignment") = 0.0f, return_value_policy::reference);
-
-    widgets.def(
-        "row_grid", [](py::list children, py::tuple flexs) {
-            RowGridWidget* widget = widgets::row_grid();
-            if (flexs.size() >= children.size()) {
-                for (int i = 0; i < children.size(); i++)
-                    widget->add_child(children[i].cast<Widget*>(), flexs[i].cast<float>());
-            } else {
-                int i = 0;
-                for (; i < flexs.size(); i++)
-                    widget->add_child(children[i].cast<Widget*>(), flexs[i].cast<float>());
-                for (; i < children.size(); i++)
-                    widget->add_child(children[i].cast<Widget*>(), 1.0f);
-            }
-            return widget;
-        },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("flexs") = py::tuple(), return_value_policy::reference);
-    widgets.def(
-        "column_grid", [](py::list children, py::tuple flexs) {
-            ColumnGridWidget* widget = widgets::column_grid();
-            if (flexs.size() >= children.size()) {
-                for (int i = 0; i < children.size(); i++)
-                    widget->add_child(children[i].cast<Widget*>(), flexs[i].cast<float>());
-            } else {
-                int i = 0;
-                for (; i < flexs.size(); i++)
-                    widget->add_child(children[i].cast<Widget*>(), flexs[i].cast<float>());
-                for (; i < children.size(); i++)
-                    widget->add_child(children[i].cast<Widget*>(), 1.0f);
-            }
-            return widget;
-        },
-        py::kw_only(), py::arg("children") = py::list(), py::arg("flexs") = py::tuple(), return_value_policy::reference);
-
-    widgets.def("pointer_listener", widgets::pointer_listener,
-                py::kw_only(), py::arg("child"), return_value_policy::reference);
-
-    widgets.def(
-        "mouse_listener", [](Widget* child) { return mk_widget<MouseListener>()->set_child(child); },
-        py::kw_only(), py::arg("child"), return_value_policy::reference);
-
-    widgets.def(
-        "focus_listener", [](Widget* child) { return mk_widget<FocusListener>()->set_child(child); },
-        py::kw_only(), py::arg("child"), return_value_policy::reference);
-
-    widgets.def(
-        "char_input_listener", [](Widget* child) { return mk_widget<CharInputListener>()->set_child(child); },
-        py::kw_only(), py::arg("child"), return_value_policy::reference);
 }
 
 void bind_widgets(py::module_& m) {

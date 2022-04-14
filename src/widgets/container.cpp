@@ -9,7 +9,6 @@ namespace RolUI {
     namespace widgets {
 
         BoxWidget::BoxWidget() noexcept {}
-        BoxWidget::~BoxWidget() {}
 
         void BoxWidget::draw(IPainter* painter) noexcept {
             Rect rect = abs_rect();
@@ -23,6 +22,10 @@ namespace RolUI {
             }
 
             SingleChildWidget::draw(painter);
+        }
+        Size BoxWidget::perform_layout(Constraint constraint) noexcept {
+            if (child_count() == 0) return constraint.max();
+            return layout_child(constraint, [](Size) { return Point{0, 0}; });
         }
 
         SizedWidget::SizedWidget() noexcept {}

@@ -37,27 +37,30 @@ namespace RolUI {
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
-        namespace _details {
-            class FlowGridWidgetBase : public MultiChildWidget {
-              public:
-                FlowGridWidgetBase() noexcept;
+        enum class FlexFit {
+            fixed,
+            percentage,
+            flex,
+            expand,
+        };
 
-                float flex_of(int index) const noexcept;
-                float flex_sum() const noexcept;
+        class FlexableWidget : public SingleChildWidget {
+          public:
+            Property<FlexableWidget, FlexFit> fit{this, FlexFit::flex};
+            Property<FlexableWidget, float> flex{this, 1.0};
+            Property<FlexableWidget, float> percentage{this, 1.0};
+            Property<FlexableWidget, int> fixed{this, 0};
 
-                FlowGridWidgetBase* add_child(Widget* child, float flex = 1.0f) noexcept;
-                FlowGridWidgetBase* set_child(int index, Widget* child, float flex = 1.0f) noexcept;
+          public:
+            FlexableWidget() noexcept;
 
-                void remove_child(Widget* child) noexcept;
-                void remove_child(int index) noexcept;
+            const ObjectType* object_type() const noexcept override;
 
-              private:
-                std::vector<float> _flexs;
-            };
+          protected:
+            Size perform_layout(Constraint constraint) noexcept override;
+        };
 
-        } // namespace _details
-
-        class ColumnGridWidget : public _details::FlowGridWidgetBase {
+        class ColumnGridWidget : public MultiChildWidget {
           public:
             ColumnGridWidget() noexcept;
 
@@ -67,7 +70,7 @@ namespace RolUI {
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
-        class RowGridWidget : public _details::FlowGridWidgetBase {
+        class RowGridWidget : public MultiChildWidget {
           public:
             RowGridWidget() noexcept;
 
@@ -105,6 +108,7 @@ namespace RolUI {
 
     RolUI_decl_object_type_of(widgets::ColumnWidget);
     RolUI_decl_object_type_of(widgets::RowWidget);
+    RolUI_decl_object_type_of(widgets::FlexableWidget);
     RolUI_decl_object_type_of(widgets::ColumnGridWidget);
     RolUI_decl_object_type_of(widgets::RowGridWidget);
     RolUI_decl_object_type_of(widgets::FlexWidget);

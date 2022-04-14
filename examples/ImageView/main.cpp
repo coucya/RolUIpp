@@ -161,9 +161,9 @@ Widget* build_ui() {
                         ->add_child(img_view)
                         ->add_child(
                             mk_widget<RowGridWidget>()
-                                ->add_child(build_button("<", [=] { image_idx_dec(); update_image(); }), 1.0)
-                                ->add_child(plw->set_child(mk_widget<SizedWidget>()), 9.0)
-                                ->add_child(build_button(">", [=] { image_idx_inc(); update_image(); }), 1.0)));
+                                ->add_child(build_button("<", [=] { image_idx_dec(); update_image(); }))
+                                ->add_child(plw->set_child(mk_widget<SizedWidget>()))
+                                ->add_child(build_button(">", [=] { image_idx_inc(); update_image(); }))));
 }
 
 int main(int argc, char* argv[]) {
