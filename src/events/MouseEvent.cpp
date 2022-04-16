@@ -91,7 +91,7 @@ namespace RolUI {
         if (is_move() && !_is_enter && !_is_leave) {
             for (auto it = _hover_widgets.begin(); it != _hover_widgets.end();) {
                 Widget* w = *it;
-                if (w && w->hit_test(mouse_pos) == false) {
+                if (w && w->hit_test_self(mouse_pos) == false) {
                     MouseLeaveEvent me{w, this};
                     send_event(w, &me);
                     it = _hover_widgets.erase(it);
@@ -100,7 +100,7 @@ namespace RolUI {
             }
 
             Widget* tw = widget;
-            while (tw && tw->hit_test(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
+            while (tw && tw->hit_test_self(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
                 _hover_widgets.insert(tw);
 
                 MouseEnterEvent me{tw, this};

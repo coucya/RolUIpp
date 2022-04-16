@@ -44,10 +44,14 @@ namespace RolUI {
             this->selected = selected;
         }
 
-        Widget* DeckWidget::get_child_by_pos(Point pos) const noexcept {
-            Widget* sw = child(selected.get());
-            if (sw == nullptr) return nullptr;
-            if (sw->hit_test(pos)) return sw;
+        bool DeckWidget::hit_test(Point pos) noexcept {
+            clear_hit();
+            return hit_test_self(pos) && child(selected()) && child(selected())->hit_test(pos);
+        }
+        Widget* DeckWidget::hit_test_children(Point pos) noexcept {
+            clear_hit();
+            if (child(selected()) && child(selected())->hit_test_self(pos))
+                return child(selected());
             return nullptr;
         }
 

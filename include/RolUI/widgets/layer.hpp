@@ -31,7 +31,8 @@ namespace RolUI {
 
             const ObjectType* object_type() const noexcept override;
 
-            Widget* get_child_by_pos(Point pos) const noexcept override;
+            bool hit_test(Point pos) noexcept override;
+            Widget* hit_test_children(Point pos) noexcept override;
 
           protected:
             void draw(IPainter* painter) noexcept override;

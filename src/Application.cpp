@@ -99,7 +99,7 @@ namespace RolUI {
         Widget* widget = nullptr;
         Widget* w_it = root_widget();
 
-        while ((widget = w_it->get_child_by_pos(pos)) != nullptr)
+        while ((widget = w_it->hit_test_children(pos)) != nullptr)
             w_it = widget;
 
         return w_it == root_widget() ? nullptr : w_it;

@@ -125,12 +125,14 @@ class PyWidget : public WidgetBase {
         PYBIND11_OVERRIDE(void, WidgetBase, remove_child, index);
     }
 
-    Widget* get_child_by_pos(Point pos) const noexcept override {
-        PYBIND11_OVERRIDE(Widget*, WidgetBase, get_child_by_pos, pos);
-    }
-
-    bool hit_test(Point pos) const noexcept override {
+    bool hit_test(Point pos) noexcept override {
         PYBIND11_OVERRIDE(bool, WidgetBase, hit_test, pos);
+    }
+    bool hit_test_self(Point pos) noexcept override {
+        PYBIND11_OVERRIDE(bool, WidgetBase, hit_test_self, pos);
+    }
+    Widget* hit_test_children(Point pos) noexcept override {
+        PYBIND11_OVERRIDE(Widget*, WidgetBase, hit_test_children, pos);
     }
 
     bool handle_event(IEvent* e) noexcept override {
@@ -547,20 +549,26 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("rect", &Widget::rect)
         .def("abs_pos", &Widget::abs_pos)
         .def("abs_rect", &Widget::abs_rect)
+        .def("is_hit", &Widget::is_hit)
         .def("mounted", &Widget::mounted)
         .def("depth", &Widget::depth)
         .def("parent", &Widget::parent, return_value_policy::reference)
+        .def("mark_hit", &Widget::mark_hit)
+        .def("clear_hit", &Widget::clear_hit)
+        .def("clear_hit_self", &Widget::clear_hit_self)
         .def("layout", &Widget::layout)
         .def("child_count", &Widget::child_count)
         .def("child", &Widget::child, py::arg("index") = 0, return_value_policy::reference)
         .def("set_child", &Widget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
         .def("remove_child", &Widget::remove_child, py::arg("index") = 0)
-        .def("get_child_by_pos", &Widget::get_child_by_pos, return_value_policy::reference)
+        .def("hit_test", &Widget::hit_test)
+        .def("hit_test_self", &Widget::hit_test_self)
+        .def("hit_test_children", &Widget::hit_test_children, return_value_policy::reference)
         .def("handle_event", &Widget::handle_event)
         .def("draw", &Widget::draw)
         .def("perform_layout", &Widget::perform_layout)
         .def("update_pos", &Widget::update_pos)
-        .def("hit_test", &Widget::hit_test);
+        .def("hit_test_self", &Widget::hit_test_self);
     class_<SingleChildWidget, PyWidget<SingleChildWidget>, Widget>(m, "SingleChildWidget")
         .def(py::init())
         .def("child_count", &SingleChildWidget::child_count)

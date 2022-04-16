@@ -90,9 +90,14 @@ namespace RolUI {
         Point abs_pos() const noexcept;
         Rect abs_rect() const noexcept;
 
+        bool is_hit() const noexcept;
         bool mounted() const noexcept;
         unsigned depth() const noexcept;
         Widget* parent() const noexcept;
+
+        void mark_hit() noexcept;
+        void clear_hit() noexcept;
+        void clear_hit_self() noexcept;
 
         Size layout(Constraint constraint) noexcept;
 
@@ -105,9 +110,9 @@ namespace RolUI {
         virtual Widget* set_child(Widget* child, int index = 0) noexcept;
         virtual void remove_child(int index = 0) noexcept;
 
-        virtual Widget* get_child_by_pos(Point pos) const noexcept;
-
-        virtual bool hit_test(Point pos) const noexcept;
+        virtual bool hit_test(Point pos) noexcept;
+        virtual bool hit_test_self(Point pos) noexcept;
+        virtual Widget* hit_test_children(Point pos) noexcept;
 
         virtual bool handle_event(IEvent* e) noexcept;
 
@@ -122,6 +127,7 @@ namespace RolUI {
         void _detach() noexcept;
 
       private:
+        bool _is_hit = false;
         bool _mounted = false;
         unsigned _depth = 0;
         Widget* _parent = nullptr;
@@ -144,8 +150,6 @@ namespace RolUI {
         void remove_child(int index = 0) noexcept override;
 
         const ObjectType* object_type() const noexcept override;
-
-        Widget* get_child_by_pos(Point pos) const noexcept override;
 
         void draw(IPainter* painter) noexcept override;
         Size perform_layout(Constraint constraint) noexcept override;
@@ -184,8 +188,6 @@ namespace RolUI {
         void remove_child_all() noexcept;
 
         const ObjectType* object_type() const noexcept override;
-
-        Widget* get_child_by_pos(Point pos) const noexcept override;
 
         void draw(IPainter* painter) noexcept override;
         Size perform_layout(Constraint constraint) noexcept override;

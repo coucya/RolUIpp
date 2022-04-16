@@ -37,9 +37,17 @@ namespace RolUI {
     Point Widget::abs_pos() const noexcept { return _abs_pos; }
     Rect Widget::abs_rect() const noexcept { return {abs_pos(), size()}; }
 
+    bool Widget::is_hit() const noexcept { return _is_hit; }
     bool Widget::mounted() const noexcept { return _mounted; }
     unsigned Widget::depth() const noexcept { return _depth; }
     Widget* Widget::parent() const noexcept { return _parent; }
+
+    void Widget::mark_hit() noexcept { _is_hit = true; }
+    void Widget::clear_hit_self() noexcept { _is_hit = false; }
+    void Widget::clear_hit() noexcept {
+        clear_hit_self();
+        visit_child(this, [](Widget* child) { child->clear_hit(); });
+    }
 
     Size Widget::layout(Constraint constraint) noexcept {
         _size = perform_layout(constraint);
@@ -51,10 +59,20 @@ namespace RolUI {
     Widget* Widget::set_child(Widget* child, int index) noexcept { return this; }
     void Widget::remove_child(int index) noexcept {}
 
-    Widget* Widget::get_child_by_pos(Point pos) const noexcept { return nullptr; }
-
-    bool Widget::hit_test(Point pos) const noexcept {
-        return abs_rect().contain(pos);
+    bool Widget::hit_test(Point pos) noexcept {
+        bool result = hit_test_self(pos);
+        for (int i = 0; i < child_count(); i++)
+            result = result || child(i)->hit_test(pos);
+        return result;
+    }
+    bool Widget::hit_test_self(Point pos) noexcept {
+        return _is_hit = abs_rect().contain(pos);
+    }
+    Widget* Widget::hit_test_children(Point pos) noexcept {
+        Widget* result = nullptr;
+        for (int i = 0; i < child_count(); i++)
+            result = child(i)->hit_test_self(pos) ? child(i) : result;
+        return result;
     }
 
     bool Widget::handle_event(IEvent* e) noexcept { return false; }
@@ -121,15 +139,6 @@ namespace RolUI {
         _child = nullptr;
     }
 
-    Widget* SingleChildWidget::get_child_by_pos(Point pos) const noexcept {
-        if (_child == nullptr) return nullptr;
-
-        if (_child->hit_test(pos))
-            return _child;
-        else
-            return nullptr;
-    }
-
     void SingleChildWidget::draw(IPainter* painter) noexcept {
         if (_child)
             _child->draw(painter);
@@ -189,13 +198,6 @@ namespace RolUI {
         for (int i = 0; i < _children.size(); i++)
             _children[i]->_unmount();
         _children.clear();
-    }
-
-    Widget* MultiChildWidget::get_child_by_pos(Point pos) const noexcept {
-        for (auto it = _children.rbegin(); it != _children.rend(); ++it)
-            if ((*it)->hit_test(pos))
-                return *it;
-        return nullptr;
     }
 
     void MultiChildWidget::draw(IPainter* painter) noexcept {
