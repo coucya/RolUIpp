@@ -17,7 +17,7 @@ namespace RolUI {
 
         ImageWidget::~ImageWidget() {}
 
-        void ImageWidget::draw(IPainter* painter) noexcept {
+        void ImageWidget::perform_draw(IPainter* painter) noexcept {
             Fit fit = this->fit.get();
             int img_handle = image->handle();
             Size img_size = painter->image_size(this->image.get().handle());

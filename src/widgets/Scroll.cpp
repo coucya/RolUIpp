@@ -114,7 +114,7 @@ namespace RolUI {
             });
             return constraint.max();
         }
-        void ScrollView::draw(IPainter* painter) noexcept {
+        void ScrollView::perform_draw(IPainter* painter) noexcept {
             if (!child()) return;
 
             RolUI::Rect ar = abs_rect();

@@ -21,7 +21,7 @@ namespace RolUI {
             const ObjectType* object_type() const noexcept override;
 
           protected:
-            void draw(IPainter* painter) noexcept override;
+            void perform_draw(IPainter* painter) noexcept override;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 
@@ -37,7 +37,7 @@ namespace RolUI {
             const ObjectType* object_type() const noexcept override;
 
           protected:
-            void draw(IPainter* painter) noexcept override;
+            void perform_draw(IPainter* painter) noexcept override;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 

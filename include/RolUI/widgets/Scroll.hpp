@@ -36,7 +36,7 @@ namespace RolUI {
 
           protected:
             Size perform_layout(Constraint constraint) noexcept override;
-            void draw(IPainter* painter) noexcept override;
+            void perform_draw(IPainter* painter) noexcept override;
         };
 
         class VScrollView : public ScrollView {

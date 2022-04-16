@@ -100,6 +100,7 @@ namespace RolUI {
         void clear_hit_self() noexcept;
 
         Size layout(Constraint constraint) noexcept;
+        void draw(IPainter* painter) noexcept;
 
         void update_pos() noexcept;
 
@@ -116,9 +117,8 @@ namespace RolUI {
 
         virtual bool handle_event(IEvent* e) noexcept;
 
-        virtual void draw(IPainter* painter) noexcept;
-
         virtual Size perform_layout(Constraint constraint) noexcept;
+        virtual void perform_draw(IPainter* painter) noexcept;
 
       private:
         void _mount(Widget* parent) noexcept;
@@ -144,15 +144,12 @@ namespace RolUI {
       public:
         SingleChildWidget() noexcept;
 
+        const ObjectType* object_type() const noexcept override;
+
         int child_count() const noexcept override;
         Widget* child(int index = 0) const noexcept override;
         Widget* set_child(Widget* child, int index = 0) noexcept override;
         void remove_child(int index = 0) noexcept override;
-
-        const ObjectType* object_type() const noexcept override;
-
-        void draw(IPainter* painter) noexcept override;
-        Size perform_layout(Constraint constraint) noexcept override;
 
       protected:
         template <typename F,
@@ -180,17 +177,14 @@ namespace RolUI {
         Widget* child(int index) const noexcept override;
         Widget* set_child(Widget* child, int index) noexcept override;
 
+        const ObjectType* object_type() const noexcept override;
+
         virtual MultiChildWidget* add_child(Widget* child) noexcept;
         virtual MultiChildWidget* insert_child(int index, Widget* child) noexcept;
 
         void remove_child(int index) noexcept override;
         void remove_child(Widget* child) noexcept;
         void remove_child_all() noexcept;
-
-        const ObjectType* object_type() const noexcept override;
-
-        void draw(IPainter* painter) noexcept override;
-        Size perform_layout(Constraint constraint) noexcept override;
     };
 
     RolUI_decl_object_type_of(Widget);

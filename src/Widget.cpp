@@ -53,6 +53,9 @@ namespace RolUI {
         _size = perform_layout(constraint);
         return _size;
     }
+    void Widget::draw(IPainter* painter) noexcept {
+        perform_draw(painter);
+    }
 
     int Widget::child_count() const noexcept { return 0; }
     Widget* Widget::child(int index) const noexcept { return nullptr; }
@@ -77,9 +80,20 @@ namespace RolUI {
 
     bool Widget::handle_event(IEvent* e) noexcept { return false; }
 
-    void Widget::draw(IPainter* painter) noexcept {}
-
-    Size Widget::perform_layout(Constraint constraint) noexcept { return {0, 0}; }
+    Size Widget::perform_layout(Constraint constraint) noexcept {
+        Size self_size{0, 0};
+        for (int i = 0; i < child_count(); i++) {
+            Size size = child(i)->layout(constraint);
+            RolUI::set_pos(child(i), Point{0, 0});
+            self_size.width = std::max(self_size.width, size.width);
+            self_size.height = std::max(self_size.height, size.height);
+        }
+        return self_size;
+    }
+    void Widget::perform_draw(IPainter* painter) noexcept {
+        for (int i = 0; i < child_count(); i++)
+            child(i)->draw(painter);
+    }
 
     void Widget::update_pos() noexcept {
         this->_abs_pos = parent() ? parent()->abs_pos() + pos() : pos();
@@ -139,16 +153,6 @@ namespace RolUI {
         _child = nullptr;
     }
 
-    void SingleChildWidget::draw(IPainter* painter) noexcept {
-        if (_child)
-            _child->draw(painter);
-    }
-
-    Size SingleChildWidget::perform_layout(Constraint constraint) noexcept {
-        Size child_size = layout_child(constraint, [](Size) { return Point{0, 0}; });
-        return child_size;
-    }
-
     MultiChildWidget::MultiChildWidget() noexcept {}
 
     int MultiChildWidget::child_count() const noexcept { return _children.size(); }
@@ -198,24 +202,6 @@ namespace RolUI {
         for (int i = 0; i < _children.size(); i++)
             _children[i]->_unmount();
         _children.clear();
-    }
-
-    void MultiChildWidget::draw(IPainter* painter) noexcept {
-        for (Widget* w : _children)
-            w->draw(painter);
-    }
-
-    Size MultiChildWidget::perform_layout(Constraint constraint) noexcept {
-        if (_children.size() == 0) return {0, 0};
-
-        Size self_size{0, 0};
-        for (Widget* w : _children) {
-            Size size = w->layout(constraint);
-            RolUI::set_pos(w, Point{0, 0});
-            self_size.width = std::max(self_size.width, size.width);
-            self_size.height = std::max(self_size.height, size.height);
-        }
-        return self_size;
     }
 
     const ObjectType* Widget::object_type() const noexcept { return object_type_of<Widget>(); }

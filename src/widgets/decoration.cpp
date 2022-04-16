@@ -9,7 +9,7 @@ namespace RolUI {
         HSeparatorWidget::HSeparatorWidget() noexcept {}
         HSeparatorWidget::~HSeparatorWidget() {}
 
-        void HSeparatorWidget::draw(IPainter* painter) noexcept {
+        void HSeparatorWidget::perform_draw(IPainter* painter) noexcept {
             Point pos = abs_pos();
             painter->set_stroke_color(color());
             painter->set_stroke_width(width());
@@ -22,7 +22,7 @@ namespace RolUI {
         VSeparatorWidget::VSeparatorWidget() noexcept {}
         VSeparatorWidget::~VSeparatorWidget() {}
 
-        void VSeparatorWidget::draw(IPainter* painter) noexcept {
+        void VSeparatorWidget::perform_draw(IPainter* painter) noexcept {
             Point pos = abs_pos();
             painter->set_stroke_color(color());
             painter->set_stroke_width(width());

@@ -62,10 +62,8 @@ namespace RolUI {
             return {0, 0};
         }
 
-        void DeckWidget::draw(IPainter* painter) noexcept {
-            if (selected.get() >= this->child_count()) return;
-            Widget* sw = this->child(selected.get());
-            if (sw) sw->draw(painter);
+        void DeckWidget::perform_draw(IPainter* painter) noexcept {
+            if (child(selected())) child(selected())->draw(painter);
         }
 
         const ObjectType* StackWidget::object_type() const noexcept { return object_type_of<StackWidget>(); }

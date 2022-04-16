@@ -46,13 +46,6 @@ namespace RolUI {
             return false;
         }
 
-        void PointerListener::draw(IPainter* painter) noexcept {
-            SingleChildWidget::draw(painter);
-            // painter->set_stroke_color({255, 0, 0});
-            // painter->set_stroke_width(2);
-            // painter->draw_rect(abs_rect());
-        }
-
         MouseListener::MouseListener() noexcept {}
         MouseListener::~MouseListener() {}
 
@@ -107,9 +100,6 @@ namespace RolUI {
                 this->on_wheel.emit(me->offset());
             }
             return false;
-        }
-        void MouseListener::draw(IPainter* painter) noexcept {
-            SingleChildWidget::draw(painter);
         }
 
         KeyboardListener::KeyboardListener() noexcept {}

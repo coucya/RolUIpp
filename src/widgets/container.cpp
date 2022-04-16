@@ -10,7 +10,7 @@ namespace RolUI {
 
         BoxWidget::BoxWidget() noexcept {}
 
-        void BoxWidget::draw(IPainter* painter) noexcept {
+        void BoxWidget::perform_draw(IPainter* painter) noexcept {
             Rect rect = abs_rect();
             painter->set_fill_color(background_color);
             painter->fill_roundedrect(rect, round);
@@ -21,7 +21,7 @@ namespace RolUI {
                 painter->draw_roundedrect(rect, round);
             }
 
-            SingleChildWidget::draw(painter);
+            SingleChildWidget::perform_draw(painter);
         }
         Size BoxWidget::perform_layout(Constraint constraint) noexcept {
             if (child_count() == 0) return constraint.max();

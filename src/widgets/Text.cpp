@@ -79,7 +79,7 @@ namespace RolUI {
             if (_chars.size() > T_MAX && buff != nullptr) delete[] buff;
         }
 
-        void TextSpanWidget::draw(IPainter* painter) noexcept {
+        void TextSpanWidget::perform_draw(IPainter* painter) noexcept {
             painter->set_font_size(font_size);
             painter->set_font_color(font_color);
 
@@ -367,8 +367,8 @@ namespace RolUI {
             cursor_index = cursor_index() + utf8nlen(str, len);
         }
 
-        void EditableTextWidget::draw(IPainter* painter) noexcept {
-            TextSpanWidget::draw(painter);
+        void EditableTextWidget::perform_draw(IPainter* painter) noexcept {
+            TextSpanWidget::perform_draw(painter);
             if (_show_cursor) {
                 int ts = line_height();
                 painter->set_stroke_width(2);

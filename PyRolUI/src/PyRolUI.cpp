@@ -139,8 +139,8 @@ class PyWidget : public WidgetBase {
         PYBIND11_OVERRIDE(bool, WidgetBase, handle_event, e);
     }
 
-    void draw(IPainter* painter) noexcept override {
-        PYBIND11_OVERRIDE(void, WidgetBase, draw, painter);
+    void perform_draw(IPainter* painter) noexcept override {
+        PYBIND11_OVERRIDE(void, WidgetBase, perform_draw, painter);
     }
 
     Size perform_layout(Constraint constraint) noexcept override {
@@ -557,6 +557,8 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("clear_hit", &Widget::clear_hit)
         .def("clear_hit_self", &Widget::clear_hit_self)
         .def("layout", &Widget::layout)
+        .def("draw", &Widget::draw)
+        .def("update_pos", &Widget::update_pos)
         .def("child_count", &Widget::child_count)
         .def("child", &Widget::child, py::arg("index") = 0, return_value_policy::reference)
         .def("set_child", &Widget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
@@ -565,10 +567,8 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("hit_test_self", &Widget::hit_test_self)
         .def("hit_test_children", &Widget::hit_test_children, return_value_policy::reference)
         .def("handle_event", &Widget::handle_event)
-        .def("draw", &Widget::draw)
         .def("perform_layout", &Widget::perform_layout)
-        .def("update_pos", &Widget::update_pos)
-        .def("hit_test_self", &Widget::hit_test_self);
+        .def("perform_draw", &Widget::perform_draw);
     class_<SingleChildWidget, PyWidget<SingleChildWidget>, Widget>(m, "SingleChildWidget")
         .def(py::init())
         .def("child_count", &SingleChildWidget::child_count)

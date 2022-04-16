@@ -52,7 +52,7 @@ namespace RolUI {
             unsigned line_height() const noexcept override;
 
           protected:
-            virtual void draw(IPainter* painter) noexcept override;
+            virtual void perform_draw(IPainter* painter) noexcept override;
             virtual Size perform_layout(Constraint constraint) noexcept override;
 
           private:
@@ -126,7 +126,7 @@ namespace RolUI {
 
             void insert_str(unsigned idx, const char* str, unsigned len) noexcept;
 
-            void draw(IPainter* painter) noexcept override;
+            void perform_draw(IPainter* painter) noexcept override;
 
           private:
             void _delete_at_index(unsigned idx, unsigned len) noexcept;

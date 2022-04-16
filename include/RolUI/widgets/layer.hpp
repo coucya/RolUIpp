@@ -35,7 +35,7 @@ namespace RolUI {
             Widget* hit_test_children(Point pos) noexcept override;
 
           protected:
-            void draw(IPainter* painter) noexcept override;
+            void perform_draw(IPainter* painter) noexcept override;
             Size perform_layout(Constraint constraint) noexcept override;
         };
 

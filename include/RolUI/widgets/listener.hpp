@@ -25,7 +25,6 @@ namespace RolUI {
 
           protected:
             bool handle_event(IEvent* e) noexcept override;
-            void draw(IPainter* painter) noexcept override;
 
           private:
             bool _is_press = false;
@@ -49,7 +48,6 @@ namespace RolUI {
 
           protected:
             bool handle_event(IEvent* e) noexcept override;
-            void draw(IPainter* painter) noexcept override;
 
           private:
             bool _is_press[MOUSE_KEY_COUNT] = {false};
