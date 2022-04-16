@@ -114,7 +114,9 @@ build_image_view() {
                            ->width(SizeUnit(800))
                            ->height(SizeUnit(600));
     ImageWidget* image_w = mk_widget<ImageWidget>()->fit(ImageWidget::contain);
-    plw->set_child(sw->set_child(sbw->set_child(image_w)));
+    sbw->set_child(image_w);
+    sw->set_child(sbw);
+    plw->set_child(sw);
 
     image_w->image(first_image);
 
@@ -155,15 +157,22 @@ Widget* build_ui() {
     plw->on_wheel.connect([=, set_scale = set_scale](Vec2i offset) {
         set_scale(image_scale = image_scale + double(offset.y) * 0.1);
     });
-    return mk_widget<BoxWidget>()
-        ->background_color({40, 44, 52})
-        ->set_child(mk_widget<StackWidget>()
-                        ->add_child(img_view)
-                        ->add_child(
-                            mk_widget<RowGridWidget>()
-                                ->add_child(build_button("<", [=] { image_idx_dec(); update_image(); }))
-                                ->add_child(plw->set_child(mk_widget<SizedWidget>()))
-                                ->add_child(build_button(">", [=] { image_idx_inc(); update_image(); }))));
+
+    BoxWidget* box_w = mk_widget<BoxWidget>()
+                           ->background_color({40, 44, 52});
+    RowGridWidget* row_grid_w = mk_widget<RowGridWidget>();
+    StackWidget* stack_w = mk_widget<StackWidget>();
+
+    plw->set_child(mk_widget<SizedWidget>());
+    row_grid_w->add_child(build_button("<", [=] { image_idx_dec(); update_image(); }));
+    row_grid_w->add_child(plw);
+    row_grid_w->add_child(build_button(">", [=] { image_idx_inc(); update_image(); }));
+
+    stack_w->add_child(img_view);
+    stack_w->add_child(row_grid_w);
+    box_w->set_child(stack_w);
+
+    return box_w;
 }
 
 int main(int argc, char* argv[]) {

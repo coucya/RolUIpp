@@ -31,7 +31,8 @@ int main(int argc, char* argv[]) {
         throw std::runtime_error("can't load font.");
 
     Widget* label = widgets::label("hello world", 50);
-    Widget* w = widgets::mk_widget<widgets::AlignWidget>()->set_child(label);
+    Widget* w = widgets::mk_widget<widgets::AlignWidget>();
+    w->set_child(label);
 
     Application::run(w);
 

@@ -85,9 +85,9 @@ namespace RolUI {
             unsigned char_count() const noexcept override;
             unsigned line_height() const noexcept override;
 
-            RichTextLineWidget* set_child(Widget* child, int index) noexcept override;
-            RichTextLineWidget* add_child(Widget* child) noexcept override;
-            RichTextLineWidget* insert_child(int index, Widget* child) noexcept override;
+            void set_child(Widget* child, int index) noexcept override;
+            void add_child(Widget* child) noexcept override;
+            void insert_child(int index, Widget* child) noexcept override;
         };
 
         class RichTextWidget : public ColumnWidget {
@@ -101,9 +101,9 @@ namespace RolUI {
             Point index_to_pos(unsigned index) const noexcept;
             unsigned char_count() const noexcept;
 
-            RichTextWidget* set_child(Widget* child, int index) noexcept override;
-            RichTextWidget* add_child(Widget* child) noexcept override;
-            RichTextWidget* insert_child(int index, Widget* child) noexcept override;
+            void set_child(Widget* child, int index) noexcept override;
+            void add_child(Widget* child) noexcept override;
+            void insert_child(int index, Widget* child) noexcept override;
         };
 
         class EditableTextWidget : public TextSpanWidget {

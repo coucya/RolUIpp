@@ -108,8 +108,8 @@ namespace RolUI {
 
         virtual int child_count() const noexcept;
         virtual Widget* child(int index = 0) const noexcept;
-        virtual Widget* set_child(Widget* child, int index = 0) noexcept;
-        virtual void remove_child(int index = 0) noexcept;
+        virtual void set_child(Widget* child, int index = 0) noexcept;
+        virtual void rm_child(int index = 0) noexcept;
 
         virtual bool hit_test(Point pos) noexcept;
         virtual bool hit_test_self(Point pos) noexcept;
@@ -148,8 +148,8 @@ namespace RolUI {
 
         int child_count() const noexcept override;
         Widget* child(int index = 0) const noexcept override;
-        Widget* set_child(Widget* child, int index = 0) noexcept override;
-        void remove_child(int index = 0) noexcept override;
+        void set_child(Widget* child, int index = 0) noexcept override;
+        void rm_child(int index = 0) noexcept override;
 
       protected:
         template <typename F,
@@ -175,16 +175,16 @@ namespace RolUI {
 
         int child_count() const noexcept override;
         Widget* child(int index) const noexcept override;
-        Widget* set_child(Widget* child, int index) noexcept override;
+        void set_child(Widget* child, int index) noexcept override;
 
         const ObjectType* object_type() const noexcept override;
 
-        virtual MultiChildWidget* add_child(Widget* child) noexcept;
-        virtual MultiChildWidget* insert_child(int index, Widget* child) noexcept;
+        virtual void add_child(Widget* child) noexcept;
+        virtual void insert_child(int index, Widget* child) noexcept;
 
-        void remove_child(int index) noexcept override;
-        void remove_child(Widget* child) noexcept;
-        void remove_child_all() noexcept;
+        void rm_child(int index) noexcept override;
+        void rm_child(Widget* child) noexcept;
+        void rm_child_all() noexcept;
     };
 
     RolUI_decl_object_type_of(Widget);

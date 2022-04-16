@@ -59,8 +59,8 @@ namespace RolUI {
 
     int Widget::child_count() const noexcept { return 0; }
     Widget* Widget::child(int index) const noexcept { return nullptr; }
-    Widget* Widget::set_child(Widget* child, int index) noexcept { return this; }
-    void Widget::remove_child(int index) noexcept {}
+    void Widget::set_child(Widget* child, int index) noexcept {}
+    void Widget::rm_child(int index) noexcept {}
 
     bool Widget::hit_test(Point pos) noexcept {
         bool result = hit_test_self(pos);
@@ -137,16 +137,13 @@ namespace RolUI {
 
     int SingleChildWidget::child_count() const noexcept { return _child ? 1 : 0; }
     Widget* SingleChildWidget::child(int index) const noexcept { return index == 0 && _child ? _child : nullptr; }
-    Widget* SingleChildWidget::set_child(Widget* child, int index) noexcept {
-        if (index != 0) return this;
-        if (_child)
-            _child->_unmount();
+    void SingleChildWidget::set_child(Widget* child, int index) noexcept {
+        if (index != 0) return;
+        if (_child) _child->_unmount();
         _child = child;
-        if (_child)
-            _child->_mount(this);
-        return this;
+        if (_child) _child->_mount(this);
     }
-    void SingleChildWidget::remove_child(int index) noexcept {
+    void SingleChildWidget::rm_child(int index) noexcept {
         if (index != 0) return;
         if (_child)
             _child->_unmount();
@@ -157,49 +154,46 @@ namespace RolUI {
 
     int MultiChildWidget::child_count() const noexcept { return _children.size(); }
     Widget* MultiChildWidget::child(int index) const noexcept {
-        if (index < 0 || index >= _children.size()) return nullptr;
+        if (index < 0 || index >= child_count()) return nullptr;
         return _children[index];
     }
-    MultiChildWidget* MultiChildWidget::add_child(Widget* child) noexcept {
-        if (!child) return this;
+    void MultiChildWidget::add_child(Widget* child) noexcept {
+        if (!child) return;
         _children.push_back(child);
         child->_mount(this);
-        return this;
     }
-    Widget* MultiChildWidget::set_child(Widget* child, int index) noexcept {
-        if (!child || index < 0 || index > _children.size()) return this;
+    void MultiChildWidget::set_child(Widget* child, int index) noexcept {
+        if (!child || index < 0 || index > child_count()) return;
 
-        if (index == _children.size()) {
+        if (index == child_count()) {
             add_child(child);
         } else {
             _children[index]->_unmount();
             _children[index] = child;
             _children[index]->_mount(this);
         }
-        return this;
     }
-    MultiChildWidget* MultiChildWidget::insert_child(int index, Widget* child) noexcept {
-        if (!child || index < 0 || index > _children.size()) return this;
-        if (index == _children.size()) {
+    void MultiChildWidget::insert_child(int index, Widget* child) noexcept {
+        if (!child || index < 0 || index > child_count()) return;
+        if (index == child_count()) {
             add_child(child);
         } else {
             _children.insert(_children.begin() + index, child);
             _children[index]->_mount(this);
         }
-        return this;
     }
 
-    void MultiChildWidget::remove_child(Widget* child) noexcept {
+    void MultiChildWidget::rm_child(Widget* child) noexcept {
         auto it = std::find(_children.begin(), _children.end(), child);
-        remove_child(it - _children.begin());
+        rm_child(it - _children.begin());
     }
-    void MultiChildWidget::remove_child(int index) noexcept {
-        if (index < 0 || index >= _children.size()) return;
+    void MultiChildWidget::rm_child(int index) noexcept {
+        if (index < 0 || index >= child_count()) return;
         _children[index]->_unmount();
         _children.erase(_children.begin() + index);
     }
-    void MultiChildWidget::remove_child_all() noexcept {
-        for (int i = 0; i < _children.size(); i++)
+    void MultiChildWidget::rm_child_all() noexcept {
+        for (int i = 0; i < child_count(); i++)
             _children[i]->_unmount();
         _children.clear();
     }

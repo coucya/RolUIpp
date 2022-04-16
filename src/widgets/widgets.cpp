@@ -22,18 +22,22 @@ namespace RolUI {
 
         Widget* label(const char* str, unsigned size, Color color,
                       Color background_color, unsigned round) {
-            return mk_widget<BoxWidget>()
-                ->round(round)
-                ->background_color(background_color)
-                ->set_child(
-                    mk_widget<AlignWidget>()
-                        ->set_child(text(str, size, color)));
+
+            BoxWidget* box_w = mk_widget<BoxWidget>()
+                                   ->round(round)
+                                   ->background_color(background_color);
+            AlignWidget* align_w = mk_widget<AlignWidget>();
+            align_w->set_child(text(str, size, color));
+            box_w->set_child(align_w);
+            return box_w;
         }
 
         Widget* button(Widget* normal, Widget* hover, Widget* press,
                        std::function<void()> callback) {
             DeckWidget* dw = mk_widget<DeckWidget>();
-            dw->add_child(normal)->add_child(hover)->add_child(press);
+            dw->add_child(normal);
+            dw->add_child(hover);
+            dw->add_child(press);
 
             PointerListener* plw = mk_widget<PointerListener>();
             plw->set_child(dw);
@@ -50,10 +54,14 @@ namespace RolUI {
                        unsigned text_size, Color text_color,
                        Color normal, Color hover, Color press, unsigned round) {
             BoxWidget* box = mk_widget<BoxWidget>();
+            AlignWidget* align_w = mk_widget<AlignWidget>();
+
             box->round(round)
-                ->background_color(normal)
-                ->set_child(mk_widget<AlignWidget>()
-                                ->set_child(text(str, text_size, text_color)));
+                ->background_color(normal);
+
+            align_w->set_child(text(str, text_size, text_color));
+            box->set_child(align_w);
+
             PointerListener* plw = mk_widget<PointerListener>();
             plw->set_child(box);
             plw->on_hover.connect([=](bool b) { box->background_color(b ? hover : normal); });
@@ -64,46 +72,60 @@ namespace RolUI {
         }
 
         BoxWidget* box(unsigned round, unsigned border_width, Color border_color, Color background_color, Widget* child) {
-            return (BoxWidget*)mk_widget<BoxWidget>()->round(round)->border_width(border_width)->border_color(border_color)->background_color(background_color)->set_child(child);
+            BoxWidget* box_w = mk_widget<BoxWidget>()->round(round)->border_width(border_width)->border_color(border_color)->background_color(background_color);
+            box_w->set_child(child);
+            return box_w;
         }
 
         AlignWidget* align(float x, float y, Widget* child) {
-            return (AlignWidget*)mk_widget<AlignWidget>()->align_x(x)->align_y(y)->set_child(child);
+            AlignWidget* align_w = mk_widget<AlignWidget>()->align_x(x)->align_y(y);
+            align_w->set_child(child);
+            return align_w;
         }
 
         SizedWidget* sized(int width, int height, Widget* child) {
-            return (SizedWidget*)mk_widget<SizedWidget>()
-                ->width(SizeUnit(width))
-                ->height(SizeUnit(height))
-                ->set_child(child);
+            SizedWidget* sized_w = mk_widget<SizedWidget>()
+                                       ->width(SizeUnit(width))
+                                       ->height(SizeUnit(height));
+            sized_w->set_child(child);
+            return sized_w;
         }
         SizedWidget* sized(float width, float height, Widget* child) {
-            return (SizedWidget*)mk_widget<SizedWidget>()
-                ->width(SizeUnit(width))
-                ->height(SizeUnit(height))
-                ->set_child(child);
+            SizedWidget* sized_w = mk_widget<SizedWidget>()
+                                       ->width(SizeUnit(width))
+                                       ->height(SizeUnit(height));
+            sized_w->set_child(child);
+            return sized_w;
         }
         SizedWidget* sized(int width, float height, Widget* child) {
-            return (SizedWidget*)mk_widget<SizedWidget>()
-                ->width(SizeUnit(width))
-                ->height(SizeUnit(height))
-                ->set_child(child);
+            SizedWidget* sized_w = mk_widget<SizedWidget>()
+                                       ->width(SizeUnit(width))
+                                       ->height(SizeUnit(height));
+            sized_w->set_child(child);
+            return sized_w;
         }
         SizedWidget* sized(float width, int height, Widget* child) {
-            return (SizedWidget*)mk_widget<SizedWidget>()
-                ->width(SizeUnit(width))
-                ->height(SizeUnit(height))
-                ->set_child(child);
+            SizedWidget* sized_w = mk_widget<SizedWidget>()
+                                       ->width(SizeUnit(width))
+                                       ->height(SizeUnit(height));
+            sized_w->set_child(child);
+            return sized_w;
         }
 
         MarginWidget* margin(unsigned margin, Widget* child) {
-            return (MarginWidget*)mk_widget<MarginWidget>(margin)->set_child(child);
+            MarginWidget* margin_w = mk_widget<MarginWidget>(margin);
+            margin_w->set_child(child);
+            return margin_w;
         }
         MarginWidget* margin(unsigned x, unsigned y, Widget* child) {
-            return (MarginWidget*)mk_widget<MarginWidget>(x, y)->set_child(child);
+            MarginWidget* margin_w = mk_widget<MarginWidget>(x, y);
+            margin_w->set_child(child);
+            return margin_w;
         }
         MarginWidget* margin(unsigned top, unsigned right, unsigned bottom, unsigned left, Widget* child) {
-            return (MarginWidget*)mk_widget<MarginWidget>(top, bottom, left, right)->set_child(child);
+            MarginWidget* margin_w = mk_widget<MarginWidget>(top, bottom, left, right);
+            margin_w->set_child(child);
+            return margin_w;
         }
 
         StackWidget* stack() { return mk_widget<StackWidget>(); }
@@ -115,7 +137,9 @@ namespace RolUI {
         ColumnGridWidget* column_grid() { return mk_widget<ColumnGridWidget>(); }
 
         PointerListener* pointer_listener(Widget* child) {
-            return (PointerListener*)mk_widget<PointerListener>()->set_child(child);
+            PointerListener* pl = mk_widget<PointerListener>();
+            pl->set_child(child);
+            return pl;
         }
 
     } // namespace widgets

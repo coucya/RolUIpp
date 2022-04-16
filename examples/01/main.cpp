@@ -52,10 +52,11 @@ int random_int(int beg = 0, int end = 100) {
 }
 
 Widget* build_size_box(Size s, Color color) {
-    return mk_widget<BoxWidget>()
-        ->background_color(color)
-        ->set_child(
-            mk_widget<SizedWidget>()->width(s.width)->height(s.height));
+    BoxWidget* box = mk_widget<BoxWidget>()
+                         ->background_color(color);
+    box->set_child(
+        mk_widget<SizedWidget>()->width(s.width)->height(s.height));
+    return box;
 }
 
 FlexableWidget* build_flexable(FlexFit fit, Color color, float val = 0.0) {

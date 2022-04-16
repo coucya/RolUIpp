@@ -118,11 +118,11 @@ class PyWidget : public WidgetBase {
     Widget* child(int index) const noexcept override {
         PYBIND11_OVERRIDE(Widget*, WidgetBase, child, index);
     }
-    Widget* set_child(Widget* child, int index) noexcept override {
-        PYBIND11_OVERRIDE(Widget*, WidgetBase, set_child, child, index);
+    void set_child(Widget* child, int index) noexcept override {
+        PYBIND11_OVERRIDE(void, WidgetBase, set_child, child, index);
     }
-    void remove_child(int index = 0) noexcept override {
-        PYBIND11_OVERRIDE(void, WidgetBase, remove_child, index);
+    void rm_child(int index = 0) noexcept override {
+        PYBIND11_OVERRIDE(void, WidgetBase, rm_child, index);
     }
 
     bool hit_test(Point pos) noexcept override {
@@ -562,7 +562,7 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("child_count", &Widget::child_count)
         .def("child", &Widget::child, py::arg("index") = 0, return_value_policy::reference)
         .def("set_child", &Widget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
-        .def("remove_child", &Widget::remove_child, py::arg("index") = 0)
+        .def("rm_child", &Widget::rm_child, py::arg("index") = 0)
         .def("hit_test", &Widget::hit_test)
         .def("hit_test_self", &Widget::hit_test_self)
         .def("hit_test_children", &Widget::hit_test_children, return_value_policy::reference)
@@ -574,7 +574,7 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("child_count", &SingleChildWidget::child_count)
         .def("child", &SingleChildWidget::child, py::arg("index") = 0, return_value_policy::reference)
         .def("set_child", &SingleChildWidget::set_child, py::arg("child"), py::arg("index") = 0, return_value_policy::reference_internal)
-        .def("remove_child", &SingleChildWidget::remove_child, py::arg("index") = 0);
+        .def("rm_child", &SingleChildWidget::rm_child, py::arg("index") = 0);
     class_<MultiChildWidget, PyWidget<MultiChildWidget>, Widget>(m, "MultiChildWidget")
         .def(py::init())
         .def("child", &MultiChildWidget::child, return_value_policy::reference)
@@ -582,9 +582,9 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def("add_child", &MultiChildWidget::add_child, py::arg("child"), return_value_policy::reference_internal)
         .def("set_child", &MultiChildWidget::set_child, py::arg("child"), py::arg("index"), return_value_policy::reference_internal)
         .def("insert_child", &MultiChildWidget::insert_child, py::arg("index"), py::arg("child"), return_value_policy::reference_internal)
-        .def("remove_child", [](MultiChildWidget& self, Widget* child) { self.remove_child(child); })
-        .def("remove_child", [](MultiChildWidget& self, int index) { self.remove_child(index); })
-        .def("remove_child_all", &MultiChildWidget::remove_child_all);
+        .def("rm_child", [](MultiChildWidget& self, Widget* child) { self.rm_child(child); })
+        .def("rm_child", [](MultiChildWidget& self, int index) { self.rm_child(index); })
+        .def("rm_child_all", &MultiChildWidget::rm_child_all);
 
     class_<RootWidget, PyWidget<RootWidget>, MultiChildWidget>(m, "RootWidget")
         .def("content_widget", &RootWidget::content_widget, return_value_policy::reference)

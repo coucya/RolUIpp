@@ -231,20 +231,17 @@ namespace RolUI {
             return max_line_height;
         }
 
-        RichTextLineWidget* RichTextLineWidget::set_child(Widget* child, int index) noexcept {
+        void RichTextLineWidget::set_child(Widget* child, int index) noexcept {
             if (child && child->object_type()->is_superclass<ITextSpan>())
                 FlexWidget::set_child(child, index);
-            return this;
         }
-        RichTextLineWidget* RichTextLineWidget::add_child(Widget* child) noexcept {
+        void RichTextLineWidget::add_child(Widget* child) noexcept {
             if (child && child->object_type()->is_superclass<ITextSpan>())
                 FlexWidget::add_child(child);
-            return this;
         }
-        RichTextLineWidget* RichTextLineWidget::insert_child(int index, Widget* child) noexcept {
+        void RichTextLineWidget::insert_child(int index, Widget* child) noexcept {
             if (child && child->object_type()->is_superclass<ITextSpan>())
                 FlexWidget::insert_child(index, child);
-            return this;
         }
 
         RichTextWidget::RichTextWidget() noexcept {}
@@ -293,20 +290,17 @@ namespace RolUI {
             return char_count_ ? char_count_ - 1 : char_count_;
         }
 
-        RichTextWidget* RichTextWidget::set_child(Widget* child, int index) noexcept {
+        void RichTextWidget::set_child(Widget* child, int index) noexcept {
             if (child && child->object_type()->is_superclass<RichTextLineWidget>())
                 ColumnWidget::set_child(child, index);
-            return this;
         }
-        RichTextWidget* RichTextWidget::add_child(Widget* child) noexcept {
+        void RichTextWidget::add_child(Widget* child) noexcept {
             if (child && child->object_type()->is_superclass<RichTextLineWidget>())
                 ColumnWidget::add_child(child);
-            return this;
         }
-        RichTextWidget* RichTextWidget::insert_child(int index, Widget* child) noexcept {
+        void RichTextWidget::insert_child(int index, Widget* child) noexcept {
             if (child && child->object_type()->is_superclass<RichTextLineWidget>())
                 ColumnWidget::insert_child(index, child);
-            return this;
         }
 
         EditableTextWidget::EditableTextWidget() noexcept {
