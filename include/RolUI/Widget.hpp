@@ -96,6 +96,8 @@ namespace RolUI {
 
         Size layout(Constraint constraint) noexcept;
 
+        void update_pos() noexcept;
+
         const ObjectType* object_type() const noexcept override;
 
         virtual int child_count() const noexcept;
@@ -105,8 +107,6 @@ namespace RolUI {
 
         virtual Widget* get_child_by_pos(Point pos) const noexcept;
 
-        virtual void visit_children(std::function<void(Widget*)> f) noexcept;
-
         virtual bool hit_test(Point pos) const noexcept;
 
         virtual bool handle_event(IEvent* e) noexcept;
@@ -114,8 +114,6 @@ namespace RolUI {
         virtual void draw(IPainter* painter) noexcept;
 
         virtual Size perform_layout(Constraint constraint) noexcept;
-
-        virtual void update_pos() noexcept;
 
       private:
         void _mount(Widget* parent) noexcept;
@@ -149,11 +147,8 @@ namespace RolUI {
 
         Widget* get_child_by_pos(Point pos) const noexcept override;
 
-        void visit_children(std::function<void(Widget*)> f) noexcept override;
-
         void draw(IPainter* painter) noexcept override;
         Size perform_layout(Constraint constraint) noexcept override;
-        void update_pos() noexcept override;
 
       protected:
         template <typename F,
@@ -192,15 +187,61 @@ namespace RolUI {
 
         Widget* get_child_by_pos(Point pos) const noexcept override;
 
-        void visit_children(std::function<void(Widget*)> f) noexcept override;
-
         void draw(IPainter* painter) noexcept override;
         Size perform_layout(Constraint constraint) noexcept override;
-        void update_pos() noexcept override;
     };
 
     RolUI_decl_object_type_of(Widget);
     RolUI_decl_object_type_of(SingleChildWidget);
     RolUI_decl_object_type_of(MultiChildWidget);
+
+    template <typename T>
+    using enable_if_invocable_Widget_p_t = typename std::enable_if<std::is_invocable_r_v<void, T, Widget*>>::type;
+    template <typename T>
+    using enable_if_invocable_int_Widget_p_t = typename std::enable_if<std::is_invocable_r_v<void, T, int, Widget*>>::type;
+
+    template <typename F>
+    void visit_child(Widget* w, F&& f, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
+        if (!w) return;
+        for (int i = 0, c = w->child_count(); i < c; i++)
+            f(w->child(i));
+    }
+    template <typename F>
+    void visit_child(Widget* w, F&& f, enable_if_invocable_int_Widget_p_t<F>* = nullptr) noexcept {
+        if (!w) return;
+        for (int i = 0, c = w->child_count(); i < c; i++)
+            f(i, w->child(i));
+    }
+    template <typename F>
+    void visit_child_reverse(Widget* w, F&& f, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
+        if (!w) return;
+        for (int i = w->child_count() - 1; i >= 0; i--)
+            f(w->child(i));
+    }
+    template <typename F>
+    void visit_child_reverse(Widget* w, F&& f, enable_if_invocable_int_Widget_p_t<F>* = nullptr) noexcept {
+        if (!w) return;
+        for (int i = w->child_count() - 1; i >= 0; i--)
+            f(i, w->child(i));
+    }
+
+    template <typename F>
+    void visit_tree(Widget* w, F&& f, bool preorder = true, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
+        if (w) {
+            if (preorder) f(w);
+            for (int i = 0, c = w->child_count(); i < c; i++)
+                visit_tree(w->child(i), std::forward<F>(f));
+            if (!preorder) f(w);
+        }
+    }
+    template <typename F>
+    void visit_tree_reverse(Widget* w, F&& f, bool preorder = true, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
+        if (w) {
+            if (preorder) f(w);
+            for (int i = w->child_count() - 1; i >= 0; i--)
+                visit_tree(w->child(i), std::forward<F>(f));
+            if (!preorder) f(w);
+        }
+    }
 
 } // namespace RolUI

@@ -46,16 +46,11 @@ namespace RolUI {
 
         CharEvent ce{nullptr};
 
-        std::function<void(Widget*)> f;
-        auto _f = [&](Widget* w) {
-            send_event(w, &ce);
-            w->visit_children(f);
-        };
-        f = _f;
-
         while (!empty()) {
             ce = CharEvent{nullptr, pop_char()};
-            rw->visit_children(f);
+            visit_tree(rw, [&](Widget* w) {
+                send_event(w, &ce);
+            });
         }
     }
 

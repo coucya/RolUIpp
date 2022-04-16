@@ -53,17 +53,12 @@ namespace RolUI {
         for (int i = 0; i < KEYBORD_KEY_COUNT; i++)
             ke._key_modes[i] = _key_modes[i];
 
-        std::function<void(Widget*)> f;
-        auto _f = [&](Widget* w) {
-            send_event(w, &ke);
-            w->visit_children(f);
-        };
-        f = _f;
-
         for (int i = 0; i < KEYBORD_KEY_COUNT; i++) {
             if (_key_is_change[i]) {
                 ke._action = KeyboardKey(i);
-                rw->visit_children(f);
+                visit_tree(rw, [&](Widget* w) {
+                    send_event(w, &ke);
+                });
             }
         }
 

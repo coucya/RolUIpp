@@ -144,10 +144,6 @@ class PyWidget : public WidgetBase {
     Size perform_layout(Constraint constraint) noexcept override {
         PYBIND11_OVERRIDE(Size, WidgetBase, perform_layout, constraint);
     }
-
-    void update_pos() noexcept override {
-        PYBIND11_OVERRIDE(void, WidgetBase, update_pos, );
-    }
 };
 
 static Image load_image(const char* filename) {
