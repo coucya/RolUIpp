@@ -57,6 +57,10 @@ namespace RolUI {
     Widget* RootWidget::content_widget() const noexcept { return child(0); }
     void RootWidget::set_content_widget(Widget* widget) noexcept { set_child(widget, 0); }
 
+    const ObjectType* RootWidget::object_type() const noexcept { return object_type_of<RootWidget>(); }
+
+    RolUI_impl_object_type_of(RootWidget, Widget);
+
     Size RootWidget::perform_layout(Constraint constraint) noexcept {
         for (int i = 0; i < child_count(); i++) {
             Widget* w = child(i);

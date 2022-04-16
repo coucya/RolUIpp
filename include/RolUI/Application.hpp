@@ -21,8 +21,11 @@ namespace RolUI {
         Widget* content_widget() const noexcept;
         void set_content_widget(Widget* widget) noexcept;
 
+        const ObjectType* object_type() const noexcept override;
         Size perform_layout(Constraint constraint) noexcept override;
     };
+
+    RolUI_decl_object_type_of(RootWidget);
 
     class Application {
       public:
