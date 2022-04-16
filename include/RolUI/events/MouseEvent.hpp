@@ -40,7 +40,7 @@ namespace RolUI {
         friend class MouseDispatcher;
 
       protected:
-        MouseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        MouseEvent(Widget* target) noexcept;
 
       public:
         const ObjectType* object_type() const noexcept override;
@@ -52,11 +52,10 @@ namespace RolUI {
         MouseKeyMode button(MouseKey key) const noexcept;
 
       private:
-        void _set_action_key(MouseKey key);
-
-      private:
+        Point _mouse_pos;
+        Vec2i _mouse_offset;
         MouseKey _action_key;
-        const MouseDispatcher* _dispatcher;
+        MouseKeyMode _key_mode[MOUSE_KEY_COUNT];
     };
 
     class MouseWheelEvent : public IEvent {
@@ -75,27 +74,27 @@ namespace RolUI {
 
     class MouseMoveEvent : public MouseEvent {
       public:
-        MouseMoveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        MouseMoveEvent(Widget* target) noexcept;
         const ObjectType* object_type() const noexcept override;
     };
     class MousePressEvent : public MouseEvent {
       public:
-        MousePressEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        MousePressEvent(Widget* targe) noexcept;
         const ObjectType* object_type() const noexcept override;
     };
     class MouseReleaseEvent : public MouseEvent {
       public:
-        MouseReleaseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        MouseReleaseEvent(Widget* target) noexcept;
         const ObjectType* object_type() const noexcept override;
     };
     class MouseEnterEvent : public MouseEvent {
       public:
-        MouseEnterEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        MouseEnterEvent(Widget* target) noexcept;
         const ObjectType* object_type() const noexcept override;
     };
     class MouseLeaveEvent : public MouseEvent {
       public:
-        MouseLeaveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept;
+        MouseLeaveEvent(Widget* target) noexcept;
         const ObjectType* object_type() const noexcept override;
     };
 
@@ -116,9 +115,8 @@ namespace RolUI {
 
         MouseKeyMode button(MouseKey key) const noexcept;
 
-        Vec2i wheel() const noexcept { return _scroll; }
+        Vec2i wheel_offset() const noexcept { return _scroll_offset; }
 
-        bool is_pos_change() const noexcept { return _pos_is_change; }
         bool is_move() const noexcept { return _pos_is_change; }
 
         bool is_action(MouseKey key) const noexcept;
@@ -126,14 +124,9 @@ namespace RolUI {
         bool is_scrolling() const noexcept { return _is_scrolling; }
 
         void set_pos(Point pos) noexcept;
-        void set_pos(int32_t x, int32_t y) noexcept;
-
         void set_last_pos(Point pos) noexcept;
-        void set_last_pos(int32_t x, int32_t y) noexcept;
-
-        void set_wheel(Vec2i scroll) noexcept;
-
         void set_key_mode(MouseKey key, MouseKeyMode mode) noexcept;
+        void set_wheel_offset(Vec2i scroll) noexcept;
 
         void enter() noexcept;
         void leave() noexcept;
@@ -143,15 +136,10 @@ namespace RolUI {
         void dispatch(Window* w) noexcept;
 
       private:
-        void _init() noexcept {
-            _last_pos = {};
-            _current_pos = {};
-            for (int i = 0; i < sizeof(_key_mode) / sizeof(MouseKeyMode); i++)
-                _key_mode[i] = MouseKeyMode::release;
-        }
+        void _init_mouse_event(MouseEvent* e, MouseKey action_key = MouseKey::unkown) const noexcept;
 
       private:
-        bool _pos_is_change;
+        bool _pos_is_change = false;
         Point _last_pos;
         Point _current_pos;
 
@@ -159,12 +147,14 @@ namespace RolUI {
         MouseKeyMode _key_mode[MOUSE_KEY_COUNT];
 
         bool _is_scrolling = false;
-        Vec2i _scroll;
+        Vec2i _scroll_offset;
 
         bool _is_enter = false;
         bool _is_leave = false;
 
-        std::unordered_set<Widget*> _hover_widgets;
+        std::unordered_set<Widget*> _last_hit_widgets;
+        std::unordered_set<Widget*> _hit_widgets;
+        std::unordered_set<Widget*> _miss_widgets;
     };
 
 } // namespace RolUI

@@ -162,7 +162,7 @@ def split_lines(tokens: list[(str, Color)]) -> list[list[(str, Color)]]:
 
 def build_code_text_widget(code_str: str, code_widget: MultiChildWidget, *, font_size=16) -> Widget:
     lines = split_lines(split_token_with_tokenize(code_str))
-    code_widget.remove_child_all()
+    code_widget.rm_child_all()
 
     for line in lines:
         line_widget = mk_widget(widgets.RichTextLineWidget)

@@ -170,17 +170,17 @@ namespace RolUIBackend {
     void GLFWWindow::_init_event_callback() {
         on_cursor_enter = [this]() {
             auto [mx, my] = this->cursor_pos();
-            this->_mouse_dispatcher.set_pos((int32_t)mx, (int32_t)my);
-            this->_mouse_dispatcher.set_last_pos((int32_t)mx, (int32_t)my);
+            this->_mouse_dispatcher.set_pos({(int)mx, (int)my});
+            this->_mouse_dispatcher.set_last_pos({(int)mx, (int)my});
             this->_mouse_dispatcher.enter();
         };
         on_cursor_leave = [this]() {
             auto [mx, my] = this->cursor_pos();
-            this->_mouse_dispatcher.set_pos((int32_t)mx, (int32_t)my);
+            this->_mouse_dispatcher.set_pos({(int)mx, (int)my});
             this->_mouse_dispatcher.leave();
         };
         on_cursor_pos = [this](double x, double y) {
-            this->_mouse_dispatcher.set_pos((int)x, (int)y);
+            this->_mouse_dispatcher.set_pos({(int)x, (int)y});
         };
         on_mouse_button = [this](int button, int action, int mods) {
             RolUI::MouseKey key = glfw_map_to_rolui_mouse_key(button);
@@ -203,7 +203,7 @@ namespace RolUIBackend {
         };
 
         on_scroll = [this](double x, double y) {
-            this->_mouse_dispatcher.set_wheel({int(x), int(y)});
+            this->_mouse_dispatcher.set_wheel_offset({int(x), int(y)});
         };
 
         on_key = [this](int key, int scancode, int action, int mods) {

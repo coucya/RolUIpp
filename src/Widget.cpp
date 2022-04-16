@@ -65,7 +65,7 @@ namespace RolUI {
     bool Widget::hit_test(Point pos) noexcept {
         bool result = hit_test_self(pos);
         for (int i = 0; i < child_count(); i++)
-            result = result || child(i)->hit_test(pos);
+            result = child(i)->hit_test(pos) || result;
         return result;
     }
     bool Widget::hit_test_self(Point pos) noexcept {

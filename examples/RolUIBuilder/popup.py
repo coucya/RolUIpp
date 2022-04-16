@@ -19,7 +19,7 @@ def popup(*, child: Widget, position=None):
 
     def _on_down(a, b):
         print("_on_down:", a, b)
-        Application.root_widget().remove_child(mouse_l)
+        Application.root_widget().rm_child(mouse_l)
 
     size_w = sized(child=margin_w)
     mouse_l = mouse_listener(child=size_w)

@@ -20,7 +20,10 @@ namespace RolUI {
     RolUI_impl_object_type_of(MouseWheelEvent, IEvent);
 
     MouseDispatcher::MouseDispatcher() noexcept {
-        _init();
+        _last_pos = {};
+        _current_pos = {};
+        for (int i = 0; i < sizeof(_key_mode) / sizeof(MouseKeyMode); i++)
+            _key_mode[i] = MouseKeyMode::release;
         clear_change();
     }
 
@@ -43,18 +46,12 @@ namespace RolUI {
         }
         _pos_is_change = true;
     }
-    void MouseDispatcher::set_pos(int32_t x, int32_t y) noexcept {
-        set_pos({x, y});
-    }
 
     void MouseDispatcher::set_last_pos(Point pos) noexcept { _last_pos = pos; }
-    void MouseDispatcher::set_last_pos(int32_t x, int32_t y) noexcept {
-        set_last_pos({x, y});
-    }
 
-    void MouseDispatcher::set_wheel(Vec2i scroll) noexcept {
+    void MouseDispatcher::set_wheel_offset(Vec2i scroll) noexcept {
         _is_scrolling = true;
-        _scroll = scroll;
+        _scroll_offset = scroll;
     }
 
     void MouseDispatcher::set_key_mode(MouseKey key, MouseKeyMode mode) noexcept {
@@ -78,126 +75,127 @@ namespace RolUI {
         }
         _is_enter = _is_leave = false;
         _is_scrolling = false;
-        _scroll = {0, 0};
+        _scroll_offset = {0, 0};
+    }
+
+    void MouseDispatcher::_init_mouse_event(MouseEvent* e, MouseKey action_key) const noexcept {
+        e->_mouse_pos = _current_pos;
+        e->_mouse_offset = _current_pos - _last_pos;
+        e->_action_key = action_key;
+        for (int i = 0; i < sizeof(_key_is_change) / sizeof(bool); i++)
+            e->_key_mode[i] = _key_mode[i];
     }
 
     void MouseDispatcher::dispatch(Window* w) noexcept {
         if (w == nullptr) return;
 
         Point mouse_pos = this->pos();
-
-        Widget* widget = Application::get_widget_by_pos(mouse_pos);
+        Application::root_widget()->hit_test(mouse_pos);
+        visit_tree(Application::root_widget(), [this](Widget* w) {
+            if (w->is_hit())
+                this->_hit_widgets.insert(w);
+            else
+                this->_miss_widgets.insert(w);
+        });
 
         if (is_move() && !_is_enter && !_is_leave) {
-            for (auto it = _hover_widgets.begin(); it != _hover_widgets.end();) {
-                Widget* w = *it;
-                if (w && w->hit_test_self(mouse_pos) == false) {
-                    MouseLeaveEvent me{w, this};
+            for (Widget* w : _hit_widgets) {
+                if (_last_hit_widgets.find(w) == _last_hit_widgets.end()) {
+                    MouseEnterEvent me(w);
+                    _init_mouse_event(&me);
                     send_event(w, &me);
-                    it = _hover_widgets.erase(it);
-                } else
-                    ++it;
+                }
             }
-
-            Widget* tw = widget;
-            while (tw && tw->hit_test_self(mouse_pos) && _hover_widgets.find(tw) == _hover_widgets.end()) {
-                _hover_widgets.insert(tw);
-
-                MouseEnterEvent me{tw, this};
-                send_event(tw, &me);
-
-                tw = tw->parent();
+            for (Widget* w : _miss_widgets) {
+                if (_last_hit_widgets.find(w) != _last_hit_widgets.end()) {
+                    MouseLeaveEvent me(w);
+                    _init_mouse_event(&me);
+                    send_event(w, &me);
+                }
             }
         } else if (_is_enter) {
-            Widget* tw = widget;
-            while (tw) {
-                _hover_widgets.insert(tw);
-
-                MouseEnterEvent me{tw, this};
-                send_event(tw, &me);
-
-                tw = tw->parent();
-            }
-        } else if (_is_leave) {
-            for (Widget* w : _hover_widgets) {
-                MouseLeaveEvent me{w, this};
+            for (Widget* w : _hit_widgets) {
+                MouseEnterEvent me(w);
+                _init_mouse_event(&me);
                 send_event(w, &me);
             }
-            _hover_widgets.clear();
+        } else if (_is_leave) {
+            visit_tree(Application::root_widget(), [&, this](Widget* w) {
+                if (this->_last_hit_widgets.find(w) != this->_last_hit_widgets.end()) {
+                    MouseLeaveEvent me{w};
+                    _init_mouse_event(&me);
+                    send_event(w, &me);
+                }
+            });
+            _hit_widgets.clear();
+            _last_hit_widgets.clear();
         }
 
         if (is_move()) {
-            Widget* tw = widget;
-            while (tw) {
-                MouseMoveEvent me{tw, this};
-                me._set_action_key(MouseKey::unkown);
-
-                if (send_event(tw, &me)) break;
-
-                tw = tw->parent();
+            for (Widget* w : _hit_widgets) {
+                MouseMoveEvent me{w};
+                _init_mouse_event(&me);
+                send_event(w, &me);
             }
         }
 
-        for (int i = 0; i < sizeof(_key_is_change); i++) {
+        for (int i = 0; i < sizeof(_key_is_change) / sizeof(bool); i++) {
             if (is_action((MouseKey)i)) {
-                Widget* tw = widget;
-                Widget* wi = Application::get_widget_by_pos(mouse_pos);
-                while (tw) {
-                    MousePressEvent mpe{tw, this};
-                    MouseReleaseEvent mre{tw, this};
+                for (Widget* w : _hit_widgets) {
+                    MousePressEvent mpe{w};
+                    MouseReleaseEvent mre{w};
                     MouseEvent* me = button((MouseKey)i) == MouseKeyMode::press
                                        ? (MouseEvent*)&mpe
                                        : (MouseEvent*)&mre;
-                    me->_set_action_key((MouseKey)i);
-
-                    if (send_event(tw, me)) break;
-
-                    tw = tw->parent();
+                    _init_mouse_event(me, (MouseKey)i);
+                    if (send_event(w, me)) break;
                 }
             }
         }
 
         if (is_scrolling()) {
-            for (auto w : _hover_widgets) {
-                MouseWheelEvent mse{w, wheel()};
+            for (auto w : _hit_widgets) {
+                MouseWheelEvent mse{w, wheel_offset()};
                 send_event(w, &mse);
             }
         }
 
+        _last_hit_widgets = std::move(_hit_widgets);
+        _hit_widgets.clear();
+        _miss_widgets.clear();
+
         clear_change();
     }
 
-    MouseEvent::MouseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept
-        : IEvent(target), _dispatcher(dispatcher) {
+    MouseEvent::MouseEvent(Widget* target) noexcept
+        : IEvent(target) {
         _action_key = MouseKey::unkown;
     }
 
     Point MouseEvent::pos() const noexcept {
-        return _dispatcher->pos();
+        return _mouse_pos;
     }
     Vec2i MouseEvent::offset() const noexcept {
-        return _dispatcher->offset();
+        return _mouse_offset;
     }
 
     MouseKeyMode MouseEvent::button(MouseKey key) const noexcept {
-        return _dispatcher->button(key);
+        return _key_mode[(int)key];
     }
     MouseKey MouseEvent::action() const noexcept {
         return _action_key;
     }
-
-    void MouseEvent::_set_action_key(MouseKey key) { _action_key = key; }
 
     MouseWheelEvent::MouseWheelEvent(Widget* target, Vec2i offset) noexcept
         : IEvent(target), _offset(offset) {}
 
     Vec2i MouseWheelEvent::offset() const noexcept { return _offset; }
 
-    MouseMoveEvent::MouseMoveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
-    MousePressEvent::MousePressEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
-    MouseReleaseEvent::MouseReleaseEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
-    MouseEnterEvent::MouseEnterEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
-    MouseLeaveEvent::MouseLeaveEvent(Widget* target, const MouseDispatcher* dispatcher) noexcept : MouseEvent(target, dispatcher) {}
+    MouseMoveEvent::MouseMoveEvent(Widget* target) noexcept : MouseEvent(target) {}
+    MousePressEvent::MousePressEvent(Widget* target) noexcept : MouseEvent(target) {}
+    MouseReleaseEvent::MouseReleaseEvent(Widget* target) noexcept : MouseEvent(target) {}
+    MouseEnterEvent::MouseEnterEvent(Widget* target) noexcept : MouseEvent(target) {}
+    MouseLeaveEvent::MouseLeaveEvent(Widget* target) noexcept : MouseEvent(target) {}
 
     const ObjectType* MouseEvent::object_type() const noexcept { return object_type_of<MouseEvent>(); }
     const ObjectType* MouseMoveEvent::object_type() const noexcept { return object_type_of<MouseMoveEvent>(); }
