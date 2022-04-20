@@ -206,7 +206,7 @@ def text_editor(*, text: str = "", font_size=16) -> Widget:
 
     def _on_down(mouse_key, pos):
         focus_l.focus()
-        cursor_idx = rich_text_w.pos_to_index(pos - rich_text_w.pos())
+        cursor_idx = rich_text_w.pos_to_index(pos - rich_text_w.abs_pos())
         text_editor_state["cursor_index"] = cursor_idx
 
     def _on_key(key, mode):
