@@ -67,9 +67,6 @@ def _menu_bar_item_button(title: str, popup_widget: Widget, menu_bar_state):
 
 
 def menu_bar(children: list[tuple[str, Widget]]) -> Widget:
-
-    # def menu_bar(menu_items: list[tuple[str, dict[str, Callable]]]) -> Widget:
-    # popup_widgets = {k: menu_popup_widget(v) for k, v in children}
     menu_bar_state = {
         "popup_widget": None,
         "popup_widget_unpopuper": None,
@@ -81,5 +78,5 @@ def menu_bar(children: list[tuple[str, Widget]]) -> Widget:
         button: Widget = _menu_bar_item_button(k, v, menu_bar_state)
         bar_buttons.append(button)
 
-    row_w = row(children=bar_buttons,gap=2)
+    row_w = row(children=bar_buttons, gap=2)
     return row_w

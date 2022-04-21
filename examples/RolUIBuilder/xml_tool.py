@@ -4,6 +4,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from functional_component import *
+from menu import *
 
 _widget_build_funcs = {}
 _widget_ids = {}
@@ -198,7 +199,7 @@ register_widget("char_listener", _make_build_func(widgets.CharInputListener, "ch
 register_widget("focus_listener", _make_build_func(widgets.FocusListener, "focus_listener"))
 
 
-def _label_button_build_func(obj, ctx) -> Widget:
+def _label_button_build_func(obj: dict, ctx: dict) -> Widget:
     props = _replace_inline_var(obj.get("props", {}), ctx)
     w = label_button(**props)
     return w
@@ -207,7 +208,7 @@ def _label_button_build_func(obj, ctx) -> Widget:
 register_widget("label_button", _label_button_build_func)
 
 
-def _build_from_list_object(obj: dict, ctx: dict) -> Widget:
+def _list_build_func(obj: dict, ctx: dict) -> Widget:
     children = obj.get("children", [])
     template_obj = None
     for c in children:
@@ -226,4 +227,52 @@ def _build_from_list_object(obj: dict, ctx: dict) -> Widget:
     return w
 
 
-register_widget("list", _build_from_list_object)
+register_widget("list", _list_build_func)
+
+
+def _menu_build_func(obj: dict, ctx: dict) -> Widget:
+    if obj.get("type", None) != "menu":
+        raise ValueError("invalid menu object.")
+
+    children = obj.get("children", [])
+    props = _replace_inline_var(obj.get("props", {}), ctx)
+    gap = props.get("gap", 3)
+    width = props.get("width", 128)
+
+    actions = []
+    for c in children:
+        tn = c.get("type", None)
+        if tn == "action":
+            c_props = _replace_inline_var(c.get("props", {}), ctx)
+            title = c_props.get("title", None)
+            cb = c_props.get("on_click", None)
+            if title is None:
+                raise ValueError("invalid menu object, there is an action without a title.")
+            actions.append((title, cb))
+        elif tn == "separator":
+            actions.append(("--", None))
+        else:
+            raise ValueError("invalid menu item.")
+
+    w = menu(actions=actions, gap=gap, width=width)
+    return w
+
+
+def _menu_bar_build_func(obj: dict, ctx: dict) -> Widget:
+    if obj.get("type", None) != "menu_bar":
+        raise ValueError("invalid menu_bar object.")
+
+    children = obj.get("children", [])
+    menus = []
+    for c in children:
+        c_title = _replace_inline_var(c.get("props", {}), ctx).get("title", None)
+        if c_title is None:
+            raise ValueError("invalid menu bar object, there is an menu without a title.")
+        menus.append((c_title, _menu_build_func(c, ctx)))
+
+    w = menu_bar(menus)
+    return w
+
+
+register_widget("menu", _menu_build_func)
+register_widget("menu_bar", _menu_bar_build_func)
