@@ -8,7 +8,7 @@ from PyRolUI import widgets
 from functional_component import *
 
 
-def popup(*, child: Widget, position=None):
+def popup(*, child: Widget, position=None, on_unpopup: Callable = None):
     margin_w = None
     if isinstance(position, Point):
         margin_w = margin(child=child, left=position.x, top=position.y)
@@ -17,11 +17,14 @@ def popup(*, child: Widget, position=None):
     else:
         margin_w = margin(child=child, left=0, top=0)
 
-    def _on_down(a, b):
-        print("_on_down:", a, b)
+    def _unpopup():
+        if callable(on_unpopup):
+            on_unpopup()
         Application.root_widget().rm_child(mouse_l)
 
     size_w = sized(child=margin_w)
     mouse_l = mouse_listener(child=size_w)
-    mouse_l.on_down.connect(_on_down)
+    mouse_l.on_down.connect(lambda a, b: _unpopup())
     Application.root_widget().add_child(mouse_l)
+
+    return _unpopup

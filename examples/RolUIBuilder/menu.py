@@ -15,31 +15,70 @@ def _menu_action(title: str, on_click: Callable, text_size=16):
     return button_w
 
 
-def menu_button(title: str, menu_items: dict[str, Callable]):
+def menu_popup_widget(popup_items: dict[str, Callable], width: int = 128) -> Widget:
+    popup_item_widgets = []
+    for t, cb in popup_items.items():
+        if all(map(lambda s: s == "-", t)):
+            popup_item_widgets.append(margin(child=hseparator(color=Color(128, 128, 128)), top=5, bottom=5))
+        else:
+            popup_item_widgets.append(_menu_action(t, cb))
+    menu_popup_w = column(children=popup_item_widgets, cross_axis_alignment=-1)
+    menu_popup_w = sized(child=menu_popup_w, width=width)
+    return menu_popup_w
+
+
+def menu_button(title: str, popup_widget: Widget, menu_bar_state):
+
+    def _popup(w, pos):
+        current_popup_widget = menu_bar_state["popup_widget"]
+        unpopuper = menu_bar_state.get("popup_widget_unpopuper", None)
+
+        if current_popup_widget is w:
+            return
+
+        if callable(unpopuper):
+            unpopuper()
+
+        def _on_unpopup():
+            menu_bar_state["popup_widget"] = None
+            menu_bar_state["popup_widget_unpopuper"] = None
+
+        menu_bar_state["popup_widget"] = w
+        unpopuper = popup(child=w, position=pos, on_unpopup=_on_unpopup)
+        menu_bar_state["popup_widget_unpopuper"] = unpopuper
+
+    def _on_hover(b):
+        pos = button.abs_pos()
+        size = button.size()
+        pos.y += size.height
+        current_popup_widget = menu_bar_state["popup_widget"]
+        if b and current_popup_widget is not None:
+            _popup(popup_widget, pos)
+
     def _on_click():
         pos = button.abs_pos()
         size = button.size()
         pos.y += size.height
-        popup(child=menu_popup_w, position=pos)
+        _popup(popup_widget, pos)
 
-    menu_item_ws = []
-    for t, cb in menu_items.items():
-        if all(map(lambda s: s == "-", t)):
-            menu_item_ws.append(margin(child=hseparator(color=Color(128, 128, 128)), top=5, bottom=5))
-        else:
-            menu_item_ws.append(_menu_action(t, cb))
-    menu_popup_w = column(children=menu_item_ws, cross_axis_alignment=-1)
-    menu_popup_w = sized(child=menu_popup_w, width=200)
-
-    button: Widget = label_button(text=title, padding=(8, 5), on_click=_on_click)
+    button: Widget = label_button(text=title, padding=(8, 5), on_click=_on_click, on_hover=_on_hover)
     return button
 
 
 def menu_bar(menu_items: dict[str, dict[str, Callable]]) -> Widget:
-    buttons = []
-    for title, items in menu_items.items():
-        bt = menu_button(title, items)
-        buttons.append(bt)
+    popup_widgets = {k: menu_popup_widget(v) for k, v in menu_items.items()}
+    menu_bar_state = {
+        "popup_widget": None,
+        "popup_widget_unpopuper": None,
+        "hover": False
+    }
 
-    row_w = row(children=buttons)
+
+
+    bar_buttons = []
+    for k, v in menu_items.items():
+        button: Widget = menu_button(k, popup_widgets[k], menu_bar_state)
+        bar_buttons.append(button)
+
+    row_w = row(children=bar_buttons)
     return row_w

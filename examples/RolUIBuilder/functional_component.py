@@ -207,7 +207,7 @@ def basic_button(*, content_widget: Widget = None,
                  bk_hover_color: Color = Color(229, 243, 255),
                  bk_press_color: Color = Color(204, 232, 255),
                  round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
-                 on_click=None):
+                 on_click=None, on_hover=None):
 
     margin_w = content_widget
     if not match_content:
@@ -218,6 +218,8 @@ def basic_button(*, content_widget: Widget = None,
 
     def _on_hover(b):
         box_w.background_color(bk_hover_color if b else bk_normal_color)
+        if callable(on_hover):
+            on_hover(b)
 
     def _on_down(a, b):
         box_w.background_color(bk_press_color)
@@ -239,7 +241,7 @@ def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 
                  bk_hover_color: Color = Color(229, 243, 255),
                  bk_press_color: Color = Color(204, 232, 255),
                  round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
-                 on_click=None):
+                 on_click=None, on_hover=None):
     text_w = textspan(text=text, font_size=text_size, font_color=text_color)
     if isinstance(padding, int):
         margin_w = margin(child=text_w, top=padding, bottom=padding, left=padding, right=padding)
@@ -257,7 +259,7 @@ def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 
     w = basic_button(content_widget=margin_w, match_content=True,
                      bk_normal_color=bk_normal_color, bk_hover_color=bk_hover_color, bk_press_color=bk_press_color,
                      round=round, border_color=border_color, border_width=border_width,
-                     on_click=on_click)
+                     on_click=on_click, on_hover=on_hover)
     return w
 
 
