@@ -103,7 +103,7 @@ def box(*, child: Widget = None, round=0, border_width=0, border_color=Color(), 
     return mk_widget(widgets.BoxWidget, **args)
 
 
-def align(*, child: Widget = None, x=0, y=0) -> widgets.AlignWidget:
+def align(*, child: Widget = None, align_x=0, align_y=0) -> widgets.AlignWidget:
     args = locals()
     return mk_widget(widgets.AlignWidget, **args)
 
@@ -181,7 +181,7 @@ def vseparator(*, color=Color(0, 0, 0, 255), width=1) -> widgets.VSeparatorWidge
     return mk_widget(widgets.VSeparatorWidget, color=color, width=width)
 
 
-def Hseparator(*, color=Color(0, 0, 0, 255), width=1) -> widgets.HSeparatorWidget:
+def hseparator(*, color=Color(0, 0, 0, 255), width=1) -> widgets.HSeparatorWidget:
     return mk_widget(widgets.HSeparatorWidget, color=color, width=width)
 
 
@@ -201,28 +201,17 @@ def focus_listener(*, child: Widget = None, on_focus: Callable) -> widgets.Focus
     return mk_widget(widgets.FocusListener, child=child, on_focus=on_focus)
 
 
-def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
-                 padding: Union[tuple, int, None] = None, round: int = 0,
+def basic_button(*, content_widget: Widget = None,
+                 match_content=True,
                  bk_normal_color: Color = Color(247, 247, 247),
                  bk_hover_color: Color = Color(229, 243, 255),
                  bk_press_color: Color = Color(204, 232, 255),
-                 border_color: Color = Color(64, 64, 64, 255), border_width=0,
+                 round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
                  on_click=None):
-    text_w = textspan(text=text, font_size=text_size, font_color=text_color)
-    if isinstance(padding, int):
-        margin_w = margin(child=text_w, top=padding, bottom=padding, left=padding, right=padding)
-    elif isinstance(padding, tuple) and len(padding) == 1:
-        margin_w = margin(child=text_w, top=padding[0], bottom=padding[0], left=padding[0], right=padding[0])
-    elif isinstance(padding, tuple) and len(padding) == 2:
-        mx, my = padding
-        margin_w = margin(child=text_w, top=my, bottom=my, left=mx, right=mx)
-    elif isinstance(padding, tuple) and len(padding) == 4:
-        mt, mr, mb, ml = padding
-        margin_w = margin(child=text_w, top=mt, bottom=mb, left=ml, right=mr)
-    elif padding is None:
-        margin_w = text_w
-    else:
-        raise TypeError("invalid margin value: %s" % str(padding))
+
+    margin_w = content_widget
+    if not match_content:
+        margin_w = align(child=margin_w, align_x=-1, align_y=-1)
 
     box_w = box(child=margin_w, round=round, border_color=border_color, border_width=border_width)
     box_w.background_color(bk_normal_color)
@@ -242,6 +231,34 @@ def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 
 
     mouse_l = mouse_listener(child=box_w, on_click=_on_click, on_hover=_on_hover, on_down=_on_down, on_up=_on_up)
     return mouse_l
+
+
+def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
+                 padding: Union[tuple, int, None] = 0,
+                 bk_normal_color: Color = Color(247, 247, 247),
+                 bk_hover_color: Color = Color(229, 243, 255),
+                 bk_press_color: Color = Color(204, 232, 255),
+                 round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
+                 on_click=None):
+    text_w = textspan(text=text, font_size=text_size, font_color=text_color)
+    if isinstance(padding, int):
+        margin_w = margin(child=text_w, top=padding, bottom=padding, left=padding, right=padding)
+    elif isinstance(padding, tuple) and len(padding) == 1:
+        margin_w = margin(child=text_w, top=padding[0], bottom=padding[0], left=padding[0], right=padding[0])
+    elif isinstance(padding, tuple) and len(padding) == 2:
+        mx, my = padding
+        margin_w = margin(child=text_w, top=my, bottom=my, left=mx, right=mx)
+    elif isinstance(padding, tuple) and len(padding) == 4:
+        mt, mr, mb, ml = padding
+        margin_w = margin(child=text_w, top=mt, bottom=mb, left=ml, right=mr)
+    else:
+        raise TypeError("invalid margin value: %s" % str(padding))
+
+    w = basic_button(content_widget=margin_w, match_content=True,
+                     bk_normal_color=bk_normal_color, bk_hover_color=bk_hover_color, bk_press_color=bk_press_color,
+                     round=round, border_color=border_color, border_width=border_width,
+                     on_click=on_click)
+    return w
 
 
 def list_view(*, template_func: Callable, datas: list, gap: int = 0, cross_axis_alignment: float = 0.0) -> Widget:
