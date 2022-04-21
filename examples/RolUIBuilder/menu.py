@@ -15,19 +15,20 @@ def _menu_action(title: str, on_click: Callable, text_size=16):
     return button_w
 
 
-def menu_popup_widget(popup_items: dict[str, Callable], width: int = 128) -> Widget:
+def menu(actions: list[tuple[str, Callable]], gap=3, width: int = 128) -> Widget:
     popup_item_widgets = []
-    for t, cb in popup_items.items():
+    for t, cb in actions:
         if all(map(lambda s: s == "-", t)):
             popup_item_widgets.append(margin(child=hseparator(color=Color(128, 128, 128)), top=5, bottom=5))
         else:
             popup_item_widgets.append(_menu_action(t, cb))
-    menu_popup_w = column(children=popup_item_widgets, cross_axis_alignment=-1)
+    menu_popup_w = column(children=popup_item_widgets, gap=gap, cross_axis_alignment=-1)
+    menu_popup_w = box(child=menu_popup_w, background_color=Color(250, 250, 250))
     menu_popup_w = sized(child=menu_popup_w, width=width)
     return menu_popup_w
 
 
-def menu_button(title: str, popup_widget: Widget, menu_bar_state):
+def _menu_bar_item_button(title: str, popup_widget: Widget, menu_bar_state):
 
     def _popup(w, pos):
         current_popup_widget = menu_bar_state["popup_widget"]
@@ -65,20 +66,20 @@ def menu_button(title: str, popup_widget: Widget, menu_bar_state):
     return button
 
 
-def menu_bar(menu_items: dict[str, dict[str, Callable]]) -> Widget:
-    popup_widgets = {k: menu_popup_widget(v) for k, v in menu_items.items()}
+def menu_bar(children: list[tuple[str, Widget]]) -> Widget:
+
+    # def menu_bar(menu_items: list[tuple[str, dict[str, Callable]]]) -> Widget:
+    # popup_widgets = {k: menu_popup_widget(v) for k, v in children}
     menu_bar_state = {
         "popup_widget": None,
         "popup_widget_unpopuper": None,
         "hover": False
     }
 
-
-
     bar_buttons = []
-    for k, v in menu_items.items():
-        button: Widget = menu_button(k, popup_widgets[k], menu_bar_state)
+    for k, v in children:
+        button: Widget = _menu_bar_item_button(k, v, menu_bar_state)
         bar_buttons.append(button)
 
-    row_w = row(children=bar_buttons)
+    row_w = row(children=bar_buttons,gap=2)
     return row_w
