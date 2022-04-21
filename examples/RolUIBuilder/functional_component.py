@@ -88,43 +88,6 @@ def mk_widget(widget_type: type, **kw_args) -> Widget:
     return widget
 
 
-def render(obj: dict):
-    if not issubclass(obj.get("type", None), Widget):
-        raise ValueError("obj must be Widget type.")
-    WidgetType = obj["type"]
-    props = obj.get("props", {})
-
-    widget: Widget = WidgetType()
-    _gc_widgets.add(widget)
-
-    def _build_cb(w: Widget, k):
-        return lambda val: getattr(w, k).set(val) if w.mounted() else None
-
-    for k, v in props.items():
-        if hasattr(widget, k):
-            if isinstance(v, State):
-                getattr(widget, k).set(v.get())
-                v.add_callback(_build_cb(widget, k))
-            else:
-                getattr(widget, k).set(v)
-
-    if "children" in obj and isinstance(obj["children"], list):
-        if isinstance(widget, MultiChildWidget):
-            children = map(render, obj["children"])
-            for c in children:
-                widget.add_child(c)
-        else:
-            raise ValueError("Invalid children: " + str(obj["children"]))
-    elif "child" in obj and isinstance(obj["child"], dict):
-        if isinstance(widget, SingleChildWidget):
-            w = render(obj["child"])
-            widget.set_child(w)
-        else:
-            raise ValueError("Invalid child: " + str(obj["child"]))
-
-    return widget
-
-
 def textspan(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextSpanWidget:
     args = locals()
     return mk_widget(widgets.TextSpanWidget, **args)
@@ -239,29 +202,27 @@ def focus_listener(*, child: Widget = None, on_focus: Callable) -> widgets.Focus
 
 
 def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
-                 margin: Union[tuple, int] = 8, round: int = 0,
+                 padding: Union[tuple, int, None] = None, round: int = 0,
                  bk_normal_color: Color = Color(247, 247, 247),
                  bk_hover_color: Color = Color(229, 243, 255),
                  bk_press_color: Color = Color(204, 232, 255),
                  border_color: Color = Color(64, 64, 64, 255), border_width=0,
                  on_click=None):
-    margin_ = margin
-    margin = globals()["margin"]
-
     text_w = textspan(text=text, font_size=text_size, font_color=text_color)
-    margin_w = None
-    if isinstance(margin_, int):
-        margin_w = margin(child=text_w, top=margin_, bottom=margin_, left=margin_, right=margin_)
-    elif isinstance(margin_, tuple) and len(margin_) == 1:
-        margin_w = margin(child=text_w, top=margin_[0], bottom=margin_[0], left=margin_[0], right=margin_[0])
-    elif isinstance(margin_, tuple) and len(margin_) == 2:
-        mx, my = margin_
+    if isinstance(padding, int):
+        margin_w = margin(child=text_w, top=padding, bottom=padding, left=padding, right=padding)
+    elif isinstance(padding, tuple) and len(padding) == 1:
+        margin_w = margin(child=text_w, top=padding[0], bottom=padding[0], left=padding[0], right=padding[0])
+    elif isinstance(padding, tuple) and len(padding) == 2:
+        mx, my = padding
         margin_w = margin(child=text_w, top=my, bottom=my, left=mx, right=mx)
-    elif isinstance(margin_, tuple) and len(margin_) == 4:
-        mt, mr, mb, ml = margin_
+    elif isinstance(padding, tuple) and len(padding) == 4:
+        mt, mr, mb, ml = padding
         margin_w = margin(child=text_w, top=mt, bottom=mb, left=ml, right=mr)
+    elif padding is None:
+        margin_w = text_w
     else:
-        raise TypeError("invalid margin value: %s" % str(margin_))
+        raise TypeError("invalid margin value: %s" % str(padding))
 
     box_w = box(child=margin_w, round=round, border_color=border_color, border_width=border_width)
     box_w.background_color(bk_normal_color)
@@ -276,7 +237,29 @@ def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 
         box_w.background_color(bk_hover_color)
 
     def _on_click(a, b):
-        on_click()
+        if callable(on_click):
+            on_click()
 
     mouse_l = mouse_listener(child=box_w, on_click=_on_click, on_hover=_on_hover, on_down=_on_down, on_up=_on_up)
     return mouse_l
+
+
+def list_view(*, template_func: Callable, datas: list, gap: int = 0, cross_axis_alignment: float = 0.0) -> Widget:
+    if not callable(template_func):
+        raise TypeError("template_func must be callable.")
+
+    w: MultiChildWidget = column(children=[], gap=gap, cross_axis_alignment=cross_axis_alignment)
+
+    def _cb(new_datas):
+        w.rm_child_all()
+        for data_item in new_datas:
+            cw = template_func(data_item)
+            w.add_child(cw)
+
+    if isinstance(datas, State):
+        datas.add_callback(_cb)
+        _cb(datas.get())
+    else:
+        _cb(datas)
+
+    return w

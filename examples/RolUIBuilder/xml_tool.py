@@ -21,10 +21,19 @@ def get_widget_by_id(id: str) -> Widget:
     return _widget_ids.get(id, None)
 
 
+class InlineVar:
+    name = ""
+
+    def __init__(self, name) -> None:
+        self.name = name
+
+
 color_hex_pattern = re.compile("#(([0-9a-fA-F]{3,4})|([0-9a-fA-F]{6})|([0-9a-fA-F]{8}))")
 color_pattern = re.compile("(color|Color|COLOR)\( *(\d{1,3}) *, *(\d{1,3}) *, *(\d{1,3}) *(, *(\d{1,3}) *)?\)")
 float_pattern = re.compile("\d+\.\d+")
 integer_pattern = re.compile("[1-9]\d*")
+inline_var_pattern = re.compile("\$([a-zA-Z_][0-9a-zA-Z_]*)")
+inline_expr_pattern = re.compile("\$\{.*\}")
 
 
 def _str_to_value(s: str):
@@ -60,24 +69,41 @@ def _str_to_value(s: str):
     if result is not None:
         return int(s)
 
+    result = re.fullmatch(inline_var_pattern, s)
+    if result is not None:
+        name = result.group(1)
+        return InlineVar(name)
+
     return s
 
 
+def _replace_inline_var(props: dict, ctx: dict) -> dict:
+    new_props = {}
+    for k, v in props.items():
+        if isinstance(v, InlineVar):
+            new_props[k] = ctx.get(v.name, None)
+        else:
+            new_props[k] = v
+    return new_props
+
+
 def _make_build_func(widget_type: type, widget_type_name: str):
-    def _bf(obj: dict) -> Widget:
+    def _bf(obj: dict, ctx: dict) -> Widget:
         if obj.get("type", None) != widget_type_name:
             raise ValueError("invalid %s object." & widget_type_name)
 
-        w = mk_widget(widget_type, **obj.get("props", {}))
+        props = _replace_inline_var(obj.get("props", {}), ctx)
+
+        w = mk_widget(widget_type, **props)
 
         children = obj.get("children", [])
 
         if isinstance(w, SingleChildWidget) and len(children) == 1:
-            w.set_child(build_widget_from_object(children[0]))
+            w.set_child(build_widget_from_object(children[0], ctx))
         elif isinstance(w, SingleChildWidget) and len(children) > 1:
-            raise RuntimeError("%s must can only have one child widget." % widget_type_name)
+            raise RuntimeError("%s widget must can only have one child widget." % widget_type_name)
         elif isinstance(w, MultiChildWidget):
-            for child in map(build_widget_from_object, children):
+            for child in map(lambda c: build_widget_from_object(c, ctx), children):
                 w.add_child(child)
 
         id_ = obj.get("id", None)
@@ -89,11 +115,21 @@ def _make_build_func(widget_type: type, widget_type_name: str):
     return _bf
 
 
+def _build_from_template_object(template_obj: dict, ctx: dict) -> Widget:
+    children = template_obj.get("children", [])
+    if len(children) != 1:
+        raise RuntimeError("template_obj must be have one and only one child.")
+
+    child = children[0]
+    w = build_widget_from_object(child, ctx)
+    return w
+
+
 def xml_element_to_object(elem: ET.Element) -> dict[str, object]:
 
     tag = elem.tag
     id_ = elem.get("id", None)
-    props = {k: _str_to_value(v) for k, v in elem.attrib.items() if k != "id"}
+    props = elem.attrib
     children = []
 
     inner_text = elem.text.strip() if elem.text is not None else ""
@@ -105,6 +141,8 @@ def xml_element_to_object(elem: ET.Element) -> dict[str, object]:
             "props": {"text": inner_text},
             "children": []
         })
+
+    props = {k: _str_to_value(v) for k, v in props.items() if k != "id"}
 
     children.extend(map(xml_element_to_object, elem))
 
@@ -119,7 +157,7 @@ def xml_to_object(xml_str: str) -> dict[str, object]:
     return xml_element_to_object(elem)
 
 
-def build_widget_from_object(obj: dict) -> Widget:
+def build_widget_from_object(obj: dict, ctx: dict) -> Widget:
     tn = obj.get("type", None)
     if tn is None:
         raise ValueError("invalid obj: " + str(obj))
@@ -128,12 +166,12 @@ def build_widget_from_object(obj: dict) -> Widget:
     if build_func is None:
         raise RuntimeError("not build function of %s" % str(tn))
 
-    return build_func(obj)
+    return build_func(obj, ctx)
 
 
-def build_widget_from_xml(xml_str: str):
+def build_widget_from_xml(xml_str: str, ctx: dict):
     obj = xml_to_object(xml_str)
-    return build_widget_from_object(obj)
+    return build_widget_from_object(obj, ctx)
 
 
 register_widget("text", _make_build_func(widgets.TextSpanWidget, "text"))
@@ -159,4 +197,33 @@ register_widget("mouse_listener", _make_build_func(widgets.MouseListener, "mouse
 register_widget("char_listener", _make_build_func(widgets.CharInputListener, "char_listener"))
 register_widget("focus_listener", _make_build_func(widgets.FocusListener, "focus_listener"))
 
-register_widget("label_button", lambda obj: label_button(**obj.get("props", {})))
+
+def _label_button_build_func(obj, ctx) -> Widget:
+    props = _replace_inline_var(obj.get("props", {}), ctx)
+    w = label_button(**props)
+    return w
+
+
+register_widget("label_button", _label_button_build_func)
+
+
+def _build_from_list_object(obj: dict, ctx: dict) -> Widget:
+    children = obj.get("children", [])
+    template_obj = None
+    for c in children:
+        if c.get("type", None) == "template":
+            template_obj = c
+
+    def _template_func(item_obj) -> Widget:
+        return _build_from_template_object(template_obj, item_obj)
+
+    datas = obj.get("props", {}).get("datas", None)
+    if isinstance(datas, InlineVar):
+        datas = ctx.get(datas.name, [])
+    else:
+        datas = []
+    w = list_view(template_func=_template_func, datas=datas)
+    return w
+
+
+register_widget("list", _build_from_list_object)
