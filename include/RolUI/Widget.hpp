@@ -6,6 +6,7 @@
 #include <vector>
 #include <tuple>
 #include <type_traits>
+#include <limits>
 
 #include "./Point.hpp"
 #include "./Rect.hpp"

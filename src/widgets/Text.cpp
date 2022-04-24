@@ -1,4 +1,6 @@
 
+#include <cstring>
+
 #include "utf8.h"
 
 #include "RolUI/Object.hpp"

@@ -5,7 +5,7 @@ aux_source_directory(${RolUI_SOURCE_DIR}/events  RolUI_events_source)
 
 add_library(RolUI-static STATIC ${RolUI_source} ${RolUI_widgets_source} ${RolUI_events_source})
 target_include_directories(RolUI-static PRIVATE ${RolUI_INCLUDE_DIR} ${3RDPARTY_DIR}/utf8)
-target_compile_options(RolUI-static PRIVATE -std=c++17)
+target_compile_options(RolUI-static PRIVATE --std=c++17)
 set_target_properties(RolUI-static PROPERTIES PREFIX "")
 set_target_properties(RolUI-static PROPERTIES OUTPUT_NAME "RolUI")
 set_target_properties(RolUI-static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/examples_bin/)

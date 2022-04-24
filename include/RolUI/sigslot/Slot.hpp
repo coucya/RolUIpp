@@ -1,6 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
+#include <utility>
+#include <algorithm>
 
 #include "ISignal.hpp"
 
@@ -51,7 +54,7 @@ namespace RolUI {
     }
 
     inline void HasSlot::_add_signal(ISignal* sign, const _details::SlotInfo& info) {
-        _signals.push_back({sign, info});
+        _signals.push_back(SignalConnect{sign, info});
     }
 
     inline void HasSlot::_remove_signal(ISignal* sign, size_t handle) noexcept {
@@ -64,8 +67,7 @@ namespace RolUI {
 
     inline void HasSlot::disconnect(ISignal* obj) noexcept {
         _disconnect_if([=](const SignalConnect& sc) {
-            const auto& [sign, info] = sc;
-            return sign == obj;
+            return std::get<0>(sc) == obj;
         });
     }
 

@@ -39,7 +39,7 @@ namespace RolUIBackend {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
         NVGglyphPosition* glyphs = &T_GLYPH_POSITION[0];
         if (pos_len > T_MAX_LEN)
-            new NVGglyphPosition[pos_len];
+            glyphs = new NVGglyphPosition[pos_len];
 
         int n = nvgTextGlyphPositions(vg, 0, 0, text, text + text_len, glyphs, pos_len);
         for (int i = 0; i < n; i++) {
