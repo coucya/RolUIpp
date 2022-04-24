@@ -3,8 +3,7 @@
 // #include <optional>
 #include <type_traits>
 
-#include "./sigslot/Signal.hpp"
-#include "./sigslot/Slot.hpp"
+#include "./sigslot.hpp"
 
 namespace RolUI {
 

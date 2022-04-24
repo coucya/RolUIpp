@@ -3,7 +3,8 @@
 #include <cstdio>
 
 #include "assert.h"
-#include "RolUI/sigslot/Signal.hpp"
+// #include "RolUI/sigslot/Signal.hpp"
+#include "RolUI/sigslot.hpp"
 #include "RolUI/Object.hpp"
 
 using namespace RolUI;
@@ -55,21 +56,16 @@ void sigslot_test() {
         printf("\n\n========== start %2d ==========\n", n);
 
         A slot;
-        size_t h1 = s.connect(slot);
+
+        size_t h2 = s.connect(&slot, &A::foo);
         debug_assert_eq(s.slot_count(), 1);
 
-        size_t h2 = s.connect(slot, &A::foo);
+        size_t h3 = s.connect(&slot, &A::bar);
         debug_assert_eq(s.slot_count(), 2);
 
-        size_t h3 = s.connect(slot, &A::bar);
-        debug_assert_eq(s.slot_count(), 3);
-
-        debug_assert_eq(slot.signals_count(), 0);
+        debug_assert_eq(slot.signals_count(), 2);
 
         s.emit(n);
-
-        s.disconnect(h1);
-        debug_assert_eq(s.slot_count(), 2);
 
         s.disconnect(h2);
         debug_assert_eq(s.slot_count(), 1);
@@ -98,6 +94,8 @@ void sigslot_test() {
         debug_assert_eq(slot.signals_count(), 3);
 
         s.emit(n);
+
+        s.disconnect_all();
 
         printf("========== end   %2d ==========\n", n);
     }
@@ -128,30 +126,7 @@ void sigslot_test() {
 
         s.emit(n);
 
-        s.disconnect(&slot);
-        debug_assert_eq(s.slot_count(), 4);
-        printf("========== dis: &slot\n");
-        s.emit(n);
-
-        s.disconnect(&slot, &A::foo);
-        debug_assert_eq(s.slot_count(), 3);
-        printf("== dis: &A::foo\n");
-        s.emit(n);
-
-        s.disconnect(&slot, &A::bar);
-        debug_assert_eq(s.slot_count(), 2);
-        printf("== dis: &A::bar\n");
-        s.emit(n);
-
-        s.disconnect(foo);
-        debug_assert_eq(s.slot_count(), 1);
-        printf("== dis: foo\n");
-        s.emit(n);
-
-        s.disconnect(A::s_foo);
-        debug_assert_eq(s.slot_count(), 0);
-        printf("== dis: s_foo\n");
-        s.emit(n);
+        s.disconnect_all();
 
         printf("========== end   %2d ==========\n", n);
     }
@@ -176,10 +151,7 @@ void sigslot_test() {
 
         s.emit(n);
 
-        slot.disconnect(&s, &A::foo);
-        debug_assert_eq(s.slot_count(), 2);
-        printf("== dis: &A::foo\n");
-        s.emit(n);
+        slot.disconnect_all();
 
         printf("========== end   %2d ==========\n", n);
     }

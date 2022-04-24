@@ -5,8 +5,7 @@
 #include "./Point.hpp"
 #include "./Rect.hpp"
 #include "./Size.hpp"
-#include "./sigslot/Slot.hpp"
-#include "./sigslot/Signal.hpp"
+#include "./sigslot.hpp"
 
 namespace RolUI {
 

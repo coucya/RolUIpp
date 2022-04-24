@@ -8,5 +8,5 @@ target_include_directories(RolUI_glfw_backend PRIVATE ${3RDPARTY_DIR}/nanovg/src
 target_include_directories(RolUI_glfw_backend PRIVATE ${3RDPARTY_DIR}/stb)
 target_link_libraries(RolUI_glfw_backend glfw glad)
 target_link_libraries(RolUI_glfw_backend nanovg)
-target_link_libraries(RolUI_glfw_backend RolUI-static)
+target_link_libraries(RolUI_glfw_backend RolUI-shared)
 target_compile_options(RolUI_glfw_backend PRIVATE --std=c++17)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Widget.hpp"
-#include "../sigslot/Signal.hpp"
+#include "../sigslot.hpp"
 #include "../events/MouseEvent.hpp"
 #include "../events/KeyboardEvent.hpp"
 

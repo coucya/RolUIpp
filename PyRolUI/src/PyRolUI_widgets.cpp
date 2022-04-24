@@ -15,8 +15,7 @@
 #include <RolUI/Widget.hpp>
 #include <RolUI/Application.hpp>
 
-#include <RolUI/sigslot/Signal.hpp>
-#include <RolUI/sigslot/Slot.hpp>
+#include <RolUI/sigslot.hpp>
 
 #include <RolUI/widgets/Text.hpp>
 #include <RolUI/widgets/container.hpp>
@@ -42,7 +41,7 @@ namespace py = pybind11;
                 .def("connect", [](Sign& self, std::function<void(__VA_ARGS__)> f) {                    \
                     return self.connect(std::move(f));                                                  \
                 })                                                                                      \
-                .def("disconnect", static_cast<void (Sign::*)(size_t)>(&Sign::disconnect))              \
+                .def("disconnect", static_cast<void (Sign::*)(unsigned)>(&Sign::disconnect))            \
                 .def("disconnect_all", &Sign::disconnect_all)                                           \
                 .def("emit", static_cast<void (Sign::*)(__VA_ARGS__) const noexcept>(&Sign::emit))      \
                 .def("__call__", static_cast<void (Sign::*)(__VA_ARGS__) const noexcept>(&Sign::emit)); \

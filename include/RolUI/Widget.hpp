@@ -13,8 +13,7 @@
 #include "./Size.hpp"
 #include "./Object.hpp"
 #include "./IEvent.hpp"
-#include "./sigslot/Signal.hpp"
-#include "./sigslot/Slot.hpp"
+#include "./sigslot.hpp"
 
 namespace RolUI {
 
