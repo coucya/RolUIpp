@@ -282,3 +282,28 @@ def list_view(*, template_func: Callable, datas: list, gap: int = 0, cross_axis_
         _cb(datas)
 
     return w
+
+
+def _tree_view(*, template_func: Callable, datas: dict, head_height: int = 30, indent: int, level: int) -> Widget:
+    if not callable(template_func):
+        raise TypeError("template_func must be callable.")
+
+    w = template_func(datas)
+    children_datas = datas.get("children", [])
+    children_nodes = []
+
+    for child_datas in children_datas:
+        cw = _tree_view(template_func=template_func, datas=child_datas, indent=indent, level=level + 1)
+        children_nodes.append(cw)
+
+    head_w = margin(child=w, left=indent * level)
+    head_w = sized(child=head_w, width=1.0, height=head_height)
+    head_w = basic_button(content_widget=head_w)
+    children_node_w = column(children=children_nodes, cross_axis_alignment=-1)
+    node_w = column(children=[head_w, children_node_w], cross_axis_alignment=-1)
+    return node_w
+
+
+def tree_view(*, template_func: Callable, datas: dict, head_height: int = 30, indent: int = 5) -> Widget:
+    w = _tree_view(template_func=template_func, datas=datas, indent=indent, level=0)
+    return w
