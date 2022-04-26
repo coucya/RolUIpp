@@ -90,10 +90,13 @@ namespace RolUI {
         Point abs_pos() const noexcept;
         Rect abs_rect() const noexcept;
 
+        bool opaque() const noexcept;
         bool is_hit() const noexcept;
         bool mounted() const noexcept;
         unsigned depth() const noexcept;
         Widget* parent() const noexcept;
+
+        void set_opaque(bool val) noexcept;
 
         void mark_hit() noexcept;
         void clear_hit() noexcept;
@@ -127,6 +130,7 @@ namespace RolUI {
         void _detach() noexcept;
 
       private:
+        bool _opaque = false;
         bool _is_hit = false;
         bool _mounted = false;
         unsigned _depth = 0;
@@ -197,45 +201,36 @@ namespace RolUI {
     using enable_if_invocable_int_Widget_p_t = typename std::enable_if<std::is_invocable_r_v<void, T, int, Widget*>>::type;
 
     template <typename F>
-    void visit_child(Widget* w, F&& f, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
+    void visit_child(Widget* w, F&& f, bool reverse = false, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
         if (!w) return;
-        for (int i = 0, c = w->child_count(); i < c; i++)
-            f(w->child(i));
+        if (reverse == false)
+            for (int i = 0, c = w->child_count(); i < c; i++)
+                f(w->child(i));
+        else
+            for (int i = w->child_count() - 1; i >= 0; i--)
+                f(w->child(i));
     }
     template <typename F>
-    void visit_child(Widget* w, F&& f, enable_if_invocable_int_Widget_p_t<F>* = nullptr) noexcept {
+    void visit_child(Widget* w, F&& f, bool reverse = false, enable_if_invocable_int_Widget_p_t<F>* = nullptr) noexcept {
         if (!w) return;
-        for (int i = 0, c = w->child_count(); i < c; i++)
-            f(i, w->child(i));
-    }
-    template <typename F>
-    void visit_child_reverse(Widget* w, F&& f, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
-        if (!w) return;
-        for (int i = w->child_count() - 1; i >= 0; i--)
-            f(w->child(i));
-    }
-    template <typename F>
-    void visit_child_reverse(Widget* w, F&& f, enable_if_invocable_int_Widget_p_t<F>* = nullptr) noexcept {
-        if (!w) return;
-        for (int i = w->child_count() - 1; i >= 0; i--)
-            f(i, w->child(i));
+        if (reverse == false)
+            for (int i = 0, c = w->child_count(); i < c; i++)
+                f(i, w->child(i));
+        else
+            for (int i = w->child_count() - 1; i >= 0; i--)
+                f(i, w->child(i));
     }
 
-    template <typename F>
-    void visit_tree(Widget* w, F&& f, bool preorder = true, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
+    template <typename F, typename = enable_if_invocable_Widget_p_t<F>>
+    void visit_tree(Widget* w, F&& f, bool reverse = false, bool preorder = true) noexcept {
         if (w) {
             if (preorder) f(w);
-            for (int i = 0, c = w->child_count(); i < c; i++)
-                visit_tree(w->child(i), std::forward<F>(f));
-            if (!preorder) f(w);
-        }
-    }
-    template <typename F>
-    void visit_tree_reverse(Widget* w, F&& f, bool preorder = true, enable_if_invocable_Widget_p_t<F>* = nullptr) noexcept {
-        if (w) {
-            if (preorder) f(w);
-            for (int i = w->child_count() - 1; i >= 0; i--)
-                visit_tree(w->child(i), std::forward<F>(f));
+            if (reverse == false)
+                for (int i = 0, c = w->child_count(); i < c; i++)
+                    visit_tree(w->child(i), std::forward<F>(f), reverse, preorder);
+            else
+                for (int i = w->child_count() - 1; i >= 0; i--)
+                    visit_tree(w->child(i), std::forward<F>(f), reverse, preorder);
             if (!preorder) f(w);
         }
     }

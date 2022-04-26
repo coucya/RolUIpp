@@ -90,6 +90,7 @@ namespace RolUI {
         if (w == nullptr) return;
 
         Point mouse_pos = this->pos();
+        Application::root_widget()->clear_hit();
         Application::root_widget()->hit_test(mouse_pos);
         visit_tree(Application::root_widget(), [this](Widget* w) {
             if (w->is_hit())

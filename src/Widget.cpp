@@ -37,10 +37,13 @@ namespace RolUI {
     Point Widget::abs_pos() const noexcept { return _abs_pos; }
     Rect Widget::abs_rect() const noexcept { return {abs_pos(), size()}; }
 
+    bool Widget::opaque() const noexcept { return _opaque; }
     bool Widget::is_hit() const noexcept { return _is_hit; }
     bool Widget::mounted() const noexcept { return _mounted; }
     unsigned Widget::depth() const noexcept { return _depth; }
     Widget* Widget::parent() const noexcept { return _parent; }
+
+    void Widget::set_opaque(bool val) noexcept { _opaque = val; }
 
     void Widget::mark_hit() noexcept { _is_hit = true; }
     void Widget::clear_hit_self() noexcept { _is_hit = false; }
@@ -63,9 +66,12 @@ namespace RolUI {
     void Widget::rm_child(int index) noexcept {}
 
     bool Widget::hit_test(Point pos) noexcept {
-        bool result = hit_test_self(pos);
-        for (int i = 0; i < child_count(); i++)
+        bool result = false;
+        for (int i = child_count() - 1; i >= 0; i--) {
             result = child(i)->hit_test(pos) || result;
+            if (opaque() && result) break;
+        }
+        result = hit_test_self(pos) || result;
         return result;
     }
     bool Widget::hit_test_self(Point pos) noexcept {
@@ -73,8 +79,10 @@ namespace RolUI {
     }
     Widget* Widget::hit_test_children(Point pos) noexcept {
         Widget* result = nullptr;
-        for (int i = 0; i < child_count(); i++)
+        for (int i = child_count() - 1; i >= 0; i--) {
             result = child(i)->hit_test_self(pos) ? child(i) : result;
+            if (opaque() && result) break;
+        }
         return result;
     }
 

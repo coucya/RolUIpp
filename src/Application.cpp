@@ -52,7 +52,7 @@ namespace RolUI {
 
     static TimerQueue _timer_queue = {};
 
-    RootWidget::RootWidget() noexcept {}
+    RootWidget::RootWidget() noexcept { set_opaque(true); }
 
     Widget* RootWidget::content_widget() const noexcept { return child(0); }
     void RootWidget::set_content_widget(Widget* widget) noexcept { set_child(widget, 0); }
@@ -98,6 +98,8 @@ namespace RolUI {
     Widget* Application::get_widget_by_pos(Point pos) noexcept {
         Widget* widget = nullptr;
         Widget* w_it = root_widget();
+
+        w_it->clear_hit();
 
         while ((widget = w_it->hit_test_children(pos)) != nullptr)
             w_it = widget;

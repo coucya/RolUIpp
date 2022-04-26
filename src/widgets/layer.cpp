@@ -45,11 +45,9 @@ namespace RolUI {
         }
 
         bool DeckWidget::hit_test(Point pos) noexcept {
-            clear_hit();
             return hit_test_self(pos) && child(selected()) && child(selected())->hit_test(pos);
         }
         Widget* DeckWidget::hit_test_children(Point pos) noexcept {
-            clear_hit();
             if (child(selected()) && child(selected())->hit_test_self(pos))
                 return child(selected());
             return nullptr;
