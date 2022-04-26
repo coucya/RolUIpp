@@ -31,8 +31,8 @@ class InlineVar:
 
 color_hex_pattern = re.compile("#(([0-9a-fA-F]{3,4})|([0-9a-fA-F]{6})|([0-9a-fA-F]{8}))")
 color_pattern = re.compile("(color|Color|COLOR)\( *(\d{1,3}) *, *(\d{1,3}) *, *(\d{1,3}) *(, *(\d{1,3}) *)?\)")
-float_pattern = re.compile("\d+\.\d+")
-integer_pattern = re.compile("[1-9]\d*")
+float_pattern = re.compile("[+-]?\d+\.\d+")
+integer_pattern = re.compile("[+-]?[1-9]\d*")
 inline_var_pattern = re.compile("\$([a-zA-Z_][0-9a-zA-Z_]*)")
 inline_expr_pattern = re.compile("\$\{.*\}")
 
@@ -82,10 +82,43 @@ def _replace_inline_var(props: dict, ctx: dict) -> dict:
     new_props = {}
     for k, v in props.items():
         if isinstance(v, InlineVar):
+            if v.name not in ctx:
+                raise RuntimeError("not found inline var (%s) in ctx." % v.name)
             new_props[k] = ctx.get(v.name, None)
         else:
             new_props[k] = v
     return new_props
+
+
+def _replace_event(props: dict, ctx: dict) -> dict:
+    new_props = {}
+    for k, v in props.items():
+        if isinstance(k, str) and k.startswith("on_"):
+            if v not in ctx:
+                raise RuntimeError("not found event callback (%s) in ctx." % v)
+            elif callable(ctx[v]):
+                new_props[k] = ctx[v]
+            else:
+                raise RuntimeError("event callback (%s) not callbale." % v)
+        else:
+            new_props[k] = v
+    return new_props
+
+
+def _replace_props_with_context(props: dict, ctx: dict) -> dict:
+    props = _replace_inline_var(props, ctx)
+    props = _replace_event(props, ctx)
+    return props
+
+
+def _build_children(w: Widget, children: list, ctx: dict):
+    if isinstance(w, SingleChildWidget) and len(children) == 1:
+        w.set_child(build_widget_from_object(children[0], ctx))
+    elif isinstance(w, SingleChildWidget) and len(children) > 1:
+        raise RuntimeError("%s widget must can only have one child widget." % type(w).__name__)
+    elif isinstance(w, MultiChildWidget):
+        for child in map(lambda c: build_widget_from_object(c, ctx), children):
+            w.add_child(child)
 
 
 def _make_build_func(widget_type: type, widget_type_name: str):
@@ -93,19 +126,11 @@ def _make_build_func(widget_type: type, widget_type_name: str):
         if obj.get("type", None) != widget_type_name:
             raise ValueError("invalid %s object." & widget_type_name)
 
-        props = _replace_inline_var(obj.get("props", {}), ctx)
+        props = _replace_props_with_context(obj.get("props", {}), ctx)
 
         w = mk_widget(widget_type, **props)
 
-        children = obj.get("children", [])
-
-        if isinstance(w, SingleChildWidget) and len(children) == 1:
-            w.set_child(build_widget_from_object(children[0], ctx))
-        elif isinstance(w, SingleChildWidget) and len(children) > 1:
-            raise RuntimeError("%s widget must can only have one child widget." % widget_type_name)
-        elif isinstance(w, MultiChildWidget):
-            for child in map(lambda c: build_widget_from_object(c, ctx), children):
-                w.add_child(child)
+        _build_children(w, obj.get("children", []), ctx)
 
         id_ = obj.get("id", None)
         if id_ is not None:
@@ -200,7 +225,7 @@ register_widget("focus_listener", _make_build_func(widgets.FocusListener, "focus
 
 
 def _label_button_build_func(obj: dict, ctx: dict) -> Widget:
-    props = _replace_inline_var(obj.get("props", {}), ctx)
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
     w = label_button(**props)
     return w
 
@@ -210,6 +235,9 @@ register_widget("label_button", _label_button_build_func)
 
 def _list_build_func(obj: dict, ctx: dict) -> Widget:
     children = obj.get("children", [])
+    props = obj.get("props", {})
+    props = _replace_props_with_context(props, ctx)
+
     template_obj = None
     for c in children:
         if c.get("type", None) == "template":
@@ -218,11 +246,8 @@ def _list_build_func(obj: dict, ctx: dict) -> Widget:
     def _template_func(item_obj) -> Widget:
         return _build_from_template_object(template_obj, item_obj)
 
-    datas = obj.get("props", {}).get("datas", None)
-    if isinstance(datas, InlineVar):
-        datas = ctx.get(datas.name, [])
-    else:
-        datas = []
+    datas = props.get("datas", None)
+
     w = list_view(template_func=_template_func, datas=datas)
     return w
 
@@ -230,12 +255,35 @@ def _list_build_func(obj: dict, ctx: dict) -> Widget:
 register_widget("list", _list_build_func)
 
 
+def _tree_build_func(obj: dict, ctx: dict) -> Widget:
+    children = obj.get("children", [])
+    props = obj.get("props", {})
+    props = _replace_props_with_context(props, ctx)
+
+    template_obj = None
+    for c in children:
+        if c.get("type", None) == "template":
+            template_obj = c
+
+    def _template_func(item_obj) -> Widget:
+        return _build_from_template_object(template_obj, item_obj)
+
+    datas = props.get("datas", None)
+
+    w = tree_view(template_func=_template_func, datas=datas, head_height=props.get("head_height", 30), indent=props.get("indent", 5))
+
+    return w
+
+
+register_widget("tree", _tree_build_func)
+
+
 def _menu_build_func(obj: dict, ctx: dict) -> Widget:
     if obj.get("type", None) != "menu":
         raise ValueError("invalid menu object.")
 
     children = obj.get("children", [])
-    props = _replace_inline_var(obj.get("props", {}), ctx)
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
     gap = props.get("gap", 3)
     width = props.get("width", 128)
 
@@ -243,7 +291,7 @@ def _menu_build_func(obj: dict, ctx: dict) -> Widget:
     for c in children:
         tn = c.get("type", None)
         if tn == "action":
-            c_props = _replace_inline_var(c.get("props", {}), ctx)
+            c_props = _replace_props_with_context(c.get("props", {}), ctx)
             title = c_props.get("title", None)
             cb = c_props.get("on_click", None)
             if title is None:
@@ -265,7 +313,7 @@ def _menu_bar_build_func(obj: dict, ctx: dict) -> Widget:
     children = obj.get("children", [])
     menus = []
     for c in children:
-        c_title = _replace_inline_var(c.get("props", {}), ctx).get("title", None)
+        c_title = _replace_props_with_context(c.get("props", {}), ctx).get("title", None)
         if c_title is None:
             raise ValueError("invalid menu bar object, there is an menu without a title.")
         menus.append((c_title, _menu_build_func(c, ctx)))
