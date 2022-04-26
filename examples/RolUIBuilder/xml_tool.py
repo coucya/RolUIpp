@@ -194,13 +194,26 @@ def _template_build_func(template_obj: dict, ctx: dict) -> Widget:
 
 register_widget("template", _template_build_func)
 
+
+def _flexable_build_func(obj: dict, ctx: dict) -> Widget:
+    if obj.get("type", None) != "flexable":
+        raise ValueError("invalid flexable object.")
+
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = flexable(**props)
+    build_widget_children_from_object(w, obj.get("children", []), ctx)
+
+    return w
+
+
+register_widget("flexable", _flexable_build_func)
+
 register_widget("text", _make_build_func(widgets.TextSpanWidget, "text"))
 register_widget("textbox", _make_build_func(widgets.TextBoxWidget, "textbox"))
 register_widget("box", _make_build_func(widgets.BoxWidget, "box"))
 register_widget("align", _make_build_func(widgets.AlignWidget, "align"))
 register_widget("sized", _make_build_func(widgets.SizedWidget, "sized"))
 register_widget("margin", _make_build_func(widgets.MarginWidget, "margin"))
-register_widget("flexable", _make_build_func(widgets.FlexableWidget, "flexable"))
 register_widget("stack", _make_build_func(widgets.StackWidget, "stack"))
 register_widget("deck", _make_build_func(widgets.DeckWidget, "deck"))
 register_widget("row", _make_build_func(widgets.RowWidget, "row"))

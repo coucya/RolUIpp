@@ -153,7 +153,7 @@ def column(*, children: List[Widget], gap=0, cross_axis_alignment=0.0) -> widget
     return mk_widget(widgets.ColumnWidget, **args)
 
 
-def flexable(*, child: Widget, fixed=None, percentage=None, flex=None, expand=None) -> widgets.FlexableWidget:
+def flexable(*, child: Widget = None, fixed=None, percentage=None, flex=None, expand=None) -> widgets.FlexableWidget:
     if((fixed, percentage, flex, expand).count(None) < 3):
         raise ValueError("fixed. percentage. flex and expand are mutually exclusive")
 

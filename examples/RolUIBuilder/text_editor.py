@@ -1,6 +1,7 @@
 from PyRolUI.widgets import TextBoxWidget, ColumnWidget, VScrollView
 from PyRolUI.events import *
 from functional_component import *
+from xml_tool import register_widget, _replace_props_with_context
 
 import tokenize
 import keyword
@@ -272,3 +273,12 @@ def text_editor(*, text: str = "", font_size=16) -> Widget:
     build_code_text_widget(text, rich_text_w, font_size=font_size)
 
     return focus_l
+
+
+def _python_editor_build_func(obj: dict, ctx: dict):
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = text_editor(**props)
+    return w
+
+
+register_widget("python_editor", _python_editor_build_func)
