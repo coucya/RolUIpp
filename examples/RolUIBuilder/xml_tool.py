@@ -7,7 +7,6 @@ from functional_component import *
 from menu import *
 
 _widget_build_funcs = {}
-_widget_ids = {}
 
 
 def register_widget(widget_nema: str, build_func: Callable):
@@ -16,10 +15,6 @@ def register_widget(widget_nema: str, build_func: Callable):
 
 def unregister_widget(widget_name: str):
     _widget_build_funcs.pop(widget_name)
-
-
-def get_widget_by_id(id: str) -> Widget:
-    return _widget_ids.get(id, None)
 
 
 class InlineVar:
@@ -34,7 +29,7 @@ color_pattern = re.compile("(color|Color|COLOR)\( *(\d{1,3}) *, *(\d{1,3}) *, *(
 float_pattern = re.compile("[+-]?\d+\.\d+")
 integer_pattern = re.compile("[+-]?[1-9]\d*")
 inline_var_pattern = re.compile("\$([a-zA-Z_][0-9a-zA-Z_]*)")
-inline_expr_pattern = re.compile("\$\{.*\}")
+inline_expr_pattern = re.compile("\$\{.*\}")  # not use
 
 
 def _str_to_value(s: str):
@@ -111,16 +106,6 @@ def _replace_props_with_context(props: dict, ctx: dict) -> dict:
     return props
 
 
-def _build_children(w: Widget, children: list, ctx: dict):
-    if isinstance(w, SingleChildWidget) and len(children) == 1:
-        w.set_child(build_widget_from_object(children[0], ctx))
-    elif isinstance(w, SingleChildWidget) and len(children) > 1:
-        raise RuntimeError("%s widget must can only have one child widget." % type(w).__name__)
-    elif isinstance(w, MultiChildWidget):
-        for child in map(lambda c: build_widget_from_object(c, ctx), children):
-            w.add_child(child)
-
-
 def _make_build_func(widget_type: type, widget_type_name: str):
     def _bf(obj: dict, ctx: dict) -> Widget:
         if obj.get("type", None) != widget_type_name:
@@ -130,25 +115,11 @@ def _make_build_func(widget_type: type, widget_type_name: str):
 
         w = mk_widget(widget_type, **props)
 
-        _build_children(w, obj.get("children", []), ctx)
-
-        id_ = obj.get("id", None)
-        if id_ is not None:
-            _widget_ids[id_] = w
+        build_widget_children_from_object(w, obj.get("children", []), ctx)
 
         return w
 
     return _bf
-
-
-def _build_from_template_object(template_obj: dict, ctx: dict) -> Widget:
-    children = template_obj.get("children", [])
-    if len(children) != 1:
-        raise RuntimeError("template_obj must be have one and only one child.")
-
-    child = children[0]
-    w = build_widget_from_object(child, ctx)
-    return w
 
 
 def xml_element_to_object(elem: ET.Element) -> dict[str, object]:
@@ -183,6 +154,17 @@ def xml_to_object(xml_str: str) -> dict[str, object]:
     return xml_element_to_object(elem)
 
 
+def build_widget_children_from_object(w: Widget, children: list[dict[str, object]], ctx: dict) -> Widget:
+    if isinstance(w, SingleChildWidget) and len(children) == 1:
+        w.set_child(build_widget_from_object(children[0], ctx))
+    elif isinstance(w, SingleChildWidget) and len(children) > 1:
+        raise RuntimeError("%s must can only have one child widget." % type(w).__name__)
+    elif isinstance(w, MultiChildWidget):
+        for child in map(lambda c: build_widget_from_object(c, ctx), children):
+            w.add_child(child)
+    return w
+
+
 def build_widget_from_object(obj: dict, ctx: dict) -> Widget:
     tn = obj.get("type", None)
     if tn is None:
@@ -199,6 +181,18 @@ def build_widget_from_xml(xml_str: str, ctx: dict):
     obj = xml_to_object(xml_str)
     return build_widget_from_object(obj, ctx)
 
+
+def _template_build_func(template_obj: dict, ctx: dict) -> Widget:
+    children = template_obj.get("children", [])
+    if len(children) != 1:
+        raise RuntimeError("template_obj must be have one and only one child.")
+
+    child = children[0]
+    w = build_widget_from_object(child, ctx)
+    return w
+
+
+register_widget("template", _template_build_func)
 
 register_widget("text", _make_build_func(widgets.TextSpanWidget, "text"))
 register_widget("textbox", _make_build_func(widgets.TextBoxWidget, "textbox"))
@@ -234,21 +228,17 @@ register_widget("label_button", _label_button_build_func)
 
 
 def _list_build_func(obj: dict, ctx: dict) -> Widget:
-    children = obj.get("children", [])
-    props = obj.get("props", {})
-    props = _replace_props_with_context(props, ctx)
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
 
     template_obj = None
-    for c in children:
+    for c in obj.get("children", []):
         if c.get("type", None) == "template":
             template_obj = c
 
     def _template_func(item_obj) -> Widget:
-        return _build_from_template_object(template_obj, item_obj)
+        return build_widget_from_object(template_obj, item_obj)
 
-    datas = props.get("datas", None)
-
-    w = list_view(template_func=_template_func, datas=datas)
+    w = list_view(template_func=_template_func, **props)
     return w
 
 
@@ -256,21 +246,17 @@ register_widget("list", _list_build_func)
 
 
 def _tree_build_func(obj: dict, ctx: dict) -> Widget:
-    children = obj.get("children", [])
-    props = obj.get("props", {})
-    props = _replace_props_with_context(props, ctx)
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
 
     template_obj = None
-    for c in children:
+    for c in obj.get("children", []):
         if c.get("type", None) == "template":
             template_obj = c
 
     def _template_func(item_obj) -> Widget:
-        return _build_from_template_object(template_obj, item_obj)
+        return build_widget_from_object(template_obj, item_obj)
 
-    datas = props.get("datas", None)
-
-    w = tree_view(template_func=_template_func, datas=datas, head_height=props.get("head_height", 30), indent=props.get("indent", 5))
+    w = tree_view(template_func=_template_func, **props)
 
     return w
 

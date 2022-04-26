@@ -305,5 +305,16 @@ def _tree_view(*, template_func: Callable, datas: dict, head_height: int = 30, i
 
 
 def tree_view(*, template_func: Callable, datas: dict, head_height: int = 30, indent: int = 5) -> Widget:
-    w = _tree_view(template_func=template_func, datas=datas, indent=indent, level=0)
+    w: widgets.BoxWidget = box()
+
+    def _cb(new_datas):
+        w.rm_child()
+        cw = _tree_view(template_func=template_func, datas=new_datas, indent=indent, level=0)
+        w.set_child(cw)
+
+    if isinstance(datas, State):
+        datas.add_callback(_cb)
+        _cb(datas.get())
+    else:
+        _cb(datas)
     return w
