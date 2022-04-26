@@ -174,7 +174,7 @@ def build_code_text_widget(code_str: str, code_widget: MultiChildWidget, *, font
     return code_widget
 
 
-def text_editor(*, text: str = "", font_size=16) -> Widget:
+def python_editor(*, text: str = "", font_size=16) -> Widget:
 
     text_editor_state = {
         "text": text,
@@ -277,7 +277,7 @@ def text_editor(*, text: str = "", font_size=16) -> Widget:
 
 def _python_editor_build_func(obj: dict, ctx: dict):
     props = _replace_props_with_context(obj.get("props", {}), ctx)
-    w = text_editor(**props)
+    w = python_editor(**props)
     return w
 
 
