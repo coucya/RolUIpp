@@ -1,10 +1,11 @@
-
+from typing import *
 
 import re
 import xml.etree.ElementTree as ET
 
-from functional_component import *
-from menu import *
+from . import *
+from . import functional_component, menu
+from .functional_component import *
 
 _widget_build_funcs = {}
 

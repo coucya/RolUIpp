@@ -1,12 +1,11 @@
 from typing import List, Callable, Iterable, Iterator
 
 
-import PyRolUI
-from PyRolUI import *
-from PyRolUI import widgets
+from . import *
+from . import widgets
 
-from functional_component import *
-from popup import *
+from .functional_component import *
+from .popup import *
 
 
 def _menu_action(title: str, on_click: Callable, text_size=16):

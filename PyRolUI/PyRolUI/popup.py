@@ -1,11 +1,10 @@
 from typing import List, Callable, Iterable, Iterator
 
 
-import PyRolUI
-from PyRolUI import *
-from PyRolUI import widgets
+from . import *
+from . import widgets
 
-from functional_component import *
+from .functional_component import *
 
 
 def popup(*, child: Widget, position=None, on_unpopup: Callable = None):

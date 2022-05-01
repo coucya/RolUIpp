@@ -1,9 +1,8 @@
 from typing import List, Callable, Iterable, Iterator, Union
 
 
-import PyRolUI
-from PyRolUI import *
-from PyRolUI import widgets
+from . import *
+from . import widgets
 
 
 class State:
