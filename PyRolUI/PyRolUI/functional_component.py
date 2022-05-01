@@ -237,7 +237,7 @@ def basic_button(*, content_widget: Widget = None,
 
 def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
                  padding: Union[tuple, int, None] = 0,
-                 bk_normal_color: Color = Color(247, 247, 247),
+                 bk_normal_color: Color = Color(74, 165, 240),
                  bk_hover_color: Color = Color(229, 243, 255),
                  bk_press_color: Color = Color(204, 232, 255),
                  round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,

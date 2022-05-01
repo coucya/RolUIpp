@@ -159,7 +159,7 @@ namespace RolUI {
 
         _window->begin_draw();
         painter->set_scissor(Rect{Point(), _window->size()});
-        root->perform_draw(painter);
+        root->draw(painter);
         _window->end_draw();
     }
 

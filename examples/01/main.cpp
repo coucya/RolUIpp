@@ -73,8 +73,16 @@ FlexableWidget* build_flexable(FlexFit fit, Color color, float val = 0.0) {
     return fw;
 }
 
-int main(int argc, char* argv[]) {
+Widget* label_button(const char* t, int fs, int pd, int r) {
+    Widget* n = box(r, 0, {}, Color(74, 165, 240), margin(pd, text(t, fs)));
+    Widget* h = box(r, 0, {}, Color(74, 165, 200), margin(pd, text(t, fs)));
+    Widget* p = box(r, 0, {}, Color(74, 165, 200), margin(pd, text(t, fs)));
+    return button(n, h, p, [] {});
+    // return button(
+    //     t, []() {}, fs, Color(32, 32, 32), Color(74, 165, 240), {230, 230, 230}, {250, 250, 250}, r);
+}
 
+int main(int argc, char* argv[]) {
     RolUIBackend::GLFWWindow win(800, 600, "text box");
     win.on_exit = [&] { RolUI::Application::exit(); };
     win.on_size_change.connect([](Size) { RolUI::Application::flush_frame(); });
@@ -84,24 +92,15 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    FlexWidget flex_w;
-    RichTextWidget rich_w;
-    MouseListener mouse_l;
-    VSeparatorWidget vsep_w;
-    SizedWidget size_w;
-    MarginWidget margin_w;
-    StackWidget stack_w;
-    RowGridWidget column_grid_w;
+    Widget* label_widget = text("label", 20);
+    Widget* buton_widget = label_button("button", 20, 10, 5);
+    MultiChildWidget* column_widget = (MultiChildWidget*)column();
 
-    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 100));
-    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 100));
-    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 200));
-    column_grid_w.add_child(build_flexable(FlexFit::expand, random_color()));
-    column_grid_w.add_child(build_flexable(FlexFit::fixed, random_color(), 100));
-    column_grid_w.add_child(build_flexable(FlexFit::flex, random_color(), 2));
-    column_grid_w.add_child(build_flexable(FlexFit::flex, random_color(), 1));
+    column_widget->add_child(label_widget);
+    column_widget->add_child(buton_widget);
 
-    Widget* w = &column_grid_w;
+    Widget* w = align(0, 0, column_widget);
+
     Application::run(w);
 
     return 0;
