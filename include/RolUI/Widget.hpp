@@ -65,7 +65,6 @@ namespace RolUI {
     class Widget : public Object, public HasSlot {
         friend class Window;
         friend class Application;
-
         friend class SingleChildWidget;
         friend class MultiChildWidget;
 
@@ -147,7 +146,6 @@ namespace RolUI {
 
       public:
         SingleChildWidget() noexcept;
-
         const ObjectType* object_type() const noexcept override;
 
         int child_count() const noexcept override;

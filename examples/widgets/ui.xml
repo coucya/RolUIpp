@@ -1,0 +1,129 @@
+<row_grid>
+    <!-- <flexable fixed="200">
+        <sized width="200" height="1.0">
+            <column> 
+                <text font_size="24">aaa</text>
+                <text font_size="24">aaa</text>
+                <text font_size="24">aaa</text>
+                <text font_size="24">aaa</text>
+                <text font_size="24">aaa</text>
+            </column> 
+        </sized>
+    </flexable> -->
+    <vseparator/>
+    <flexable expand="1">
+        <vscroll_panel>
+            <margin top="20" bottom="20" left="20" right="20">
+                <column cross_axis_alignment="-1" gap="30">
+                    <column cross_axis_alignment="-1" gap="10">
+                        <text font_size="40">菜单栏</text>
+                        <menu_bar>
+                            <menu title="菜单A" width="100">
+                                <action title="选项A"/>
+                                <action title="选项B"/>
+                                <action title="选项C"/>
+                                <action title="---"/>
+                                <action title="选项D"/>
+                                <action title="选项E"/>
+                            </menu>
+                            <menu title="菜单B" width="100">
+                                <action title="选项A"/>
+                                <action title="选项B"/>
+                                <action title="选项C"/>
+                                <action title="---"/>
+                                <action title="选项D"/>
+                                <action title="选项E"/>
+                            </menu>
+                            <menu title="菜单C" width="100">
+                                <action title="选项A"/>
+                                <action title="选项B"/>
+                                <action title="选项C"/>
+                                <action title="---"/>
+                                <action title="选项D"/>
+                                <action title="选项E"/>
+                            </menu>
+                            <menu title="菜单D" width="100">
+                                <action title="选项A"/>
+                                <action title="选项B"/>
+                                <action title="选项C"/>
+                                <action title="---"/>
+                                <action title="选项D"/>
+                                <action title="选项E"/>
+                            </menu>
+                            <menu title="菜单E" width="100">
+                                <action title="选项A"/>
+                                <action title="选项B"/>
+                                <action title="选项C"/>
+                                <action title="---"/>
+                                <action title="选项D"/>
+                                <action title="选项E"/>
+                            </menu>
+                        </menu_bar>
+                    </column>
+
+                    <hseparator/>
+                    <column cross_axis_alignment="-1" gap="10">
+                        <text font_size="40">按钮</text>
+                        <row gap="20">
+                            <label_button text="按钮1" on_click="button1" padding="15" bk_normal_color="color(74,165,240)"/>
+                            <label_button text="按钮2" on_click="button2" padding="15" border_width="1" border_color="#ccddee" bk_normal_color="#ffffff"/>
+                            <label_button text="按钮3" on_click="button3" padding="15" bk_normal_color="color(74,165,240)" round="20"/>
+                            <label_button text="按钮4" on_click="button4" padding="15" round="20" border_width="1" border_color="#ccddee" bk_normal_color="#ffffff"/>
+                        </row>
+                    </column>
+
+                    <hseparator/>
+                    <column cross_axis_alignment="-1" gap="10">
+                        <text font_size="40">输入框</text>
+                        <column gap="10">
+                            <box background_color="#ffffff00" border_width="1" border_color="#888888">
+                                <sized width="300" height="36">
+                                    <margin top="8" bottom="20" left="12" right="12">
+                                        <align><textbox text="你好，世界" font_size="20"/></align>
+                                    </margin>
+                                </sized>
+                            </box>
+                            <box background_color="#ffffff00" border_width="1" border_color="#888888" round="16">
+                                <sized width="300" height="36">
+                                    <margin top="8" bottom="20" left="12" right="12">
+                                        <align><textbox text="你好，世界" font_size="20"/></align>
+                                    </margin>
+                                </sized>
+                            </box>
+                            <box background_color="#ddeeffff">
+                                <sized width="300" height="36">
+                                    <margin top="8" bottom="20" left="12" right="12">
+                                        <align><textbox text="你好，世界" font_size="20"/></align>
+                                    </margin>
+                                </sized>
+                            </box>
+                            <box background_color="#ddeeffff" round="16">
+                                <sized width="300" height="36">
+                                    <margin top="8" bottom="20" left="12" right="12">
+                                        <align><textbox text="你好，世界" font_size="20"/></align>
+                                    </margin>
+                                </sized>
+                            </box>
+                        </column>
+                    </column>
+
+
+                    <hseparator/>
+                    <column cross_axis_alignment="-1" gap="10">
+                        <text font_size="40">进度条</text>
+                        <sized width="300" height="30"><progress value="$progress_value"/></sized>
+                    </column>
+
+                    <hseparator/>
+                    <column cross_axis_alignment="-1" gap="10">
+                        <text font_size="40">开关</text>
+                        <switch/>
+                    </column>
+
+                </column>
+            </margin>
+        </vscroll_panel>
+    </flexable>
+
+</row_grid>
+

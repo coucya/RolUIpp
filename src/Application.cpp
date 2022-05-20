@@ -52,7 +52,7 @@ namespace RolUI {
 
     static TimerQueue _timer_queue = {};
 
-    RootWidget::RootWidget() noexcept { set_opaque(true); }
+    RootWidget::RootWidget() noexcept {}
 
     Widget* RootWidget::content_widget() const noexcept { return child(0); }
     void RootWidget::set_content_widget(Widget* widget) noexcept { set_child(widget, 0); }

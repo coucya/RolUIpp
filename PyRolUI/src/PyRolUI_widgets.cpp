@@ -1,4 +1,6 @@
 
+#include "RolUI/Vector.hpp"
+#include "pybind11/detail/common.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/functional.h>
@@ -188,7 +190,7 @@ static void bind_flow_widgets(py::module_& widgets, py::module_& signals, py::mo
 }
 
 static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
-    BIND_SINGAL(signals, Point);
+    BIND_SINGAL(signals, Vec2i);
     BIND_SINGAL(signals, bool);
     BIND_SINGAL(signals, unsigned);
     class_<PointerListener, SingleChildWidget>(widgets, "PointerListener")
@@ -231,9 +233,11 @@ static void bind_listener_widgets(py::module_& widgets, py::module_& signals, py
 
 static void bind_scroll_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
     BIND_PROPERTY(propertys, signals, ScrollView, Point);
+    BIND_SINGAL(signals, Vec2i);
     class_<ScrollView, SingleChildWidget>(widgets, "ScrollView")
         .def(py::init())
         .def_readonly("offset", &ScrollView::offset, return_value_policy::reference_internal)
+        .def_readonly("on_scroll", &ScrollView::on_scroll, return_value_policy::reference_internal)
         .def("widget_x_ratio", &ScrollView::widget_x_ratio)
         .def("widget_y_ratio", &ScrollView::widget_y_ratio)
         .def("scroll_by_px", &ScrollView::scroll_by_px)

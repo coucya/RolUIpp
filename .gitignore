@@ -11,3 +11,4 @@ todo.txt
 *.dll
 *.pyd
 *.pyc
+.cache

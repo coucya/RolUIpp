@@ -3,6 +3,7 @@ from typing import List, Callable, Iterable, Iterator, Union
 
 from . import *
 from . import widgets
+from . import popup
 
 
 class State:
@@ -236,7 +237,7 @@ def basic_button(*, content_widget: Widget = None,
 
 def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 32, 32),
                  padding: Union[tuple, int, None] = 0,
-                 bk_normal_color: Color = Color(74, 165, 240),
+                 bk_normal_color: Color = Color(247, 247, 247),
                  bk_hover_color: Color = Color(229, 243, 255),
                  bk_press_color: Color = Color(204, 232, 255),
                  round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
@@ -317,3 +318,92 @@ def tree_view(*, template_func: Callable, datas: dict, head_height: int = 30, in
     else:
         _cb(datas)
     return w
+
+
+def progress(*, value=0, max_value=100, border_width=1, border_color=Color(128, 128, 128), progress_color=Color(113, 188, 228)) -> Widget:
+
+    size_w = sized(width=0.0, height=1.0)
+    core_box_w = box(child=size_w)
+    margin_w = margin(child=core_box_w, top=3, bottom=3, left=3, right=3)
+
+    align_w = align(child=margin_w, align_x=-1, align_y=0)
+    box_w = box(child=align_w)
+
+    box_w.border_width(border_width)
+    box_w.border_color(border_color)
+    core_box_w.background_color(progress_color)
+
+    def _cb(new_value):
+        size_w.width(widgets. SizeUnit(float(new_value / max_value)))
+
+    if isinstance(value, State):
+        value.add_callback(_cb)
+    else:
+        _cb(value)
+
+    return box_w
+
+
+def switch(*, on_switch=None):
+
+    switch_state = {
+        "widget": None,
+        "open": True,
+        "align_state": State(1),
+        "core_bk_color": State(Color(16, 152, 104))
+    }
+
+    core_box = sized(width=20, height=20, child=box(background_color=switch_state["core_bk_color"], round=20))
+    align_w = align(child=core_box, align_x=switch_state["align_state"], align_y=0)
+    margin_w = margin(child=align_w, top=4, bottom=4, left=4, right=4)
+    big_box = sized(width=50, height=26, child=box(child=margin_w, border_width=1, border_color=Color(125, 125, 125), round=13))
+
+    def _on_click(a, b):
+        if switch_state["open"]:
+            switch_state["open"] = False
+            switch_state["align_state"].set(-1)
+            switch_state["core_bk_color"].set(Color(150, 150, 150))
+        else:
+            switch_state["open"] = True
+            switch_state["align_state"].set(1)
+            switch_state["core_bk_color"].set(Color(16, 152, 104))
+        if callable(on_switch):
+            on_switch()
+
+    mouse_l = mouse_listener(child=big_box, on_click=_on_click)
+    switch_state["widget"] = mouse_l
+
+    return mouse_l
+
+
+def dialog(msg: str, title: str = "info", on_yes=None, on_no=None):
+    def _on_yes():
+        if callable(on_yes):
+            on_yes()
+        unupopuper()
+
+    def _on_no():
+        if callable(on_no):
+            on_no()
+        unupopuper()
+
+    title_w = margin(child=textspan(title, font_size=25), top=0, bottom=5)
+    context_w = align(child=textspan(msg, font_size=20), align_x=-1, align_y=-0.85)
+
+    yes_button_w = label_button(text="确定", text_size=20, padding=10, on_click=_on_yes)
+    no_button_w = label_button(text="取消", text_size=20, padding=10, on_click=_on_no)
+    buttons = align(child=row(children=[yes_button_w, no_button_w], gap=2), align_x=0.9)
+
+    title_flexable = flexable(child=title_w, fixed=30)
+    sep_flexable = hseparator(color=Color(200, 200, 200))
+    content_flexable = flexable(child=context_w, expand=1)
+    buttons_flexable = flexable(child=buttons, fixed=35)
+
+    column_w = column_grid(children=[title_flexable, sep_flexable, content_flexable, buttons_flexable])
+
+    margin_w = margin(child=column_w, top=10, bottom=10, left=10, right=10)
+    size_w = sized(child=margin_w, width=300, height=200)
+    box_w = box(child=size_w, background_color=Color(255, 255, 255), border_width=1, border_color=Color(200, 200, 200))
+    align_w = align(child=box_w)
+
+    unupopuper = popup.popup(child=align_w)

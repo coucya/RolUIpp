@@ -1,0 +1,6 @@
+<align>
+    <column>
+        <text font_size="20">$label_str</text>
+        <label_button text="$button_str" text_size="20" padding="10" round="5"/>
+    </column>
+</align>

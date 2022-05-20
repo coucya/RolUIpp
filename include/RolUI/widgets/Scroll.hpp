@@ -4,6 +4,9 @@
 
 #include "../Property.hpp"
 #include "../Widget.hpp"
+#include "../sigslot.hpp"
+#include "RolUI/Size.hpp"
+#include "RolUI/Vector.hpp"
 
 namespace RolUI {
     namespace widgets {
@@ -11,6 +14,8 @@ namespace RolUI {
         class ScrollView : public SingleChildWidget {
           public:
             Property<ScrollView, Point> offset{this};
+
+            Signal<Vec2i> on_scroll;
 
           public:
             ScrollView() noexcept;

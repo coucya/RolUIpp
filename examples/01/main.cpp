@@ -92,14 +92,31 @@ int main(int argc, char* argv[]) {
     if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
         throw std::runtime_error("can't load font.");
 
-    Widget* label_widget = text("label", 20);
-    Widget* buton_widget = label_button("button", 20, 10, 5);
-    MultiChildWidget* column_widget = (MultiChildWidget*)column();
+    // Widget* label_widget = text("label", 20);
+    // Widget* buton_widget = label_button("button", 20, 10, 5);
+    // MultiChildWidget* column_widget = (MultiChildWidget*)column();
 
-    column_widget->add_child(label_widget);
-    column_widget->add_child(buton_widget);
+    // column_widget->add_child(label_widget);
+    // column_widget->add_child(buton_widget);
 
-    Widget* w = align(0, 0, column_widget);
+    // Widget* w = align(0, 0, column_widget);
+
+    RowGridWidget* row_grid = mk_widget<RowGridWidget>();
+    FlexableWidget* flexable_w = mk_widget<FlexableWidget>();
+    ColumnWidget* cloumn_w = mk_widget<ColumnWidget>();
+    BoxWidget* box1_w = mk_widget<BoxWidget>()->background_color({255, 0, 0});
+    BoxWidget* box2_w = mk_widget<BoxWidget>()->background_color({0, 255, 0});
+
+    for (int i = 0; i < 10; i++) {
+        cloumn_w->add_child(mk_widget<TextSpanWidget>("aaa")->font_size(20));
+    }
+
+    flexable_w->fit(FlexFit::fixed)->fixed(300);
+    flexable_w->set_child(cloumn_w);
+
+    row_grid->add_child(flexable_w);
+    row_grid->add_child(box2_w);
+    Widget* w = row_grid;
 
     Application::run(w);
 

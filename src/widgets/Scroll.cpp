@@ -4,6 +4,7 @@
 
 #include "RolUI/Point.hpp"
 #include "RolUI/IPainter.hpp"
+#include "RolUI/Vector.hpp"
 #include "RolUI/widgets/Scroll.hpp"
 #include "RolUI/events/MouseEvent.hpp"
 
@@ -50,6 +51,7 @@ namespace RolUI {
         void ScrollView::scroll_by_px(int dx, int dy) noexcept {
             if (!child()) return;
             offset = offset.get() + Point{dx, dy};
+            on_scroll.emit(Point{dx, dy});
         }
         void ScrollView::scroll_by_ratio(float x, float y) noexcept {
             if (!child()) return;
@@ -78,7 +80,9 @@ namespace RolUI {
 
         void ScrollView::scroll_to_px(int x, int y) noexcept {
             if (!child()) return;
+            Vec2i old_offset = offset;
             offset = {x, y};
+            on_scroll.emit(old_offset - offset);
         }
         void ScrollView::scroll_to_ratio(float x, float y) noexcept {
             if (!child()) return;

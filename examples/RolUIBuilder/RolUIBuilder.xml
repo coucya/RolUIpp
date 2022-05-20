@@ -1,0 +1,37 @@
+
+<column cross_axis_alignment="-1">
+    <menu_bar>
+        <menu title="file">
+            <action title="new" on_click="/menu/file/new"/>
+            <action title="open" on_click="/menu/file/open"/>
+            <action title="save" on_click="/menu/file/save"/>
+        </menu>
+        <menu title="edit">
+            <action title="copy"/>
+            <action title="past"/>
+        </menu>
+        <menu title="help">
+            <action title="about"/>
+        </menu>
+    </menu_bar>
+    <row_grid cross_axis_alignment="-1">
+        <flexable fixed="200">
+            <box border_width="1" border_color="#aaaaaa">
+                <tree datas="$resource_datas" indent="20">
+                    <template>
+                        <align align_x="-1">
+                            <text>$name</text>
+                        </align>
+                    </template>
+                </tree>
+            </box>
+        </flexable>
+        <flexable flex="1">
+            <box border_width="1" border_color="#aaaaaa">
+                <margin top="10" botton="10" left="10" right="10">
+                    <python_editor text="$python_text"/>
+                </margin>
+            </box>
+        </flexable>
+    </row_grid>
+</column>

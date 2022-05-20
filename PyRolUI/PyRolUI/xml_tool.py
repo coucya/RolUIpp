@@ -4,8 +4,9 @@ import re
 import xml.etree.ElementTree as ET
 
 from . import *
-from . import functional_component, menu
+from . import functional_component
 from .functional_component import *
+from .menu import *
 
 _widget_build_funcs = {}
 
@@ -28,7 +29,7 @@ class InlineVar:
 color_hex_pattern = re.compile("#(([0-9a-fA-F]{3,4})|([0-9a-fA-F]{6})|([0-9a-fA-F]{8}))")
 color_pattern = re.compile("(color|Color|COLOR)\( *(\d{1,3}) *, *(\d{1,3}) *, *(\d{1,3}) *(, *(\d{1,3}) *)?\)")
 float_pattern = re.compile("[+-]?\d+\.\d+")
-integer_pattern = re.compile("[+-]?[1-9]\d*")
+integer_pattern = re.compile("[+-]?\d+")
 inline_var_pattern = re.compile("\$([a-zA-Z_][0-9a-zA-Z_]*)")
 inline_expr_pattern = re.compile("\$\{.*\}")  # not use
 
@@ -111,6 +112,9 @@ def _make_build_func(widget_type: type, widget_type_name: str):
     def _bf(obj: dict, ctx: dict) -> Widget:
         if obj.get("type", None) != widget_type_name:
             raise ValueError("invalid %s object." & widget_type_name)
+
+        if widget_type_name == "row_grid":
+            print(widget_type_name, widget_type)
 
         props = _replace_props_with_context(obj.get("props", {}), ctx)
 
@@ -209,11 +213,25 @@ def _flexable_build_func(obj: dict, ctx: dict) -> Widget:
 
 register_widget("flexable", _flexable_build_func)
 
+
+def _sized_build_func(obj: dict, ctx: dict) -> Widget:
+    if obj.get("type", None) != "sized":
+        raise ValueError("invalid sized object.")
+
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = sized(**props)
+    build_widget_children_from_object(w, obj.get("children", []), ctx)
+
+    return w
+
+
+register_widget("sized", _sized_build_func)
+
+
 register_widget("text", _make_build_func(widgets.TextSpanWidget, "text"))
 register_widget("textbox", _make_build_func(widgets.TextBoxWidget, "textbox"))
 register_widget("box", _make_build_func(widgets.BoxWidget, "box"))
 register_widget("align", _make_build_func(widgets.AlignWidget, "align"))
-register_widget("sized", _make_build_func(widgets.SizedWidget, "sized"))
 register_widget("margin", _make_build_func(widgets.MarginWidget, "margin"))
 register_widget("stack", _make_build_func(widgets.StackWidget, "stack"))
 register_widget("deck", _make_build_func(widgets.DeckWidget, "deck"))
@@ -324,3 +342,21 @@ def _menu_bar_build_func(obj: dict, ctx: dict) -> Widget:
 
 register_widget("menu", _menu_build_func)
 register_widget("menu_bar", _menu_bar_build_func)
+
+
+def _progress_build_func(obj, ctx):
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = progress(**props)
+    return w
+
+
+register_widget("progress", _progress_build_func)
+
+
+def _switch_build_func(obj, ctx):
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = switch(**props)
+    return w
+
+
+register_widget("switch", _switch_build_func)
