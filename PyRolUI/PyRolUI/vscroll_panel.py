@@ -2,6 +2,7 @@ import math
 
 import PyRolUI
 from PyRolUI import *
+from PyRolUI import popup
 from PyRolUI.functional_component import *
 from PyRolUI import xml_tool as xt
 from PyRolUI.widgets import VScrollView
@@ -14,7 +15,11 @@ class VScrollPanel(SingleChildWidget):
         self._content_w: Widget = content_widget
 
         box_w = box(background_color=Color(205, 205, 205))
-        self._scroll_slider_mouse_l = mouse_listener(child=box_w, on_drag=self._on_drag)
+        self._scroll_bar_mask_unpopup = None
+        self._scroll_bar_mask_l = mouse_listener(child=box(), 
+                                                 on_move=self._on_mask_move, on_up=self._on_mask_up,
+                                                 on_hover=self._on_mask_hover)
+        self._scroll_slider_mouse_l = mouse_listener(child=box_w, on_down=self._on_slider_down)
         self._scroll_slider_w = sized(child=self._scroll_slider_mouse_l, width=1.0, height=1.0)
         self._scroll_scroll_v: VScrollView = vscroll_view(child=self._scroll_slider_w)
         self._scroll_bar_w = flexable(child=self._scroll_scroll_v, fixed=18)
@@ -28,13 +33,26 @@ class VScrollPanel(SingleChildWidget):
     def _on_scroll(self, offset):
         self._scroll_scroll_v.scroll_to_ratio(self._content_scroll_v.widget_x_ratio(), self._content_scroll_v.widget_y_ratio())
 
-    def _on_drag(self, mouse_key, offset: Point):
+    def _on_slider_down(self, *args):
+        self._scroll_bar_mask_unpopup = popup.popup(child=self._scroll_bar_mask_l)
+
+    def _on_mask_hover(self, hover):
+        if not hover and callable(self._scroll_bar_mask_unpopup):
+            self._scroll_bar_mask_unpopup()
+            
+    def _on_mask_up(self, *args):
+        if callable(self._scroll_bar_mask_unpopup):
+            self._scroll_bar_mask_unpopup()
+
+    def _on_mask_move(self, offset: Point):
         self._scroll_scroll_v.scroll_y_by_px(offset.y)
         if self._scroll_scroll_v.widget_y_ratio() < 0.0:
             self._scroll_scroll_v.scroll_y_to_ratio(0)
         elif self._scroll_scroll_v.widget_y_ratio() > 1.0:
             self._scroll_scroll_v.scroll_y_to_ratio(1)
         self._content_scroll_v.scroll_y_to_ratio(self._scroll_scroll_v.widget_y_ratio())
+
+
 
     def set_content_widget(self, w: Widget):
         self._content_w = w

@@ -10,7 +10,7 @@ from .popup import *
 
 def _menu_action(title: str, on_click: Callable, text_size=16):
     content_w = sized(child=align(child=margin(child=textspan(title, font_size=text_size), left=8), align_x=-1), height=int(text_size * 1.5))
-    button_w = basic_button(content_widget=content_w, match_content=True, on_click=on_click)
+    button_w = basic_button(child=content_w, match_content=True, on_click=on_click)
     return button_w
 
 

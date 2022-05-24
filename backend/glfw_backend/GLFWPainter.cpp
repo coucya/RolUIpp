@@ -1,3 +1,4 @@
+#include <iostream>
 
 #include "RolUI/Point.hpp"
 #include "nanovg.h"
@@ -54,6 +55,7 @@ namespace RolUIBackend {
 
     int GLFWPainter::create_image_with_rgba(const uint8_t* data, int w, int h) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
+
         return nvgCreateImageRGBA(vg, w, h, 0, data);
     }
     RolUI::Size GLFWPainter::image_size(int handle) {

@@ -1,6 +1,6 @@
 
-#include "RolUI/Vector.hpp"
 #include "pybind11/detail/common.h"
+#include "pybind11/pybind11.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/functional.h>
@@ -320,6 +320,22 @@ static void bind_text_widgets(py::module_& widgets, py::module_& signals, py::mo
     class_<TextBoxWidget, EditableTextWidget>(widgets, "TextBoxWidget")
         .def(py::init());
 }
+static void bind_image_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
+    BIND_PROPERTY(propertys, signals, ImageWidget, RolUI::Image);
+    BIND_PROPERTY(propertys, signals, ImageWidget, ImageWidget::Fit);
+    auto py_image_widget_class =
+        class_<ImageWidget, Widget>(widgets, "ImageWidget")
+            .def_readonly("image", &ImageWidget::image, return_value_policy::reference_internal)
+            .def_readonly("fit", &ImageWidget::fit, return_value_policy::reference_internal)
+            .def(py::init())
+            .def(py::init<RolUI::Image, ImageWidget::Fit>());
+
+    enum_<ImageWidget::Fit>(py_image_widget_class, "Fit")
+        .value("fill", ImageWidget::fill)
+        .value("cover", ImageWidget::cover)
+        .value("contain", ImageWidget::contain)
+        .export_values();
+}
 
 static void bind_decoration_widgets(py::module_& widgets, py::module_& signals, py::module_& propertys) {
     BIND_PROPERTY(propertys, signals, HSeparatorWidget, Color);
@@ -351,6 +367,7 @@ void bind_widgets(py::module_& m) {
     bind_listener_widgets(widgets, signals, propertys);
     bind_scroll_widgets(widgets, signals, propertys);
     bind_text_widgets(widgets, signals, propertys);
+    bind_image_widgets(widgets, signals, propertys);
     bind_decoration_widgets(widgets, signals, propertys);
     bind_widgets_widgets(widgets, signals, propertys);
 }

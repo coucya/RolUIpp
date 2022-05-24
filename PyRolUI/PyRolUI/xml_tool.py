@@ -3,8 +3,10 @@ from typing import *
 import re
 import xml.etree.ElementTree as ET
 
+from PyRolUI import Widget
+
 from . import *
-from . import functional_component
+# from . import functional_component
 from .functional_component import *
 from .menu import *
 
@@ -72,6 +74,13 @@ def _str_to_value(s: str):
         name = result.group(1)
         return InlineVar(name)
 
+    if s == "@True":
+        return True
+    elif s == "@False":
+        return False
+    elif s == "@None":
+        return None
+
     return s
 
 
@@ -112,9 +121,6 @@ def _make_build_func(widget_type: type, widget_type_name: str):
     def _bf(obj: dict, ctx: dict) -> Widget:
         if obj.get("type", None) != widget_type_name:
             raise ValueError("invalid %s object." & widget_type_name)
-
-        if widget_type_name == "row_grid":
-            print(widget_type_name, widget_type)
 
         props = _replace_props_with_context(obj.get("props", {}), ctx)
 
@@ -200,6 +206,15 @@ def _template_build_func(template_obj: dict, ctx: dict) -> Widget:
 register_widget("template", _template_build_func)
 
 
+def _image_build_func(obj:dict, ctx: dict) ->Widget:
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = image(**props)
+    # build_widget_children_from_object(w, obj.get("children", []), ctx)
+    return w
+
+register_widget("image", _image_build_func)
+
+
 def _flexable_build_func(obj: dict, ctx: dict) -> Widget:
     if obj.get("type", None) != "flexable":
         raise ValueError("invalid flexable object.")
@@ -250,6 +265,16 @@ register_widget("char_listener", _make_build_func(widgets.CharInputListener, "ch
 register_widget("focus_listener", _make_build_func(widgets.FocusListener, "focus_listener"))
 
 
+def _basic_button_build_func(obj: dict, ctx: dict) -> Widget:
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    child_obj = obj.get("children", [None])[0]
+    child = NOne if child_obj is None else build_widget_from_object(child_obj, ctx)
+    w = basic_button(child=child, **props)
+    return w
+
+register_widget("basic_button", _basic_button_build_func)
+
+
 def _label_button_build_func(obj: dict, ctx: dict) -> Widget:
     props = _replace_props_with_context(obj.get("props", {}), ctx)
     w = label_button(**props)
@@ -257,6 +282,15 @@ def _label_button_build_func(obj: dict, ctx: dict) -> Widget:
 
 
 register_widget("label_button", _label_button_build_func)
+
+
+def _image_button_build_func(obj: dict, ctx: dict) -> Widget:
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    w = image_button(**props)
+    return w
+
+
+register_widget("image_button", _image_button_build_func)
 
 
 def _list_build_func(obj: dict, ctx: dict) -> Widget:
@@ -360,3 +394,4 @@ def _switch_build_func(obj, ctx):
 
 
 register_widget("switch", _switch_build_func)
+

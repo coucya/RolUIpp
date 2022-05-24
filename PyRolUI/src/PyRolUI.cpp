@@ -1,8 +1,15 @@
 
+#include "pybind11/detail/common.h"
+#include "pybind11/pytypes.h"
+#include "pybind11/stl.h"
+
+#include <cstdint>
+#include <iterator>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
+#include <stdexcept>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -148,15 +155,45 @@ class PyWidget : public WidgetBase {
     }
 };
 
+static Image load_image_mem(py::bytes bytes, uint32_t w, uint32_t h) {
+    if (!PyBytes_Check(bytes.ptr()))
+        throw std::runtime_error("load_image_mem_file(): invalid image data.");
+    auto byte_size = PyBytes_Size(bytes.ptr());
+    auto byte_data = PyBytes_AsString(bytes.ptr());
+
+    if (w * h * 4 > byte_size)
+        throw std::runtime_error("load_image_mem(): w * h * 4 > bytes.size().");
+    RolUI::Image img = RolUI::Image::create_rgba_mem((const uint8_t*)byte_data, w, h);
+    return img;
+}
+static Image load_image_mem_file(py::bytes bytes) {
+    int image_w, image_h, image_c;
+
+    if (!PyBytes_Check(bytes.ptr()))
+        throw std::runtime_error("load_image_mem_file(): invalid image data.");
+    auto byte_size = PyBytes_Size(bytes.ptr());
+    auto byte_data = PyBytes_AsString(bytes.ptr());
+
+    auto image_data = stbi_load_from_memory((const uint8_t*)byte_data, byte_size, &image_w, &image_h, &image_c, 4);
+
+    if (!image_data)
+        throw std::runtime_error("load_image_mem_file(): invalid image data.");
+    RolUI::Image img = RolUI::Image::create_rgba_mem((const uint8_t*)image_data, image_w, image_h);
+    stbi_image_free(image_data);
+    return img;
+}
 static Image load_image(const char* filename) {
     int image_w, image_h, image_c;
     uint8_t* image_data = stbi_load(filename, &image_w, &image_h, &image_c, 4);
+    if (!image_data)
+        throw std::runtime_error("load_image(): invalid image file.");
     RolUI::Image img = RolUI::Image::create_rgba_mem(image_data, image_w, image_h);
     stbi_image_free(image_data);
     return img;
 }
 static bool load_font(const char* name, const char* filename) {
-    return Application::window()->painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC");
+    // return Application::window()->painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC");
+    return Application::window()->painter()->load_font(name, filename);
 }
 
 static std::string Vec2i_to_string(const Vec2i& v) {
@@ -462,6 +499,9 @@ PYBIND11_MODULE(PyRolUI, m) {
     py::module_ events_module = m.def_submodule("events", "RolUI events Python bind.");
 
     m.def("load_font", load_font, py::arg("name"), py::arg("filename"));
+    m.def("load_image", load_image, py::arg("filename"));
+    m.def("load_image_mem_file", load_image_mem_file, py::arg("bytes"));
+    m.def("load_image_mem", load_image_mem, py::arg("bytes"), py::arg("w"), py::arg("h"));
 
     class_<ObjectType>(m, "ObjectType")
         .def("type_name", &ObjectType::type_name)

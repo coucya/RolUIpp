@@ -1,0 +1,85 @@
+<stack >
+    <image image="$playing_music_image" fit="$image_fit_cover"/>
+    <box background_color="#222730dd"/>
+    <row_grid>
+        <flexable fixed="400">
+            <vscroll_panel>
+                <list datas="$music_list">
+                    <template>
+                        <margin top="2" bottom="2" left="4" right="4">
+                            <basic_button match_content="@True" round="8" 
+                                bk_normal_color="#1A191F88"
+                                bk_hover_color="#1A191Fff"
+                                bk_press_color="#1A191Fff"
+                                on_click="on_select">
+                                <sized width="1.0" height="100">
+                                    <margin top="8" bottom="8" left="8" right="8">
+                                        <align align_x="-1" align_y="0">
+                                            <row gap="10" cross_axis_alignment="-1">
+                                                <image image="$music_image" width="80" height="80"/>
+                                                <align align_x="-1" align_y="-0.6">
+                                                    <column gap="5" cross_axis_alignment="-1">
+                                                        <text font_size="20" font_color="#ffffff">$music_title</text>
+                                                        <text font_size="16" font_color="#bbbbbb">$music_artist</text>
+                                                        <text font_size="12" font_color="#bbbbbb">$music_path</text>
+                                                    </column>
+                                                </align>
+                                            </row>
+                                        </align>
+                                    </margin>
+                                </sized>
+                            </basic_button>
+                        </margin>
+                    </template>
+                </list>
+            </vscroll_panel>
+        </flexable>
+        <flexable>
+            <column_grid>
+                <flexable expand="">
+                    <align>
+                        <sized width="0.9" height="0.9">
+                            <image image="$playing_music_image" fit="$image_fit_contain"/>
+                        </sized>
+                    </align>
+                </flexable>
+                <flexable fixed="100">
+                    <align align_x="1">
+                        <margin right="16">
+                            <column gap="8" cross_axis_alignment="1">
+                                <text font_size="30" font_color="#ffffff">$playing_music_title</text>
+                                <text font_size="20" font_color="#bbbbbb">$playing_music_artist</text>
+                                <text font_size="12" font_color="#bbbbbb">$playing_music_path</text>
+                            </column>
+                        </margin>
+                    </align>
+                </flexable>
+                <flexable fixed="150">
+                    <margin top="10" bottom="10" left="10" right="10">
+                        <box round="20" background_color="#1A191F88">
+                            <align>
+                                <row gap="40">
+                                    <image_button image="$prev_button_image" width="50" height="50" round="25"
+                                        bk_normal_color="#1A191F88"
+                                        bk_hover_color="#81A1C188"
+                                        bk_press_color="#1A191Fff"
+                                        on_click="on_prev"/>
+                                    <image_button image="$play_button_image" width="60" height="60" round="30" 
+                                        bk_normal_color="#1A191F88"
+                                        bk_hover_color="#81A1C188"
+                                        bk_press_color="#1A191Fff"
+                                        on_click="on_play"/>
+                                    <image_button image="$next_button_image" width="50" height="50" round="25" 
+                                        bk_normal_color="#1A191F88"
+                                        bk_hover_color="#81A1C188"
+                                        bk_press_color="#1A191Fff"
+                                        on_click="on_next"/>
+                                </row>
+                            </align>
+                        </box>
+                    </margin>
+                </flexable>
+            </column_grid>
+        </flexable>
+    </row_grid>
+</stack>

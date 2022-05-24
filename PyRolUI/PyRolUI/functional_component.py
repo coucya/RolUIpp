@@ -87,6 +87,29 @@ def mk_widget(widget_type: type, **kw_args) -> Widget:
 
     return widget
 
+def image(*, image: Union[Image, str, State]=None, width=None, height=None, fit=widgets.ImageWidget.fill) ->widgets.ImageWidget:
+    w = mk_widget(widgets.ImageWidget, fit=fit)
+    def _cb(img):
+        if isinstance(img, str):
+            w.image(load_image(img))
+        elif isinstance(img, Image):
+            w.image(img)
+        else:
+            raise RuntimeError("not vaild image or path.")
+    if isinstance(image, str):
+        w.image(load_image(image))
+    elif isinstance(image, Image):
+        w.image(image)
+    elif isinstance(image, State):
+        image.add_callback(lambda img: w.image(img))
+        _cb(image.get())
+    else:
+        raise RuntimeError("not vaild image or path.")
+
+    if width is not None or height is not None:
+        w = sized(child=w, width=width if width else 1.0, height=height if height else 1.0)
+
+    return w
 
 def textspan(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextSpanWidget:
     args = locals()
@@ -201,7 +224,7 @@ def focus_listener(*, child: Widget = None, on_focus: Callable) -> widgets.Focus
     return mk_widget(widgets.FocusListener, child=child, on_focus=on_focus)
 
 
-def basic_button(*, content_widget: Widget = None,
+def basic_button(*, child: Widget = None,
                  match_content=True,
                  bk_normal_color: Color = Color(247, 247, 247),
                  bk_hover_color: Color = Color(229, 243, 255),
@@ -209,11 +232,10 @@ def basic_button(*, content_widget: Widget = None,
                  round: int = 0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
                  on_click=None, on_hover=None):
 
-    margin_w = content_widget
     if not match_content:
-        margin_w = align(child=margin_w, align_x=-1, align_y=-1)
+        child = align(child=child, align_x=-1, align_y=-1)
 
-    box_w = box(child=margin_w, round=round, border_color=border_color, border_width=border_width)
+    box_w = box(child=child, round=round, border_color=border_color, border_width=border_width)
     box_w.background_color(bk_normal_color)
 
     def _on_hover(b):
@@ -256,8 +278,28 @@ def label_button(*, text="", text_size: int = 16, text_color: Color = Color(32, 
     else:
         raise TypeError("invalid margin value: %s" % str(padding))
 
-    w = basic_button(content_widget=margin_w, match_content=True,
+    w = basic_button(child=margin_w, match_content=True,
                      bk_normal_color=bk_normal_color, bk_hover_color=bk_hover_color, bk_press_color=bk_press_color,
+                     round=round, border_color=border_color, border_width=border_width,
+                     on_click=on_click, on_hover=on_hover)
+    return w
+
+def image_button(*, image=Image(), width=None, height=None,
+                 bk_normal_color: Color = Color(247, 247, 247),
+                 bk_hover_color: Color = Color(229, 243, 255),
+                 bk_press_color: Color = Color(204, 232, 255),
+                 round:int=0, border_color: Color = Color(64, 64, 64, 255), border_width=0,
+                 on_click=None, on_hover=None):
+
+    child = globals()["image"](image=image)
+    if width is not None or height is not None:
+        child = sized(child=child, width=width if width else 1.0, height=height if height else 1.0)
+    
+    w = basic_button(child=child,
+                     match_content=True,
+                     bk_normal_color=bk_normal_color,
+                     bk_hover_color=bk_hover_color,
+                     bk_press_color=bk_press_color,
                      round=round, border_color=border_color, border_width=border_width,
                      on_click=on_click, on_hover=on_hover)
     return w
@@ -298,7 +340,7 @@ def _tree_view(*, template_func: Callable, datas: dict, head_height: int = 30, i
 
     head_w = margin(child=w, left=indent * level)
     head_w = sized(child=head_w, width=1.0, height=head_height)
-    head_w = basic_button(content_widget=head_w)
+    head_w = basic_button(child=head_w)
     children_node_w = column(children=children_nodes, cross_axis_alignment=-1)
     node_w = column(children=[head_w, children_node_w], cross_axis_alignment=-1)
     return node_w
@@ -344,11 +386,10 @@ def progress(*, value=0, max_value=100, border_width=1, border_color=Color(128, 
     return box_w
 
 
-def switch(*, on_switch=None):
-
+def switch(*, value=True, on_switch=None):
     switch_state = {
         "widget": None,
-        "open": True,
+        "open": value,
         "align_state": State(1),
         "core_bk_color": State(Color(16, 152, 104))
     }
@@ -368,7 +409,7 @@ def switch(*, on_switch=None):
             switch_state["align_state"].set(1)
             switch_state["core_bk_color"].set(Color(16, 152, 104))
         if callable(on_switch):
-            on_switch()
+            on_switch(switch_state["open"])
 
     mouse_l = mouse_listener(child=big_box, on_click=_on_click)
     switch_state["widget"] = mouse_l
@@ -407,3 +448,4 @@ def dialog(msg: str, title: str = "info", on_yes=None, on_no=None):
     align_w = align(child=box_w)
 
     unupopuper = popup.popup(child=align_w)
+

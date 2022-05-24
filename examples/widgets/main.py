@@ -9,11 +9,9 @@ from PyRolUI import widgets
 from PyRolUI import functional_component as fc
 from PyRolUI import popup, menu, xml_tool as xt
 from PyRolUI.xml_tool import *
-
+from PyRolUI import vscroll_panel
 
 from PyRolUI_glfw import *
-
-import vscroll_panel
 
 
 def load_file(path: str) -> str:
