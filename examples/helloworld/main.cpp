@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <stdexcept>
 
+#include "RolUI/widgets/Text.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Widget.hpp"
@@ -27,10 +28,10 @@ int main(int argc, char* argv[]) {
     RolUI::Application::init(&win);
 
     std::string font_path = get_font_path();
-    if (win.painter()->load_font("default", font_path.c_str()) == false)
-        throw std::runtime_error("can't load font.");
+    // if (win.painter()->load_font("default", font_path.c_str()) == false)
+    //     throw std::runtime_error("can't load font.");
 
-    Widget* label = widgets::label("hello world", 50);
+    Widget* label = widgets::mk_widget<widgets::TextWidget>("hello world~");
     Widget* w = widgets::mk_widget<widgets::AlignWidget>();
     w->set_child(label);
 

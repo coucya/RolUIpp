@@ -57,8 +57,8 @@ int main(int argc, char* argv[]) {
 
     std::string img_huaji_path = get_image_huaji_path();
     std::string font_path = get_font_path();
-    if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
-        throw std::runtime_error("can't load font.");
+    // if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
+    //     throw std::runtime_error("can't load font.");
 
     RolUI::Image img = load_image(img_huaji_path);
     widgets::ImageWidget image1{img};

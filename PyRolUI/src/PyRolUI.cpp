@@ -1,15 +1,17 @@
 
-#include "pybind11/detail/common.h"
+#include "pybind11/operators.h"
+#include "pybind11/pybind11.h"
 #include "pybind11/pytypes.h"
 #include "pybind11/stl.h"
 
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <iterator>
-#include <pybind11/pybind11.h>
-#include <pybind11/operators.h>
-#include <pybind11/functional.h>
-#include <pybind11/stl.h>
 #include <stdexcept>
+#include <fstream>
+#include <sstream>
+#include <unordered_map>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -33,25 +35,6 @@ using namespace RolUI;
 
 namespace py = pybind11;
 
-#define _CONCAT(l, r) l##r
-#define CONCAT(l, r) _CONCAT(l, r)
-
-#define ARG_COUNT(...) _INTERNAL_ARG_COUNT(0, ##__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#define _INTERNAL_ARG_COUNT(_0, _1, _2, _3, _4, _5, _6, _7, _8, N, ...) N
-
-#define MYPYBIND11_OVERRIDE_PURE_0(ret_type, ct, fn) \
-    virtual ret_type fn() override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, ); }
-#define MYPYBIND11_OVERRIDE_PURE_2(ret_type, ct, fn, a, b) \
-    virtual ret_type fn(a b) override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, b); }
-#define MYPYBIND11_OVERRIDE_PURE_4(ret_type, ct, fn, a, b, c, d) \
-    virtual ret_type fn(a b, c d) override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, b, d); }
-#define MYPYBIND11_OVERRIDE_PURE_6(ret_type, ct, fn, a, b, c, d, e, f) \
-    virtual ret_type fn(a b, c d, e f) override { PYBIND11_OVERRIDE_PURE(ret_type, ct, fn, b, d, f); }
-
-#define MYPYBIND11_OVERRIDE_PURE(ret_type, ct, fn, ...)       \
-    CONCAT(MYPYBIND11_OVERRIDE_PURE_, ARG_COUNT(__VA_ARGS__)) \
-    (ret_type, ct, fn, __VA_ARGS__)
-
 class RolUIPyObject : public RolUI::Object {
   public:
     virtual const ObjectType* object_type() const noexcept override {
@@ -71,48 +54,100 @@ class PyWindow : public Window {
     virtual void dispatch_event(double timeout) override { PYBIND11_OVERRIDE_PURE(void, Window, dispatch_event, timeout); }
 };
 
-#define PyIPainter_OVERRIDE(ret_type, fn, ...) \
-    MYPYBIND11_OVERRIDE_PURE(ret_type, IPainter, fn, __VA_ARGS__)
 class PyIPainter : public IPainter {
 
-    PyIPainter_OVERRIDE(bool, load_font, const char*, name, const char*, filename);
-    PyIPainter_OVERRIDE(int, create_image_with_rgba, const uint8_t*, data, int, w, int, h);
-    PyIPainter_OVERRIDE(void, delete_image, int, handle);
-    PyIPainter_OVERRIDE(Size, image_size, int, handle);
-
-    PyIPainter_OVERRIDE(void, set_scissor, Rect, rect);
-
-    PyIPainter_OVERRIDE(void, set_font_size, uint32_t, s);
-    PyIPainter_OVERRIDE(void, set_font_color, Color, color);
-    PyIPainter_OVERRIDE(void, set_font, const char*, name);
-
-    PyIPainter_OVERRIDE(void, set_stroke_color, Color, color);
-    PyIPainter_OVERRIDE(void, set_fill_color, Color, color);
-    PyIPainter_OVERRIDE(void, set_stroke_width, uint32_t, w);
-
-    PyIPainter_OVERRIDE(void, draw_text, Point, pos, const char*, text, uint32_t, len);
-
-    PyIPainter_OVERRIDE(void, draw_image, Point, pos, Size, size, int, handle);
-
-    PyIPainter_OVERRIDE(void, draw_line, Point, a, Point, b);
-    PyIPainter_OVERRIDE(void, draw_rect, Rect, rect);
-    PyIPainter_OVERRIDE(void, draw_circle, Point, centre, uint32_t, r);
-    PyIPainter_OVERRIDE(void, draw_ellipse, Rect, rect);
-    PyIPainter_OVERRIDE(void, draw_roundedrect, Rect, rect, uint32_t, round);
-
-    PyIPainter_OVERRIDE(void, fill_rect, Rect, rect);
-    PyIPainter_OVERRIDE(void, fill_circle, Point, centre, uint32_t, r);
-    PyIPainter_OVERRIDE(void, fill_ellipse, Rect, rect);
-    PyIPainter_OVERRIDE(void, fill_roundedrect, Rect, rect, uint32_t, round);
-
-    PyIPainter_OVERRIDE(void, draw_hline, Point, a, uint32_t, len);
-    PyIPainter_OVERRIDE(void, draw_vline, Point, a, uint32_t, len);
-
-    virtual Size text_size(const char* text, uint32_t len) const override {
+    Size text_size(const char* text, uint32_t len) const override {
         PYBIND11_OVERRIDE_PURE(Size, IPainter, text_size, text, len);
     }
-    virtual Rect get_scissor() const override {
-        PYBIND11_OVERRIDE_PURE(Rect, IPainter, get_scissor, );
+
+    int32_t create_image(const uint8_t* data, uint32_t w, uint32_t h) override {
+        PYBIND11_OVERRIDE_PURE(int32_t, IPainter, create_image, data, w, h);
+    }
+    void delete_image(int32_t handle) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, delete_image, handle);
+    }
+    Size image_size(int32_t handle) override {
+        PYBIND11_OVERRIDE_PURE(Size, IPainter, image_size, handle);
+    }
+
+    int32_t create_font(const uint8_t* data, uint32_t len) override {
+        PYBIND11_OVERRIDE_PURE(int32_t, IPainter, create_font, data, len);
+    }
+    void set_font(int32_t handle) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_font, handle);
+    }
+    void set_font_size(uint32_t s) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_font_size, s);
+    }
+    void set_font_color(Color color) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_font_color, color);
+    }
+
+    void clip_rect(Rect rect) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, clip_rect, rect);
+    }
+    Rect get_clip_rect() const override {
+        PYBIND11_OVERRIDE_PURE(Rect, IPainter, get_clip_rect, );
+    }
+    void save_clip() override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, save_clip, );
+    }
+    void restore_clip() override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, restore_clip, );
+    }
+
+    void set_fill_color(Color color) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_fill_color, color);
+    }
+
+    void set_line_color(Color color) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_line_color, color);
+    }
+    void set_line_width(uint32_t w) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_line_width, w);
+    }
+    void set_line_cap(int32_t cap) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_line_cap, cap);
+    }
+    void set_line_join(int32_t join) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, set_line_join, join);
+    }
+
+    void fill_text(Point pos, const char* text, uint32_t len) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, fill_text, text, len);
+    }
+
+    void draw_image(Point pos, Size size, int handle) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, draw_image, pos, size, handle);
+    }
+    void draw_line(Point a, Point b) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, draw_line, a, b);
+    }
+
+    void stroke_rect(Rect rect) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, stroke_rect, rect);
+    }
+    void stroke_circle(Point centre, uint32_t r) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, stroke_circle, centre, r);
+    }
+    void stroke_ellipse(Rect rect) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, stroke_ellipse, rect);
+    }
+    void stroke_roundedrect(Rect rect, uint32_t round) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, stroke_roundedrect, rect, round);
+    }
+
+    void fill_rect(Rect rect) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, fill_rect, rect);
+    }
+    void fill_ellipse(Rect rect) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, fill_ellipse, rect);
+    }
+    void fill_circle(Point centre, uint32_t r) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, fill_circle, centre, r);
+    }
+    void fill_roundedrect(Rect rect, uint32_t round) override {
+        PYBIND11_OVERRIDE_PURE(void, IPainter, fill_roundedrect, rect, round);
     }
 };
 
@@ -191,27 +226,56 @@ static Image load_image(const char* filename) {
     stbi_image_free(image_data);
     return img;
 }
-static bool load_font(const char* name, const char* filename) {
-    // return Application::window()->painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC");
-    return Application::window()->painter()->load_font(name, filename);
+
+std::unordered_map<std::string, int32_t> _fonts;
+
+static int32_t load_font(const char* filename) {
+    auto it = _fonts.find(filename);
+    if (it != _fonts.end()) return it->second;
+
+    std::ifstream in(filename);
+    std::string buf{std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>()};
+    int32_t handle = Application::window()->painter()->create_font((const uint8_t*)buf.data(), buf.size());
+    if (handle >= 0)
+        _fonts[filename] = handle;
+    return handle;
+}
+static int32_t load_font_mem_file(const char* name, py::bytes bytes) {
+    if (!PyBytes_Check(bytes.ptr()))
+        throw std::runtime_error("load_font_mem_file(): invalid font data.");
+
+    auto byte_size = PyBytes_Size(bytes.ptr());
+    auto byte_data = PyBytes_AsString(bytes.ptr());
+    int32_t handle = Application::window()->painter()->create_font((const uint8_t*)byte_data, byte_size);
+    if (handle >= 0)
+        _fonts[name] = handle;
+    return handle;
 }
 
 static std::string Vec2i_to_string(const Vec2i& v) {
-    return std::string("Vec2i(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")");
+    char buf[64]{0};
+    sprintf(buf, "vec2i(%d, %d)", v.x, v.y);
+    return buf;
 }
 static std::string Vec2f_to_string(const Vec2f& v) {
-    return std::string("Vec2f(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")");
+    char buf[64]{0};
+    sprintf(buf, "vec2f(%.2f, %.2f)", v.x, v.y);
+    return buf;
 }
 static std::string Size_to_string(const Size& v) {
-    return std::string("Size(" + std::to_string(v.width) + ", " + std::to_string(v.height) + ")");
+    char buf[64]{0};
+    sprintf(buf, "Size(%d, %d)", v.width, v.height);
+    return buf;
 }
 static std::string Rect_to_string(const Rect& v) {
-    return std::string("Rect(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ", "
-                       + std::to_string(v.width) + ", " + std::to_string(v.height) + ")");
+    char buf[128]{0};
+    sprintf(buf, "Rect(%d, %d, %d, %d)", v.x, v.y, v.width, v.height);
+    return buf;
 }
 static std::string Color_to_string(const Color& v) {
-    return std::string("Color(" + std::to_string(v.r) + ", " + std::to_string(v.g) + ", "
-                       + std::to_string(v.b) + ", " + std::to_string(v.a) + ")");
+    char buf[128]{0};
+    sprintf(buf, "Color(%d, %d, %d, %d)", v.r, v.g, v.b, v.a);
+    return buf;
 }
 
 void bind_widgets(py::module_& m);
@@ -498,7 +562,8 @@ PYBIND11_MODULE(PyRolUI, m) {
 
     py::module_ events_module = m.def_submodule("events", "RolUI events Python bind.");
 
-    m.def("load_font", load_font, py::arg("name"), py::arg("filename"));
+    m.def("load_font", load_font, py::arg("filename"));
+    m.def("load_font_mem_file", load_font_mem_file, py::arg("name"), py::arg("bytes"));
     m.def("load_image", load_image, py::arg("filename"));
     m.def("load_image_mem_file", load_image_mem_file, py::arg("bytes"));
     m.def("load_image_mem", load_image_mem, py::arg("bytes"), py::arg("w"), py::arg("h"));
@@ -525,34 +590,7 @@ PYBIND11_MODULE(PyRolUI, m) {
     class_<IEvent, Object>(m, "IEvent")
         .def("target", &IEvent::target, return_value_policy::reference);
 
-    class_<IPainter, PyIPainter>(m, "IPainter")
-        .def("load_font", &IPainter::load_font)
-        .def("text_size", &IPainter::text_size)
-        .def("text_glyph_pos", &IPainter::text_glyph_pos)
-        .def("create_image_with_rgba", &IPainter::create_image_with_rgba)
-        .def("delete_image", &IPainter::delete_image)
-        .def("image_size", &IPainter::image_size)
-        .def("set_scissor", &IPainter::set_scissor)
-        .def("get_scissor", &IPainter::get_scissor)
-        .def("set_font_size", &IPainter::set_font_size)
-        .def("set_font_color", &IPainter::set_font_color)
-        .def("set_font", &IPainter::set_font)
-        .def("set_stroke_color", &IPainter::set_stroke_color)
-        .def("set_fill_color", &IPainter::set_fill_color)
-        .def("set_stroke_width", &IPainter::set_stroke_width)
-        .def("draw_text", &IPainter::draw_text)
-        .def("draw_image", &IPainter::draw_image)
-        .def("draw_line", &IPainter::draw_line)
-        .def("draw_rect", &IPainter::draw_rect)
-        .def("draw_circle", &IPainter::draw_circle)
-        .def("draw_ellipse", &IPainter::draw_ellipse)
-        .def("draw_roundedrect", &IPainter::draw_roundedrect)
-        .def("fill_rect", &IPainter::fill_rect)
-        .def("fill_circle", &IPainter::fill_circle)
-        .def("fill_ellipse", &IPainter::fill_ellipse)
-        .def("fill_roundedrect", &IPainter::fill_roundedrect)
-        .def("draw_hline", &IPainter::draw_hline)
-        .def("draw_vline", &IPainter::draw_vline);
+    class_<IPainter, PyIPainter>(m, "IPainter");
 
     class_<Window, PyWindow>(m, "Window")
         .def(py::init())

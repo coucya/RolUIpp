@@ -16,9 +16,9 @@ namespace RolUI {
             painter->fill_roundedrect(rect, round);
 
             if (border_width > 0) {
-                painter->set_stroke_color(border_color);
-                painter->set_stroke_width(border_width * 2);
-                painter->draw_roundedrect(rect, round);
+                painter->set_line_color(border_color);
+                painter->set_line_width(border_width);
+                painter->stroke_roundedrect(rect, round);
             }
 
             SingleChildWidget::perform_draw(painter);

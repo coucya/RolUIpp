@@ -158,15 +158,7 @@ namespace RolUI {
     template <typename T>
     T* object_try_cast(Object* obj) {
         if (!obj) return nullptr;
-
-        if (obj->object_type()->is_superclass<T>())
-            return obj->object_type()->try_as_superclass<T>(obj);
-
-        if constexpr (std::is_base_of<Object, T>::value) {
-            if (object_type_of<T>() && object_type_of<T>()->is_superclass(obj->object_type()))
-                return static_cast<T*>(obj);
-        }
-        return nullptr;
+        return dynamic_cast<T*>(obj);
     }
 
 } // namespace RolUI

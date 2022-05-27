@@ -256,7 +256,7 @@ namespace RolUIBackend {
     int GLFWWindow::load_image(const char* filename) noexcept {
         int w, h, n;
         unsigned char* data = stbi_load(filename, &w, &h, &n, 4);
-        int handle = painter()->create_image_with_rgba(data, w, h);
+        int handle = painter()->create_image(data, w, h);
         stbi_image_free(data);
         return handle;
     }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -18,38 +19,29 @@
 namespace RolUI {
     namespace widgets {
 
-        class ITextSpan {
+        class TextWidget : public Widget {
           public:
-            virtual ~ITextSpan() {}
-            virtual unsigned pos_to_index(Point pos) const noexcept = 0;
-            virtual Point index_to_pos(unsigned index) const noexcept = 0;
-            virtual unsigned char_count() const noexcept = 0;
-            virtual unsigned line_height() const noexcept = 0;
-        };
-
-        class TextSpanWidget : public ITextSpan, public Widget {
-          public:
-            Property<TextSpanWidget, unsigned> font_size{this, 15};
-            Property<TextSpanWidget, Color> font_color{this, {0, 0, 0, 255}};
-            Property<TextSpanWidget, std::string> font_name{this, "default"};
-            Property<TextSpanWidget, std::string> text{this};
+            Property<TextWidget, int32_t> font{this, 0};
+            Property<TextWidget, unsigned> text_size{this, 15};
+            Property<TextWidget, Color> text_color{this, {0, 0, 0, 255}};
+            Property<TextWidget, std::string> text{this};
 
           public:
-            TextSpanWidget() noexcept;
-            TextSpanWidget(const std::string& text) noexcept;
-            ~TextSpanWidget() override;
+            TextWidget() noexcept;
+            TextWidget(const std::string& text) noexcept;
+            ~TextWidget() override;
 
             const ObjectType* object_type() const noexcept override;
 
-            unsigned pos_to_index(Point pos) const noexcept override;
-            Point index_to_pos(unsigned index) const noexcept override;
+            unsigned pos_to_index(Point pos) const noexcept;
+            Point index_to_pos(unsigned index) const noexcept;
 
-            unsigned char_count() const noexcept override;
+            unsigned char_count() const noexcept;
             unsigned char_index_to_byte_index(unsigned idx) const noexcept;
             unsigned char_byte_size(unsigned idx) const noexcept;
             unsigned byte_index_to_char_index(unsigned idx) const noexcept;
 
-            unsigned line_height() const noexcept override;
+            unsigned line_height() const noexcept;
 
           protected:
             virtual void perform_draw(IPainter* painter) noexcept override;
@@ -73,40 +65,7 @@ namespace RolUI {
             std::vector<CharInfo> _chars;
         };
 
-        class RichTextLineWidget : public ITextSpan, public FlexWidget {
-          public:
-            RichTextLineWidget() noexcept;
-            ~RichTextLineWidget() override;
-
-            const ObjectType* object_type() const noexcept override;
-
-            unsigned pos_to_index(Point pos) const noexcept override;
-            Point index_to_pos(unsigned index) const noexcept override;
-            unsigned char_count() const noexcept override;
-            unsigned line_height() const noexcept override;
-
-            void set_child(Widget* child, int index) noexcept override;
-            void add_child(Widget* child) noexcept override;
-            void insert_child(int index, Widget* child) noexcept override;
-        };
-
-        class RichTextWidget : public ColumnWidget {
-          public:
-            RichTextWidget() noexcept;
-            ~RichTextWidget() override;
-
-            const ObjectType* object_type() const noexcept override;
-
-            unsigned pos_to_index(Point pos) const noexcept;
-            Point index_to_pos(unsigned index) const noexcept;
-            unsigned char_count() const noexcept;
-
-            void set_child(Widget* child, int index) noexcept override;
-            void add_child(Widget* child) noexcept override;
-            void insert_child(int index, Widget* child) noexcept override;
-        };
-
-        class EditableTextWidget : public TextSpanWidget {
+        class EditableTextWidget : public TextWidget {
           public:
             Property<EditableTextWidget, unsigned int> cursor_index{this, 0};
 
@@ -152,9 +111,7 @@ namespace RolUI {
 
     } // namespace widgets
 
-    RolUI_decl_object_type_of(widgets::TextSpanWidget);
-    RolUI_decl_object_type_of(widgets::RichTextLineWidget);
-    RolUI_decl_object_type_of(widgets::RichTextWidget);
+    RolUI_decl_object_type_of(widgets::TextWidget);
     RolUI_decl_object_type_of(widgets::EditableTextWidget);
     RolUI_decl_object_type_of(widgets::TextBoxWidget);
 

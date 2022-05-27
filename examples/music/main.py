@@ -43,6 +43,7 @@ def load_music_infos(path:str) -> list[dict]:
     for i, music_path in enumerate(files):
         id3 = EasyID3(music_path)
         music_info = {}
+        music_info["font"] ="C:\\WINDOWS\\FONTS\\MSYHL.TTC"
         music_info["music_path"] = music_path
         music_info["music_index"] = i
         try:
@@ -110,7 +111,7 @@ def make_on_select(music_info:dict):
 
 
 def init():
-    load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC")
+    load_font("C:\\WINDOWS\\FONTS\\MSYHL.TTC")
     CTRL_BUTTON_IMAGES["prev"] = load_image_resource("prev-wrap.png")
     CTRL_BUTTON_IMAGES["next"] = load_image_resource("next-wrap.png")
     CTRL_BUTTON_IMAGES["play"] = load_image_resource("play-wrap.png")
@@ -136,6 +137,7 @@ def main():
     context["music_list"] = music_list
     context["music_progress"] = State(0)
 
+    context["font"] = "C:\\WINDOWS\\FONTS\\MSYHL.TTC"
     context["image_fit_fill"] = ImageWidget.fill
     context["image_fit_contain"] = ImageWidget.contain
     context["image_fit_cover"] = ImageWidget.cover

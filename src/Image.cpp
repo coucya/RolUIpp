@@ -12,7 +12,7 @@ namespace RolUI {
     static std::unordered_map<size_t, size_t> image_rc;
 
     static size_t image_new_rgba_mem(const uint8_t* data, size_t w, size_t h) {
-        size_t handle = Application::window()->painter()->create_image_with_rgba(data, w, h);
+        size_t handle = Application::window()->painter()->create_image(data, w, h);
         image_rc[handle] = 0;
         return handle;
     }

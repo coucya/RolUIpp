@@ -242,8 +242,17 @@ def _sized_build_func(obj: dict, ctx: dict) -> Widget:
 
 register_widget("sized", _sized_build_func)
 
+def _text_build_func(obj: dict, ctx: dict) -> Widget:
+    props = _replace_props_with_context(obj.get("props", {}), ctx)
+    font = props.get("font", None)
+    if isinstance(font, str):
+        props["font"] = load_font(font)
+    w = mk_widget(widgets.TextWidget, **props)
+    return w
+    
 
-register_widget("text", _make_build_func(widgets.TextSpanWidget, "text"))
+register_widget("text", _text_build_func)
+
 register_widget("textbox", _make_build_func(widgets.TextBoxWidget, "textbox"))
 register_widget("box", _make_build_func(widgets.BoxWidget, "box"))
 register_widget("align", _make_build_func(widgets.AlignWidget, "align"))

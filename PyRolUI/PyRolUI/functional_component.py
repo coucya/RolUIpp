@@ -111,9 +111,9 @@ def image(*, image: Union[Image, str, State]=None, width=None, height=None, fit=
 
     return w
 
-def textspan(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextSpanWidget:
+def text(text, *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextWidget:
     args = locals()
-    return mk_widget(widgets.TextSpanWidget, **args)
+    return mk_widget(widgets.TextWidget, **args)
 
 
 def textbox(text="", *, font_size=16, font_name="default", font_color=Color(64, 64, 64)) -> widgets.TextBoxWidget:

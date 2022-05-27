@@ -122,13 +122,10 @@ namespace RolUI {
             if (!child()) return;
 
             RolUI::Rect ar = abs_rect();
-            RolUI::Rect current_scissor = painter->get_scissor();
-            painter->set_scissor(
-                current_scissor
-                    .intersected(ar)
-                    .value_or(RolUI::Rect{ar.pos(), Size{0, 0}}));
+            painter->save_clip();
+            painter->clip_rect(ar);
             child()->draw(painter);
-            painter->set_scissor(current_scissor);
+            painter->restore_clip();
         }
 
         VScrollView::VScrollView() noexcept {}

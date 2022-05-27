@@ -11,9 +11,9 @@ namespace RolUI {
 
         void HSeparatorWidget::perform_draw(IPainter* painter) noexcept {
             Point pos = abs_pos();
-            painter->set_stroke_color(color());
-            painter->set_stroke_width(width());
-            painter->draw_hline(abs_pos(), size().width);
+            painter->set_line_color(color());
+            painter->set_line_width(width());
+            painter->draw_line(pos, Point{pos.x + size().width, pos.y});
         }
         Size HSeparatorWidget::perform_layout(Constraint constraint) noexcept {
             return {constraint.max_width(), width()};
@@ -24,9 +24,9 @@ namespace RolUI {
 
         void VSeparatorWidget::perform_draw(IPainter* painter) noexcept {
             Point pos = abs_pos();
-            painter->set_stroke_color(color());
-            painter->set_stroke_width(width());
-            painter->draw_vline(abs_pos(), size().height);
+            painter->set_line_color(color());
+            painter->set_line_width(width());
+            painter->draw_line(pos, Point{pos.x, pos.y + size().height});
         }
         Size VSeparatorWidget::perform_layout(Constraint constraint) noexcept {
             return {width(), constraint.max_height()};
