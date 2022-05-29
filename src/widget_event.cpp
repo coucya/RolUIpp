@@ -1,6 +1,6 @@
 
 #include "RolUI/IEvent.hpp"
-#include "RolUI/events/Widget_event.hpp"
+#include "RolUI/Widget_event.hpp"
 
 namespace RolUI {
 

@@ -1,12 +1,11 @@
 
 #include "RolUI/IPainter.hpp"
 #include "RolUI/Application.hpp"
-#include "RolUI/widgets/listener.hpp"
-
-#include "RolUI/events/MouseEvent.hpp"
-#include "RolUI/events/KeyboardEvent.hpp"
-#include "RolUI/events/CharEvent.hpp"
-#include "RolUI/events/Widget_event.hpp"
+#include "RolUI/Widget_event.hpp"
+#include "RolUI-widgets/listener.hpp"
+#include "RolUI-events/MouseEvent.hpp"
+#include "RolUI-events/KeyboardEvent.hpp"
+#include "RolUI-events/CharEvent.hpp"
 
 namespace RolUI {
     namespace widgets {

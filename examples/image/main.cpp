@@ -10,10 +10,10 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Image.hpp"
 #include "RolUI/Widget.hpp"
-#include "RolUI/widgets/Image.hpp"
-#include "RolUI/events/MouseEvent.hpp"
-#include "RolUI/events/Widget_event.hpp"
 #include "RolUI/Application.hpp"
+#include "RolUI/Widget_event.hpp"
+#include "RolUI-widgets/Image.hpp"
+#include "RolUI-events/MouseEvent.hpp"
 
 #include "stb_image.h"
 

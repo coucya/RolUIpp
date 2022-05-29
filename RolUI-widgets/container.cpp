@@ -3,7 +3,7 @@
 #include "RolUI/Size.hpp"
 #include "RolUI/IEvent.hpp"
 #include "RolUI/IPainter.hpp"
-#include "RolUI/widgets/container.hpp"
+#include "RolUI-widgets/container.hpp"
 
 namespace RolUI {
     namespace widgets {

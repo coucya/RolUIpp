@@ -1,7 +1,7 @@
 
 #include "RolUI/IPainter.hpp"
 #include "RolUI/Widget.hpp"
-#include "RolUI/widgets/decoration.hpp"
+#include "RolUI-widgets/decoration.hpp"
 
 namespace RolUI {
     namespace widgets {

@@ -6,7 +6,7 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Application.hpp"
-#include "RolUI/events/KeyboardEvent.hpp"
+#include "RolUI-events/KeyboardEvent.hpp"
 
 namespace RolUI {
 

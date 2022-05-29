@@ -2,7 +2,7 @@
 
 #include <queue>
 
-#include "../IEvent.hpp"
+#include "RolUI/IEvent.hpp"
 
 namespace RolUI {
 

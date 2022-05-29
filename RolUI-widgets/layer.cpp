@@ -1,6 +1,5 @@
 
-#include "RolUI/widgets/layer.hpp"
-#include "RolUI/IPainter.hpp"
+#include "RolUI-widgets/layer.hpp"
 
 namespace RolUI {
     namespace widgets {

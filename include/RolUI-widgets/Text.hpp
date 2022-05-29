@@ -5,16 +5,14 @@
 #include <string>
 #include <vector>
 
-#include "../Object.hpp"
-#include "../Widget.hpp"
-#include "../IPainter.hpp"
-#include "../Property.hpp"
+#include "RolUI/Object.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/IPainter.hpp"
+#include "RolUI/Property.hpp"
+#include "RolUI/Widget_event.hpp"
+#include "RolUI-events/MouseEvent.hpp"
+#include "RolUI-events/CharEvent.hpp"
 
-#include "../events/MouseEvent.hpp"
-#include "../events/CharEvent.hpp"
-#include "../events/Widget_event.hpp"
-
-#include "./flow.hpp"
 
 namespace RolUI {
     namespace widgets {

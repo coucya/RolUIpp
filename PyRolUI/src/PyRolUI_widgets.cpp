@@ -17,13 +17,15 @@
 
 #include <RolUI/sigslot.hpp>
 
-#include <RolUI/widgets/Text.hpp>
-#include <RolUI/widgets/container.hpp>
-#include <RolUI/widgets/flow.hpp>
-#include <RolUI/widgets/layer.hpp>
-#include <RolUI/widgets/listener.hpp>
-#include <RolUI/widgets/decoration.hpp>
-#include <RolUI/widgets/widgets.hpp>
+#include <RolUI-widgets/Text.hpp>
+#include <RolUI-widgets/container.hpp>
+#include <RolUI-widgets/flow.hpp>
+#include <RolUI-widgets/layer.hpp>
+#include <RolUI-widgets/listener.hpp>
+#include <RolUI-widgets/decoration.hpp>
+#include <RolUI-widgets/Scroll.hpp>
+#include <RolUI-widgets/Image.hpp>
+#include <RolUI-widgets/widgets.hpp>
 
 using namespace pybind11;
 using namespace RolUI;

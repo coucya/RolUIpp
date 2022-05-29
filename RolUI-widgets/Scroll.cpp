@@ -5,8 +5,8 @@
 #include "RolUI/Point.hpp"
 #include "RolUI/IPainter.hpp"
 #include "RolUI/Vector.hpp"
-#include "RolUI/widgets/Scroll.hpp"
-#include "RolUI/events/MouseEvent.hpp"
+#include "RolUI-events/MouseEvent.hpp"
+#include "RolUI-widgets/Scroll.hpp"
 
 namespace RolUI {
     namespace widgets {

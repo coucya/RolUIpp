@@ -2,9 +2,9 @@
 
 #include <cstddef>
 
-#include "../Property.hpp"
-#include "../Widget.hpp"
-#include "../sigslot.hpp"
+#include "RolUI/Property.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/sigslot.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/Vector.hpp"
 

@@ -1,23 +1,11 @@
 
 aux_source_directory(${RolUI_SOURCE_DIR} RolUI_source)
-aux_source_directory(${RolUI_SOURCE_DIR}/widgets RolUI_widgets_source)
-aux_source_directory(${RolUI_SOURCE_DIR}/events  RolUI_events_source)
 
-add_library(RolUI-static STATIC ${RolUI_source} ${RolUI_widgets_source} ${RolUI_events_source})
+add_library(RolUI-static STATIC ${RolUI_source})
 target_include_directories(RolUI-static PRIVATE ${RolUI_INCLUDE_DIR} ${3RDPARTY_DIR}/utf8)
 target_compile_options(RolUI-static PRIVATE --std=c++17)
-set_target_properties(RolUI-static PROPERTIES PREFIX "")
 set_target_properties(RolUI-static PROPERTIES OUTPUT_NAME "RolUI")
-set_target_properties(RolUI-static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/examples_bin/)
 
 add_library(RolUI-shared SHARED $<TARGET_OBJECTS:RolUI-static>)
-set_target_properties(RolUI-shared PROPERTIES PREFIX "")
 set_target_properties(RolUI-shared PROPERTIES OUTPUT_NAME "RolUI")
-set_target_properties(RolUI-shared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/examples_bin/)
-set_target_properties(RolUI-shared PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/examples_bin/)
 
-add_library(RolUI-shared-py SHARED $<TARGET_OBJECTS:RolUI-static>)
-set_target_properties(RolUI-shared-py PROPERTIES PREFIX "")
-set_target_properties(RolUI-shared-py PROPERTIES OUTPUT_NAME "RolUI")
-set_target_properties(RolUI-shared-py PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/PyRolUI/PyRolUI/)
-set_target_properties(RolUI-shared-py PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/PyRolUI/PyRolUI/)

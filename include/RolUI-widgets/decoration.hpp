@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "../Color.hpp"
-#include "../Rect.hpp"
-#include "../Property.hpp"
-#include "../Widget.hpp"
+#include "RolUI/Color.hpp"
+#include "RolUI/Rect.hpp"
+#include "RolUI/Property.hpp"
+#include "RolUI/Widget.hpp"
 
 namespace RolUI {
     namespace widgets {

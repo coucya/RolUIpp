@@ -3,8 +3,8 @@
 #include "RolUI/IEvent.hpp"
 #include "RolUI/Image.hpp"
 #include "RolUI/Window.hpp"
-#include "RolUI/events/Widget_event.hpp"
-#include "RolUI/widgets/Image.hpp"
+#include "RolUI/Widget_event.hpp"
+#include "RolUI-widgets/Image.hpp"
 
 namespace RolUI {
     namespace widgets {

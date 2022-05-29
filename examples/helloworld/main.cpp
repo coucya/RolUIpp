@@ -3,13 +3,13 @@
 #include <filesystem>
 #include <stdexcept>
 
-#include "RolUI/widgets/Text.hpp"
 #include "glfw_backend/GLFWWindow.h"
 
 #include "RolUI/Widget.hpp"
-#include "RolUI/widgets/widgets.hpp"
-#include "RolUI/widgets/container.hpp"
 #include "RolUI/Application.hpp"
+#include "RolUI-widgets/widgets.hpp"
+#include "RolUI-widgets/container.hpp"
+#include "RolUI-widgets/Text.hpp"
 
 using namespace RolUI;
 

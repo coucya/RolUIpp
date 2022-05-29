@@ -6,9 +6,9 @@
 #include "RolUI/Vector.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/IPainter.hpp"
-#include "RolUI/events/MouseEvent.hpp"
-#include "RolUI/events/CharEvent.hpp"
-#include "RolUI/events/KeyboardEvent.hpp"
+#include "RolUI-events/MouseEvent.hpp"
+#include "RolUI-events/CharEvent.hpp"
+#include "RolUI-events/KeyboardEvent.hpp"
 
 #include "GLFWPainter.h"
 #include "GLFWppWindow.h"

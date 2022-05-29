@@ -2,14 +2,18 @@ cmake_minimum_required(VERSION 3.2)
 
 PROJECT(RolUI)
 
-set(RolUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(RolUI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(RolUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(RolUI_EVENTS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/RolUI-events)
+set(RolUI_WIDGETS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/RolUI-widgets)
 
 set(3RDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
 set(BACKEND_DIR ${CMAKE_CURRENT_SOURCE_DIR}/backend)
 
 add_subdirectory(src)
+add_subdirectory(RolUI-events)
+add_subdirectory(RolUI-widgets)
 add_subdirectory(backend)
 add_subdirectory(examples)
 add_subdirectory(3rdparty)

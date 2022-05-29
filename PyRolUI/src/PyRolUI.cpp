@@ -26,9 +26,9 @@
 #include <RolUI/Window.hpp>
 #include <RolUI/Widget.hpp>
 #include <RolUI/Application.hpp>
-#include <RolUI/events/MouseEvent.hpp>
-#include <RolUI/events/CharEvent.hpp>
-#include <RolUI/events/KeyboardEvent.hpp>
+#include <RolUI-events/MouseEvent.hpp>
+#include <RolUI-events/CharEvent.hpp>
+#include <RolUI-events/KeyboardEvent.hpp>
 
 using namespace pybind11;
 using namespace RolUI;

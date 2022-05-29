@@ -1,12 +1,13 @@
 #include <iostream>
-
-#include "RolUI/Point.hpp"
-#include "nanovg.h"
-
-#include "RolUI/Color.hpp"
-#include "GLFWPainter.h"
 #include <cstdint>
 #include <stdint.h>
+
+#include "nanovg.h"
+
+#include "GLFWPainter.h"
+
+#include "RolUI/Color.hpp"
+#include "RolUI/Point.hpp"
 
 namespace RolUIBackend {
 

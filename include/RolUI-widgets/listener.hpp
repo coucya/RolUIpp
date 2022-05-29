@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Widget.hpp"
-#include "../sigslot.hpp"
-#include "../events/MouseEvent.hpp"
-#include "../events/KeyboardEvent.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/sigslot.hpp"
+#include "RolUI-events/MouseEvent.hpp"
+#include "RolUI-events/KeyboardEvent.hpp"
 
 namespace RolUI {
     namespace widgets {

@@ -8,11 +8,11 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/Window.hpp"
 #include "RolUI/Application.hpp"
-#include "RolUI/widgets/Text.hpp"
-#include "RolUI/events/Widget_event.hpp"
-#include "RolUI/events/MouseEvent.hpp"
-#include "RolUI/events/CharEvent.hpp"
-#include "RolUI/events/KeyboardEvent.hpp"
+#include "RolUI/Widget_event.hpp"
+#include "RolUI-widgets/Text.hpp"
+#include "RolUI-events/MouseEvent.hpp"
+#include "RolUI-events/CharEvent.hpp"
+#include "RolUI-events/KeyboardEvent.hpp"
 
 namespace RolUI {
     namespace widgets {

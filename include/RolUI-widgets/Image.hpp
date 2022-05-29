@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Image.hpp"
-#include "../Property.hpp"
-#include "../Widget.hpp"
-#include "../IPainter.hpp"
+#include "RolUI/Image.hpp"
+#include "RolUI/Property.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/IPainter.hpp"
 
 namespace RolUI {
     namespace widgets {

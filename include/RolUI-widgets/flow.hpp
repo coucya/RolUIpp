@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "../Object.hpp"
-#include "../Widget.hpp"
-#include "../Property.hpp"
+#include "RolUI/Object.hpp"
+#include "RolUI/Widget.hpp"
+#include "RolUI/Property.hpp"
 
 namespace RolUI {
     namespace widgets {

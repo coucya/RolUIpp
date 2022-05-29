@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Property.hpp"
-#include "../Widget.hpp"
+#include "RolUI/Property.hpp"
+#include "RolUI/Widget.hpp"
 
 namespace RolUI {
     namespace widgets {

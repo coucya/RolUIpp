@@ -3,7 +3,7 @@
 #include "RolUI/Window.hpp"
 #include "RolUI/Widget.hpp"
 #include "RolUI/Application.hpp"
-#include "RolUI/events/CharEvent.hpp"
+#include "RolUI-events/CharEvent.hpp"
 
 #include "utf8.h"
 

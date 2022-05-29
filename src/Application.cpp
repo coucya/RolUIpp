@@ -7,8 +7,7 @@
 #include "RolUI/Widget.hpp"
 #include "RolUI/IPainter.hpp"
 #include "RolUI/Application.hpp"
-
-#include "RolUI/events/Widget_event.hpp"
+#include "RolUI/Widget_event.hpp"
 
 namespace RolUI {
 

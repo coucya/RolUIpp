@@ -1,0 +1,12 @@
+
+aux_source_directory(${RolUI_EVENTS_SOURCE_DIR}  RolUI_events_source)
+
+add_library(RolUI-events-static STATIC ${RolUI_events_source})
+target_include_directories(RolUI-events-static PRIVATE ${RolUI_INCLUDE_DIR} ${3RDPARTY_DIR}/utf8)
+target_compile_options(RolUI-events-static PRIVATE --std=c++17)
+set_target_properties(RolUI-events-static PROPERTIES OUTPUT_NAME "RolUI-events")
+
+add_library(RolUI-events-shared SHARED $<TARGET_OBJECTS:RolUI-events-static>)
+target_link_libraries(RolUI-events-shared PRIVATE RolUI-static)
+set_target_properties(RolUI-events-shared PROPERTIES OUTPUT_NAME "RolUI-events")
+
