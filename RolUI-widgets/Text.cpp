@@ -182,7 +182,7 @@ namespace RolUI {
             if (_is_blinking) {
                 _is_blinking = false;
                 _show_cursor = false;
-                Application::clear_interval(_blink_timer_handle);
+                // Application::clear_interval(_blink_timer_handle);
             }
         }
 
@@ -193,12 +193,12 @@ namespace RolUI {
             if (blink && !is_blinking()) {
                 _show_cursor = true;
                 _is_blinking = true;
-                _blink_timer_handle = Application::set_interval(0.5f, [this](double) {
-                    this->_show_cursor = !this->_show_cursor;
-                });
+                // _blink_timer_handle = Application::set_interval(0.5f, [this](double) {
+                //     this->_show_cursor = !this->_show_cursor;
+                // });
             } else if (!blink && _is_blinking) {
                 _is_blinking = false;
-                Application::clear_interval(_blink_timer_handle);
+                // Application::clear_interval(_blink_timer_handle);
                 _show_cursor = false;
             }
         }

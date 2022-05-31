@@ -245,8 +245,8 @@ namespace RolUIBackend {
         swap_buffer();
     }
 
-    void GLFWWindow::dispatch_event(double timeout) {
-        this->wait_events_timeout(timeout);
+    void GLFWWindow::dispatch_event() {
+        this->poll_events();
 
         _mouse_dispatcher.dispatch(this);
         _key_dispatcher.dispatch(this);

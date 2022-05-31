@@ -54,7 +54,7 @@ set_target_properties(RolUI-events-shared PROPERTIES OUTPUT_NAME "RolUI-events")
 
 
 add_subdirectory(backend)
-add_subdirectory(examples)
+# add_subdirectory(examples)
 add_subdirectory(3rdparty)
 add_subdirectory(test)
 add_subdirectory(PyRolUI)

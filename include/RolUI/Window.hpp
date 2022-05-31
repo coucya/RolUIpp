@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "./Point.hpp"
 #include "./Rect.hpp"
 #include "./Size.hpp"
@@ -26,7 +24,7 @@ namespace RolUI {
         virtual void begin_draw() = 0;
         virtual void end_draw() = 0;
 
-        virtual void dispatch_event(double timeout) = 0;
+        virtual void dispatch_event() = 0;
 
       public:
         Signal<Point> on_pos_change;

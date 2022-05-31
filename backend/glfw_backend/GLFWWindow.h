@@ -37,7 +37,7 @@ namespace RolUIBackend {
 
         int load_image(const char* filename) noexcept;
 
-        void dispatch_event(double timeout) override;
+        void dispatch_event() override;
 
       private:
         void _init_nanovg();

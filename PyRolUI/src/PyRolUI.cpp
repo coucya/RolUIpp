@@ -51,7 +51,7 @@ class PyWindow : public Window {
     virtual void begin_draw() override { PYBIND11_OVERRIDE_PURE(void, Window, begin_draw, ); }
     virtual void end_draw() override { PYBIND11_OVERRIDE_PURE(void, Window, end_draw, ); }
 
-    virtual void dispatch_event(double timeout) override { PYBIND11_OVERRIDE_PURE(void, Window, dispatch_event, timeout); }
+    virtual void dispatch_event() override { PYBIND11_OVERRIDE_PURE(void, Window, dispatch_event, ); }
 };
 
 class PyIPainter : public IPainter {
@@ -677,16 +677,10 @@ PYBIND11_MODULE(PyRolUI, m) {
         .def_static("has_focus_widget", Application::has_focus_widget)
         .def_static("set_focus_widget", Application::set_focus_widget)
         .def_static("focus_widget", Application::focus_widget, return_value_policy::reference)
-        .def_static("set_timeout", Application::set_timeout)
-        .def_static("set_interval", Application::set_interval)
-        .def_static("clear_timeout", Application::clear_timeout)
-        .def_static("clear_interval", Application::clear_interval)
         .def_static("get_widget_by_pos", Application::get_widget_by_pos, return_value_policy::reference)
         .def_static("flush_layout", Application::flush_layout)
         .def_static("flush_draw", Application::flush_draw)
         .def_static("flush_frame", Application::flush_frame)
-        .def_static("run", static_cast<void (*)()>(&Application::run))
-        .def_static("run", static_cast<void (*)(Widget*)>(&Application::run))
         .def_static("exit", Application::exit);
 
     bind_widgets(m);
