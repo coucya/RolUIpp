@@ -210,7 +210,7 @@ namespace RolUI {
     const ObjectType* SingleChildWidget::object_type() const noexcept { return object_type_of<SingleChildWidget>(); }
     const ObjectType* MultiChildWidget::object_type() const noexcept { return object_type_of<MultiChildWidget>(); }
 
-    RolUI_impl_object_type_of(Widget, Object, HasSlot);
+    RolUI_impl_object_type_of(Widget, Object);
     RolUI_impl_object_type_of(SingleChildWidget, Widget);
     RolUI_impl_object_type_of(MultiChildWidget, Widget);
 

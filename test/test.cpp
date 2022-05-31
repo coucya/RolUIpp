@@ -157,78 +157,8 @@ void sigslot_test() {
     }
 }
 
-struct ObjA;
-struct ObjB;
-struct ObjC;
-
-namespace RolUI {
-    RolUI_decl_object_type_of(ObjA);
-    RolUI_decl_object_type_of(ObjB);
-    RolUI_decl_object_type_of(ObjC);
-} // namespace RolUI
-
-struct InterfaceA {
-    virtual ~InterfaceA() {}
-    virtual void foo() = 0;
-};
-struct ObjA : public RolUI::Object {
-    const ObjectType* object_type() const noexcept override { return object_type_of<ObjA>(); }
-};
-struct ObjB : public InterfaceA, public RolUI::Object {
-    void foo() override {}
-    const ObjectType* object_type() const noexcept override { return object_type_of<ObjB>(); }
-};
-struct ObjC : public InterfaceA, public ObjA {
-    void foo() override {}
-    const ObjectType* object_type() const noexcept override { return object_type_of<ObjB>(); }
-};
-
-namespace RolUI {
-    RolUI_impl_object_type_of(ObjA, RolUI::Object);
-    RolUI_impl_object_type_of(ObjB, InterfaceA, RolUI::Object);
-    RolUI_impl_object_type_of(ObjC, InterfaceA, ObjA);
-} // namespace RolUI
-
-void Object_test() {
-    ObjA obj_a;
-    ObjB obj_b;
-    ObjC obj_c;
-    ObjA* optr_a = &obj_a;
-    ObjB* optr_b = &obj_b;
-    ObjC* optr_c = &obj_c;
-    InterfaceA* iptr_b = &obj_b;
-    InterfaceA* iptr_c = &obj_c;
-
-    const ObjectType* ot_a = object_type_of<ObjA>();
-    const ObjectType* ot_b = object_type_of<ObjB>();
-    const ObjectType* ot_c = object_type_of<ObjC>();
-
-    debug_assert(ot_a->is_superclass<RolUI::Object>());
-    debug_assert(ot_b->is_superclass<RolUI::Object>());
-    debug_assert(ot_a->is_superclass(object_type_of<RolUI::Object>()));
-    debug_assert(ot_b->is_superclass(object_type_of<RolUI::Object>()));
-    debug_assert(ot_a->is_superclass(typeid(RolUI::Object)));
-    debug_assert(ot_b->is_superclass(typeid(RolUI::Object)));
-    debug_assert(ot_b->is_superclass(typeid(InterfaceA)));
-    debug_assert(!ot_a->is_superclass<InterfaceA>());
-    debug_assert(ot_b->is_superclass<InterfaceA>());
-    debug_assert(ot_c->is_superclass<Object>());
-    debug_assert(ot_c->is_superclass<ObjA>());
-    debug_assert(ot_c->is_superclass<InterfaceA>());
-
-    debug_assert(ot_a->try_cast<ObjA>(static_cast<Object*>(&obj_a)) == optr_a);
-    debug_assert(ot_a->try_cast<ObjB>(static_cast<Object*>(&obj_a)) == nullptr);
-
-    debug_assert(object_try_cast<ObjA>(static_cast<Object*>(&obj_a)) == optr_a);
-    debug_assert(object_try_cast<ObjB>(static_cast<Object*>(&obj_a)) == nullptr);
-    debug_assert(object_try_cast<InterfaceA>(static_cast<Object*>(&obj_a)) == nullptr);
-    debug_assert(object_try_cast<InterfaceA>(static_cast<Object*>(&obj_b)) == iptr_b);
-    debug_assert(object_try_cast<InterfaceA>(static_cast<Object*>(&obj_c)) == iptr_c);
-}
-
 int main() {
     test_func(sigslot_test);
-    test_func(Object_test);
 
     return 0;
 }
