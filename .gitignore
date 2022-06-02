@@ -12,3 +12,5 @@ todo.txt
 *.pyd
 *.pyc
 .cache
+/compile_commands.json
+/.xmake
