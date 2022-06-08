@@ -25,3 +25,7 @@ add_headerfiles("include/(RolUI-widgets/*.hpp)")
 add_deps("rolui", "rolui-events")
 add_packages("utf8.h")
 target_end()
+
+includes("backend")
+includes("examples")
+
