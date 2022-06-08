@@ -8,7 +8,7 @@
 
 #include "GLFW/glfw3.h"
 
-namespace RolUIBackend {
+namespace RolUIGLFW {
 
     namespace _details {
 
@@ -91,4 +91,4 @@ namespace RolUIBackend {
         GLFWwindow* _glfw_window;
     };
 
-} // namespace RolUIBackend
+} // namespace RolUIGLFW

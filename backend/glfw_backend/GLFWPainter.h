@@ -7,7 +7,7 @@
 #include "RolUI/Color.hpp"
 #include "RolUI/IPainter.hpp"
 
-namespace RolUIBackend {
+namespace RolUIGLFW {
 
     class GLFWWindow;
 
@@ -76,8 +76,7 @@ namespace RolUIBackend {
         int32_t _line_cap = ROLUI_LINE_CAP_BUTT;
         int32_t _line_join = ROLUI_LINE_JOIN_MITER;
 
-
         RolUI::Rect _clip_rect;
     };
 
-} // namespace RolUIBackend
+} // namespace RolUIGLFW

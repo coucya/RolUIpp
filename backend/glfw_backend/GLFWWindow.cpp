@@ -1,5 +1,6 @@
 
 #include <cstdint>
+#include <chrono>
 
 #include "glad/glad.h"
 
@@ -11,7 +12,15 @@
 
 #include "GLFWWindow.h"
 
-namespace RolUIBackend {
+#include "RolUI/Application.hpp"
+
+namespace RolUIGLFW {
+
+    static double now() noexcept {
+        using namespace std;
+        auto d = chrono::steady_clock::now().time_since_epoch();
+        return chrono::duration_cast<chrono::duration<double>>(d).count();
+    }
 
     static RolUI::MouseKey glfw_map_to_rolui_mouse_key(int glfw_mouse_key) {
         RolUI::MouseKey key = RolUI::MouseKey::unkown;
@@ -253,6 +262,17 @@ namespace RolUIBackend {
         _char_dispatcher.dispatch(this);
     }
 
+    void GLFWWindow::run() {
+        double now_time = now();
+        RolUI::Application::flush_frame(now_time);
+
+        while (!Application::should_exit()) {
+            dispatch_event();
+            now_time = now();
+            RolUI::Application::flush_frame(now_time);
+        }
+    }
+
     int GLFWWindow::load_image(const char* filename) noexcept {
         int w, h, n;
         unsigned char* data = stbi_load(filename, &w, &h, &n, 4);
@@ -260,4 +280,4 @@ namespace RolUIBackend {
         stbi_image_free(data);
         return handle;
     }
-} // namespace RolUIBackend
+} // namespace RolUIGLFW

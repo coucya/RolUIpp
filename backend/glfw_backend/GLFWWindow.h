@@ -13,7 +13,7 @@
 #include "GLFWPainter.h"
 #include "GLFWppWindow.h"
 
-namespace RolUIBackend {
+namespace RolUIGLFW {
 
     class GLFWWindow : public GLFWppWindow, public RolUI::Window {
       private:
@@ -39,6 +39,8 @@ namespace RolUIBackend {
 
         void dispatch_event() override;
 
+        void run();
+
       private:
         void _init_nanovg();
 
@@ -53,4 +55,4 @@ namespace RolUIBackend {
         RolUI::KeyboardDispatcher _key_dispatcher;
     };
 
-} // namespace RolUIBackend
+} // namespace RolUIGLFW

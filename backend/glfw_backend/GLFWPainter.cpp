@@ -9,7 +9,7 @@
 #include "RolUI/Color.hpp"
 #include "RolUI/Point.hpp"
 
-namespace RolUIBackend {
+namespace RolUIGLFW {
 
     static NVGcolor rc_to_nc(const RolUI::Color& c) {
         return nvgRGBA(c.r, c.g, c.b, c.a);
@@ -211,4 +211,4 @@ namespace RolUIBackend {
         nvgFill(vg);
     }
 
-} // namespace RolUIBackend
+} // namespace RolUIGLFW

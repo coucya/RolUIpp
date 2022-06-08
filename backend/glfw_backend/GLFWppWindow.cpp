@@ -9,7 +9,7 @@
 
 #include "GLFWppWindow.h"
 
-namespace RolUIBackend {
+namespace RolUIGLFW {
 
     static bool _is_init = false;
 
@@ -193,4 +193,4 @@ namespace RolUIBackend {
 
     void GLFWppWindow::close() { glfwSetWindowShouldClose(_glfw_window, GLFW_TRUE); }
 
-} // namespace RolUIBackend
+} // namespace RolUIGLFW
