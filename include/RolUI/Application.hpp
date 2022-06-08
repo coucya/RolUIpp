@@ -51,6 +51,7 @@ namespace RolUI {
         static void flush_frame(double time) noexcept;
 
         static void exit() noexcept;
+        static bool should_exit() noexcept;
     };
 
 } // namespace RolUI

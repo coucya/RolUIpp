@@ -61,7 +61,6 @@ namespace RolUI {
     Widget* Application::get_widget_by_pos(Point pos) noexcept {
         Widget* widget = nullptr;
         Widget* w_it = root_widget();
-
         w_it->clear_hit();
 
         while ((widget = w_it->hit_test_children(pos)) != nullptr)
@@ -71,6 +70,7 @@ namespace RolUI {
     }
 
     void Application::exit() noexcept { _should_exit = true; }
+    bool Application::should_exit() noexcept { return _should_exit; }
 
     void Application::flush_frame(double time) noexcept {
         _current_time = time;
