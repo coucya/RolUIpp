@@ -11,7 +11,7 @@ namespace RolUI {
     class Widget;
     class IPainter;
 
-    class Window : public HasSlot {
+    class Window {
         friend Application;
 
       public:

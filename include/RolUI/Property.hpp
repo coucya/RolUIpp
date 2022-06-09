@@ -21,7 +21,7 @@ namespace RolUI {
     using enable_if_move_assignable_t = typename std::enable_if<std::is_move_assignable<T>::value>::type;
 
     template <typename WT, typename T>
-    class Property : public HasSlot {
+    class Property {
       public:
         Signal<const T&> on_change;
 

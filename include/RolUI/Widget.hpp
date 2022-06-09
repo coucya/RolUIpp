@@ -62,7 +62,7 @@ namespace RolUI {
         Size _max;
     };
 
-    class Widget : public Object, public HasSlot {
+    class Widget : public Object {
         friend class Window;
         friend class Application;
         friend class SingleChildWidget;

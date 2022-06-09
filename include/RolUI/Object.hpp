@@ -31,24 +31,6 @@ namespace RolUI {
         template <typename T>
         bool is_superclass() const noexcept { return is_superclass(typeid(T)); }
 
-        template <typename T>
-        T* try_cast(Object* obj) const noexcept {
-            return typeid(T) == *_type_info ? static_cast<T*>(obj) : nullptr;
-        }
-        template <typename T>
-        const T* try_cast(const Object* obj) const noexcept {
-            return typeid(T) == *_type_info ? static_cast<const T*>(obj) : nullptr;
-        }
-
-        template <typename T>
-        T* try_as_superclass(Object* obj) const noexcept {
-            return dynamic_cast<T*>(obj);
-        }
-        template <typename T>
-        const T* try_as_superclass(const Object* obj) const noexcept {
-            return dynamic_cast<const T*>(obj);
-        }
-
       private:
         const char* _type_name = "";
         const std::type_info* _type_info = nullptr;
@@ -67,6 +49,15 @@ namespace RolUI {
 
         Object* object_ref() noexcept;
         Object* object_unref() noexcept;
+
+        template <typename T>
+        T* try_cast() const noexcept {
+            return object_type()->is_superclass<T>() ? dynamic_cast<T*>(this) : nullptr;
+        }
+        template <typename T>
+        const T* try_cast() const noexcept {
+            return object_type()->is_superclass<T>() ? dynamic_cast<const T*>(this) : nullptr;
+        }
 
       protected:
         Object() noexcept;
