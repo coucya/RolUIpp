@@ -6,6 +6,7 @@
 #include "RolUI/Vector.hpp"
 #include "RolUI/Size.hpp"
 #include "RolUI/IPainter.hpp"
+#include "RolUI/Image.hpp"
 #include "RolUI-events/MouseEvent.hpp"
 #include "RolUI-events/CharEvent.hpp"
 #include "RolUI-events/KeyboardEvent.hpp"
@@ -35,7 +36,8 @@ namespace RolUIGLFW {
         void begin_draw() override;
         void end_draw() override;
 
-        int load_image(const char* filename) noexcept;
+        Image load_image(const char* filename) noexcept;
+        int load_font(const char* filename) noexcept;
 
         void dispatch_event() override;
 

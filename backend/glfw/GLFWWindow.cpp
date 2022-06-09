@@ -1,6 +1,11 @@
 
 #include <cstdint>
 #include <chrono>
+#include <cstdio>
+#include <fstream>
+#include <iterator>
+#include <string>
+#include <streambuf>
 
 #include "glad/glad.h"
 
@@ -15,6 +20,20 @@
 #include "RolUI/Application.hpp"
 
 namespace RolUIGLFW {
+
+    static long long file_size(const char* filename) noexcept {
+        FILE* f = fopen(filename, "rb");
+        if (fseek(f, 0, SEEK_END) != 0) return -1;
+        long long fsize = ftell(f);
+        fclose(f);
+        return fsize;
+    }
+    static size_t file_read(const char* filename, void* buf, int buf_size) noexcept {
+        FILE* f = fopen(filename, "rb");
+        size_t rs = fread(buf, 1, buf_size, f);
+        fclose(f);
+        return rs;
+    }
 
     static double now() noexcept {
         using namespace std;
@@ -273,11 +292,23 @@ namespace RolUIGLFW {
         }
     }
 
-    int GLFWWindow::load_image(const char* filename) noexcept {
+    Image GLFWWindow::load_image(const char* filename) noexcept {
         int w, h, n;
         unsigned char* data = stbi_load(filename, &w, &h, &n, 4);
-        int handle = painter()->create_image(data, w, h);
+        Image img = Image::create_rgba_mem(data, w, h);
         stbi_image_free(data);
-        return handle;
+        return img;
     }
+    int GLFWWindow::load_font(const char* filename) noexcept {
+        long long fs = file_size(filename);
+        if (fs <= 0) return -1;
+
+        uint8_t* buf = new uint8_t[fs]{0};
+        fs = file_read(filename, buf, fs);
+        auto res = painter()->create_font(buf, fs);
+        delete[] buf;
+
+        return res;
+    }
+
 } // namespace RolUIGLFW

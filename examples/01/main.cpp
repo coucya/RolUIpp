@@ -58,8 +58,7 @@ int main(int argc, char* argv[]) {
 
     RolUI::Application::init(&win);
 
-    // if (win.painter()->load_font("default", "C:\\WINDOWS\\FONTS\\MSYHL.TTC") == false)
-    //     throw std::runtime_error("can't load font.");
+    int msyhl_handle = win.load_font("C:\\WINDOWS\\FONTS\\MSYHL.TTC");
 
     // Widget* label_widget = text("label", 20);
     // Widget* buton_widget = label_button("button", 20, 10, 5);
@@ -77,7 +76,7 @@ int main(int argc, char* argv[]) {
     BoxWidget* box2_w = mk_widget<BoxWidget>()->background_color({0, 255, 0});
 
     for (int i = 0; i < 10; i++) {
-        cloumn_w->add_child(mk_widget<TextWidget>("aaa")->text_size(20));
+        cloumn_w->add_child(mk_widget<TextWidget>("aaa")->text_size(20)->font(msyhl_handle));
     }
 
     flexable_w->fit(FlexFit::fixed)->fixed(300);

@@ -1,3 +1,5 @@
+add_rules("mode.debug", "mode.release")
+
 add_requires("utf8.h")
 
 target("rolui")

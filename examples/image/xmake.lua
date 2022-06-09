@@ -1,5 +1,5 @@
 
-target("01")
+target("image")
 set_kind("binary")
 set_languages("cxx17")
 add_files("./*.cpp")

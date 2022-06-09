@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <stdexcept>
 
-#include "glfw_backend/GLFWWindow.h"
+#include "GLFWWindow.h"
 
 #include "RolUI/Widget.hpp"
 #include "RolUI/Application.hpp"
@@ -22,20 +22,24 @@ std::string get_font_path() {
 int main(int argc, char* argv[]) {
     using namespace RolUI;
 
-    RolUIBackend::GLFWWindow win(800, 600, "hello world");
+    RolUIGLFW::GLFWWindow win(800, 600, "hello world");
     win.on_exit = [&] { RolUI::Application::exit(); };
 
     RolUI::Application::init(&win);
 
     std::string font_path = get_font_path();
-    // if (win.painter()->load_font("default", font_path.c_str()) == false)
-    //     throw std::runtime_error("can't load font.");
+    int msyhl_handle = win.load_font("C:\\WINDOWS\\FONTS\\MSYHL.TTC");
+    // int msyhl_handle = win.load_font(font_path.c_str());
 
-    Widget* label = widgets::mk_widget<widgets::TextWidget>("hello world~");
+    std::cout << "msyhl_handle: " << msyhl_handle << std::endl;
+
+    Widget* label = widgets::mk_widget<widgets::TextWidget>("hello world~")->font(msyhl_handle);
     Widget* w = widgets::mk_widget<widgets::AlignWidget>();
     w->set_child(label);
 
-    Application::run(w);
+    Application::root_widget()->set_content_widget(w);
+
+    win.run();
 
     return 0;
 }

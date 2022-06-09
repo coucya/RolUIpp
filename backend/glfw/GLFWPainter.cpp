@@ -1,6 +1,7 @@
-#include <iostream>
-#include <cstdint>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
 
 #include "nanovg.h"
 
@@ -67,7 +68,9 @@ namespace RolUIGLFW {
 
     int32_t GLFWPainter::create_font(const uint8_t* data, uint32_t len) {
         NVGcontext* vg = (NVGcontext*)_nvg_context;
-        return nvgCreateFontMem(vg, "", (uint8_t*)data, len, 0);
+        uint8_t* _data = (uint8_t*)malloc(len);
+        memcpy(_data, data, len);
+        return nvgCreateFontMem(vg, "", _data, len, 0);
     }
     void GLFWPainter::set_font(int32_t handle) {
         if (handle >= 0) _font_id = handle;
