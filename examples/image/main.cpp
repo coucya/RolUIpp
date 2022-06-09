@@ -39,7 +39,6 @@ int main(int argc, char* argv[]) {
     RolUI::Application::init(&win);
 
     std::string img_huaji_path = get_image_huaji_path();
-    std::cout << "img_huaji_path: " << img_huaji_path << std::endl;
 
     RolUI::Image img = win.load_image(img_huaji_path.c_str());
     widgets::ImageWidget image1{img};
