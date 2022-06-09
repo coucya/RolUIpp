@@ -11,7 +11,7 @@
 #include <functional>
 #include <random>
 
-#include "glfw_backend/GLFWWindow.h"
+#include "GLFWWindow.h"
 
 #include "RolUI/Point.hpp"
 #include "RolUI/Vector.hpp"
@@ -51,11 +51,10 @@ int random_int(int beg = 0, int end = 100) {
     return rs(e);
 }
 
-
 int main(int argc, char* argv[]) {
-    RolUIBackend::GLFWWindow win(800, 600, "text box");
+    RolUIGLFW::GLFWWindow win(800, 600, "text box");
     win.on_exit = [&] { RolUI::Application::exit(); };
-    win.on_size_change.connect([](Size) { RolUI::Application::flush_frame(); });
+    // win.on_size_change.connect([](Size) { RolUI::Application::flush_frame(); });
 
     RolUI::Application::init(&win);
 
@@ -88,7 +87,9 @@ int main(int argc, char* argv[]) {
     row_grid->add_child(box2_w);
     Widget* w = row_grid;
 
-    Application::run(w);
+    RolUI::Application::root_widget()->set_content_widget(w);
+
+    win.run();
 
     return 0;
 }
