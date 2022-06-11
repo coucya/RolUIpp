@@ -1,0 +1,10 @@
+add_requires("pybind11")
+add_requires("python3", { system = true })
+
+target("pyrolui")
+set_languages("cxx17")
+add_rules("python.library")
+add_files("src/*.cpp")
+add_deps("rolui", "rolui-events", "rolui-widgets", "rolui-glfw")
+add_packages("pybind11", "python3", { public = true })
+target_end()
